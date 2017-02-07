@@ -1,0 +1,58 @@
+AppBundle\Entity\ReportsBlacklist:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\ReportsBlacklistRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        blid:
+            type: integer
+        tid:
+            type: integer
+        cgid:
+            type: integer
+        trafficSource:
+            type: string
+            length: '60'
+            column: traffic_source
+        geo:
+            type: string
+            length: '10'
+        vertical:
+            type: string
+            length: 255
+        placement:
+            type: string
+            length: '255'
+        visits:
+            type: integer
+        clicks:
+            type: integer
+        ctr:
+            type: float
+        cost:
+            type: float
+        roi:
+            type: float
+        conversions:
+            type: integer
+        campaignName:
+            type: string
+            length: '60'
+            column: campaign_name
+        frequency:
+            type: integer
+        startFrom:
+            type: integer
+            column: start_from
+        dateExecuted:
+            type: integer
+            column: date_executed
+        status:
+            type: string
+            length: '10'
+    lifecycleCallbacks: {  }

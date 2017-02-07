@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\IpRules" table="ip_rules">
+    <id name="iid" type="integer" column="iid">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="cgid" type="string" column="cgid" length="11" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="active" type="boolean" column="active" nullable="false"/>
+    <field name="frequency" type="integer" column="frequency" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="dateupdated" type="date" column="dateUpdated" nullable="false"/>
+  </entity>
+</doctrine-mapping>

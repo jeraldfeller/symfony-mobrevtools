@@ -1,0 +1,56 @@
+AppBundle\Entity\Reportsbot:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\ReportsbotRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        bid:
+            type: integer
+        tid:
+            type: integer
+        cgid:
+            type: integer
+        trafficSource:
+            type: string
+            length: '60'
+            column: traffic_source
+        geo:
+            type: string
+            length: '10'
+        vertical:
+            type: string
+            length: '20'
+        placement:
+            type: string
+            length: '255'
+        visits:
+            type: integer
+        clicks:
+            type: string
+            length: 255
+        ctr:
+            type: float
+        cost:
+            type: float
+        conversions:
+            type: float
+        roi:
+            type: float
+        campaignName:
+            type: string
+            length: '30'
+        frequency:
+            type: integer
+        startFrom:
+            type: integer
+        dateExecuted:
+            type: integer
+        status:
+            type: string
+            length: '10'
+    lifecycleCallbacks: {  }

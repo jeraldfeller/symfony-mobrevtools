@@ -1,0 +1,21 @@
+AppBundle\Entity\Entity:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\EntityRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        uid:
+            type: integer
+            unique: true
+        email:
+            type: string
+            length: '60'
+        password:
+            type: string
+            length: '100'
+    lifecycleCallbacks: {  }

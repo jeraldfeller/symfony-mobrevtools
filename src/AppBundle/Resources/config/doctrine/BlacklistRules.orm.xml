@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\BlacklistRules" table="blacklist_rules">
+    <indexes>
+      <index name="cgid" columns="cgid"/>
+    </indexes>
+    <id name="blid" type="integer" column="blid">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="active" type="boolean" column="active" nullable="false"/>
+    <field name="actiontype" type="string" column="actionType" length="20" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="visits" type="boolean" column="visits" nullable="false"/>
+    <field name="visitscondition" type="string" column="visitsCondition" length="15" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="visitsvalue1" type="float" column="visitsValue1" precision="10" scale="0" nullable="false"/>
+    <field name="visitsvalue2" type="float" column="visitsValue2" precision="10" scale="0" nullable="false"/>
+    <field name="cost" type="boolean" column="cost" nullable="false"/>
+    <field name="costcondition" type="string" column="costCondition" length="15" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="costvalue1" type="float" column="costValue1" precision="10" scale="0" nullable="false"/>
+    <field name="costvalue2" type="float" column="costValue2" precision="10" scale="0" nullable="false"/>
+    <field name="conv" type="boolean" column="conv" nullable="false"/>
+    <field name="convcondition" type="string" column="convCondition" length="15" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="convvalue1" type="float" column="convValue1" precision="10" scale="0" nullable="false"/>
+    <field name="convvalue2" type="float" column="convValue2" precision="10" scale="0" nullable="false"/>
+    <field name="ctr" type="boolean" column="ctr" nullable="false"/>
+    <field name="ctrcondition" type="string" column="ctrCondition" length="15" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="ctrvalue1" type="float" column="ctrValue1" precision="10" scale="0" nullable="false"/>
+    <field name="ctrvalue2" type="float" column="ctrValue2" precision="10" scale="0" nullable="false"/>
+    <field name="roi" type="boolean" column="roi" nullable="false"/>
+    <field name="roicondition" type="string" column="roiCondition" length="15" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="roivalue1" type="float" column="roiValue1" precision="10" scale="0" nullable="false"/>
+    <field name="roivalue2" type="float" column="roiValue2" precision="10" scale="0" nullable="false"/>
+    <field name="startfrom" type="date" column="startFrom" nullable="false"/>
+    <field name="datetime" type="string" column="dateTime" length="20" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="datetimeunix" type="integer" column="dateTimeUnix" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="frequency" type="integer" column="frequency" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="dateupdated" type="date" column="dateUpdated" nullable="false"/>
+    <many-to-one field="cgid" target-entity="Campaigngroups" fetch="LAZY">
+      <join-columns>
+        <join-column name="cgid" referenced-column-name="cgid"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

@@ -1,0 +1,64 @@
+{% for item in data %}
+    {% if item.trafficSource == 'ExoClick' %}
+        <div class="col-md-6">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption font-green-sharp">
+                        <i class="icon-share font-green-sharp"></i>
+                        <span class="caption-subject bold uppercase"> {{ item.trafficSource }}</span>
+
+                    </div>
+                    <div class="action" id="{{ loop.index0 }}">
+                        <button type="button" class="btn btn-circle btn-info btn-sm ladda-button pull-right spinnerBtn" id="save-spinner{{ loop.index0 }}" data-style="expand-right" data-size="s" onClick="updateApiAccessSettings(this)">
+                                                    <span class="ladda-label">
+                                                        <i class="fa fa-save"></i> Save</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="form-group form-md-line-input">
+                        <input type="text" class="form-control" id="user-{{ loop.index0 }}" placeholder="Enter username" value="{{ item.username }}">
+                        <input type="hidden" class="form-control" id="password-{{ loop.index0 }}" placeholder="Enter password" value="{{ item.password }}">
+                        <input type="hidden" class="form-control" id="tid-{{ loop.index0 }}" placeholder="Enter password" value="{{ item.tid }}">
+                        <input type="hidden" class="form-control" id="traffic-{{ loop.index0 }}" placeholder="Enter password" value="{{ item.trafficSource }}">
+                        <label for="user-{{ loop.index0 }}">Token</label>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+            <div class="col-md-6">
+                <div class="portlet light">
+                    <div class="portlet-title">
+                        <div class="caption font-green-sharp">
+                            <i class="icon-share font-green-sharp"></i>
+                            <span class="caption-subject bold uppercase"> {{ item.trafficSource }}</span>
+
+                        </div>
+                        <div class="action" id="{{ loop.index0 }}">
+                            <button type="button" class="btn btn-circle btn-info btn-sm ladda-button pull-right spinnerBtn" data-style="expand-right" data-size="s" onClick="updateApiAccessSettings(this)">
+                                                    <span class="ladda-label">
+                                                        <i class="fa fa-save"></i> Save</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="form-group form-md-line-input">
+                            <input type="text" class="form-control" id="user-{{ loop.index0 }}" placeholder="Enter username" value="{{ item.username }}">
+                            <label for="user-{{ loop.index0 }}">Username</label>
+
+                        </div>
+                        <div class="form-group form-md-line-input">
+                            <input type="password" class="form-control" id="password-{{ loop.index0 }}" placeholder="Enter password" value="{{ item.password }}">
+                            <input type="hidden" class="form-control" id="tid-{{ loop.index0 }}" placeholder="Enter password" value="{{ item.tid }}">
+                            <input type="hidden" class="form-control" id="traffic-{{ loop.index0 }}" placeholder="Enter password" value="{{ item.trafficSource }}">
+                            <label for="password-{{ loop.index0 }}">Password</label>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+    {% endif %}
+
+{% endfor %}

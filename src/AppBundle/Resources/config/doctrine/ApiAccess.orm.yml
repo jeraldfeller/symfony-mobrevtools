@@ -1,0 +1,23 @@
+AppBundle\Entity\ApiAccess:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\ApiAccessRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        tid:
+            type: integer
+        trafficSource:
+            type: string
+            length: '60'
+        userName:
+            type: string
+            length: '60'
+        password:
+            type: string
+            length: '100'
+    lifecycleCallbacks: {  }

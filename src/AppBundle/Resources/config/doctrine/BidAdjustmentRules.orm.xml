@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\BidAdjustmentRules" table="bid_adjustment_rules">
+    <indexes>
+      <index name="cgid" columns="cgid"/>
+    </indexes>
+    <id name="baid" type="integer" column="baid">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="active" type="boolean" column="active" nullable="false"/>
+    <field name="reviewlast" type="integer" column="reviewLast" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="conversions" type="integer" column="conversions" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="startfrom" type="date" column="startFrom" nullable="false"/>
+    <field name="datetime" type="string" column="dateTime" length="30" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="datetimeunix" type="integer" column="dateTimeUnix" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="frequency" type="integer" column="frequency" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="dateupdated" type="date" column="dateUpdated" nullable="false"/>
+    <many-to-one field="cgid" target-entity="Campaigngroups" fetch="LAZY">
+      <join-columns>
+        <join-column name="cgid" referenced-column-name="cgid"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

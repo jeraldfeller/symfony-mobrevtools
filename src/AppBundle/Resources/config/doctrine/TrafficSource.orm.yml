@@ -1,0 +1,18 @@
+AppBundle\Entity\TrafficSource:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\TrafficSourceRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        trafficSourceId:
+            type: string
+            length: '120'
+        trafficName:
+            type: string
+            length: '60'
+    lifecycleCallbacks: {  }

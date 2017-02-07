@@ -1,0 +1,180 @@
+{% extends 'base.html.twig' %}
+{% block nav %}
+    <li class="nav-item">
+        <a href="/" class="nav-link nav-toggle">
+            <i class="icon-home"></i>
+            <span class="title">Dashboard</span>
+        </a>
+    </li>
+
+    <li class="nav-item start active open">
+        <a href="javascript:;" class="nav-link nav-toggle">
+            <i class="fa fa-gears"></i>
+            <span class="title">Global Settings</span>
+            <span class="selected"></span>
+            <span class="arrow open"></span>
+        </a>
+        <ul class="sub-menu">
+            <li class="nav-item">
+                <a href="/global-settings/api-access" class="nav-link ">
+                    <span class="title">API Access</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/global-settings/traffic-source" class="nav-link ">
+                    <span class="title">Traffic Source</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+{% endblock %}
+{% block body %}
+    <h1 class="page-title"> Global Settings
+        <small>traffic sources</small>
+    </h1>
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li>
+                <i class="icon-home"></i>
+                <a href="/">Home</a>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>Global Settings</span>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>{{ page }}</span>
+            </li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li>
+                        <a href="#">
+                            <i class="icon-bell"></i> Action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-shield"></i> Another action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-user"></i> Something else here</a>
+                    </li>
+                    <li class="divider"> </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-bag"></i> Separated link</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE HEADER-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption font-dark">
+                        <button type="button" id="importTrafficSourceBtn" class="btn btn-primary"><i class="fa fa-cloud-download"></i> Add Traffic Source</button>
+                    </div>
+                    <div class="portlet-body">
+
+                        <div class="table-toolbar">
+                            <div class="row">
+
+                            </div>
+                        </div>
+                        {{ sg_datatables_render(datatable) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).on('ready', function() {
+
+
+            $('#importTrafficSourceBtn').click(function(){
+                $btnSpinner = "#importTrafficSourceTableCell-spinner";
+                $('#import-modal').modal('show');
+                apiGetTrafficSource($btnSpinner);
+            });
+
+            $('#deleteRecordsBtn').click(function(){
+                $('#delete-modal').modal('show');
+            });
+
+
+            $('#datatable-responsive').DataTable({
+                fixedHeader: true,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": "Model/Datatables-Source?ref=traffic-source",
+                responsive: true
+            });
+
+            var table =  $('#datatable-responsive').DataTable();
+
+
+            $('#importTrafficSourceBtnSave').on('click', function(){
+                $btnSpinner = "#importTrafficSourceBtnSave-spinner";
+                var data = {items:[]};
+                $i = 0;
+                $('input:checkbox.traffic-record').each(function () {
+
+
+                    if($(this).is(':checked') == true){
+                        var trafficSourceId = (this.checked ? $(this).data('trafficid') : "");
+                        var trafficSourceName = (this.checked ? $(this).data('trafficname') : "");
+
+                        data.items.push({trafficSourceId: trafficSourceId, trafficSourceName: trafficSourceName});
+
+                    }
+
+                });
+
+                console.log(data.items);
+                apiAddTraffic($btnSpinner, data);
+
+            });
+
+
+
+            $('#confirmDeleteRecordsBtn').on('click', function(){
+                $btnSpinner = "#confirmDeleteRecordsBtn-spinner"
+                var data = {items:[]};
+                $i = 0;
+                $('input:checkbox.report-record').each(function () {
+
+
+                    if($(this).is(':checked') == true){
+                        var id = (this.checked ? $(this).data('id') : "");
+
+                        data.items.push({id: id});
+                        // $campaigns.push({$i: {vid: voluumId, campid: campId, campname: campName}});
+                    }
+
+                });
+
+                console.log(data.items);
+                trafficDelete($btnSpinner, data);
+
+            });
+
+        });
+    </script>
+    <!-- AJAX CALLS -->
+    <script src="{{ asset('assets/ajax/global-settings/ajax-global-settings.js') }}" type="text/javascript"></script>
+    <!-- END AJAX CALLS -->
+{% endblock %}
+{% block javascripts %}
+    <script>
+        Ladda.bind( '.spinnerBtn' );
+    </script>
+{% endblock %}

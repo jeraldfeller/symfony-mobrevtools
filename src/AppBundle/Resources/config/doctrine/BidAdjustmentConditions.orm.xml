@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\BidAdjustmentConditions" table="bid_adjustment_conditions">
+    <indexes>
+      <index name="baid" columns="baid"/>
+    </indexes>
+    <id name="bacid" type="integer" column="bacid">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="horizontalcondition" type="string" column="horizontalCondition" length="30" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="value1" type="float" column="value1" precision="10" scale="0" nullable="false"/>
+    <field name="value2" type="float" column="value2" precision="10" scale="0" nullable="false"/>
+    <field name="verticalcondition" type="string" column="verticalCondition" length="30" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="valuepercent" type="float" column="valuePercent" precision="10" scale="0" nullable="false"/>
+    <many-to-one field="baid" target-entity="BidAdjustmentRules" fetch="LAZY">
+      <join-columns>
+        <join-column name="baid" referenced-column-name="baid"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

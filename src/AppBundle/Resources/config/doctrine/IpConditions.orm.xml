@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\IpConditions" table="ip_conditions">
+    <indexes>
+      <index name="iid" columns="iid"/>
+    </indexes>
+    <id name="icid" type="integer" column="icid">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="carrier" type="string" column="carrier" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <many-to-one field="iid" target-entity="IpRules" fetch="LAZY">
+      <join-columns>
+        <join-column name="iid" referenced-column-name="iid"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

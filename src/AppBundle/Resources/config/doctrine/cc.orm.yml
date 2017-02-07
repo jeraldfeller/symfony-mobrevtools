@@ -1,0 +1,11 @@
+AppBundle\Entity\cc:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\ccRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    lifecycleCallbacks: {  }

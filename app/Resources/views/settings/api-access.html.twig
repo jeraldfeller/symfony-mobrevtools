@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+{% block nav %}
+    {{ render(controller(
+    'AppBundle:Navmenu:getNavmenu'
+    )) }}
+{% endblock %}
+{% block body %}
+    <h1 class="page-title"> Global Settings
+        <small>api access credentials</small>
+    </h1>
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li>
+                <i class="icon-home"></i>
+                <a href="/">Home</a>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>Global Settings</span>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>{{ page }}</span>
+            </li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li>
+                        <a href="#">
+                            <i class="icon-bell"></i> Action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-shield"></i> Another action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-user"></i> Something else here</a>
+                    </li>
+                    <li class="divider"> </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-bag"></i> Separated link</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE HEADER-->
+    <div class="row">
+        {{ render(controller(
+            'AppBundle:Settings:getApiAccessCredentials'
+        )) }}
+    </div>
+    <!-- AJAX CALLS -->
+    <script src="{{ asset('assets/ajax/global-settings/ajax-global-settings.js') }}" type="text/javascript"></script>
+    <!-- END AJAX CALLS -->
+{% endblock %}
+{% block javascripts %}
+
+{% endblock %}

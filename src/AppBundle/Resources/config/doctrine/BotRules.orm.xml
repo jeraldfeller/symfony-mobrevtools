@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\BotRules" table="bot_rules">
+    <unique-constraints>
+      <unique-constraint name="cgid" columns="cgid"/>
+    </unique-constraints>
+    <id name="bid" type="integer" column="bid">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="opt" type="integer" column="opt" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="visits" type="integer" column="visits" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="val" type="integer" column="val" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="datetimeunix" type="integer" column="dateTimeUnix" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="datefrom" type="date" column="dateFrom" nullable="false"/>
+    <field name="datetime" type="string" column="dateTime" length="10" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="frequency" type="integer" column="frequency" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="active" type="boolean" column="active" nullable="false"/>
+    <field name="dateupdated" type="date" column="dateUpdated" nullable="false"/>
+    <many-to-one field="cgid" target-entity="Campaigngroups" fetch="LAZY">
+      <join-columns>
+        <join-column name="cgid" referenced-column-name="cgid"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
