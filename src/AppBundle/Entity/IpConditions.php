@@ -81,4 +81,3 @@ class IpConditions
         return $this->iid;
     }
 }
-

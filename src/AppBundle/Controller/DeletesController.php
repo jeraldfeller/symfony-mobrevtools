@@ -66,4 +66,18 @@ class DeletesController extends Controller{
         );
     }
 
+    /**
+     * @Route("/delete/individual/{$appBundle}/{$column}/{$value}", name="deleteIndividual")
+     */
+    public function deleteIndividualColumnAction($appBundle = null, $column = null, $value = null){
+        $em = $this->getDoctrine()->getEntityManager();
+        $sql = $em->createQuery(
+            "DELETE FROM $appBundle p WHERE p.$column = $value"
+        );
+        $numDeleted = $sql->execute();
+        return new Response(
+            json_encode($numDeleted)
+        );
+    }
+
 }

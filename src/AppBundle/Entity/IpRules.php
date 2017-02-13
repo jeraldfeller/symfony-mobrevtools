@@ -139,4 +139,3 @@ class IpRules
         return $this->iid;
     }
 }
-

@@ -99,6 +99,8 @@ function showNotification(status, title, message){
 
     if(status == 'success'){
         toastr.success(message, title);
+    }else if(status == 'warning'){
+        toastr.warning(message, title);
     }else if(status == 'error'){
         toastr.error('Something terrible happened, please try again later', 'Error');
     }

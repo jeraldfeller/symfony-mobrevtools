@@ -75,17 +75,17 @@ class LogsTbl
     /**
      * @var string
      */
-    private $batterylevel;
+    private $batteryLevel;
 
     /**
      * @var string
      */
-    private $batterycharging;
+    private $batteryCharging;
 
     /**
      * @var string
      */
-    private $batterydischargingtime;
+    private $batteryDischargingTime;
 
     /**
      * @var string
@@ -457,9 +457,9 @@ class LogsTbl
      *
      * @return LogsTbl
      */
-    public function setBatterylevel($batterylevel)
+    public function setBatteryLevel($batteryLevel)
     {
-        $this->batterylevel = $batterylevel;
+        $this->batteryLevel = $batteryLevel;
 
         return $this;
     }
@@ -469,9 +469,9 @@ class LogsTbl
      *
      * @return string
      */
-    public function getBatterylevel()
+    public function getBatteryLevel()
     {
-        return $this->batterylevel;
+        return $this->batteryLevel;
     }
 
     /**
@@ -481,9 +481,9 @@ class LogsTbl
      *
      * @return LogsTbl
      */
-    public function setBatterycharging($batterycharging)
+    public function setBatteryCharging($batteryCharging)
     {
-        $this->batterycharging = $batterycharging;
+        $this->batteryCharging = $batteryCharging;
 
         return $this;
     }
@@ -493,9 +493,9 @@ class LogsTbl
      *
      * @return string
      */
-    public function getBatterycharging()
+    public function getBatteryCharging()
     {
-        return $this->batterycharging;
+        return $this->batteryCharging;
     }
 
     /**
@@ -505,9 +505,9 @@ class LogsTbl
      *
      * @return LogsTbl
      */
-    public function setBatterydischargingtime($batterydischargingtime)
+    public function setBatteryDischargingTime($batteryDischargingTime)
     {
-        $this->batterydischargingtime = $batterydischargingtime;
+        $this->batteryDischargingTime = $batteryDischargingTime;
 
         return $this;
     }
@@ -517,9 +517,9 @@ class LogsTbl
      *
      * @return string
      */
-    public function getBatterydischargingtime()
+    public function getBatteryDischargingTime()
     {
-        return $this->batterydischargingtime;
+        return $this->batteryDischargingTime;
     }
 
     /**
@@ -748,4 +748,3 @@ class LogsTbl
         return $this->id;
     }
 }
-

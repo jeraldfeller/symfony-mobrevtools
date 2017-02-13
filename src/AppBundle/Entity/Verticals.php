@@ -52,4 +52,3 @@ class Verticals
         return $this->id;
     }
 }
-

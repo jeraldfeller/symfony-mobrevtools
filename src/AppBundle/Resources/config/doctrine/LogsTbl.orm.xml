@@ -69,17 +69,17 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="batterylevel" type="string" column="batteryLevel" length="60" nullable="false">
+    <field name="batteryLevel" type="string" column="battery_level" length="60" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="batterycharging" type="string" column="batteryCharging" length="60" nullable="false">
+    <field name="batteryCharging" type="string" column="battery_Charging" length="60" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="batterydischargingtime" type="string" column="batteryDischargingTime" length="60" nullable="false">
+    <field name="batteryDischargingTime" type="string" column="battery_discharging_time" length="60" nullable="false">
       <options>
         <option name="fixed"/>
       </options>

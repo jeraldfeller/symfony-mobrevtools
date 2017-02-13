@@ -226,4 +226,3 @@ class Safedomains
         return $this->did;
     }
 }
-

@@ -47,6 +47,10 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="dateSet" type="integer" column="date_set" nullable="false"/>
+    <field name="dateSet" type="integer" column="date_set" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
   </entity>
 </doctrine-mapping>

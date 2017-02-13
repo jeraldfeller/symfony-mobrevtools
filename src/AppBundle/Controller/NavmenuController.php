@@ -58,6 +58,26 @@ class NavmenuController extends Controller{
                                                         <span class="title">IP</span>
                                                     </a>
                                                 </li>
+                                                <li class="nav-item">
+                                                    <a href="/reports/log-tracker" class="nav-link ">
+                                                        <span class="title">Log Tracker</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/reports/conversions" class="nav-link ">
+                                                        <span class="title">Conversions</span>
+                                                    </a>
+                                                 </li>
+                                                <li class="nav-item">
+                                                    <a href="/reports/metrics" class="nav-link ">
+                                                        <span class="title">Metrics</span>
+                                                    </a>
+                                                </li>
+                                                 <li class="nav-item">
+                                                    <a href="/reports/traffic-monitoring" class="nav-link ">
+                                                        <span class="title">Traffic Monitoring</span>
+                                                    </a>
+                                                 </li>
                                             </ul>
                                         </li>',
                     'global-settings' => '<li class="nav-item start isActiveIdentifier">

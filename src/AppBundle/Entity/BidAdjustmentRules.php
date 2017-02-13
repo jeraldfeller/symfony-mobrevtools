@@ -284,4 +284,3 @@ class BidAdjustmentRules
         return $this->cgid;
     }
 }
-

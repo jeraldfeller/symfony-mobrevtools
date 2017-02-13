@@ -110,4 +110,3 @@ class ChangeLog
         return $this->clid;
     }
 }
-

@@ -168,4 +168,3 @@ class ReportsIp
         return $this->Id;
     }
 }
-

@@ -4,7 +4,7 @@
     <indexes>
       <index name="cid" columns="cid"/>
       <index name="gid" columns="gid"/>
-      <index name="verId" columns="verId"/>
+      <index name="verId" columns="ver_id"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
@@ -14,7 +14,7 @@
         <option name="fixed"/>
       </options>
     </field>
-    <many-to-one field="verId" target-entity="Verticals" fetch="LAZY">
+    <many-to-one field="ver" target-entity="Verticals" fetch="LAZY">
       <join-columns>
         <join-column name="ver_id" referenced-column-name="id"/>
       </join-columns>

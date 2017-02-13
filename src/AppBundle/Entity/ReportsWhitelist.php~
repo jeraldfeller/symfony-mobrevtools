@@ -63,7 +63,7 @@ class ReportsWhitelist
     private $campaign;
 
     /**
-     * @var \DateTime
+     * @var \Date
      */
     private $dateSet;
 
@@ -338,15 +338,15 @@ class ReportsWhitelist
     }
 
     /**
-     * Set dateset
+     * Set dateSet
      *
      * @param \DateTime $dateSet
      *
      * @return ReportsWhitelist
      */
-    public function setDateset($dateSet)
+    public function setDateSet($dateSet)
     {
-        $this->dateset = $dateSet;
+        $this->dateSet = $dateSet;
 
         return $this;
     }
@@ -356,7 +356,7 @@ class ReportsWhitelist
      *
      * @return \DateTime
      */
-    public function getDateset()
+    public function getDateSet()
     {
         return $this->dateSet;
     }
@@ -370,5 +370,7 @@ class ReportsWhitelist
     {
         return $this->id;
     }
-}
 
+
+
+}

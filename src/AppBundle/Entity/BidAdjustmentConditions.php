@@ -197,4 +197,3 @@ class BidAdjustmentConditions
         return $this->baid;
     }
 }
-

@@ -81,4 +81,3 @@ class AppsCountries
         return $this->id;
     }
 }
-

@@ -1,0 +1,751 @@
+<?php
+
+namespace AppBundle\Entity;
+
+/**
+ * LogsTbl
+ */
+class LogsTbl
+{
+    /**
+     * @var string
+     */
+    private $pageName;
+
+    /**
+     * @var string
+     */
+    private $geoTarget;
+
+    /**
+     * @var string
+     */
+    private $clickid;
+
+    /**
+     * @var string
+     */
+    private $campid;
+
+    /**
+     * @var integer
+     */
+    private $conversion;
+
+    /**
+     * @var string
+     */
+    private $ua;
+
+    /**
+     * @var string
+     */
+    private $ip;
+
+    /**
+     * @var integer
+     */
+    private $visitCount;
+
+    /**
+     * @var integer
+     */
+    private $colorDensity;
+
+    /**
+     * @var string
+     */
+    private $resolution;
+
+    /**
+     * @var string
+     */
+    private $orientation;
+
+    /**
+     * @var string
+     */
+    private $acceleration;
+
+    /**
+     * @var string
+     */
+    private $rotation;
+
+    /**
+     * @var string
+     */
+    private $batteryLevel;
+
+    /**
+     * @var string
+     */
+    private $batteryCharging;
+
+    /**
+     * @var string
+     */
+    private $batteryDischargingTime;
+
+    /**
+     * @var string
+     */
+    private $motion;
+
+    /**
+     * @var string
+     */
+    private $platform;
+
+    /**
+     * @var integer
+     */
+    private $fonts;
+
+    /**
+     * @var string
+     */
+    private $appVersion;
+
+    /**
+     * @var integer
+     */
+    private $noOfPlugins;
+
+    /**
+     * @var string
+     */
+    private $plugins;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateTime;
+
+    /**
+     * @var string
+     */
+    private $timeZone;
+
+    /**
+     * @var string
+     */
+    private $country;
+
+    /**
+     * @var integer
+     */
+    private $id;
+
+
+    /**
+     * Set pageName
+     *
+     * @param string $pageName
+     *
+     * @return LogsTbl
+     */
+    public function setPageName($pageName)
+    {
+        $this->pageName = $pageName;
+
+        return $this;
+    }
+
+    /**
+     * Get pageName
+     *
+     * @return string
+     */
+    public function getPageName()
+    {
+        return $this->pageName;
+    }
+
+    /**
+     * Set geoTarget
+     *
+     * @param string $geoTarget
+     *
+     * @return LogsTbl
+     */
+    public function setGeoTarget($geoTarget)
+    {
+        $this->geoTarget = $geoTarget;
+
+        return $this;
+    }
+
+    /**
+     * Get geoTarget
+     *
+     * @return string
+     */
+    public function getGeoTarget()
+    {
+        return $this->geoTarget;
+    }
+
+    /**
+     * Set clickid
+     *
+     * @param string $clickid
+     *
+     * @return LogsTbl
+     */
+    public function setClickid($clickid)
+    {
+        $this->clickid = $clickid;
+
+        return $this;
+    }
+
+    /**
+     * Get clickid
+     *
+     * @return string
+     */
+    public function getClickid()
+    {
+        return $this->clickid;
+    }
+
+    /**
+     * Set campid
+     *
+     * @param string $campid
+     *
+     * @return LogsTbl
+     */
+    public function setCampid($campid)
+    {
+        $this->campid = $campid;
+
+        return $this;
+    }
+
+    /**
+     * Get campid
+     *
+     * @return string
+     */
+    public function getCampid()
+    {
+        return $this->campid;
+    }
+
+    /**
+     * Set conversion
+     *
+     * @param integer $conversion
+     *
+     * @return LogsTbl
+     */
+    public function setConversion($conversion)
+    {
+        $this->conversion = $conversion;
+
+        return $this;
+    }
+
+    /**
+     * Get conversion
+     *
+     * @return integer
+     */
+    public function getConversion()
+    {
+        return $this->conversion;
+    }
+
+    /**
+     * Set ua
+     *
+     * @param string $ua
+     *
+     * @return LogsTbl
+     */
+    public function setUa($ua)
+    {
+        $this->ua = $ua;
+
+        return $this;
+    }
+
+    /**
+     * Get ua
+     *
+     * @return string
+     */
+    public function getUa()
+    {
+        return $this->ua;
+    }
+
+    /**
+     * Set ip
+     *
+     * @param string $ip
+     *
+     * @return LogsTbl
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    /**
+     * Get ip
+     *
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
+    /**
+     * Set visitCount
+     *
+     * @param integer $visitCount
+     *
+     * @return LogsTbl
+     */
+    public function setVisitCount($visitCount)
+    {
+        $this->visitCount = $visitCount;
+
+        return $this;
+    }
+
+    /**
+     * Get visitCount
+     *
+     * @return integer
+     */
+    public function getVisitCount()
+    {
+        return $this->visitCount;
+    }
+
+    /**
+     * Set colorDensity
+     *
+     * @param integer $colorDensity
+     *
+     * @return LogsTbl
+     */
+    public function setColorDensity($colorDensity)
+    {
+        $this->colorDensity = $colorDensity;
+
+        return $this;
+    }
+
+    /**
+     * Get colorDensity
+     *
+     * @return integer
+     */
+    public function getColorDensity()
+    {
+        return $this->colorDensity;
+    }
+
+    /**
+     * Set resolution
+     *
+     * @param string $resolution
+     *
+     * @return LogsTbl
+     */
+    public function setResolution($resolution)
+    {
+        $this->resolution = $resolution;
+
+        return $this;
+    }
+
+    /**
+     * Get resolution
+     *
+     * @return string
+     */
+    public function getResolution()
+    {
+        return $this->resolution;
+    }
+
+    /**
+     * Set orientation
+     *
+     * @param string $orientation
+     *
+     * @return LogsTbl
+     */
+    public function setOrientation($orientation)
+    {
+        $this->orientation = $orientation;
+
+        return $this;
+    }
+
+    /**
+     * Get orientation
+     *
+     * @return string
+     */
+    public function getOrientation()
+    {
+        return $this->orientation;
+    }
+
+    /**
+     * Set acceleration
+     *
+     * @param string $acceleration
+     *
+     * @return LogsTbl
+     */
+    public function setAcceleration($acceleration)
+    {
+        $this->acceleration = $acceleration;
+
+        return $this;
+    }
+
+    /**
+     * Get acceleration
+     *
+     * @return string
+     */
+    public function getAcceleration()
+    {
+        return $this->acceleration;
+    }
+
+    /**
+     * Set rotation
+     *
+     * @param string $rotation
+     *
+     * @return LogsTbl
+     */
+    public function setRotation($rotation)
+    {
+        $this->rotation = $rotation;
+
+        return $this;
+    }
+
+    /**
+     * Get rotation
+     *
+     * @return string
+     */
+    public function getRotation()
+    {
+        return $this->rotation;
+    }
+
+    /**
+     * Set batterylevel
+     *
+     * @param string $batterylevel
+     *
+     * @return LogsTbl
+     */
+    public function setBatteryLevel($batteryLevel)
+    {
+        $this->batteryLevel = $batteryLevel;
+
+        return $this;
+    }
+
+    /**
+     * Get batterylevel
+     *
+     * @return string
+     */
+    public function getBatteryLevel()
+    {
+        return $this->batteryLevel;
+    }
+
+    /**
+     * Set batterycharging
+     *
+     * @param string $batterycharging
+     *
+     * @return LogsTbl
+     */
+    public function setBatteryCharging($batteryCharging)
+    {
+        $this->batteryCharging = $batteryCharging;
+
+        return $this;
+    }
+
+    /**
+     * Get batterycharging
+     *
+     * @return string
+     */
+    public function getBatteryCharging()
+    {
+        return $this->batteryCharging;
+    }
+
+    /**
+     * Set batterydischargingtime
+     *
+     * @param string $batterydischargingtime
+     *
+     * @return LogsTbl
+     */
+    public function setBatteryDischargingTime($batteryDischargingTime)
+    {
+        $this->batteryDischargingTime = $batteryDischargingTime;
+
+        return $this;
+    }
+
+    /**
+     * Get batterydischargingtime
+     *
+     * @return string
+     */
+    public function getBatteryDischargingTime()
+    {
+        return $this->batteryDischargingTime;
+    }
+
+    /**
+     * Set motion
+     *
+     * @param string $motion
+     *
+     * @return LogsTbl
+     */
+    public function setMotion($motion)
+    {
+        $this->motion = $motion;
+
+        return $this;
+    }
+
+    /**
+     * Get motion
+     *
+     * @return string
+     */
+    public function getMotion()
+    {
+        return $this->motion;
+    }
+
+    /**
+     * Set platform
+     *
+     * @param string $platform
+     *
+     * @return LogsTbl
+     */
+    public function setPlatform($platform)
+    {
+        $this->platform = $platform;
+
+        return $this;
+    }
+
+    /**
+     * Get platform
+     *
+     * @return string
+     */
+    public function getPlatform()
+    {
+        return $this->platform;
+    }
+
+    /**
+     * Set fonts
+     *
+     * @param integer $fonts
+     *
+     * @return LogsTbl
+     */
+    public function setFonts($fonts)
+    {
+        $this->fonts = $fonts;
+
+        return $this;
+    }
+
+    /**
+     * Get fonts
+     *
+     * @return integer
+     */
+    public function getFonts()
+    {
+        return $this->fonts;
+    }
+
+    /**
+     * Set appVersion
+     *
+     * @param string $appVersion
+     *
+     * @return LogsTbl
+     */
+    public function setAppVersion($appVersion)
+    {
+        $this->appVersion = $appVersion;
+
+        return $this;
+    }
+
+    /**
+     * Get appVersion
+     *
+     * @return string
+     */
+    public function getAppVersion()
+    {
+        return $this->appVersion;
+    }
+
+    /**
+     * Set noOfPlugins
+     *
+     * @param integer $noOfPlugins
+     *
+     * @return LogsTbl
+     */
+    public function setNoOfPlugins($noOfPlugins)
+    {
+        $this->noOfPlugins = $noOfPlugins;
+
+        return $this;
+    }
+
+    /**
+     * Get noOfPlugins
+     *
+     * @return integer
+     */
+    public function getNoOfPlugins()
+    {
+        return $this->noOfPlugins;
+    }
+
+    /**
+     * Set plugins
+     *
+     * @param string $plugins
+     *
+     * @return LogsTbl
+     */
+    public function setPlugins($plugins)
+    {
+        $this->plugins = $plugins;
+
+        return $this;
+    }
+
+    /**
+     * Get plugins
+     *
+     * @return string
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
+    }
+
+    /**
+     * Set dateTime
+     *
+     * @param \DateTime $dateTime
+     *
+     * @return LogsTbl
+     */
+    public function setDateTime($dateTime)
+    {
+        $this->dateTime = $dateTime;
+
+        return $this;
+    }
+
+    /**
+     * Get dateTime
+     *
+     * @return \DateTime
+     */
+    public function getDateTime()
+    {
+        return $this->dateTime;
+    }
+
+    /**
+     * Set timeZone
+     *
+     * @param string $timeZone
+     *
+     * @return LogsTbl
+     */
+    public function setTimeZone($timeZone)
+    {
+        $this->timeZone = $timeZone;
+
+        return $this;
+    }
+
+    /**
+     * Get timeZone
+     *
+     * @return string
+     */
+    public function getTimeZone()
+    {
+        return $this->timeZone;
+    }
+
+    /**
+     * Set country
+     *
+     * @param string $country
+     *
+     * @return LogsTbl
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    /**
+     * Get country
+     *
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}
+

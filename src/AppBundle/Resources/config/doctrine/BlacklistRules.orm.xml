@@ -72,7 +72,7 @@
     <field name="dateupdated" type="date" column="dateUpdated" nullable="false"/>
     <many-to-one field="cgid" target-entity="Campaigngroups" fetch="LAZY">
       <join-columns>
-        <join-column name="cgid" referenced-column-name="cgid"/>
+        <join-column name="cgid" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

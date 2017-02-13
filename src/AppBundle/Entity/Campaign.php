@@ -168,4 +168,3 @@ class Campaign
         return $this->tid;
     }
 }
-

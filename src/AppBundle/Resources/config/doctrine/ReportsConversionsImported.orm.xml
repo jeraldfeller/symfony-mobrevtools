@@ -4,20 +4,20 @@
     <indexes>
       <index name="igid" columns="igid"/>
     </indexes>
-    <id name="ctid" type="integer" column="ctid">
+    <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="campaignname" type="string" column="campaignName" length="100" nullable="false">
+    <field name="campaignName" type="string" column="campaign_name" length="100" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="campaignid" type="string" column="campaignId" length="100" nullable="false">
+    <field name="campaignId" type="string" column="campaign_id" length="100" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="ipint" type="integer" column="ipInt" nullable="false">
+    <field name="ipInt" type="integer" column="ip_int" nullable="false">
       <options>
         <option name="unsigned"/>
       </options>
@@ -41,12 +41,12 @@
     <field name="cost" type="float" column="cost" precision="10" scale="0" nullable="false"/>
     <field name="profit" type="float" column="profit" precision="10" scale="0" nullable="false"/>
     <field name="roi" type="float" column="roi" precision="10" scale="0" nullable="false"/>
-    <field name="countrycode" type="string" column="countryCode" length="20" nullable="false">
+    <field name="countryCode" type="string" column="country_code" length="20" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="countryname" type="string" column="countryName" length="20" nullable="false">
+    <field name="countryName" type="string" column="country_name" length="20" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
@@ -56,20 +56,20 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="mobilecarrier" type="string" column="mobileCarrier" length="100" nullable="false">
+    <field name="mobileCarrier" type="string" column="mobile_carrier" length="100" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="connectiontype" type="string" column="connectionType" length="100" nullable="false">
+    <field name="connectionType" type="string" column="connection_type" length="100" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="visittimestamp" type="date" column="visitTimestamp" nullable="false"/>
+    <field name="visitTimestamp" type="date" column="visit_timestamp" nullable="false"/>
     <many-to-one field="igid" target-entity="ImportGroup" fetch="LAZY">
       <join-columns>
-        <join-column name="igid" referenced-column-name="igid"/>
+        <join-column name="igid" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

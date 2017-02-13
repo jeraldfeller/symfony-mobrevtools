@@ -63,7 +63,7 @@ var ComponentsDateTimePickers = function () {
                 opens: (App.isRTL() ? 'left' : 'right'),
                 format: 'MM/DD/YYYY',
                 separator: ' to ',
-                startDate: moment().subtract('days', 29),
+                startDate: moment().subtract('days', 6),
                 endDate: moment(),
                 ranges: {
                     'Today': [moment(), moment()],
@@ -81,13 +81,16 @@ var ComponentsDateTimePickers = function () {
                 $('#date-from').val(start.format('M/D/YYYY'));
                 $('#date-to').val(end.format('M/D/YYYY'));
             }
-        );        
+        );
 
+        $('#defaultrange input').val(moment().subtract('days', 6).format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+        $('#date-from').val(moment().subtract('days', 6).format('M/D/YYYY'));
+        $('#date-to').val(moment().format('M/D/YYYY'));
         $('#defaultrange_modal').daterangepicker({
                 opens: (App.isRTL() ? 'left' : 'right'),
                 format: 'MM/DD/YYYY',
                 separator: ' to ',
-                startDate: moment().subtract('days', 29),
+                startDate: moment().subtract('days', 6),
                 endDate: moment(),
                 minDate: '01/01/2012',
                 maxDate: '12/31/2018'
@@ -95,7 +98,9 @@ var ComponentsDateTimePickers = function () {
             function (start, end) {
                 $('#defaultrange_modal input').val(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             }
-        );  
+        );
+
+
 
         // this is very important fix when daterangepicker is used in modal. in modal when daterange picker is opened and mouse clicked anywhere bootstrap modal removes the modal-open class from the body element.
         // so the below code will fix this issue.
@@ -144,6 +149,7 @@ var ComponentsDateTimePickers = function () {
             },
             function (start, end) {
                 $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+
             }
         );
         //Set the initial state of the picker label

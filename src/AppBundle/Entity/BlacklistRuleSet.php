@@ -52,4 +52,3 @@ class BlacklistRuleSet
         return $this->blid;
     }
 }
-

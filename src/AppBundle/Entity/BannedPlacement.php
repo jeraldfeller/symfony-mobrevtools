@@ -197,4 +197,3 @@ class BannedPlacement
         return $this->id;
     }
 }
-
