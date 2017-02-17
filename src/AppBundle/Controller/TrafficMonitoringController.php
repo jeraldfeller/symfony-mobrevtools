@@ -395,7 +395,7 @@ class TrafficMonitoringController extends Controller{
             $traffic->setVisitCount($row['count']);
             $em->persist($traffic);
 
-            if(($batch % $i) == 0){
+            if(($i % $batch) == 0){
                 $em->flush();
                 $em->clear();
             }

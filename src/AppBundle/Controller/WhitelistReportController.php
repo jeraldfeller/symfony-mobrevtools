@@ -158,7 +158,7 @@ class WhitelistReportController extends Controller {
             $whitelist->setCampaign($row['campaign']);
             $whitelist->setDateSet($row['dateSet']);
             $em->persist($whitelist);
-            if(($batch % $i) == 0){
+            if(($i % $batch) == 0){
                 $em->flush();
                 $em->clear();
             }

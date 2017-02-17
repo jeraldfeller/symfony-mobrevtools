@@ -34,7 +34,7 @@ class DeletesController extends Controller{
         foreach($data['items'] as $row){
             $data = $em->getRepository($appBundle)->find($row['id']);
             $em->remove($data);
-            if(($batch % $i) == 0){
+            if(($i % $batch) == 0){
                 $em->flush();
                 $em->clear();
             }

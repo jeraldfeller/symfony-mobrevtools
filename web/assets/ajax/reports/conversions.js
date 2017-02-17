@@ -200,7 +200,7 @@ function reportsConversionsMergeIpAndConversionsData(btn)
                 }else{
                     $('#progressDiv').css('width', '60%').attr('aria-valuenow', 70);
                     reportsConversionsMergeIpAndConversionsDataSecondPhase(btn);
-                    l.stop()
+
 
                 }
 

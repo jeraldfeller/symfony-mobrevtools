@@ -1061,7 +1061,7 @@ class ConversionsReportController extends Controller{
 
             //   $_SESSION['ASSOC_MASKED_VALUES_FILE_COUNTER'] = $x;
             //  file_put_contents("tmp_files/ASSOC_MASKED_VALUES_".$x, json_encode($assocMaskValues, JSON_UNESCAPED_UNICODE));
-            sleep(5);
+            //sleep(5);
         }
 
 
@@ -1114,7 +1114,7 @@ class ConversionsReportController extends Controller{
 
             }
 
-            sleep(5);
+           // sleep(5);
 
         }
 
@@ -1133,8 +1133,8 @@ class ConversionsReportController extends Controller{
     public function finalizingFirstPhaseAction(){
         $this->get('session')->remove('FILE_COUNTER');
         $values = json_decode(file_get_contents("tmp_files/VALUES"), true);
+        $em = $this->getDoctrine()->getManager();
         if(count($values) > 0){
-            $em = $this->getDoctrine()->getManager();
             $batch = 100;
             $i = 1;
             foreach ($values as $row) {
@@ -1157,10 +1157,12 @@ class ConversionsReportController extends Controller{
                 $reports->setVisitTimestamp(new \DateTime($row['visitTimestamp']));
                 $em->persist($reports);
 
-                if(($batch % $i) == 0){
+
+                if(($i % $batch) === 0){
                     $em->flush();
                     $em->clear();
                 }
+
 
                 $i++;
             }
@@ -1168,6 +1170,7 @@ class ConversionsReportController extends Controller{
             $em->flush();
             $em->clear();
         }
+
 
         return new Response(
             json_encode(true)
@@ -1182,7 +1185,7 @@ class ConversionsReportController extends Controller{
         $assocMaskValues = json_decode(file_get_contents("tmp_files/ASSOC_MASKED_VALUES"), true);
         if(count($assocMaskValues) > 0){
             $em = $this->getDoctrine()->getManager();
-            $reports = new ReportsMaskedConversions();
+
             $batch = 100;
             $i = 1;
             $dataItem = array();
@@ -1237,7 +1240,7 @@ class ConversionsReportController extends Controller{
                     $connectionType = implode(', ', array_unique($connectionType));
 
 
-
+                    $reports = new ReportsMaskedConversions();
                     $reports->setCampaignName($campaignName);
                     $reports->setIpInt($ip);
                     $reports->setIp($item);
@@ -1266,7 +1269,7 @@ class ConversionsReportController extends Controller{
                         }else{
                             $roiPercent = -0;
                         }
-
+                        $reports = new ReportsMaskedConversions();
                         $reports->setCampaignName($data['campaignName']);
                         $reports->setIpInt($data['ipInt']);
                         $reports->setIp($item);
@@ -1289,10 +1292,12 @@ class ConversionsReportController extends Controller{
 
                 //  usleep(25000);
 
-                if(($batch % $i) == 0){
+
+                if(($i % $batch) === 0){
                     $em->flush();
                     $em->clear();
                 }
+
 
                 $i++;
             }
@@ -1319,7 +1324,7 @@ class ConversionsReportController extends Controller{
         $assocCampaignValues = json_decode(file_get_contents("tmp_files/ASSOC_CAMPAIGN_VALUES"), true);
         if(count($assocCampaignValues) > 0){
             $em = $this->getDoctrine()->getManager();
-            $reports = new ReportsCampaignConversions();
+
             $batch = 100;
             $i = 1;
             $dataItem = array();
@@ -1374,7 +1379,7 @@ class ConversionsReportController extends Controller{
                     $mobileCarrier = implode(', ', array_unique($mobileCarrier));
                     $connectionType = implode(', ', array_unique($connectionType));
 
-
+                    $reports = new ReportsCampaignConversions();
                     $reports->setCampaignName($campaignName);
                     $reports->setIpInt($ip);
                     $reports->setIp($ipStr);
@@ -1400,7 +1405,7 @@ class ConversionsReportController extends Controller{
                         } else {
                             $roiPercent = -0;
                         }
-
+                        $reports = new ReportsCampaignConversions();
                         $reports->setCampaignName($data['campaignName']);
                         $reports->setIpInt($data['ipInt']);
                         $reports->setIp($data['ip']);
@@ -1423,11 +1428,12 @@ class ConversionsReportController extends Controller{
 
                 //  usleep(25000);
 
-                if (($batch % $i) == 0) {
+                    /*
+                if (($i % $batch) === 0) {
                     $em->flush();
                     $em->clear();
                 }
-
+*/
                 $i++;
             }
             }
@@ -1618,7 +1624,7 @@ class ConversionsReportController extends Controller{
     public function insertConversionsCampaignReport($assocCampaignValues){
         $em = $this->getDoctrine()->getManager();
         $reports = new ReportsCampaignConversions();
-        $batch = 100;
+        $batch = 5;
         $i = 1;
         $dataItem = array();
         foreach($assocCampaignValues as $item => $data) {
@@ -1721,7 +1727,7 @@ class ConversionsReportController extends Controller{
 
                 //  usleep(25000);
 
-                if (($batch % $i) == 0) {
+                if (($i % $batch) == 0) {
                     $em->flush();
                     $em->clear();
                 }
@@ -1738,7 +1744,7 @@ class ConversionsReportController extends Controller{
     public function insertConversionsMaskReport($assocMaskValues){
         $em = $this->getDoctrine()->getManager();
         $reports = new ReportsMaskedConversions();
-        $batch = 100;
+        $batch = 5;
         $i = 1;
         $dataItem = array();
         foreach($assocMaskValues as $item => $value) {
@@ -1844,7 +1850,7 @@ class ConversionsReportController extends Controller{
 
             //  usleep(25000);
 
-            if(($batch % $i) == 0){
+            if(($i % $batch) == 0){
                 $em->flush();
                 $em->clear();
             }
@@ -2221,7 +2227,7 @@ class ConversionsReportController extends Controller{
     public function insertImportedIpData($values){
         if(count($values) > 0){
             $em = $this->getDoctrine()->getManager();
-            $batch = 100;
+            $batch = 5;
             $i = 1;
 
             foreach ($values as $row) {
@@ -2246,7 +2252,7 @@ class ConversionsReportController extends Controller{
                 $reports->setIgid($groupId);
                 $em->persist($reports);
 
-                if(($batch % $i) == 0){
+                if(($i % $batch) == 0){
                     $em->flush();
                     $em->clear();
                 }
