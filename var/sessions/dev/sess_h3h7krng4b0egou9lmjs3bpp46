@@ -1,1 +1,1 @@
-_sf2_attributes|a:2:{s:10:"isLoggedIn";b:1;s:8:"userData";a:4:{s:7:"success";b:1;s:5:"email";s:22:"andrew@mobrevmedia.com";s:8:"password";s:9:"mobrev$37";s:8:"isActive";b:1;}}_sf2_flashes|a:0:{}_sf2_meta|a:3:{s:1:"u";i:1487302361;s:1:"c";i:1487300458;s:1:"l";s:1:"0";}
+_sf2_attributes|a:3:{s:10:"isLoggedIn";b:1;s:8:"userData";a:4:{s:7:"success";b:1;s:5:"email";s:22:"andrew@mobrevmedia.com";s:8:"password";s:9:"mobrev$37";s:8:"isActive";b:1;}s:12:"FILE_COUNTER";i:0;}_sf2_flashes|a:0:{}_sf2_meta|a:3:{s:1:"u";i:1487310030;s:1:"c";i:1487300458;s:1:"l";s:1:"0";}
