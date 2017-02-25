@@ -23,77 +23,54 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_235e5c6b53a5ace6f0d6ef68c29e88bc4b214cdcd5c515828cbfa61365ad5b50 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_235e5c6b53a5ace6f0d6ef68c29e88bc4b214cdcd5c515828cbfa61365ad5b50->enter($__internal_235e5c6b53a5ace6f0d6ef68c29e88bc4b214cdcd5c515828cbfa61365ad5b50_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", ":settings:traffic-source.html.twig"));
+        $__internal_3ea3847f36d0e5707e5b7b941b71d534fe78f979419e2c3b9035413e92fd18de = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_3ea3847f36d0e5707e5b7b941b71d534fe78f979419e2c3b9035413e92fd18de->enter($__internal_3ea3847f36d0e5707e5b7b941b71d534fe78f979419e2c3b9035413e92fd18de_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", ":settings:traffic-source.html.twig"));
 
-        $__internal_f3861980df8a4b4a6f90a69298866fb644b72d40d55e5affa0735717dbb2f379 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_f3861980df8a4b4a6f90a69298866fb644b72d40d55e5affa0735717dbb2f379->enter($__internal_f3861980df8a4b4a6f90a69298866fb644b72d40d55e5affa0735717dbb2f379_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", ":settings:traffic-source.html.twig"));
+        $__internal_bbfa62b6e59327da51a273ba617ac60862146298fa2cd342aa4c23fdf64ed5b0 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_bbfa62b6e59327da51a273ba617ac60862146298fa2cd342aa4c23fdf64ed5b0->enter($__internal_bbfa62b6e59327da51a273ba617ac60862146298fa2cd342aa4c23fdf64ed5b0_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", ":settings:traffic-source.html.twig"));
 
         $this->parent->display($context, array_merge($this->blocks, $blocks));
         
-        $__internal_235e5c6b53a5ace6f0d6ef68c29e88bc4b214cdcd5c515828cbfa61365ad5b50->leave($__internal_235e5c6b53a5ace6f0d6ef68c29e88bc4b214cdcd5c515828cbfa61365ad5b50_prof);
+        $__internal_3ea3847f36d0e5707e5b7b941b71d534fe78f979419e2c3b9035413e92fd18de->leave($__internal_3ea3847f36d0e5707e5b7b941b71d534fe78f979419e2c3b9035413e92fd18de_prof);
 
         
-        $__internal_f3861980df8a4b4a6f90a69298866fb644b72d40d55e5affa0735717dbb2f379->leave($__internal_f3861980df8a4b4a6f90a69298866fb644b72d40d55e5affa0735717dbb2f379_prof);
+        $__internal_bbfa62b6e59327da51a273ba617ac60862146298fa2cd342aa4c23fdf64ed5b0->leave($__internal_bbfa62b6e59327da51a273ba617ac60862146298fa2cd342aa4c23fdf64ed5b0_prof);
 
     }
 
     // line 2
     public function block_nav($context, array $blocks = array())
     {
-        $__internal_93d93157ad60e9aec4bfd1167777cbdf2ef4aa0a8323367ce31179f1a5f73fe7 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_93d93157ad60e9aec4bfd1167777cbdf2ef4aa0a8323367ce31179f1a5f73fe7->enter($__internal_93d93157ad60e9aec4bfd1167777cbdf2ef4aa0a8323367ce31179f1a5f73fe7_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "nav"));
+        $__internal_49d3adb2b0966db43968af0493d99b2e1e7f85fa762bf4eba35771e3cac52b1a = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_49d3adb2b0966db43968af0493d99b2e1e7f85fa762bf4eba35771e3cac52b1a->enter($__internal_49d3adb2b0966db43968af0493d99b2e1e7f85fa762bf4eba35771e3cac52b1a_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "nav"));
 
-        $__internal_88b06794e2fb49bb025336184d53f75d49b3e141e19f2b7f5ba06f07913a8a62 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_88b06794e2fb49bb025336184d53f75d49b3e141e19f2b7f5ba06f07913a8a62->enter($__internal_88b06794e2fb49bb025336184d53f75d49b3e141e19f2b7f5ba06f07913a8a62_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "nav"));
+        $__internal_d455ebd906fa5bacb305661e6544e609bc86e78c2eb4b54edb6cf7ba6a9afbc1 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_d455ebd906fa5bacb305661e6544e609bc86e78c2eb4b54edb6cf7ba6a9afbc1->enter($__internal_d455ebd906fa5bacb305661e6544e609bc86e78c2eb4b54edb6cf7ba6a9afbc1_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "nav"));
 
         // line 3
-        echo "    <li class=\"nav-item\">
-        <a href=\"/\" class=\"nav-link nav-toggle\">
-            <i class=\"icon-home\"></i>
-            <span class=\"title\">Dashboard</span>
-        </a>
-    </li>
-
-    <li class=\"nav-item start active open\">
-        <a href=\"javascript:;\" class=\"nav-link nav-toggle\">
-            <i class=\"fa fa-gears\"></i>
-            <span class=\"title\">Global Settings</span>
-            <span class=\"selected\"></span>
-            <span class=\"arrow open\"></span>
-        </a>
-        <ul class=\"sub-menu\">
-            <li class=\"nav-item\">
-                <a href=\"/global-settings/api-access\" class=\"nav-link \">
-                    <span class=\"title\">API Access</span>
-                </a>
-            </li>
-            <li class=\"nav-item\">
-                <a href=\"/global-settings/traffic-source\" class=\"nav-link \">
-                    <span class=\"title\">Traffic Source</span>
-                </a>
-            </li>
-        </ul>
-    </li>
+        echo "    ";
+        echo $this->env->getRuntime('Symfony\Bridge\Twig\Extension\HttpKernelRuntime')->renderFragment(Symfony\Bridge\Twig\Extension\HttpKernelExtension::controller("AppBundle:Navmenu:getNavmenu"));
+        // line 5
+        echo "
 ";
         
-        $__internal_88b06794e2fb49bb025336184d53f75d49b3e141e19f2b7f5ba06f07913a8a62->leave($__internal_88b06794e2fb49bb025336184d53f75d49b3e141e19f2b7f5ba06f07913a8a62_prof);
+        $__internal_d455ebd906fa5bacb305661e6544e609bc86e78c2eb4b54edb6cf7ba6a9afbc1->leave($__internal_d455ebd906fa5bacb305661e6544e609bc86e78c2eb4b54edb6cf7ba6a9afbc1_prof);
 
         
-        $__internal_93d93157ad60e9aec4bfd1167777cbdf2ef4aa0a8323367ce31179f1a5f73fe7->leave($__internal_93d93157ad60e9aec4bfd1167777cbdf2ef4aa0a8323367ce31179f1a5f73fe7_prof);
+        $__internal_49d3adb2b0966db43968af0493d99b2e1e7f85fa762bf4eba35771e3cac52b1a->leave($__internal_49d3adb2b0966db43968af0493d99b2e1e7f85fa762bf4eba35771e3cac52b1a_prof);
 
     }
 
-    // line 31
+    // line 7
     public function block_body($context, array $blocks = array())
     {
-        $__internal_cb31810cee07424f615595dfe293d5b43a92b35328f135c70dc4c5ec65a8f26c = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_cb31810cee07424f615595dfe293d5b43a92b35328f135c70dc4c5ec65a8f26c->enter($__internal_cb31810cee07424f615595dfe293d5b43a92b35328f135c70dc4c5ec65a8f26c_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "body"));
+        $__internal_3b9bb262695363fb83ba50143457f6aa2e82e087fe079fc022d39d229701e533 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_3b9bb262695363fb83ba50143457f6aa2e82e087fe079fc022d39d229701e533->enter($__internal_3b9bb262695363fb83ba50143457f6aa2e82e087fe079fc022d39d229701e533_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "body"));
 
-        $__internal_5842334cfa5bc7353df733552c32819baf11ba55de6d45fe53a3668907dc0d79 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_5842334cfa5bc7353df733552c32819baf11ba55de6d45fe53a3668907dc0d79->enter($__internal_5842334cfa5bc7353df733552c32819baf11ba55de6d45fe53a3668907dc0d79_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "body"));
+        $__internal_e4ea883a8bb30a24c53b350b457854271679d1d26de46199180f5e2f60ea63f9 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_e4ea883a8bb30a24c53b350b457854271679d1d26de46199180f5e2f60ea63f9->enter($__internal_e4ea883a8bb30a24c53b350b457854271679d1d26de46199180f5e2f60ea63f9_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "body"));
 
-        // line 32
+        // line 8
         echo "    <h1 class=\"page-title\"> Global Settings
         <small>traffic sources</small>
     </h1>
@@ -110,7 +87,7 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
             </li>
             <li>
                 <span>";
-        // line 47
+        // line 23
         echo twig_escape_filter($this->env, (isset($context["page"]) ? $context["page"] : $this->getContext($context, "page")), "html", null, true);
         echo "</span>
             </li>
@@ -154,15 +131,22 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
 
                     <!--DOC: Aplly \"modal-cached\" class after \"modal\" class to enable ajax content caching-->
                     <div class=\"modal fade\" id=\"import-modal\" role=\"basic\" aria-hidden=\"true\">
-                        <div class=\"modal-dialog\">
+                        <div class=\"modal-dialog modal-lg\">
                             <div class=\"modal-content\">
+                                <div class=\"modal-header\">
+                                   <h4>Importing Traffic Source</h4>
+                                </div>
                                 <div class=\"modal-body\" id=\"displayTrafficSourceContent\">
                                     <img src=\"";
-        // line 92
+        // line 71
         echo twig_escape_filter($this->env, $this->env->getExtension('Symfony\Bridge\Twig\Extension\AssetExtension')->getAssetUrl("assets/global/img/loading-spinner-grey.gif"), "html", null, true);
         echo "\" alt=\"\" class=\"loading\">
                                     <span> &nbsp;&nbsp;Loading... </span>
 
+                                </div>
+                                <div class=\"modal-footer\">
+                                    <button type=\"button\" class=\"btn dark btn-outline\" data-dismiss=\"modal\">Close</button>
+                                    <button type=\"button\" name=\"importTrafficSourceBtnSubmit\" id=\"importTrafficSourceBtnSave\"  class=\"btn blue ladda-button spinnerBtn\" data-style=\"expand-right\" data-size=\"l\"><span class=\"ladda-label\"><i class=\"fa fa-save\"></i> Save</span></button>
                                 </div>
                             </div>
                         </div>
@@ -186,12 +170,6 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
                         <!-- /.modal-dialog -->
                     </div>
                 <div class=\"portlet-body\">
-
-                    <div class=\"table-toolbar\">
-                        <div class=\"row\">
-
-                        </div>
-                    </div>
                         <table class=\"table table-striped table-bordered table-hover table-checkable order-column\" id=\"datatable-responsive\">
                         <thead>
                         <tr>
@@ -218,23 +196,23 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
     </div>
 ";
         
-        $__internal_5842334cfa5bc7353df733552c32819baf11ba55de6d45fe53a3668907dc0d79->leave($__internal_5842334cfa5bc7353df733552c32819baf11ba55de6d45fe53a3668907dc0d79_prof);
+        $__internal_e4ea883a8bb30a24c53b350b457854271679d1d26de46199180f5e2f60ea63f9->leave($__internal_e4ea883a8bb30a24c53b350b457854271679d1d26de46199180f5e2f60ea63f9_prof);
 
         
-        $__internal_cb31810cee07424f615595dfe293d5b43a92b35328f135c70dc4c5ec65a8f26c->leave($__internal_cb31810cee07424f615595dfe293d5b43a92b35328f135c70dc4c5ec65a8f26c_prof);
+        $__internal_3b9bb262695363fb83ba50143457f6aa2e82e087fe079fc022d39d229701e533->leave($__internal_3b9bb262695363fb83ba50143457f6aa2e82e087fe079fc022d39d229701e533_prof);
 
     }
 
-    // line 149
+    // line 126
     public function block_javascripts($context, array $blocks = array())
     {
-        $__internal_31f9176e5b71437edf943a42868455c072477e0dcacc492d97142d4622a77a20 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_31f9176e5b71437edf943a42868455c072477e0dcacc492d97142d4622a77a20->enter($__internal_31f9176e5b71437edf943a42868455c072477e0dcacc492d97142d4622a77a20_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "javascripts"));
+        $__internal_0c68c76b3e624c2cd06dea922236e37041c0d8a21048bcc5d7f5b47b42f11d45 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_0c68c76b3e624c2cd06dea922236e37041c0d8a21048bcc5d7f5b47b42f11d45->enter($__internal_0c68c76b3e624c2cd06dea922236e37041c0d8a21048bcc5d7f5b47b42f11d45_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "javascripts"));
 
-        $__internal_9481f24b402d1b1d4b73fc3d630272a63dbb3edc49e10672e23dc1ac4d6ac0db = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_9481f24b402d1b1d4b73fc3d630272a63dbb3edc49e10672e23dc1ac4d6ac0db->enter($__internal_9481f24b402d1b1d4b73fc3d630272a63dbb3edc49e10672e23dc1ac4d6ac0db_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "javascripts"));
+        $__internal_f505ac60710d5134ca412751a03f5781116503970788399257d55df4a2121b82 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_f505ac60710d5134ca412751a03f5781116503970788399257d55df4a2121b82->enter($__internal_f505ac60710d5134ca412751a03f5781116503970788399257d55df4a2121b82_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "javascripts"));
 
-        // line 150
+        // line 127
         echo "    <script>
         Ladda.bind( '.spinnerBtn' );
     </script>
@@ -414,16 +392,16 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
 
     <!-- AJAX CALLS -->
     <script src=\"";
-        // line 328
+        // line 305
         echo twig_escape_filter($this->env, $this->env->getExtension('Symfony\Bridge\Twig\Extension\AssetExtension')->getAssetUrl("assets/ajax/global-settings/ajax-global-settings.js"), "html", null, true);
         echo "\" type=\"text/javascript\"></script>
     <!-- END AJAX CALLS -->
 ";
         
-        $__internal_9481f24b402d1b1d4b73fc3d630272a63dbb3edc49e10672e23dc1ac4d6ac0db->leave($__internal_9481f24b402d1b1d4b73fc3d630272a63dbb3edc49e10672e23dc1ac4d6ac0db_prof);
+        $__internal_f505ac60710d5134ca412751a03f5781116503970788399257d55df4a2121b82->leave($__internal_f505ac60710d5134ca412751a03f5781116503970788399257d55df4a2121b82_prof);
 
         
-        $__internal_31f9176e5b71437edf943a42868455c072477e0dcacc492d97142d4622a77a20->leave($__internal_31f9176e5b71437edf943a42868455c072477e0dcacc492d97142d4622a77a20_prof);
+        $__internal_0c68c76b3e624c2cd06dea922236e37041c0d8a21048bcc5d7f5b47b42f11d45->leave($__internal_0c68c76b3e624c2cd06dea922236e37041c0d8a21048bcc5d7f5b47b42f11d45_prof);
 
     }
 
@@ -439,7 +417,7 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
 
     public function getDebugInfo()
     {
-        return array (  418 => 328,  238 => 150,  229 => 149,  162 => 92,  114 => 47,  97 => 32,  88 => 31,  51 => 3,  42 => 2,  11 => 1,);
+        return array (  396 => 305,  216 => 127,  207 => 126,  142 => 71,  91 => 23,  74 => 8,  65 => 7,  54 => 5,  51 => 3,  42 => 2,  11 => 1,);
     }
 
     /** @deprecated since 1.27 (to be removed in 2.0). Use getSourceContext() instead */
@@ -454,33 +432,9 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
     {
         return new Twig_Source("{% extends 'base.html.twig' %}
 {% block nav %}
-    <li class=\"nav-item\">
-        <a href=\"/\" class=\"nav-link nav-toggle\">
-            <i class=\"icon-home\"></i>
-            <span class=\"title\">Dashboard</span>
-        </a>
-    </li>
-
-    <li class=\"nav-item start active open\">
-        <a href=\"javascript:;\" class=\"nav-link nav-toggle\">
-            <i class=\"fa fa-gears\"></i>
-            <span class=\"title\">Global Settings</span>
-            <span class=\"selected\"></span>
-            <span class=\"arrow open\"></span>
-        </a>
-        <ul class=\"sub-menu\">
-            <li class=\"nav-item\">
-                <a href=\"/global-settings/api-access\" class=\"nav-link \">
-                    <span class=\"title\">API Access</span>
-                </a>
-            </li>
-            <li class=\"nav-item\">
-                <a href=\"/global-settings/traffic-source\" class=\"nav-link \">
-                    <span class=\"title\">Traffic Source</span>
-                </a>
-            </li>
-        </ul>
-    </li>
+    {{ render(controller(
+    'AppBundle:Navmenu:getNavmenu'
+    )) }}
 {% endblock %}
 {% block body %}
     <h1 class=\"page-title\"> Global Settings
@@ -540,12 +494,19 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
 
                     <!--DOC: Aplly \"modal-cached\" class after \"modal\" class to enable ajax content caching-->
                     <div class=\"modal fade\" id=\"import-modal\" role=\"basic\" aria-hidden=\"true\">
-                        <div class=\"modal-dialog\">
+                        <div class=\"modal-dialog modal-lg\">
                             <div class=\"modal-content\">
+                                <div class=\"modal-header\">
+                                   <h4>Importing Traffic Source</h4>
+                                </div>
                                 <div class=\"modal-body\" id=\"displayTrafficSourceContent\">
                                     <img src=\"{{ asset('assets/global/img/loading-spinner-grey.gif') }}\" alt=\"\" class=\"loading\">
                                     <span> &nbsp;&nbsp;Loading... </span>
 
+                                </div>
+                                <div class=\"modal-footer\">
+                                    <button type=\"button\" class=\"btn dark btn-outline\" data-dismiss=\"modal\">Close</button>
+                                    <button type=\"button\" name=\"importTrafficSourceBtnSubmit\" id=\"importTrafficSourceBtnSave\"  class=\"btn blue ladda-button spinnerBtn\" data-style=\"expand-right\" data-size=\"l\"><span class=\"ladda-label\"><i class=\"fa fa-save\"></i> Save</span></button>
                                 </div>
                             </div>
                         </div>
@@ -569,12 +530,6 @@ class __TwigTemplate_2ae575df5cdf20f046f7326ae7dd827da5a8953c5e880259b6d886fc983
                         <!-- /.modal-dialog -->
                     </div>
                 <div class=\"portlet-body\">
-
-                    <div class=\"table-toolbar\">
-                        <div class=\"row\">
-
-                        </div>
-                    </div>
                         <table class=\"table table-striped table-bordered table-hover table-checkable order-column\" id=\"datatable-responsive\">
                         <thead>
                         <tr>

@@ -395,6 +395,27 @@ class SettingsController extends Controller {
 
     }
 
+    /**
+     * @Route("/settings/get-api-access-by-traffic/{$traffic}", name="getApiAccessByTraffic")
+     */
+    public function getApiAccessByTrafficAction($traffic = null){
+
+        $trafficSource = $this->getDoctrine()
+            ->getRepository('AppBundle:ApiAccess')
+            ->findOneBy(array('trafficSource' => $traffic));
+
+        $return = array('id' => $trafficSource->getId(),
+            'tid' => $trafficSource->getTid(),
+            'trafficSource' => $trafficSource->getTrafficSource(),
+            'userName' => $trafficSource->getUserName(),
+            'password' => $trafficSource->getPassword()
+        );
+
+        return new Response(
+            json_encode($return)
+        );
+    }
+
     public function getTrafficSourceAll(){
 
         $trafficSources = $this->getDoctrine()

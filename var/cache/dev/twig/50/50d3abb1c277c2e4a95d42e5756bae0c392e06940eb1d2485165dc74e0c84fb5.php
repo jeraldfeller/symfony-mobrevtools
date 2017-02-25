@@ -15,11 +15,11 @@ class __TwigTemplate_bbdbe6079177d3fc143ad0fbf839159bbafc6110661f90f0984e50ee0bf
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_bd83d214aa97d29fc135c7a11b089f0ef2def55b24f888730a036bc86daa7d07 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_bd83d214aa97d29fc135c7a11b089f0ef2def55b24f888730a036bc86daa7d07->enter($__internal_bd83d214aa97d29fc135c7a11b089f0ef2def55b24f888730a036bc86daa7d07_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/highlight.js.twig"));
+        $__internal_70fc388f56c1d57997a9581afe2bb9a0b0cebe24fb6e7e2e41003c5aa6d20197 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_70fc388f56c1d57997a9581afe2bb9a0b0cebe24fb6e7e2e41003c5aa6d20197->enter($__internal_70fc388f56c1d57997a9581afe2bb9a0b0cebe24fb6e7e2e41003c5aa6d20197_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/highlight.js.twig"));
 
-        $__internal_e0f01edeaa18c4820b7337f484efedfc74a17628bb6cb9de86a8341d23d8fcc1 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_e0f01edeaa18c4820b7337f484efedfc74a17628bb6cb9de86a8341d23d8fcc1->enter($__internal_e0f01edeaa18c4820b7337f484efedfc74a17628bb6cb9de86a8341d23d8fcc1_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/highlight.js.twig"));
+        $__internal_1ce8ce8bfd297d478468cd76d23889631407c32e134dd3b1b00247bf04371a69 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_1ce8ce8bfd297d478468cd76d23889631407c32e134dd3b1b00247bf04371a69->enter($__internal_1ce8ce8bfd297d478468cd76d23889631407c32e134dd3b1b00247bf04371a69_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/highlight.js.twig"));
 
         // line 9
         echo "
@@ -140,10 +140,10 @@ function setupHighlight(fieldId, searchValue, val) {
 ";
         }
         
-        $__internal_bd83d214aa97d29fc135c7a11b089f0ef2def55b24f888730a036bc86daa7d07->leave($__internal_bd83d214aa97d29fc135c7a11b089f0ef2def55b24f888730a036bc86daa7d07_prof);
+        $__internal_70fc388f56c1d57997a9581afe2bb9a0b0cebe24fb6e7e2e41003c5aa6d20197->leave($__internal_70fc388f56c1d57997a9581afe2bb9a0b0cebe24fb6e7e2e41003c5aa6d20197_prof);
 
         
-        $__internal_e0f01edeaa18c4820b7337f484efedfc74a17628bb6cb9de86a8341d23d8fcc1->leave($__internal_e0f01edeaa18c4820b7337f484efedfc74a17628bb6cb9de86a8341d23d8fcc1_prof);
+        $__internal_1ce8ce8bfd297d478468cd76d23889631407c32e134dd3b1b00247bf04371a69->leave($__internal_1ce8ce8bfd297d478468cd76d23889631407c32e134dd3b1b00247bf04371a69_prof);
 
     }
 

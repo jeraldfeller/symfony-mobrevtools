@@ -11,10 +11,45 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+
+
 class VoluumApiController extends Controller{
+
+
+    public function voluumLoginAction(){
+        $credential = json_decode($this->forward('AppBundle:Settings:getApiAccessByTraffic', array('traffic' => 'Voluum'
+        ))->getContent(), true);
+
+
+        $user = $credential['userName'];
+        $password = str_replace('|', '&', $credential['password']);
+        $auth = base64_encode($user . ':' . $password);
+        $url = 'https://security.voluum.com/login';
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $auth . ''),
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+
+
+
+        return new Response($resp);
+
+
+    }
+
 
     /**
      * @Route("/api/voluum-report/{$url}/{$query}/{$method}/{$sessionId}", name="voluumReport")

@@ -139,9 +139,108 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         if (0 === strpos($pathinfo, '/c')) {
-            // campaignDetailsAll
-            if ($pathinfo === '/campaign/get-details/all') {
-                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignDetailsAllAction',  '_route' => 'campaignDetailsAll',);
+            if (0 === strpos($pathinfo, '/campaign')) {
+                // campaign
+                if (0 === strpos($pathinfo, '/campaign/bot-settings') && preg_match('#^/campaign/bot\\-settings/(?P<tid>[^/]++)/(?P<page>[^/]++)$#s', $pathinfo, $matches)) {
+                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'campaign')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::indexAction',));
+                }
+
+                if (0 === strpos($pathinfo, '/campaign/get-')) {
+                    // getCampaigns
+                    if (0 === strpos($pathinfo, '/campaign/get-campaigns') && preg_match('#^/campaign/get\\-campaigns/(?P<tid>[^/]++)$#s', $pathinfo, $matches)) {
+                        return $this->mergeDefaults(array_replace($matches, array('_route' => 'getCampaigns')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignsForSelect',));
+                    }
+
+                    // campaignDetailsAll
+                    if ($pathinfo === '/campaign/get-details/all') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignDetailsAllAction',  '_route' => 'campaignDetailsAll',);
+                    }
+
+                    // campaignGetApiCampaigns
+                    if ($pathinfo === '/campaign/get-api-campaigns') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getApiCampaignAction',  '_route' => 'campaignGetApiCampaigns',);
+                    }
+
+                }
+
+                // importCampaigns
+                if ($pathinfo === '/campaign/import-campaigns') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::importCampaignAction',  '_route' => 'importCampaigns',);
+                }
+
+                // addGroup
+                if ($pathinfo === '/campaign/add-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addGroup',  '_route' => 'addGroup',);
+                }
+
+                // getGroup
+                if ($pathinfo === '/campaign/get-groups') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getGroup',  '_route' => 'getGroup',);
+                }
+
+                // deleteGroup
+                if ($pathinfo === '/campaign/delete-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteGroup',  '_route' => 'deleteGroup',);
+                }
+
+                // addVertical
+                if ($pathinfo === '/campaign/add-vertical') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addVertical',  '_route' => 'addVertical',);
+                }
+
+                // getVeritical
+                if ($pathinfo === '/campaign/get-verticals') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getVertical',  '_route' => 'getVeritical',);
+                }
+
+                // deleteVertical
+                if ($pathinfo === '/campaign/delete-vertical') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteVertical',  '_route' => 'deleteVertical',);
+                }
+
+                // addCampaignGroup
+                if ($pathinfo === '/campaign/add-campaign-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addCampaignGroup',  '_route' => 'addCampaignGroup',);
+                }
+
+                // getGroupCampaignMatch
+                if ($pathinfo === '/campaign/get-group-campaign-match') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getGroupCampaignMatch',  '_route' => 'getGroupCampaignMatch',);
+                }
+
+                if (0 === strpos($pathinfo, '/campaign/add-b')) {
+                    // addBotRule
+                    if ($pathinfo === '/campaign/add-bot-rule') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addBotRule',  '_route' => 'addBotRule',);
+                    }
+
+                    // addBlacklistRule
+                    if ($pathinfo === '/campaign/add-blacklist-rule') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addBlacklistRule',  '_route' => 'addBlacklistRule',);
+                    }
+
+                    // addBidAdjustmentRule
+                    if ($pathinfo === '/campaign/add-bid-adjustment-rule') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addBidAdjustmentRule',  '_route' => 'addBidAdjustmentRule',);
+                    }
+
+                }
+
+                // getPlacementReport
+                if ($pathinfo === '/campaign/get-placement-report') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getPlacementReport',  '_route' => 'getPlacementReport',);
+                }
+
+                // deleteCampaignGroup
+                if ($pathinfo === '/campaign/delete-campaign-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteCampaignGroup',  '_route' => 'deleteCampaignGroup',);
+                }
+
+                // addIpRule
+                if ($pathinfo === '/campaign/add-ip-rule') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addIpRule',  '_route' => 'addIpRule',);
+                }
+
             }
 
             if (0 === strpos($pathinfo, '/common/create-')) {
@@ -321,6 +420,24 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
+        // app_domaintracker_showdomainreport
+        if ($pathinfo === '/reports/domain') {
+            return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::showDomainReportAction',  '_route' => 'app_domaintracker_showdomainreport',);
+        }
+
+        if (0 === strpos($pathinfo, '/a')) {
+            // app_domaintracker_ajaxgetreportsdomain
+            if ($pathinfo === '/ajax/get-reports-domain') {
+                return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::ajaxGetReportsDomain',  '_route' => 'app_domaintracker_ajaxgetreportsdomain',);
+            }
+
+            // exoClickGetCampaigns
+            if ($pathinfo === '/api/exoclick/get-campaigns/{$token}') {
+                return array (  'token' => NULL,  '_controller' => 'AppBundle\\Controller\\ExoClickApiController::exoClickGetCampaignsAction',  '_route' => 'exoClickGetCampaigns',);
+            }
+
+        }
+
         // getFilters
         if ($pathinfo === '/filters/{$bundle}/{$column}') {
             return array (  'bundle' => NULL,  'column' => NULL,  '_controller' => 'AppBundle\\Controller\\FiltersController::getFiltersAction',  '_route' => 'getFilters',);
@@ -409,6 +526,19 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             // app_settings_importtrafficsource
             if ($pathinfo === '/global-settings/add-trafficsource') {
                 return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::importTrafficsourceAction',  '_route' => 'app_settings_importtrafficsource',);
+            }
+
+        }
+
+        if (0 === strpos($pathinfo, '/s')) {
+            // getApiAccessByTraffic
+            if ($pathinfo === '/settings/get-api-access-by-traffic/{$traffic}') {
+                return array (  'traffic' => NULL,  '_controller' => 'AppBundle\\Controller\\SettingsController::getApiAccessByTrafficAction',  '_route' => 'getApiAccessByTraffic',);
+            }
+
+            // registerToken
+            if ($pathinfo === '/system/register-token/{$JSESSIONID}/{$VOLUUMSESSIONID}/{$EXOSESSIONTOKEN}') {
+                return array (  'JSESSIONID' => NULL,  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
             }
 
         }
@@ -517,9 +647,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        // app_whitelistreport_ajaxgetreportswhitelist
-        if ($pathinfo === '/ajax/get-reports-whitelist') {
-            return array (  '_controller' => 'AppBundle\\Controller\\WhitelistReportController::ajaxGetReportsWhitelist',  '_route' => 'app_whitelistreport_ajaxgetreportswhitelist',);
+        if (0 === strpos($pathinfo, '/a')) {
+            // app_whitelistreport_ajaxgetreportswhitelist
+            if ($pathinfo === '/ajax/get-reports-whitelist') {
+                return array (  '_controller' => 'AppBundle\\Controller\\WhitelistReportController::ajaxGetReportsWhitelist',  '_route' => 'app_whitelistreport_ajaxgetreportswhitelist',);
+            }
+
+            // zeroparkApiAction
+            if ($pathinfo === '/api/zeropark/{$url}/{$query}/{$method}/{$token}') {
+                return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'token' => NULL,  '_controller' => 'AppBundle\\Controller\\ZeroparkApiController::zeroparkRequestAction',  '_route' => 'zeroparkApiAction',);
+            }
+
         }
 
         // fos_js_routing_js

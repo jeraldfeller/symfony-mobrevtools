@@ -13,11 +13,29 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+
+use AppBundle\Entity\TrafficSource;
+
 class NavmenuController extends Controller{
 
     public function getNavmenuAction(){
         $uri = explode('/', $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
         $baseUri = $uri[1];
+
+        $campaignNav = $this->getCampgaignNavigation();
+        $campNavArr = array();
+
+
+        foreach($campaignNav as $nav){
+            $campNavArr[] = '<li class="nav-item">
+                            <a href="/campaign/bot-settings/' . $nav['id'] . '/' . $nav['trafficName'] . '" class="nav-link ">
+                                <span class="title">' . $nav['trafficName'] . '</span>
+                            </a>
+                          </li>';
+        }
+
+        $campNav = implode(' ', $campNavArr);
+
         $navmenu = array('home' => '<li class="nav-item isActiveIdentifier">
                                 <a href="/" class="nav-link nav-toggle">
                                     <i class="icon-home"></i>
@@ -30,6 +48,18 @@ class NavmenuController extends Controller{
                                     <span class="title">Offers</span>
                                 </a>
                             </li>',
+                    'campaigns' => '<li class="nav-item start isActiveIdentifier">
+                                        <a href="javascript:;" class="nav-link nav-toggle">
+                                                <i class="fa fa-bullhorn"></i>
+                                                <span class="title">Campaigns</span>
+                                                <span class="selected"></span>
+                                                <span class="arrow open"></span>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            ' .  $campNav . '
+                                        </ul>
+                                    </li>
+                                    ',
                     'reports' => '<li class="nav-item start isActiveIdentifier">
                                             <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="icon icon-docs"></i>
@@ -56,6 +86,11 @@ class NavmenuController extends Controller{
                                                 <li class="nav-item">
                                                     <a href="/reports/ip" class="nav-link ">
                                                         <span class="title">IP</span>
+                                                    </a>
+                                                </li>
+                                                 <li class="nav-item">
+                                                    <a href="/reports/domain" class="nav-link ">
+                                                        <span class="title">Domains</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
@@ -123,5 +158,20 @@ class NavmenuController extends Controller{
         return new Response(
             $output
         );
+    }
+
+    public function getCampgaignNavigation(){
+        $em = $this->getDoctrine()->getEntityManager();
+        $sql = $em->createQuery("
+            SELECT p.id, p.trafficName
+                FROM AppBundle:TrafficSource p
+                WHERE p.trafficName != 'Voluum'
+                ORDER BY p.trafficName ASC
+        ");
+
+        $result = $sql->getResult();
+
+        return $result;
+
     }
 }

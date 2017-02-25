@@ -220,12 +220,12 @@ class Campaign extends \AppBundle\Entity\Campaign implements \Doctrine\ORM\Proxy
     /**
      * {@inheritDoc}
      */
-    public function setCampName($campname)
+    public function setCampName($campName)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setCampName', [$campname]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setCampName', [$campName]);
 
-        return parent::setCampName($campname);
+        return parent::setCampName($campName);
     }
 
     /**

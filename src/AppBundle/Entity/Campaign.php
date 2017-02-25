@@ -93,9 +93,9 @@ class Campaign
      *
      * @return Campaign
      */
-    public function setCampName($campname)
+    public function setCampName($campName)
     {
-        $this->campname = $campname;
+        $this->campName = $campName;
 
         return $this;
     }
@@ -141,7 +141,7 @@ class Campaign
      */
     public function getId()
     {
-        return $this->Id;
+        return $this->id;
     }
 
     /**

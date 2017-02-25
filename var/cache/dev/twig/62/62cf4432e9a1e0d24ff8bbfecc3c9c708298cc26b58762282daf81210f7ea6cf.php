@@ -15,11 +15,11 @@ class __TwigTemplate_a7a13504ffc7eb7f0463328a47254e0d64d8a64187a492d74b51b47b037
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_d0eb23ff9202448732b88c35bebf47d64a31b9c49a1912e95081bdb034a05d8c = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_d0eb23ff9202448732b88c35bebf47d64a31b9c49a1912e95081bdb034a05d8c->enter($__internal_d0eb23ff9202448732b88c35bebf47d64a31b9c49a1912e95081bdb034a05d8c_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", ":settings:api_access_list.html.twig"));
+        $__internal_ade539e2f334e17871c0aa8f1dcf89e75d0fb723d02ea9dd9741031f7af807b3 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_ade539e2f334e17871c0aa8f1dcf89e75d0fb723d02ea9dd9741031f7af807b3->enter($__internal_ade539e2f334e17871c0aa8f1dcf89e75d0fb723d02ea9dd9741031f7af807b3_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", ":settings:api_access_list.html.twig"));
 
-        $__internal_b503eb7b59a2a68e699e51b18ceb18a0c37dcc46cfc05c86fdc1ad10e75bb49d = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_b503eb7b59a2a68e699e51b18ceb18a0c37dcc46cfc05c86fdc1ad10e75bb49d->enter($__internal_b503eb7b59a2a68e699e51b18ceb18a0c37dcc46cfc05c86fdc1ad10e75bb49d_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", ":settings:api_access_list.html.twig"));
+        $__internal_459c9d6b7cd3b0a8a8d75aae3c6adcb52ab87d8eff5059f67f58e25d3cbfeae3 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_459c9d6b7cd3b0a8a8d75aae3c6adcb52ab87d8eff5059f67f58e25d3cbfeae3->enter($__internal_459c9d6b7cd3b0a8a8d75aae3c6adcb52ab87d8eff5059f67f58e25d3cbfeae3_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", ":settings:api_access_list.html.twig"));
 
         // line 1
         $context['_parent'] = $context;
@@ -84,7 +84,7 @@ class __TwigTemplate_a7a13504ffc7eb7f0463328a47254e0d64d8a64187a492d74b51b47b037
                 // line 22
                 echo twig_escape_filter($this->env, $this->getAttribute($context["loop"], "index0", array()), "html", null, true);
                 echo "\" placeholder=\"Enter password\" value=\"";
-                echo twig_escape_filter($this->env, $this->getAttribute($context["item"], "tid", array()), "html", null, true);
+                echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($context["item"], "tid", array()), "getId", array(), "method"), "html", null, true);
                 echo "\">
                         <input type=\"hidden\" class=\"form-control\" id=\"traffic-";
                 // line 23
@@ -150,7 +150,7 @@ class __TwigTemplate_a7a13504ffc7eb7f0463328a47254e0d64d8a64187a492d74b51b47b037
                 // line 54
                 echo twig_escape_filter($this->env, $this->getAttribute($context["loop"], "index0", array()), "html", null, true);
                 echo "\" placeholder=\"Enter password\" value=\"";
-                echo twig_escape_filter($this->env, $this->getAttribute($context["item"], "tid", array()), "html", null, true);
+                echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($context["item"], "tid", array()), "getId", array(), "method"), "html", null, true);
                 echo "\">
                             <input type=\"hidden\" class=\"form-control\" id=\"traffic-";
                 // line 55
@@ -185,10 +185,10 @@ class __TwigTemplate_a7a13504ffc7eb7f0463328a47254e0d64d8a64187a492d74b51b47b037
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['item'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
         
-        $__internal_d0eb23ff9202448732b88c35bebf47d64a31b9c49a1912e95081bdb034a05d8c->leave($__internal_d0eb23ff9202448732b88c35bebf47d64a31b9c49a1912e95081bdb034a05d8c_prof);
+        $__internal_ade539e2f334e17871c0aa8f1dcf89e75d0fb723d02ea9dd9741031f7af807b3->leave($__internal_ade539e2f334e17871c0aa8f1dcf89e75d0fb723d02ea9dd9741031f7af807b3_prof);
 
         
-        $__internal_b503eb7b59a2a68e699e51b18ceb18a0c37dcc46cfc05c86fdc1ad10e75bb49d->leave($__internal_b503eb7b59a2a68e699e51b18ceb18a0c37dcc46cfc05c86fdc1ad10e75bb49d_prof);
+        $__internal_459c9d6b7cd3b0a8a8d75aae3c6adcb52ab87d8eff5059f67f58e25d3cbfeae3->leave($__internal_459c9d6b7cd3b0a8a8d75aae3c6adcb52ab87d8eff5059f67f58e25d3cbfeae3_prof);
 
     }
 
@@ -238,7 +238,7 @@ class __TwigTemplate_a7a13504ffc7eb7f0463328a47254e0d64d8a64187a492d74b51b47b037
                     <div class=\"form-group form-md-line-input\">
                         <input type=\"text\" class=\"form-control\" id=\"user-{{ loop.index0 }}\" placeholder=\"Enter username\" value=\"{{ item.username }}\">
                         <input type=\"hidden\" class=\"form-control\" id=\"password-{{ loop.index0 }}\" placeholder=\"Enter password\" value=\"{{ item.password }}\">
-                        <input type=\"hidden\" class=\"form-control\" id=\"tid-{{ loop.index0 }}\" placeholder=\"Enter password\" value=\"{{ item.tid }}\">
+                        <input type=\"hidden\" class=\"form-control\" id=\"tid-{{ loop.index0 }}\" placeholder=\"Enter password\" value=\"{{ item.tid.getId() }}\">
                         <input type=\"hidden\" class=\"form-control\" id=\"traffic-{{ loop.index0 }}\" placeholder=\"Enter password\" value=\"{{ item.trafficSource }}\">
                         <label for=\"user-{{ loop.index0 }}\">Token</label>
 
@@ -270,7 +270,7 @@ class __TwigTemplate_a7a13504ffc7eb7f0463328a47254e0d64d8a64187a492d74b51b47b037
                         </div>
                         <div class=\"form-group form-md-line-input\">
                             <input type=\"password\" class=\"form-control\" id=\"password-{{ loop.index0 }}\" placeholder=\"Enter password\" value=\"{{ item.password }}\">
-                            <input type=\"hidden\" class=\"form-control\" id=\"tid-{{ loop.index0 }}\" placeholder=\"Enter password\" value=\"{{ item.tid }}\">
+                            <input type=\"hidden\" class=\"form-control\" id=\"tid-{{ loop.index0 }}\" placeholder=\"Enter password\" value=\"{{ item.tid.getId() }}\">
                             <input type=\"hidden\" class=\"form-control\" id=\"traffic-{{ loop.index0 }}\" placeholder=\"Enter password\" value=\"{{ item.trafficSource }}\">
                             <label for=\"password-{{ loop.index0 }}\">Password</label>
 
