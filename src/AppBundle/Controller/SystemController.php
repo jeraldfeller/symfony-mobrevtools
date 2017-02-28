@@ -40,13 +40,14 @@ class SystemController extends Controller{
     }
 
     /**
-     * @Route("/system/register-token/{$EXOSESSIONTOKEN}", name="registerToken")
+     * @Route("/system/register-token/{$VOLUUMSESSIONID}/{$EXOSESSIONTOKEN}", name="registerToken")
      */
 
-    public function registerTokenAction($EXOSESSIONTOKEN = null){
+    public function registerTokenAction($VOLUUMSESSIONID = null, $EXOSESSIONTOKEN = null){
 
         $em = $this->getDoctrine()->getManager();
         $credentials = $em->getRepository('AppBundle:ApiCredentials')->findOneById(1);
+        $credentials->setVoluum($VOLUUMSESSIONID);
         $credentials->setExoClick($EXOSESSIONTOKEN);
         $em->flush();
 
