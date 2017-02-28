@@ -724,6 +724,7 @@ class CampaignController extends Controller
                 $campaignExists[] = $x['vid'];
                 $campaignExistsExoClick[] = $x['campId'];
             }
+
         }
 
 
@@ -801,8 +802,6 @@ class CampaignController extends Controller
                 'method' => 'GET',
                 'sessionId' => $voluumSessionId))->getContent(), true);
 
-            
-            //echo '<pre>' , var_dump($apiCampaignsReturn) , '</pre>';
             $noExists = 1;
             if(!isset($voluumCampaignToMatchGetCampid['error'])){
                 $i = 0;
@@ -820,7 +819,9 @@ class CampaignController extends Controller
                         $output .= '<select data-selectid="' . $i . '" class="form-control" onchange="setDataAttribute(this)">';
                         $output .= '<option value="0">-- select campaign --</option>';
                         $output .= '<option value="none">None</option>';
+
                         foreach($apiResponse as $row){
+
                             if($row['status'] != -1){
                                 if(!in_array($row['id'], $campaignExistsExoClick )){
                                     $output .= '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';

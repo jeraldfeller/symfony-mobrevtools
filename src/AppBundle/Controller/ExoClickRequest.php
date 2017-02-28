@@ -91,7 +91,6 @@ class ExoClickRequest {
     public function setAuthorizationHeader($type, $token) {
 
         $authorization = "$type $token";
-
         $this->_headers[] = 'Authorization: ' . $authorization;
     }
 

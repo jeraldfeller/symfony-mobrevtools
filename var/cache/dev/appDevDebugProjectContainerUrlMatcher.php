@@ -537,8 +537,8 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             }
 
             // registerToken
-            if ($pathinfo === '/system/register-token/{$JSESSIONID}/{$VOLUUMSESSIONID}/{$EXOSESSIONTOKEN}') {
-                return array (  'JSESSIONID' => NULL,  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
+            if ($pathinfo === '/system/register-token/{$EXOSESSIONTOKEN}') {
+                return array (  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
             }
 
         }

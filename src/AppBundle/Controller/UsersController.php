@@ -138,15 +138,15 @@ class UsersController extends Controller
             $this->get('session')->set('userData', $return);
            // $voluumToken = json_decode($this->forward('AppBundle:VoluumApi:voluumLogin', array())->getContent(), true);
            // $zeroparkToken = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkLogin', array())->getContent(), true);
-           // $exoClickToken = json_decode($this->forward('AppBundle:ExoClickApi:exoClickLogin', array())->getContent(), true);
+            $exoClickToken = json_decode($this->forward('AppBundle:ExoClickApi:exoClickLogin', array())->getContent(), true);
 
 
-           // $this->forward('AppBundle:System:registerToken', array('JSESSIONID' => $zeroparkToken,
-           //     'VOLUUMSESSIONID' => $voluumToken['token'],
-           //     'EXOSESSIONTOKEN' => $exoClickToken));
+           $this->forward('AppBundle:System:registerToken', array(
+                'EXOSESSIONTOKEN' => $exoClickToken[0]['token']));
 
 
-            return $this->redirectToRoute('homepage', array(), 301);
+
+           return $this->redirectToRoute('homepage', array(), 301);
            
 
         }else{
