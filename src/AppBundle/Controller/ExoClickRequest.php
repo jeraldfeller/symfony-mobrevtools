@@ -7,6 +7,8 @@
  */
 
 
+namespace AppBundle\Controller;
+
 class ExoClickRequest {
     /**
      * @var resource
@@ -88,7 +90,7 @@ class ExoClickRequest {
      */
     public function setAuthorizationHeader($type, $token) {
 
-        $authorization = $type . ' ' . $token;
+        $authorization = "$type $token";
 
         $this->_headers[] = 'Authorization: ' . $authorization;
     }
@@ -174,10 +176,10 @@ class ExoClickRequest {
         curl_setopt($this->_request, CURLOPT_SSL_VERIFYHOST, false);
 
         // Send the request and store the body
-        $this->_response = new Response(curl_exec($this->_request));
+        $this->_responses = new Responses(curl_exec($this->_request));
 
         // Set the status code
-        $this->_response->setStatusCode(curl_getinfo($this->_request, CURLINFO_HTTP_CODE));
+        $this->_responses->setStatusCode(curl_getinfo($this->_request, CURLINFO_HTTP_CODE));
 
         // Close the connection
         curl_close($this->_request);
@@ -190,11 +192,11 @@ class ExoClickRequest {
      */
     public function getResponse() {
 
-        return $this->_response;
+        return $this->_responses;
     }
 }
 
-class Response {
+class Responses {
 
     /**
      * @var array

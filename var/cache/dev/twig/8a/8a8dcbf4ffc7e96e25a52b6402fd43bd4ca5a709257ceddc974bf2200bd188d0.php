@@ -15,11 +15,11 @@ class __TwigTemplate_8d0be78935a654b1dc8478efa35c910006b9f557bbb6d1a5b8d62732155
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_2d2131f7fc87df13f141cc3f37af812ca9fce62ddc90cfa08115c28bd2608487 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_2d2131f7fc87df13f141cc3f37af812ca9fce62ddc90cfa08115c28bd2608487->enter($__internal_2d2131f7fc87df13f141cc3f37af812ca9fce62ddc90cfa08115c28bd2608487_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "SgDatatablesBundle:Helper:render_image.html.twig"));
+        $__internal_f10ee6075fbc1f2829e3dbd7f000ed221d84bb4efee9cb32bace58b1a4110539 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_f10ee6075fbc1f2829e3dbd7f000ed221d84bb4efee9cb32bace58b1a4110539->enter($__internal_f10ee6075fbc1f2829e3dbd7f000ed221d84bb4efee9cb32bace58b1a4110539_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "SgDatatablesBundle:Helper:render_image.html.twig"));
 
-        $__internal_e2b5d5da204a17c3f0c27b435732f75b29048de31f7eb65e50ce4cdb51d1fe71 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_e2b5d5da204a17c3f0c27b435732f75b29048de31f7eb65e50ce4cdb51d1fe71->enter($__internal_e2b5d5da204a17c3f0c27b435732f75b29048de31f7eb65e50ce4cdb51d1fe71_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "SgDatatablesBundle:Helper:render_image.html.twig"));
+        $__internal_2a6da2142f9576997b4ee64366bcae6ff00e04c6441739ad2f5504b0ff9de174 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_2a6da2142f9576997b4ee64366bcae6ff00e04c6441739ad2f5504b0ff9de174->enter($__internal_2a6da2142f9576997b4ee64366bcae6ff00e04c6441739ad2f5504b0ff9de174_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "SgDatatablesBundle:Helper:render_image.html.twig"));
 
         // line 9
         if ((isset($context["image_name"]) ? $context["image_name"] : $this->getContext($context, "image_name"))) {
@@ -30,10 +30,10 @@ class __TwigTemplate_8d0be78935a654b1dc8478efa35c910006b9f557bbb6d1a5b8d62732155
 ";
         }
         
-        $__internal_2d2131f7fc87df13f141cc3f37af812ca9fce62ddc90cfa08115c28bd2608487->leave($__internal_2d2131f7fc87df13f141cc3f37af812ca9fce62ddc90cfa08115c28bd2608487_prof);
+        $__internal_f10ee6075fbc1f2829e3dbd7f000ed221d84bb4efee9cb32bace58b1a4110539->leave($__internal_f10ee6075fbc1f2829e3dbd7f000ed221d84bb4efee9cb32bace58b1a4110539_prof);
 
         
-        $__internal_e2b5d5da204a17c3f0c27b435732f75b29048de31f7eb65e50ce4cdb51d1fe71->leave($__internal_e2b5d5da204a17c3f0c27b435732f75b29048de31f7eb65e50ce4cdb51d1fe71_prof);
+        $__internal_2a6da2142f9576997b4ee64366bcae6ff00e04c6441739ad2f5504b0ff9de174->leave($__internal_2a6da2142f9576997b4ee64366bcae6ff00e04c6441739ad2f5504b0ff9de174_prof);
 
     }
 

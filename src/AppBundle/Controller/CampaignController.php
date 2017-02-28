@@ -760,6 +760,7 @@ class CampaignController extends Controller
             $dateNow = date('Y-m-d');
             $exoClick = $this->getTrafficSourceByName('ExoClick');
 
+
             $from = date('Y-m-d', strtotime('-30 days'));
             $to = date('Y-m-d', strtotime('+1 days'));
             $tz = 'America/Chicago';
@@ -789,8 +790,9 @@ class CampaignController extends Controller
                 'limit' => $limit,
                 'include' => 'traffic',
                 'filter1' => 'traffic-source',
-                'filter1Value' => $exoClick[0]['trafficSourceId']
+                'filter1Value' => $exoClick[0]->getTrafficSourceId()
             );
+            $url = 'https://portal.voluum.com/report?';
 
 
 
@@ -798,6 +800,7 @@ class CampaignController extends Controller
                 'query' => $query,
                 'method' => 'GET',
                 'sessionId' => $voluumSessionId))->getContent(), true);
+
             
             //echo '<pre>' , var_dump($apiCampaignsReturn) , '</pre>';
             $noExists = 1;

@@ -13,7 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-require 'ExoClickRequest.php';
+use AppBundle\Controller\ExoClickRequest;
+
 class ExoClickApiController extends Controller{
 
 
@@ -62,8 +63,7 @@ class ExoClickApiController extends Controller{
         $url = 'https://api.exoclick.com/v1/campaigns';
 
         // Specify the campaign id
-        $params = array();
-
+        $params = array('limit' => 1000);
 
         $request = new  ExoClickRequest($url, 'GET', $params);
         $type = 'Bearer';
@@ -76,6 +76,7 @@ class ExoClickApiController extends Controller{
 
         // Get the response object
         $response = $request->getResponse();
+
 
         if($response->getStatusCode() == 200) {
 
@@ -100,9 +101,7 @@ class ExoClickApiController extends Controller{
                     'price' => $statistic->price);
             }
 
-
-
-            return new Response( json_encode($$data) );
+            return new Response(json_encode($data));
 
 
         }
@@ -112,9 +111,13 @@ class ExoClickApiController extends Controller{
             $errorResponse[] = $response->getReasonPhrase() . PHP_EOL;
             $errorResponse[] = $response->getBody() . PHP_EOL;
 
-            return new Response( json_encode(array('error' => $errorResponse)) );
+            return new Response(json_encode(array('error' => $errorResponse)));
         }
+
+
 
     }
 
 }
+
+

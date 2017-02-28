@@ -194,7 +194,7 @@ class DomainTrackerController extends Controller{
                 $isChecked = '';
             }
 
-            $row[] = '<input class="switch_btn make-switch" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="YES" data-off-text="NO" type="checkbox" value="1" name="switch"  data-id="' .  $did . '" ' . $isChecked . '>';
+            $row[] = '<input class="make-switch" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="YES" data-off-text="NO" type="checkbox" value="1" name="switch"  data-id="' .  $did . '" ' . $isChecked . '>';
             $output['aaData'][] = $row;
         }
         return new Response( json_encode( $output ) );

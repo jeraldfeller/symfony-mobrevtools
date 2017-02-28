@@ -65,7 +65,7 @@ class ZeroparkApiController extends Controller {
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
             CURLOPT_POST => $method,
-            CURLOPT_HTTPHEADER => array('Cookie: JSESSIONID=' . $token . ''),
+            CURLOPT_HTTPHEADER => array('Cookie: JSESSIONID=FFE4E062C46ED25F787A47CF2CDA5B0F-n1'),
         ));
         // Send the request & save response to $resp
         $resp = curl_exec($curl);
