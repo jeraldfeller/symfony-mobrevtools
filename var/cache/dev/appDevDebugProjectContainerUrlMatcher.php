@@ -243,15 +243,23 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
             }
 
-            if (0 === strpos($pathinfo, '/common/create-')) {
-                // commonCreateDateRange
-                if ($pathinfo === '/common/create-date-range/{$startDate}/{$endDate}') {
-                    return array (  'startDate' => NULL,  'endDate' => NULL,  '_controller' => 'AppBundle\\Controller\\CommonController::createDateRangeAction',  '_route' => 'commonCreateDateRange',);
+            if (0 === strpos($pathinfo, '/common')) {
+                // getGeoCodeByCountry
+                if ($pathinfo === '/common/get-geo-code-by-country/{$country}') {
+                    return array (  'country' => NULL,  '_controller' => 'AppBundle\\Controller\\CommonController::getGeoCodeByCountryAction',  '_route' => 'getGeoCodeByCountry',);
                 }
 
-                // commonCreateTimeRange
-                if ($pathinfo === '/common/create-time-range/{$start}/{$end}') {
-                    return array (  'start' => NULL,  'end' => NULL,  '_controller' => 'AppBundle\\Controller\\CommonController::createTimeRangeAction',  '_route' => 'commonCreateTimeRange',);
+                if (0 === strpos($pathinfo, '/common/create-')) {
+                    // commonCreateDateRange
+                    if ($pathinfo === '/common/create-date-range/{$startDate}/{$endDate}') {
+                        return array (  'startDate' => NULL,  'endDate' => NULL,  '_controller' => 'AppBundle\\Controller\\CommonController::createDateRangeAction',  '_route' => 'commonCreateDateRange',);
+                    }
+
+                    // commonCreateTimeRange
+                    if ($pathinfo === '/common/create-time-range/{$start}/{$end}') {
+                        return array (  'start' => NULL,  'end' => NULL,  '_controller' => 'AppBundle\\Controller\\CommonController::createTimeRangeAction',  '_route' => 'commonCreateTimeRange',);
+                    }
+
                 }
 
             }
@@ -537,8 +545,8 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             }
 
             // registerToken
-            if ($pathinfo === '/system/register-token/{$EXOSESSIONTOKEN}') {
-                return array (  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
+            if ($pathinfo === '/system/register-token/{$VOLUUMSESSIONID}/{$EXOSESSIONTOKEN}') {
+                return array (  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
             }
 
         }

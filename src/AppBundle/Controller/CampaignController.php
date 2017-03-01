@@ -812,7 +812,7 @@ class CampaignController extends Controller
                             $geo = json_decode($this->forward('AppBundle:Common:getGeoCodeByCountry', array('country' => $voluumRow['campaignCountry']))->getContent(), true);
                         }
                         $output .= '<tr>';
-                        $output .= '<td class="a-center"><label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"><input id="checkBoxId_' . $i . '" style="width: 20px; height: 20px;" type="checkbox" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geo . '" class="checkboxes camp-record" name="table_records"><span></span></label></td>';
+                        $output .= '<td class="a-center"><label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"><input id="checkBoxId_' . $i . '" name="table_records" type="checkbox" data-campid="1" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geo['geoCode'] . '" class="checkboxes camp-record"><span></span></label></td>';
 
                         $output .= '<td>' . $voluumRow['campaignName'] . '</td>';
                         $output .= '<td>';

@@ -15,8 +15,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 
+use AppBundle\Entity\AppsCountries;
+
 
 class CommonController extends Controller {
+
+
+    /**
+     * @Route("/common/get-geo-code-by-country/{$country}", name="getGeoCodeByCountry")
+     */
+    public function getGeoCodeByCountryAction($country = null){
+        $em = $this->getDoctrine()->getManager();
+        $country = $em->getRepository('AppBundle:AppsCountries')
+            ->findOneBy(array('countryName' => $country));
+
+        return new Response(json_encode($country->getCountryCode()));
+
+    }
 
     function secondsToTime($seconds, $requestFormat) {
         $dtF = new \DateTime('@0');
