@@ -52,4 +52,3 @@ class Emails
         return $this->eid;
     }
 }
-

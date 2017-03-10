@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\ScannedUrls" table="scanned_urls">
+    <id name="scanId" type="integer" column="scan_id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="landerId" type="string" column="lander_id" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="url" type="text" column="url" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="isScanned" type="boolean" column="is_scanned" nullable="false"/>
+    <field name="scanRequestId" type="string" column="scan_request_id" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="hasReturned" type="boolean" column="has_returned" nullable="false"/>
+    <field name="isSafe" type="boolean" column="is_safe" nullable="false"/>
+    <field name="flagType" type="string" column="flag_type" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="dateUpdated" type="datetime" column="date_updated" nullable="false"/>
+    <field name="toCheck" type="boolean" column="to_check" nullable="false"/>
+  </entity>
+</doctrine-mapping>

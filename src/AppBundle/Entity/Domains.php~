@@ -81,4 +81,3 @@ class Domains
         return $this->did;
     }
 }
-

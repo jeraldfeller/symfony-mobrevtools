@@ -10,17 +10,17 @@ class ReportsConversions
     /**
      * @var string
      */
-    private $campaignname;
+    private $campaignName;
 
     /**
      * @var string
      */
-    private $campaignid;
+    private $campaignId;
 
     /**
      * @var integer
      */
-    private $ipint;
+    private $ipInt;
 
     /**
      * @var string
@@ -60,12 +60,12 @@ class ReportsConversions
     /**
      * @var string
      */
-    private $countrycode;
+    private $countryCode;
 
     /**
      * @var string
      */
-    private $countryname;
+    private $countryName;
 
     /**
      * @var string
@@ -75,22 +75,22 @@ class ReportsConversions
     /**
      * @var string
      */
-    private $mobilecarrier;
+    private $mobileCarrier;
 
     /**
      * @var string
      */
-    private $connectiontype;
+    private $connectionType;
 
     /**
      * @var \DateTime
      */
-    private $visittimestamp;
+    private $visitTimestamp;
 
     /**
      * @var integer
      */
-    private $ctid;
+    private $id;
 
 
     /**
@@ -100,9 +100,9 @@ class ReportsConversions
      *
      * @return ReportsConversions
      */
-    public function setCampaignname($campaignname)
+    public function setCampaignName($campaignName)
     {
-        $this->campaignname = $campaignname;
+        $this->campaignName = $campaignName;
 
         return $this;
     }
@@ -112,9 +112,9 @@ class ReportsConversions
      *
      * @return string
      */
-    public function getCampaignname()
+    public function getCampaignName()
     {
-        return $this->campaignname;
+        return $this->campaignName;
     }
 
     /**
@@ -124,9 +124,9 @@ class ReportsConversions
      *
      * @return ReportsConversions
      */
-    public function setCampaignid($campaignid)
+    public function setCampaignId($campaignId)
     {
-        $this->campaignid = $campaignid;
+        $this->campaignId = $campaignId;
 
         return $this;
     }
@@ -136,9 +136,9 @@ class ReportsConversions
      *
      * @return string
      */
-    public function getCampaignid()
+    public function getCampaignId()
     {
-        return $this->campaignid;
+        return $this->campaignId;
     }
 
     /**
@@ -148,9 +148,9 @@ class ReportsConversions
      *
      * @return ReportsConversions
      */
-    public function setIpint($ipint)
+    public function setIpInt($ipInt)
     {
-        $this->ipint = $ipint;
+        $this->ipInt = $ipInt;
 
         return $this;
     }
@@ -160,9 +160,9 @@ class ReportsConversions
      *
      * @return integer
      */
-    public function getIpint()
+    public function getIpInt()
     {
-        return $this->ipint;
+        return $this->ipInt;
     }
 
     /**
@@ -340,9 +340,9 @@ class ReportsConversions
      *
      * @return ReportsConversions
      */
-    public function setCountrycode($countrycode)
+    public function setCountryCode($countryCode)
     {
-        $this->countrycode = $countrycode;
+        $this->countryCode = $countryCode;
 
         return $this;
     }
@@ -352,9 +352,9 @@ class ReportsConversions
      *
      * @return string
      */
-    public function getCountrycode()
+    public function getCountryCode()
     {
-        return $this->countrycode;
+        return $this->countryCode;
     }
 
     /**
@@ -364,9 +364,9 @@ class ReportsConversions
      *
      * @return ReportsConversions
      */
-    public function setCountryname($countryname)
+    public function setCountryName($countryName)
     {
-        $this->countryname = $countryname;
+        $this->countryName = $countryName;
 
         return $this;
     }
@@ -376,9 +376,9 @@ class ReportsConversions
      *
      * @return string
      */
-    public function getCountryname()
+    public function getCountryName()
     {
-        return $this->countryname;
+        return $this->countryName;
     }
 
     /**
@@ -412,9 +412,9 @@ class ReportsConversions
      *
      * @return ReportsConversions
      */
-    public function setMobilecarrier($mobilecarrier)
+    public function setMobileCarrier($mobileCarrier)
     {
-        $this->mobilecarrier = $mobilecarrier;
+        $this->mobileCarrier = $mobileCarrier;
 
         return $this;
     }
@@ -424,9 +424,9 @@ class ReportsConversions
      *
      * @return string
      */
-    public function getMobilecarrier()
+    public function getMobileCarrier()
     {
-        return $this->mobilecarrier;
+        return $this->mobileCarrier;
     }
 
     /**
@@ -436,9 +436,9 @@ class ReportsConversions
      *
      * @return ReportsConversions
      */
-    public function setConnectiontype($connectiontype)
+    public function setConnectiontype($connectionType)
     {
-        $this->connectiontype = $connectiontype;
+        $this->connectionType = $connectionType;
 
         return $this;
     }
@@ -448,9 +448,9 @@ class ReportsConversions
      *
      * @return string
      */
-    public function getConnectiontype()
+    public function getConnectionType()
     {
-        return $this->connectiontype;
+        return $this->connectionType;
     }
 
     /**
@@ -460,9 +460,9 @@ class ReportsConversions
      *
      * @return ReportsConversions
      */
-    public function setVisittimestamp($visittimestamp)
+    public function setVisitTimestamp($visitTimestamp)
     {
-        $this->visittimestamp = $visittimestamp;
+        $this->visitTimestamp = $visitTimestamp;
 
         return $this;
     }
@@ -472,9 +472,9 @@ class ReportsConversions
      *
      * @return \DateTime
      */
-    public function getVisittimestamp()
+    public function getVisitTimestamp()
     {
-        return $this->visittimestamp;
+        return $this->visitTimestamp;
     }
 
     /**
@@ -482,9 +482,8 @@ class ReportsConversions
      *
      * @return integer
      */
-    public function getCtid()
+    public function getId()
     {
-        return $this->ctid;
+        return $this->id;
     }
 }
-

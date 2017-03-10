@@ -139,4 +139,33 @@ class Campaigngroups
         return $this->cid;
     }
 
+    /**
+     * @var \AppBundle\Entity\Verticals
+     */
+    private $ver;
+
+
+    /**
+     * Set ver
+     *
+     * @param \AppBundle\Entity\Verticals $ver
+     *
+     * @return Campaigngroups
+     */
+    public function setVer(\AppBundle\Entity\Verticals $ver = null)
+    {
+        $this->ver = $ver;
+
+        return $this;
+    }
+
+    /**
+     * Get ver
+     *
+     * @return \AppBundle\Entity\Verticals
+     */
+    public function getVer()
+    {
+        return $this->ver;
+    }
 }

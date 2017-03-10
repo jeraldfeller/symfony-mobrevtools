@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-use AppBundle\Entity\Domains;
-use AppBundle\Entity\Safedomains;
+use AppBundle\Entity\ScannedUrls;
+
 
 
 class DomainTrackerController extends Controller{
@@ -32,6 +32,27 @@ class DomainTrackerController extends Controller{
         );
     }
 
+    /**
+     * @Route("reports/update-domain-check")
+     */
+    public function updateDomainCheckAction(){
+        $data = json_decode($_POST['param'], true);
+        $id = $data['scan_id'];
+        $toCheck = $data['toCheck'];
+        $em = $this->getDoctrine()->getManager();
+        $domain = $em->getRepository('AppBundle:ScannedUrls')->find($id);
+
+        if(!$id){
+            throw $this->createNotFoundException(
+                'No domain found for id' . $id
+            );
+        }
+        $domain->setToCheck($toCheck);
+        $em->flush();
+
+        return new Response(json_encode(true));
+    }
+
 
     /**
      * @Route("ajax/get-reports-domain")
@@ -39,13 +60,13 @@ class DomainTrackerController extends Controller{
 
     public function ajaxGetReportsDomain(){
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 'p.did','p.domain', 'p.toCheck');
+        $aColumns = array( 'p.scanId','p.url', 'p.flagType', 'p.toCheck');
 
         // Indexed column (used for fast and accurate table cardinality)
-        $sIndexColumn = 'p.did';
+        $sIndexColumn = 'p.scanId';
 
         // DB table to use
-        $sTable = 'AppBundle:Domains';
+        $sTable = 'AppBundle:ScannedUrls';
 
         // Input method (use $_GET, $_POST or $_REQUEST)
         $input = $_GET;
@@ -179,46 +200,21 @@ class DomainTrackerController extends Controller{
 
         foreach($rResult as $column){
             $row = array();
-            $did = $column['did'];
-            $domainStatus = $this->getDomainStatusById($did);
-
-            $row[] = $column['domain'];
-            $row[] = $column['domain'];
-            $row[] = $column['domain'];
-            //$row[] = (isset($domainStatus[0]['safeSate']) ? strtoupper($domainStatus[0]['safeSate']) : '');
-           // $row[] = (isset($domainStatus[0]['unsafeType']) ? $domainStatus[0]['unsafeType'] : '');
-
+            $did = $column['scanId'];
+            $row[] = $column['url'];
+            $row[] = $column['flagType'];
             if($column['toCheck'] == 1){
                 $isChecked = 'checked';
             }else{
                 $isChecked = '';
             }
 
-            $row[] = '<input class="make-switch" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="YES" data-off-text="NO" type="checkbox" value="1" name="switch"  data-id="' .  $did . '" ' . $isChecked . '>';
+            $row[] = '<input class="switch_btn" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="YES" data-off-text="NO" type="checkbox" value="1" name="switch"  data-id="' .  $did . '" ' . $isChecked . '>';
+            $row[] = '<input class="switch_btn" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="YES" data-off-text="NO" type="checkbox" value="1" name="switch"  data-id="' .  $did . '" ' . $isChecked . '>';
             $output['aaData'][] = $row;
         }
         return new Response( json_encode( $output ) );
     }
-
-    public function getDomainStatusById($did){
-
-        $domain = $this->getDoctrine()
-            ->getRepository('AppBundle:Safedomains')
-            ->findByDid($did);
-
-
-
-        if(count($domain) == 0){
-            return array();
-        }else{
-            return array('id' => $domain[0]->getDid(),
-                'safeState' => $domain[0]->getSafeState(),
-                'unsafeType' => $domain[0]->getUnsafeType()
-            );
-
-        }
-    }
-
 
 
 

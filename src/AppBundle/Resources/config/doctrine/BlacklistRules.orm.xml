@@ -7,8 +7,8 @@
     <id name="blid" type="integer" column="blid">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="active" type="boolean" column="active" nullable="true"/>
-    <field name="actiontype" type="string" column="actionType" length="20" nullable="true">
+    <field name="active" type="boolean" column="active" nullable="false"/>
+    <field name="actiontype" type="string" column="actionType" length="20" nullable="false">
       <options>
         <option name="fixed"/>
       </options>

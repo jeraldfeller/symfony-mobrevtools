@@ -428,9 +428,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        // app_domaintracker_showdomainreport
-        if ($pathinfo === '/reports/domain') {
-            return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::showDomainReportAction',  '_route' => 'app_domaintracker_showdomainreport',);
+        if (0 === strpos($pathinfo, '/reports')) {
+            // app_domaintracker_showdomainreport
+            if ($pathinfo === '/reports/domain') {
+                return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::showDomainReportAction',  '_route' => 'app_domaintracker_showdomainreport',);
+            }
+
+            // app_domaintracker_updatedomaincheck
+            if ($pathinfo === '/reports/update-domain-check') {
+                return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::updateDomainCheckAction',  '_route' => 'app_domaintracker_updatedomaincheck',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/a')) {

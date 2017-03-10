@@ -89,8 +89,7 @@
                         </div>
                     </div>
                     <br>
-                    <br>
-                    <div class="tools"> </div>
+
                 </div>
 
                     <div class="portlet-body">
@@ -103,8 +102,7 @@
                                         <thead>
                                         <tr>
                                             <th>Domain </th>
-                                            <th>State </th>
-                                            <th>Flag Type </th>
+                                            <th>Status </th>
                                             <th>Allow Check</th>
                                         </tr>
                                         </thead>
@@ -132,6 +130,7 @@
     <script src="{{ asset('assets/global/plugins/clockface/js/clockface.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/pages/scripts/components-date-time-pickers.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/pages/scripts/components-bootstrap-switch.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
     <script>
         Ladda.bind( '.spinnerBtn' );
     </script>
@@ -162,7 +161,7 @@
                 },
                 "bProcessing": true,
                 "bServerSide": true,
-                "fnServerData": function (sSource, aoData, fnCallback) {
+                "fnDrawCallback": function( oSettings ) {
                     $("input[type=checkbox].switch_btn").bootstrapSwitch();
 
                     $('input[name="switch"]').on('switchChange.bootstrapSwitch', function(event, state) {
@@ -174,14 +173,17 @@
                             $isActive = 0;
                         }
 
-                     //   updateDomainCheck($id, $isActive);
-                    });
-                    $.getJSON(sSource, aoData, function (json) {
-                        /* Do whatever additional processing you want on the callback, then tell DataTables */
-                        fnCallback(json)
+                        $data = {
+                            scan_id: $id,
+                            toCheck: $isActive
+                        }
+                        updateDomainCheck($data);
                     });
                 },
                 "sAjaxSource": "/ajax/get-reports-domain",
+                "fnServerParams": function ( aoData ) {
+                    aoData.push( { "name": "domainStatus", "value": $('#domainStatus').val() } );
+                },
 
                 responsive: {
                     details: {
@@ -222,5 +224,6 @@
 
     <!-- AJAX CALLS -->
 
+    <script src="{{ asset('assets/ajax/reports/domain.js') }}" type="text/javascript"></script>
     <!-- END AJAX CALLS -->
 {% endblock %}

@@ -835,4 +835,3 @@ class BlacklistRules
         return $this->cgid;
     }
 }
-

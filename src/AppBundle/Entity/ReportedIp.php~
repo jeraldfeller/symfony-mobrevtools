@@ -81,4 +81,3 @@ class ReportedIp
         return $this->repid;
     }
 }
-

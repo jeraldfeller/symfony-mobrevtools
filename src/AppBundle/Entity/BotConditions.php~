@@ -168,4 +168,3 @@ class BotConditions
         return $this->brsid;
     }
 }
-

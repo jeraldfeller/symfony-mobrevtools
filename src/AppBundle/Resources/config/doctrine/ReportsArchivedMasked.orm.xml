@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\ReportsArchivedMasked" table="reports_archived_masked">
+    <indexes>
+      <index name="archive_label_iid" columns="archive_label_iid"/>
+    </indexes>
+    <id name="ramid" type="integer" column="ramid">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="campaignName" type="string" column="campaign_name" length="100" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="ipInt" type="integer" column="ip_int" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="ip" type="string" column="ip" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="subnet" type="string" column="subnet" length="10" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="visits" type="integer" column="visits" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="conversions" type="integer" column="conversions" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="revenue" type="float" column="revenue" precision="10" scale="0" nullable="false"/>
+    <field name="cost" type="float" column="cost" precision="10" scale="0" nullable="false"/>
+    <field name="profit" type="float" column="profit" precision="10" scale="0" nullable="false"/>
+    <field name="roi" type="float" column="roi" precision="10" scale="0" nullable="false"/>
+    <field name="countryCode" type="string" column="country_code" length="20" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="countryName" type="string" column="country_name" length="20" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="isp" type="string" column="isp" length="100" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="mobileCarrier" type="string" column="mobile_carrier" length="100" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="connectionType" type="string" column="connection_type" length="100" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <many-to-one field="archiveLabelIid" target-entity="ArchiveLabel" fetch="LAZY">
+      <join-columns>
+        <join-column name="archive_label_iid" referenced-column-name="archive_label_id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

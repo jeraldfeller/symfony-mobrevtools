@@ -313,4 +313,3 @@ class BotRules
         return $this->cgid;
     }
 }
-

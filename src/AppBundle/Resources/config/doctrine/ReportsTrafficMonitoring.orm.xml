@@ -38,7 +38,7 @@
         <option name="unsigned"/>
       </options>
     </field>
-    <field name="currentHourVisitValue" type="integer" column="current_hour_visit_value" nullable="false">
+    <field name="currentHourVisitValue" type="integer" column="current_hour_Visit_value" nullable="false">
       <options>
         <option name="unsigned"/>
       </options>

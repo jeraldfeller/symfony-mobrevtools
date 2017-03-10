@@ -168,4 +168,3 @@ class BlacklistConditions
         return $this->blrsid;
     }
 }
-

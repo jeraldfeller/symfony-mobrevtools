@@ -15,7 +15,7 @@ class ImportGroup
     /**
      * @var integer
      */
-    private $igid;
+    private $id;
 
 
     /**
@@ -47,9 +47,8 @@ class ImportGroup
      *
      * @return integer
      */
-    public function getIgid()
+    public function getId()
     {
-        return $this->igid;
+        return $this->id;
     }
 }
-

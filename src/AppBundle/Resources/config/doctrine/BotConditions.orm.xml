@@ -18,7 +18,7 @@
       </options>
     </field>
     <field name="value1" type="float" column="value1" precision="10" scale="0" nullable="false"/>
-    <field name="value2" type="float" column="value2" precision="10" scale="0" nullable="true"/>
+    <field name="value2" type="float" column="value2" precision="10" scale="0" nullable="false"/>
     <many-to-one field="brsid" target-entity="BotRuleSet" fetch="LAZY">
       <join-columns>
         <join-column name="brsid" referenced-column-name="brsid"/>
