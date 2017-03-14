@@ -81,4 +81,3 @@ class ArchiveFileCounter
         return $this->id;
     }
 }
-

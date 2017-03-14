@@ -98,4 +98,32 @@ class VoluumApiController extends Controller{
     }
 
 
+    /**
+     * @Route("/api/voluum/get-countries", name="voluumGetCountries")
+     */
+    public function voluumGetCountriesAction($sessionId = null){
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $query = array();
+        $url = 'https://core.voluum.com/countries';
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+
+        return new Response($resp);
+
+    }
+
+
 }

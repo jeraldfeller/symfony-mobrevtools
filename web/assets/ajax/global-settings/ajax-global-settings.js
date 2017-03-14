@@ -359,3 +359,57 @@ function escapeHtml(text) {
 
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
+
+
+function addPresets(btn, data)
+{
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/tools/settings/add-presets");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+                l.stop();
+
+
+
+                if(response == true){
+                    showNotification('success', 'Success', 'Preset Successfully Added!')
+                    $('#modalAddPreset').modal('hide');
+                    var table =  $('#datatable-responsive').DataTable();
+                    table.ajax.reload();
+                }else{
+                    showNotification('warning', 'Warning', 'Preset Already Exisits!')
+                    $('#presetName').focus();
+                }
+
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+        //   $cellValue =  $('#modalCampaignTable tr td:first').text();
+
+        l.start();
+
+        var dataArray = JSON.stringify(data);
+
+        XMLHttpRequestObject.send("param=" + dataArray);
+
+    }
+
+    return false;
+}

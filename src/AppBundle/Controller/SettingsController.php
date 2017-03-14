@@ -15,8 +15,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Entity\TrafficSource;
 use AppBundle\Entity\ApiAccess;
+use AppBundle\Entity\SettingsPresets;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+
+
 
 
 class SettingsController extends Controller {
@@ -444,6 +447,237 @@ class SettingsController extends Controller {
             'trafficSource' => $api[0]->getTrafficSource(),
             'username' => $api[0]->getUsername(),
             'password' => $api[0]->getPassword());
+
+    }
+
+
+    /**
+     * @Route("/tools/settings/presets")
+     */
+    public function showPresetsSettings(){
+        return $this->render(
+            'settings/presets.html.twig', array('page' => 'Presets')
+        );
+    }
+
+
+    /**
+     * @Route("/ajax/get-presets")
+     */
+    public function ajaxGetPresets(){
+
+        $em = $this->getDoctrine()->getManager();
+        $aColumns = array( 't.presetId', 't.presetName', 't.parameters' );
+
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'id';
+
+        // DB table to use
+        $sTable = 'AppBundle:SettingsPresets';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                }
+            }
+
+
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }
+
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules);
+        } else {
+            $sWhere = "";
+        }
+
+
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
+
+
+
+        $sQuery = $em->createQuery("
+        SELECT $aQueryColumns
+        FROM ".$sTable." t ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+        $rResult = $sQuery->getResult();
+
+
+        $sQuery = $em->createQuery("
+        SELECT t
+        FROM ".$sTable." t ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($paginator);
+
+        $sQuery = $em->createQuery("
+        SELECT t
+        FROM ".$sTable." t ".$sWhere.$sOrder."");
+
+        $iTotal = count($paginator = new Paginator($sQuery));
+
+        /**
+         * Output
+         */
+
+
+        $output = array(
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
+        );
+
+
+        foreach($rResult as $column){
+            $presetsExplode = explode(',', $column['parameters']);
+            $presets = '';
+            for($p = 0; $p < count($presetsExplode); $p++){
+                $presets .= '&'.$presetsExplode[$p].'={'.$presetsExplode[$p].'}';
+            }
+            $row = array();
+            $row[] = $column['presetName'];
+            $row[] = $presets;
+            $row[] = '<div class="btn-group">
+                                        <button type="button" class="btn blue btn-xs"> Action</button>
+                                        <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#" data-toggle="modal" data-target="#modalEditPreset"  data-action="edit" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
+                                            </li>
+                                            <li><a href="#" data-toggle="modal" data-target="#modalDeletePreset" data-action="remove" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
+                                            </li>
+                                        </ul>
+                       </div>';
+            $output['aaData'][] = $row;
+        }
+        return new Response( json_encode( $output ) );
+
+
+    }
+
+
+    /**
+     * @Route("/tools/settings/add-presets", name="addPresetsActions")
+     */
+    public function addPresetsAction(){
+        $data = json_decode($_POST['param'], true);
+        $isPresetExists = $this->getDoctrine()
+            ->getRepository('AppBundle:SettingsPresets')
+            ->findOneBy(array('presetName' => $data['presetName']));
+        if(!$isPresetExists){
+            $doctrine = new SettingsPresets();
+            $doctrine->setPresetName($data['presetName']);
+            $doctrine->setParameters($data['parameters']);
+            $em = $this->getDoctrine()->getManager();
+
+            // tells Doctrine you want to (eventually) save the Users (no quesries yet)
+            $em->persist($doctrine);
+
+            // actually executes the queries (i.e. the INSERT query)
+            $em->flush();
+            $return = true;
+        }else{
+           $return = false;
+        }
+
+
+       return new Response(
+           json_encode($return)
+       );
+
+    }
+
+    /**
+     * @Route("tools/settings/get-presets", name="getPresets")
+     */
+    public function getPresetsAction(){
+        $presets = $this->getDoctrine()
+            ->getRepository('AppBundle:SettingsPresets')
+            ->findAll();
+
+        $data = array();
+        for($i = 0; $i < count($presets); $i++){
+            $data[] = array(
+                'presetId' => $presets[$i]->getPresetId(),
+                'presetName' => $presets[$i]->getPresetName(),
+                'presets' => $presets[$i]->getParameters()
+            );
+        }
+
+
+        return new Response(
+            json_encode($data)
+        );
 
     }
 }

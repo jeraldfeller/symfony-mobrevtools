@@ -391,11 +391,6 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\ConversionsReportController::deleteLabelAction',  '_route' => 'app_conversionsreport_deletelabel',);
             }
 
-            // clearTmpFiles
-            if ($pathinfo === '/reports/clear-tmp-files') {
-                return array (  '_controller' => 'AppBundle\\Controller\\ConversionsReportController::clearTmpFilesAction',  '_route' => 'clearTmpFiles',);
-            }
-
         }
 
         // homepage
@@ -469,6 +464,29 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\IpController::ajaxGetReportsIp',  '_route' => 'app_ip_ajaxgetreportsip',);
         }
 
+        if (0 === strpos($pathinfo, '/tools')) {
+            // app_landers_showlanderspage
+            if ($pathinfo === '/tools/landers') {
+                return array (  '_controller' => 'AppBundle\\Controller\\LandersController::showLandersPageAction',  '_route' => 'app_landers_showlanderspage',);
+            }
+
+            // app_landers_addlanders
+            if ($pathinfo === '/tools/add-landers') {
+                return array (  '_controller' => 'AppBundle\\Controller\\LandersController::addLandersAction',  '_route' => 'app_landers_addlanders',);
+            }
+
+        }
+
+        // app_landers_getlanderstofile
+        if ($pathinfo === '/ajax/get-landers-to-file') {
+            return array (  '_controller' => 'AppBundle\\Controller\\LandersController::getLandersToFileAction',  '_route' => 'app_landers_getlanderstofile',);
+        }
+
+        // clearTmpFiles
+        if ($pathinfo === '/tools/clear-tmp-files') {
+            return array (  '_controller' => 'AppBundle\\Controller\\LandersController::clearTmpFilesAction',  '_route' => 'clearTmpFiles',);
+        }
+
         // app_logtracker_showlogtrackerreport
         if ($pathinfo === '/reports/log-tracker') {
             return array (  '_controller' => 'AppBundle\\Controller\\LogTrackerController::showLogTrackerReportAction',  '_route' => 'app_logtracker_showlogtrackerreport',);
@@ -492,14 +510,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        // app_offers_showofferspage
-        if ($pathinfo === '/offers') {
-            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOffersPageAction',  '_route' => 'app_offers_showofferspage',);
-        }
+        if (0 === strpos($pathinfo, '/tools')) {
+            // app_offers_showofferspage
+            if ($pathinfo === '/tools/offers') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOffersPageAction',  '_route' => 'app_offers_showofferspage',);
+            }
 
-        // app_offers_addoffers
-        if ($pathinfo === '/add-offers') {
-            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOffersAction',  '_route' => 'app_offers_addoffers',);
+            // app_offers_addoffers
+            if ($pathinfo === '/tools/add-offers') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOffersAction',  '_route' => 'app_offers_addoffers',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/global-settings')) {
@@ -546,17 +567,37 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/s')) {
-            // getApiAccessByTraffic
-            if ($pathinfo === '/settings/get-api-access-by-traffic/{$traffic}') {
-                return array (  'traffic' => NULL,  '_controller' => 'AppBundle\\Controller\\SettingsController::getApiAccessByTrafficAction',  '_route' => 'getApiAccessByTraffic',);
+        // getApiAccessByTraffic
+        if ($pathinfo === '/settings/get-api-access-by-traffic/{$traffic}') {
+            return array (  'traffic' => NULL,  '_controller' => 'AppBundle\\Controller\\SettingsController::getApiAccessByTrafficAction',  '_route' => 'getApiAccessByTraffic',);
+        }
+
+        // app_settings_showpresetssettings
+        if ($pathinfo === '/tools/settings/presets') {
+            return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::showPresetsSettings',  '_route' => 'app_settings_showpresetssettings',);
+        }
+
+        // app_settings_ajaxgetpresets
+        if ($pathinfo === '/ajax/get-presets') {
+            return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::ajaxGetPresets',  '_route' => 'app_settings_ajaxgetpresets',);
+        }
+
+        if (0 === strpos($pathinfo, '/tools/settings')) {
+            // addPresetsActions
+            if ($pathinfo === '/tools/settings/add-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::addPresetsAction',  '_route' => 'addPresetsActions',);
             }
 
-            // registerToken
-            if ($pathinfo === '/system/register-token/{$VOLUUMSESSIONID}/{$EXOSESSIONTOKEN}') {
-                return array (  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
+            // getPresets
+            if ($pathinfo === '/tools/settings/get-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::getPresetsAction',  '_route' => 'getPresets',);
             }
 
+        }
+
+        // registerToken
+        if ($pathinfo === '/system/register-token/{$VOLUUMSESSIONID}/{$EXOSESSIONTOKEN}') {
+            return array (  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
         }
 
         if (0 === strpos($pathinfo, '/reports')) {
@@ -637,15 +678,23 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/api/voluum-')) {
-            // voluumReport
-            if ($pathinfo === '/api/voluum-report/{$url}/{$query}/{$method}/{$sessionId}') {
-                return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::getVoluumReportsAction',  '_route' => 'voluumReport',);
+        if (0 === strpos($pathinfo, '/api/voluum')) {
+            if (0 === strpos($pathinfo, '/api/voluum-')) {
+                // voluumReport
+                if ($pathinfo === '/api/voluum-report/{$url}/{$query}/{$method}/{$sessionId}') {
+                    return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::getVoluumReportsAction',  '_route' => 'voluumReport',);
+                }
+
+                // voluumPost
+                if ($pathinfo === '/api/voluum-post/{$url}/{$query}/{$method}/{$sessionId}') {
+                    return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::postVoluumAction',  '_route' => 'voluumPost',);
+                }
+
             }
 
-            // voluumPost
-            if ($pathinfo === '/api/voluum-post/{$url}/{$query}/{$method}/{$sessionId}') {
-                return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::postVoluumAction',  '_route' => 'voluumPost',);
+            // voluumGetCountries
+            if ($pathinfo === '/api/voluum/get-countries') {
+                return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetCountriesAction',  '_route' => 'voluumGetCountries',);
             }
 
         }

@@ -42,12 +42,6 @@ class NavmenuController extends Controller{
                                     <span class="title">Dashboard</span>
                                 </a>
                             </li>',
-                    'offers' => '<li class="nav-item isActiveIdentifier">
-                                <a href="/offers" class="nav-link nav-toggle">
-                                    <i class="fa fa-tags"></i>
-                                    <span class="title">Offers</span>
-                                </a>
-                            </li>',
                     'campaigns' => '<li class="nav-item start isActiveIdentifier">
                                         <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="fa fa-bullhorn"></i>
@@ -113,6 +107,40 @@ class NavmenuController extends Controller{
                                                         <span class="title">Traffic Monitoring</span>
                                                     </a>
                                                  </li>
+                                            </ul>
+                                        </li>',
+                    'tools' => '<li class="nav-item start isActiveIdentifier">
+                                            <a href="javascript:;" class="nav-link nav-toggle">
+                                                <i class="fa fa-cubes"></i>
+                                                <span class="title">Tools</span>
+                                                <span class="selected"></span>
+                                                <span class="arrow open"></span>
+                                            </a>
+                                            <ul class="sub-menu">
+                                                <li class="nav-item">
+                                                    <a href="/tools/offers" class="nav-link ">
+                                                        <span class="title">Offers</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/tools/landers" class="nav-link ">
+                                                        <span class="title">Landers</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item start isActiveIdentifier">
+                                                        <a href="javascript:;" class="nav-link nav-toggle">
+                                                            <span class="title">Settings</span>
+                                                            <span class="selected"></span>
+                                                            <span class="arrow open"></span>
+                                                        </a>
+                                                        <ul class="sub-menu">
+                                                            <li class="nav-item">
+                                                                <a href="/tools/settings/presets" class="nav-link ">
+                                                                    <span class="title">Presets</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
                                             </ul>
                                         </li>',
                     'global-settings' => '<li class="nav-item start isActiveIdentifier">

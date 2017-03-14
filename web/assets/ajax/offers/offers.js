@@ -20,7 +20,7 @@ function addOffers(btn, data)
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "add-offers");
+        XMLHttpRequestObject.open("POST", "/tools/add-offers");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');

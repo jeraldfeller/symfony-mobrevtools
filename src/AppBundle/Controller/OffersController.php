@@ -21,7 +21,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 class OffersController extends Controller{
 
     /**
-     * @Route("/offers")
+     * @Route("/tools/offers")
      */
     public function showOffersPageAction(){
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
@@ -78,7 +78,7 @@ class OffersController extends Controller{
     }
 
     /**
-     * @Route("/add-offers")
+     * @Route("/tools/add-offers")
      */
     public function addOffersAction(){
 
@@ -172,6 +172,7 @@ class OffersController extends Controller{
 
         return new Response($return);
     }
+
 
 
     public function makeResponse($error, $message, $data){

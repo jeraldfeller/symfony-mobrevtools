@@ -48,6 +48,12 @@ class ScannedUrls
     private $dateUpdated;
 
     /**
+     * @var boolean
+     */
+    private $toCheck;
+
+
+    /**
      * @var integer
      */
     private $scanId;
@@ -246,6 +252,30 @@ class ScannedUrls
     }
 
     /**
+     * Set toCheck
+     *
+     * @param boolean $toCheck
+     *
+     * @return ScannedUrls
+     */
+    public function setToCheck($toCheck)
+    {
+        $this->toCheck = $toCheck;
+
+        return $this;
+    }
+
+    /**
+     * Get toCheck
+     *
+     * @return boolean
+     */
+    public function getToCheck()
+    {
+        return $this->toCheck;
+    }
+
+    /**
      * Get scanId
      *
      * @return integer
@@ -255,4 +285,3 @@ class ScannedUrls
         return $this->scanId;
     }
 }
-

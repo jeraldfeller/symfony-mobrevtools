@@ -52,4 +52,3 @@ class ArchiveLabel
         return $this->archiveLabelId;
     }
 }
-
