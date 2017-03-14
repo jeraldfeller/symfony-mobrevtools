@@ -56,10 +56,13 @@ class LandersController extends Controller {
         foreach($data as $row){
 
             $landerName = trim($row['landerName']);
-            $presetsExplode = explode(',', $row['landerPresets']);
             $presets = '';
-            for($p = 0; $p < count($presetsExplode); $p++){
-                $presets .= '&'.$presetsExplode[$p].'={'.$presetsExplode[$p].'}';
+            if($row['landerPresets'] != 0){
+                $presetsExplode = explode(',', $row['landerPresets']);
+
+                for($p = 0; $p < count($presetsExplode); $p++){
+                    $presets .= '&'.$presetsExplode[$p].'={'.$presetsExplode[$p].'}';
+                }
             }
             $landerOffer = trim($row['landerOffer']);
             $landerUrl = trim($row['landerUrl']);

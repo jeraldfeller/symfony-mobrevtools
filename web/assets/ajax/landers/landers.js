@@ -46,6 +46,7 @@ function addLanders(btn, data)
                             console.log(obj['message']);
                             showNotification('error', '', '');
                             l.stop();
+                            delete data.items;
                         }
                     });
                 });
