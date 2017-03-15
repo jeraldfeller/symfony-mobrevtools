@@ -42,11 +42,14 @@ function addLanders(btn, data)
                         if(obj['error'] != 1){
                             console.log(obj['message']);
                             showNotification('success', 'Success', obj['message'])
+                            delete data
+                            var data = {items:[]};
                         }else{
                             console.log(obj['message']);
-                            showNotification('error', '', '');
+                            showNotification('error', '', '');delete data.items;
                             l.stop();
-                            delete data.items;
+                            delete data
+                            var data = {items:[]};
                         }
                     });
                 });

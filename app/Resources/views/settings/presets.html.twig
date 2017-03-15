@@ -125,7 +125,7 @@
                                             <div class="modal-body">
                                                 <input type="hidden" id="editPresetId" class="form-control">
                                                 <h4>Preset Name</h4>
-                                                <input type="text" id="editPresetsName" class="form-control">
+                                                <input type="text" id="editPresetName" class="form-control">
                                                 <br>
                                                 <h4>Presets</h4>
                                                 <input type="text" class="form-control input-large" id="editPresets" data-role="tagsinput" style="width: 100%;">
@@ -139,6 +139,41 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+     <!-- MODAL FOR DELETE -->
+                            <div class="modal fade" id="modalDeletePreset" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span>
+                                            </button>
+                                            <h2 class="modal-title" id="modalDeleteTitle"><i class="fa fa-warning"></i> Warning</h2>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <p id="delmsg"></p>
+                                                    <input type="hidden" id="deletePresetId" class="form-control col-lg-12 col-md-12 col-sm-12">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                <button type="button" id="deletePresetsBtn" class="btn btn-primary spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Delete </span></button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- /MODAL END FOR DELETE -->
+
                     <br>
                 </div>
 
@@ -230,12 +265,34 @@
 
                 $data = {
                     presetName: $presetName,
-                    parameters: $items
+                    parameters: encodeURIComponent($items)
                 }
 
 
-
+                //console.log($data);
                 addPresets($btn, $data);
+            });
+
+
+            $('#editPresetsBtn').on('click', function(){
+                $btn = $(this)[0];
+                $presetId = $('#editPresetId').val();
+                $presetName = $('#editPresetName').val();
+                $items = $("#editPresets").val();
+
+                $data = {
+                    presetId: $presetId,
+                    presetName: $presetName,
+                    parameters: encodeURIComponent($items)
+                }
+                editPresets($btn, $data);
+            });
+
+            $('#deletePresetsBtn').on('click', function(){
+                $btn = $(this)[0];
+                $presetId = $('#deletePresetId').val();
+
+                deletePresets($btn, $presetId);
             });
 
         });
@@ -249,10 +306,11 @@
 
             if($action == 'edit'){
                 $('#editPresetId').val($id);
-                $('#editPresetsName').val($presetName);
+                $('#editPresetName').val($presetName);
                 $('#editPresets').tagsinput('add', $presets);
             }else if($action == 'delete'){
-
+                $('#deletePresetId').val($id);
+                $('#delmsg').html('Are you sure do you want to delete <b>' + $presetName+'</b>?');
             }
 
         }

@@ -600,7 +600,7 @@ class SettingsController extends Controller {
             $presetsExplode = explode(',', $column['parameters']);
             $presets = '';
             for($p = 0; $p < count($presetsExplode); $p++){
-                $presets .= '&'.$presetsExplode[$p].'={'.$presetsExplode[$p].'}';
+                $presets .= $presetsExplode[$p];
             }
             $row = array();
             $row[] = $column['presetName'];
@@ -614,7 +614,7 @@ class SettingsController extends Controller {
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="#" data-toggle="modal" data-target="#modalEditPreset"  data-action="edit" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
                                             </li>
-                                            <li><a href="#" data-toggle="modal" data-target="#modalDeletePreset" data-action="remove" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
+                                            <li><a href="#" data-toggle="modal" data-target="#modalDeletePreset" data-action="delete" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
                                             </li>
                                         </ul>
                        </div>';
@@ -663,7 +663,7 @@ class SettingsController extends Controller {
     public function getPresetsAction(){
         $presets = $this->getDoctrine()
             ->getRepository('AppBundle:SettingsPresets')
-            ->findAll();
+            ->findBy(array(), array('presetName' => 'asc'));
 
         $data = array();
         for($i = 0; $i < count($presets); $i++){
@@ -678,6 +678,42 @@ class SettingsController extends Controller {
         return new Response(
             json_encode($data)
         );
+
+    }
+
+    /**
+     * @Route("tools/settings/edit-presets", name="updatePresets")
+     */
+    public function presetEditAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $doctrine = $em->getRepository('AppBundle:SettingsPresets')->findOneByPresetId($data['presetId']);
+        $doctrine->setPresetName($data['presetName']);
+        $doctrine->setParameters($data['parameters']);
+        $em->flush();
+
+        return new Response(
+            json_encode(true)
+        );
+
+
+    }
+
+
+    /**
+     * @Route("tools/settings/delete-presets", name="deletePresets")
+     */
+    public function presetDeleteAction(){
+        $data = $_POST['param'];
+        $em = $this->getDoctrine()->getManager();
+        $doctrine = $em->getRepository('AppBundle:SettingsPresets')->find($data);
+        $em->remove($doctrine);
+        $em->flush();
+
+        return new Response(
+            json_encode(true)
+        );
+
 
     }
 }

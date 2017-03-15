@@ -593,6 +593,16 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::getPresetsAction',  '_route' => 'getPresets',);
             }
 
+            // updatePresets
+            if ($pathinfo === '/tools/settings/edit-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::presetEditAction',  '_route' => 'updatePresets',);
+            }
+
+            // deletePresets
+            if ($pathinfo === '/tools/settings/delete-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::presetDeleteAction',  '_route' => 'deletePresets',);
+            }
+
         }
 
         // registerToken

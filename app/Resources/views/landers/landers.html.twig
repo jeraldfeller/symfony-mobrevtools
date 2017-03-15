@@ -272,7 +272,7 @@
             '</div>' +
             '<div class="col-md-2 col-sm-6">' +
             '<select class="form-control selectPreset" id="lander_presets_'+i+'" placeholder="Presets">' +
-            '<option value="0" >No Preset</option>' +
+            '<option value="No Preset" >No Preset</option>' +
                 {% for preset in presets %}
                 '<option value="{{ preset.presets }}">{{ preset.presetName }}</option>' +
                 {% endfor %}
@@ -308,18 +308,19 @@
             $btn = $(this)[0];
             $landerData = [];
             $.each(data, function(i, elem) {
-                $.each(elem, function(obj, value) {
-                    if(typeof value != 'undefined'){
-                        $landerData.push({
-                                    landerName: $('#' + value['landerName']).val(),
-                                    landerUrl: $('#' + value['landerUrl']).val(),
-                                    landerOffer: $('#' + value['landerOffer']).val(),
-                                    landerGeo: $('#' + value['landerGeo']).val(),
-                                    landerPresets: $('#' + value['landerPresets']).val()
-                                }
-                        )
-                    }
-                });
+
+                    $.each(elem, function(obj, value) {
+                        if(typeof $('#' + value['landerName']).val() != 'undefined'){
+                            $landerData.push({
+                                        landerName: $('#' + value['landerName']).val(),
+                                        landerUrl: $('#' + value['landerUrl']).val(),
+                                        landerOffer: $('#' + value['landerOffer']).val(),
+                                        landerGeo: $('#' + value['landerGeo']).val(),
+                                        landerPresets: encodeURIComponent($('#' + value['landerPresets']).val())
+                                    }
+                            )
+                        }
+                    });
             });
 
             console.log($landerData);
@@ -361,55 +362,21 @@
                 },
                 "ajax": '/data_table_tmp_files/landers/landers.txt',
                 responsive: {
-                    details: {
-
-                    }
+                    details: {}
                 },
                 "iDisplayLength": 20,
                 "lengthMenu": [
                     [20, 500, 1000, -1],
                     [20, 500, 1000, "All"] // change per page values here
                 ],
-                "order": [[ 0, "asc" ]],
+                "order": [[0, "asc"]],
                 "columnDefs": [
-                    { "width": "30%", "targets": 0 },
-                    { className: "align-left", "targets": 0 }
+                    {"width": "30%", "targets": 0},
+                    {className: "align-left", "targets": 0}
                 ]
             });
-
-            $('#addPresetsBtn').on('click', function(){
-                $btn = $(this)[0];
-                $presetName = $('#presetName').val();
-                $items = $("#addPresets").val();
-
-                $data = {
-                    presetName: $presetName,
-                    parameters: $items
-                }
-
-
-
-                addPresets($btn, $data);
-            });
-
         });
 
-        function pushData(elem){
-            $('#editPresets').tagsinput('removeAll');
-            $action = $(elem).data('action');
-            $id = $(elem).data('id');
-            $presetName = $(elem).data('name');
-            $presets = $(elem).data('parameters');
-
-            if($action == 'edit'){
-                $('#editPresetId').val($id);
-                $('#editPresetsName').val($presetName);
-                $('#editPresets').tagsinput('add', $presets);
-            }else if($action == 'delete'){
-
-            }
-
-        }
 
     </script>
 

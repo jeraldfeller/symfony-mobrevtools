@@ -57,13 +57,16 @@ class LandersController extends Controller {
 
             $landerName = trim($row['landerName']);
             $presets = '';
-            if($row['landerPresets'] != 0){
-                $presetsExplode = explode(',', $row['landerPresets']);
 
+            if($row['landerPresets'] == 'No Preset'){
+                $presets = '';
+            }else{
+                $presetsExplode = explode(',', $row['landerPresets']);
                 for($p = 0; $p < count($presetsExplode); $p++){
-                    $presets .= '&'.$presetsExplode[$p].'={'.$presetsExplode[$p].'}';
+                        $presets .= $presetsExplode[$p];
                 }
             }
+
             $landerOffer = trim($row['landerOffer']);
             $landerUrl = trim($row['landerUrl']);
             $landerGeo = trim($row['landerGeo']);
@@ -72,7 +75,7 @@ class LandersController extends Controller {
                 $query = array('namePostfix' => $landerName,
                     'numberOfOffers' =>  $landerOffer,
                     'tags' => array(),
-                    'url' => $landerUrl.'?'.$presets
+                    'url' => $landerUrl.$presets
                 );
             }else {
 
@@ -80,9 +83,10 @@ class LandersController extends Controller {
                      'namePostfix' => $landerName,
                      'numberOfOffers' =>  $landerOffer,
                      'tags' => array(),
-                     'url' => $landerUrl.'?'.$presets
+                     'url' => $landerUrl.$presets
                  );
             }
+
 
                 $apiResponse[] = json_decode($this->forward('AppBundle:VoluumApi:postVoluum', array('url' => $url,
                     'query' => $query,
@@ -94,7 +98,6 @@ class LandersController extends Controller {
                 }else{
                    $failed[] = $landerName;
                 }
-
         }
 
         $message = 'Landers Successfully Added';
