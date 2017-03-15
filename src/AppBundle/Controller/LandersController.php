@@ -61,10 +61,7 @@ class LandersController extends Controller {
             if($row['landerPresets'] == 'No Preset'){
                 $presets = '';
             }else{
-                $presetsExplode = explode(',', $row['landerPresets']);
-                for($p = 0; $p < count($presetsExplode); $p++){
-                        $presets .= $presetsExplode[$p];
-                }
+                $presets = $row['landerPresets'];
             }
 
             $landerOffer = trim($row['landerOffer']);

@@ -597,14 +597,9 @@ class SettingsController extends Controller {
 
 
         foreach($rResult as $column){
-            $presetsExplode = explode(',', $column['parameters']);
-            $presets = '';
-            for($p = 0; $p < count($presetsExplode); $p++){
-                $presets .= $presetsExplode[$p];
-            }
             $row = array();
             $row[] = $column['presetName'];
-            $row[] = $presets;
+            $row[] = $column['parameters'];
             $row[] = '<div class="btn-group">
                                         <button type="button" class="btn blue btn-xs"> Action</button>
                                         <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">

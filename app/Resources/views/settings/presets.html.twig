@@ -99,7 +99,7 @@
                                                 <input type="text" id="presetName" class="form-control">
                                                 <br>
                                                 <h4>Presets</h4>
-                                                <input type="text" class="form-control input-large" id="addPresets" data-role="tagsinput" style="width: 100%;">
+                                                <input type="text" class="form-control" id="addPresets">
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -128,7 +128,7 @@
                                                 <input type="text" id="editPresetName" class="form-control">
                                                 <br>
                                                 <h4>Presets</h4>
-                                                <input type="text" class="form-control input-large" id="editPresets" data-role="tagsinput" style="width: 100%;">
+                                                <input type="text" class="form-control" id="editPresets">
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -298,7 +298,6 @@
         });
 
         function pushData(elem){
-            $('#editPresets').tagsinput('removeAll');
             $action = $(elem).data('action');
             $id = $(elem).data('id');
             $presetName = $(elem).data('name');
@@ -307,7 +306,7 @@
             if($action == 'edit'){
                 $('#editPresetId').val($id);
                 $('#editPresetName').val($presetName);
-                $('#editPresets').tagsinput('add', $presets);
+                $('#editPresets').val($presets);
             }else if($action == 'delete'){
                 $('#deletePresetId').val($id);
                 $('#delmsg').html('Are you sure do you want to delete <b>' + $presetName+'</b>?');
