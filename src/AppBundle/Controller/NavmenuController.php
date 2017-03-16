@@ -42,7 +42,7 @@ class NavmenuController extends Controller{
                                     <span class="title">Dashboard</span>
                                 </a>
                             </li>',
-                    'campaigns' => '<li class="nav-item start isActiveIdentifier">
+                    'campaigns' => '<li class="nav-item isActiveIdentifier">
                                         <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="fa fa-bullhorn"></i>
                                                 <span class="title">Campaigns</span>
@@ -54,7 +54,13 @@ class NavmenuController extends Controller{
                                         </ul>
                                     </li>
                                     ',
-                    'reports' => '<li class="nav-item start isActiveIdentifier">
+                    'cost-update' => '<li class="nav-item isActiveIdentifier">
+                                            <a href="/cost-update" class="nav-link nav-toggle">
+                                                <i class="fa fa-money"></i>
+                                                <span class="title">Cost Update</span>
+                                            </a>
+                                        </li>',
+                    'reports' => '<li class="nav-item isActiveIdentifier">
                                             <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="icon icon-docs"></i>
                                                 <span class="title">Reports</span>
@@ -109,7 +115,7 @@ class NavmenuController extends Controller{
                                                  </li>
                                             </ul>
                                         </li>',
-                    'tools' => '<li class="nav-item start isActiveIdentifier">
+                    'tools' => '<li class="nav-item isActiveIdentifier">
                                             <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="fa fa-cubes"></i>
                                                 <span class="title">Tools</span>
@@ -143,7 +149,7 @@ class NavmenuController extends Controller{
                                                     </li>
                                             </ul>
                                         </li>',
-                    'global-settings' => '<li class="nav-item start isActiveIdentifier">
+                    'global-settings' => '<li class="nav-item isActiveIdentifier">
                                             <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="fa fa-gears"></i>
                                                 <span class="title">Global Settings</span>

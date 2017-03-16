@@ -81,4 +81,3 @@ class SettingsPresets
         return $this->presetId;
     }
 }
-

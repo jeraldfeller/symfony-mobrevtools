@@ -15,11 +15,11 @@ class __TwigTemplate_dfc2464ba9839bbf89a41765ba331a8335376b0f7aee41ec866ccf1d5cd
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_a4be3bff03fbf3d1768c70ce1bd11d36facc36f3f6505fd3b8af81948253faf1 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_a4be3bff03fbf3d1768c70ce1bd11d36facc36f3f6505fd3b8af81948253faf1->enter($__internal_a4be3bff03fbf3d1768c70ce1bd11d36facc36f3f6505fd3b8af81948253faf1_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@Framework/Form/money_widget.html.php"));
+        $__internal_c21a02f328141497a451ffeacb44047c18829347b9fb73576e46526fa74d65b0 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_c21a02f328141497a451ffeacb44047c18829347b9fb73576e46526fa74d65b0->enter($__internal_c21a02f328141497a451ffeacb44047c18829347b9fb73576e46526fa74d65b0_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@Framework/Form/money_widget.html.php"));
 
-        $__internal_a6156a43419a89a4516db53937e3cf6e4e0e8c2e9543c1629e1ff7a069aba74c = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_a6156a43419a89a4516db53937e3cf6e4e0e8c2e9543c1629e1ff7a069aba74c->enter($__internal_a6156a43419a89a4516db53937e3cf6e4e0e8c2e9543c1629e1ff7a069aba74c_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@Framework/Form/money_widget.html.php"));
+        $__internal_87b21ca9cb3e5a85a6e321ffe1627809ac63c2c0bd86a00746f65bd3a4462ec0 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_87b21ca9cb3e5a85a6e321ffe1627809ac63c2c0bd86a00746f65bd3a4462ec0->enter($__internal_87b21ca9cb3e5a85a6e321ffe1627809ac63c2c0bd86a00746f65bd3a4462ec0_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@Framework/Form/money_widget.html.php"));
 
         // line 1
         echo "<?php echo str_replace('";
@@ -27,10 +27,10 @@ class __TwigTemplate_dfc2464ba9839bbf89a41765ba331a8335376b0f7aee41ec866ccf1d5cd
         echo "', \$view['form']->block(\$form, 'form_widget_simple'), \$money_pattern) ?>
 ";
         
-        $__internal_a4be3bff03fbf3d1768c70ce1bd11d36facc36f3f6505fd3b8af81948253faf1->leave($__internal_a4be3bff03fbf3d1768c70ce1bd11d36facc36f3f6505fd3b8af81948253faf1_prof);
+        $__internal_c21a02f328141497a451ffeacb44047c18829347b9fb73576e46526fa74d65b0->leave($__internal_c21a02f328141497a451ffeacb44047c18829347b9fb73576e46526fa74d65b0_prof);
 
         
-        $__internal_a6156a43419a89a4516db53937e3cf6e4e0e8c2e9543c1629e1ff7a069aba74c->leave($__internal_a6156a43419a89a4516db53937e3cf6e4e0e8c2e9543c1629e1ff7a069aba74c_prof);
+        $__internal_87b21ca9cb3e5a85a6e321ffe1627809ac63c2c0bd86a00746f65bd3a4462ec0->leave($__internal_87b21ca9cb3e5a85a6e321ffe1627809ac63c2c0bd86a00746f65bd3a4462ec0_prof);
 
     }
 

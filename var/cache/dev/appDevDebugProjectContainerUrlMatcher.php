@@ -709,6 +709,32 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
+        // app_voluumapi_showlanderspage
+        if ($pathinfo === '/cost-update') {
+            return array (  '_controller' => 'AppBundle\\Controller\\VoluumApiController::showLandersPageAction',  '_route' => 'app_voluumapi_showlanderspage',);
+        }
+
+        if (0 === strpos($pathinfo, '/a')) {
+            if (0 === strpos($pathinfo, '/api/voluum')) {
+                // getCampaignsManualCost
+                if ($pathinfo === '/api/voluum/get-campaigns-manual-cost') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\VoluumApiController::getCampaignManualCostAction',  '_route' => 'getCampaignsManualCost',);
+                }
+
+                // updateCost
+                if ($pathinfo === '/api/voluum/update-cost') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\VoluumApiController::updateCostAction',  '_route' => 'updateCost',);
+                }
+
+            }
+
+            // ajaxGetCampaignsManualCost
+            if ($pathinfo === '/ajax/get-campaigns-manual-cost') {
+                return array (  '_controller' => 'AppBundle\\Controller\\VoluumApiController::ajaxGetReportsCampaignManualCost',  '_route' => 'ajaxGetCampaignsManualCost',);
+            }
+
+        }
+
         if (0 === strpos($pathinfo, '/reports')) {
             // app_whitelistreport_showwhitelistreport
             if ($pathinfo === '/reports/whitelist') {

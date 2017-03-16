@@ -487,4 +487,3 @@ class ReportsArchivedMasked
         return $this->archiveLabelIid;
     }
 }
-

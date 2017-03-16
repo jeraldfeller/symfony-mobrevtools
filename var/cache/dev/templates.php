@@ -154,7 +154,9 @@
   'WebProfilerBundle:Router:panel.html.twig' => __DIR__.'/../../../vendor/symfony/symfony/src/Symfony/Bundle/WebProfilerBundle/Resources/views/Router/panel.html.twig',
   '::base.html.twig' => __DIR__.'/../../../app/Resources/views/base.html.twig',
   ':campaign:campaign.html.twig' => __DIR__.'/../../../app/Resources/views/campaign/campaign.html.twig',
+  ':cost-update:cost-update.html.twig' => __DIR__.'/../../../app/Resources/views/cost-update/cost-update.html.twig',
   ':default:index.html.twig' => __DIR__.'/../../../app/Resources/views/default/index.html.twig',
+  ':landers:landers.html.twig' => __DIR__.'/../../../app/Resources/views/landers/landers.html.twig',
   ':login:login.html.twig' => __DIR__.'/../../../app/Resources/views/login/login.html.twig',
   ':offers:offers.html.twig' => __DIR__.'/../../../app/Resources/views/offers/offers.html.twig',
   ':reports:blacklist.html.twig' => __DIR__.'/../../../app/Resources/views/reports/blacklist.html.twig',
@@ -168,6 +170,7 @@
   ':reports:whitelist.html.twig' => __DIR__.'/../../../app/Resources/views/reports/whitelist.html.twig',
   ':settings:api-access.html.twig' => __DIR__.'/../../../app/Resources/views/settings/api-access.html.twig',
   ':settings:api_access_list.html.twig' => __DIR__.'/../../../app/Resources/views/settings/api_access_list.html.twig',
+  ':settings:presets.html.twig' => __DIR__.'/../../../app/Resources/views/settings/presets.html.twig',
   ':settings:traffic-source.html.twig' => __DIR__.'/../../../app/Resources/views/settings/traffic-source.html.twig',
   ':users:users.html.twig' => __DIR__.'/../../../app/Resources/views/users/users.html.twig',
 );
