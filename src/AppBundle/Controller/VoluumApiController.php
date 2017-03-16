@@ -143,12 +143,12 @@ class VoluumApiController extends Controller{
      */
     public function getCampaignManualCostAction(){
         $data = json_decode($_POST['param'], true);
-
+        $this->forward('AppBundle:Deletes:deleteReportsAll', array('data' => 'AppBundle:ReportsCampaignsManualCostUpdate'))->getContent();
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $from = date('Y-m-d', strtotime($data['from'])) . 'T00:00:00Z';
         $to = date('Y-m-d', strtotime($data['to'] . '+1 days')) . 'T00:00:00Z';
-        $tz = 'America/Chicago';
+        $tz = 'America/New_York';
         $sort = 'visits';
         $direction = 'desc';
         $limit = '5000';
@@ -195,6 +195,7 @@ class VoluumApiController extends Controller{
                     $reports->setCampaignId($row['campaignId']);
                     $reports->setCampaignName($row['campaignName']);
                     $reports->setTrafficSourceName($row['trafficSourceName']);
+                    $reports->setVisits($row['visits']);
                     $reports->setCost($row['cost']);
                     $reports->setTimeZone($tz);
                     $em->persist($reports);
@@ -220,26 +221,40 @@ class VoluumApiController extends Controller{
      */
     public function updateCostAction(){
         $data = json_decode($_POST['param'], true);
+        $return = true;
+
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
-
-        $ymd = date('Y-m-d');
-        $hmi = date('H:00:00');
-        $from = $ymd.'T00:00:00';
-        $to = $ymd.'T'.$hmi;
-        if($hmi == '00:00:00'){
-            $ymd = date('Y-m-d', strtotime('-1 days'));
+        $dateNow = date('Y-m-d');
+        $dateFrom = date('Y-m-d', strtotime($data['options'][0]['from']));
+        $dateTo = date('Y-m-d', strtotime($data['options'][0]['to']));
+        if($dateTo == $dateNow){
+            $ymd = date('Y-m-d');
+            $hmi = date('H:00:00');
             $from = $ymd.'T00:00:00';
+            $to = $ymd.'T'.$hmi;
+            if($hmi == '00:00:00'){
+                $ymd = date('Y-m-d', strtotime('-1 days'));
+                $from = $ymd.'T00:00:00';
+            }
         }
+        else{
+                $ymdFrom = $dateFrom;
+                $ymdTo = date('Y-m-d', strtotime($dateNow, strtotime('+1 days')));
+                $hmi = date('H:00:00');
+                $from = $ymdFrom.'T00:00:00';
+                $to = $ymdTo.'T'.$hmi;
+        }
+
 
         $url = 'https://reports.voluum.com/manual-costs';
         $return = array();
-        for($i = 0; $i < count($data); $i++){
+        foreach($data['items'] as $item){
 
-            $query = array('timeZone' => $data[$i]['timeZone'],
-                'cost' => $data[$i]['cost'],
+            $query = array('timeZone' => $item['timeZone'],
+                'cost' => $item['cost'],
                 'restoreCost' => false,
-                'campaignId' => $data[$i]['campid'],
+                'campaignId' => $item['campid'],
                 'from' => $from,
                 'to' => $to,
             );
@@ -250,13 +265,14 @@ class VoluumApiController extends Controller{
                 'sessionId' => $voluumSessionId))->getContent(), true);
 
             if(!isset($response['error'])){
-                $return[] = $data[$i]['campName'] . ' Successfully Updated.';
+                $return[] = $item['campName'] . ' Successfully Updated.';
             }else{
                 $return[] = $response;
             }
 
 
         }
+
 
         return new Response(json_encode($return));
     }
@@ -268,7 +284,7 @@ class VoluumApiController extends Controller{
 
     public function ajaxGetReportsCampaignManualCost(){
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 'p.id', 'p.campaignId', 'p.campaignName', 'p.trafficSourceName', 'p.cost', 'p.timeZone');
+        $aColumns = array( 'p.id', 'p.campaignId', 'p.campaignName', 'p.trafficSourceName', 'p.visits', 'p.cost', 'p.timeZone');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'p.id';
@@ -395,6 +411,7 @@ class VoluumApiController extends Controller{
         foreach($rResult as $column){
             $row = array();
             $row[] = $column['campaignName'];
+            $row[] = $column['visits'];
             $row[] = '<input type="text" class="form-control inputCost" onKeyPress="return isNumberKey(event)"
                       data-campaign-id="' . $column['campaignId'] . '"
                       data-campaign-name="' . $column['campaignName'] . '"

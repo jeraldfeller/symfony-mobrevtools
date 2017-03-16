@@ -108,13 +108,14 @@
                                         <tr>
 
                                             <th>Campaign </th>
+                                            <th>Visits </th>
                                             <th>Cost </th>
 
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="2"><button class="btn blue spinnerBtn ladda-button pull-right" id="saveBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save </span></button></th>
+                                            <th colspan="3"><button class="btn blue spinnerBtn ladda-button pull-right" id="saveBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save </span></button></th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
@@ -165,12 +166,6 @@
                 "bProcessing": true,
                 "bServerSide": true,
                 "sAjaxSource": '/ajax/get-campaigns-manual-cost',
-                "fnServerData": function (sSource, aoData, fnCallback) {
-                    $.getJSON(sSource, aoData, function (json) {
-                        /* Do whatever additional processing you want on the callback, then tell DataTables */
-                        fnCallback(json)
-                    });
-                },
                 responsive: {
                     details: {}
                 },
@@ -181,7 +176,7 @@
                 ],
                 "order": [[0, "asc"]],
                 "columnDefs": [
-                    {"width": "90%", "targets": 0},
+                    {"width": "85%", "targets": 0},
                     {className: "align-left", "targets": 0}
                 ]
             });
@@ -204,7 +199,9 @@
 
             $('#saveBtn').click(function(){
                 $btn = $(this)[0];
-                $data= [];
+                $from = $('#date-from').val();
+                $to = $('#date-to').val();
+                $data= {items:[], options:[]};
                 $("input.inputCost[type=text]").each(function () {
                     var campId = $(this).data('campaign-id');
                     var campName = $(this).data('campaign-name');
@@ -212,7 +209,7 @@
                     var timeZone = $(this).data('time-zone');
 
                     if(inputCost != 0 && inputCost != '' && inputCost != null){
-                        $data.push({
+                        $data.items.push({
                             campid: campId,
                             campName: campName,
                             cost: inputCost,
@@ -221,6 +218,12 @@
                     }
                 });
 
+                $data.options.push({
+                    from: $from,
+                    to: $to
+                })
+
+                console.log($data.items);
                 updateCost($btn, $data);
 
             });

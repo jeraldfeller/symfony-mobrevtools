@@ -24,6 +24,12 @@ class ReportsCampaignsManualCostUpdate
     private $trafficSourceName;
 
     /**
+     * @var integer
+     */
+    private $visits;
+
+
+    /**
      * @var float
      */
     private $cost;
@@ -109,6 +115,30 @@ class ReportsCampaignsManualCostUpdate
     public function getTrafficSourceName()
     {
         return $this->trafficSourceName;
+    }
+
+    /**
+     * Set visits
+     *
+     * @param int $visits
+     *
+     * @return ReportsCampaignsManualCostUpdate
+     */
+    public function setVisits($visits)
+    {
+        $this->visits = $visits;
+
+        return $this;
+    }
+
+    /**
+     * Get visits
+     *
+     * @return int
+     */
+    public function getVisits()
+    {
+        return $this->visits;
     }
 
     /**

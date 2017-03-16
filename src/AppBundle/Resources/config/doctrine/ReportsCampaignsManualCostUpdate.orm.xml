@@ -20,6 +20,7 @@
       </options>
     </field>
     <field name="cost" type="float" column="cost" precision="10" scale="0" nullable="false"/>
+    <field name="visits" type="integer" column="visits" precision="10" scale="0" nullable="false"/>
     <field name="timeZone" type="string" column="time_zone" length="50" nullable="false">
       <options>
         <option name="fixed"/>
