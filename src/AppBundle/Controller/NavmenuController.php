@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 
 use AppBundle\Entity\TrafficSource;
+use AppBundle\Entity\MenuPages;
 
 class NavmenuController extends Controller{
 
@@ -149,6 +150,26 @@ class NavmenuController extends Controller{
                                                     </li>
                                             </ul>
                                         </li>',
+                    'manage-users' => '<li class="nav-item isActiveIdentifier">
+                                            <a href="javascript:;" class="nav-link nav-toggle">
+                                                <i class="fa fa-users"></i>
+                                                <span class="title">Manage Users</span>
+                                                <span class="selected"></span>
+                                                <span class="arrow open"></span>
+                                            </a>
+                                            <ul class="sub-menu">
+                                                <li class="nav-item">
+                                                    <a href="/manage-users/groups" class="nav-link ">
+                                                        <span class="title">Groups</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/manage-users/users" class="nav-link ">
+                                                        <span class="title">Users</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>',
                     'global-settings' => '<li class="nav-item isActiveIdentifier">
                                             <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="fa fa-gears"></i>
@@ -207,5 +228,25 @@ class NavmenuController extends Controller{
 
         return $result;
 
+    }
+
+    /**
+     * @Route("/nav/menu-pages", name="menuPages")
+     */
+    public function getMenuPagesAction(){
+        $pages = $this->getDoctrine()
+            ->getRepository('AppBundle:MenuPages')
+            ->findAll();
+        $data = array();
+        for($x = 0; $x < count( $pages); $x++){
+            $data[] = array('pageId' =>  $pages[$x]->getPageId(),
+                            'pageName' => $pages[$x]->getPageName(),
+                            'pageLink' => $pages[$x]->getPageLink(),
+                            'parent' => $pages[$x]->getParent()
+                );
+        }
+        return new Response(
+            json_encode($data)
+        );
     }
 }

@@ -24,6 +24,16 @@
         <option name="fixed"/>
       </options>
     </field>
+    <field name="userLevel" type="string" column="user_level" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="isActive" type="integer" column="is_active" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
     <field name="dateAdded" type="date" column="date_added" nullable="false"/>
   </entity>
 </doctrine-mapping>

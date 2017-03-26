@@ -9,6 +9,16 @@
         <option name="unsigned"/>
       </options>
     </field>
+    <field name="firstName" type="string" column="first_name" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="lastName" type="string" column="last_name" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
     <field name="email" type="string" column="email" length="60" nullable="false">
       <options>
         <option name="fixed"/>
@@ -19,6 +29,12 @@
         <option name="fixed"/>
       </options>
     </field>
+    <field name="userLevel" type="string" column="user_level" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
     <field name="isActive" type="boolean" column="is_active" nullable="false"/>
+    <field name="dateAdded" type="date" column="date_added" nullable="false"/>
   </entity>
 </doctrine-mapping>

@@ -183,7 +183,7 @@ class VoluumApiController extends Controller{
 
         foreach($returnedData['rows']  as $row) {
             if($row['trafficSourceName'] != 'Zeropark'){
-                if($row['visits'] > 1){
+                if($row['visits'] >= 1){
                     if($row['trafficSourceName'] == 'ExoClick'){
                         $tz = 'America/New_York';
                     }else if($row['trafficSourceName'] == 'TrafficStars'){

@@ -24,7 +24,6 @@ function apiGetCampaign(data)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response = XMLHttpRequestObject.responseText;
-                var response = XMLHttpRequestObject.responseText;
                 $('#displayCampaignToImport').html(
 
                     '<table class="table table-striped table-bordered table-hover table-checkable order-column" id="modalCampaignTable">'

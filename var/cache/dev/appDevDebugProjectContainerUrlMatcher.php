@@ -168,19 +168,9 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::importCampaignAction',  '_route' => 'importCampaigns',);
                 }
 
-                // addGroup
-                if ($pathinfo === '/campaign/add-group') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addGroup',  '_route' => 'addGroup',);
-                }
-
                 // getGroup
                 if ($pathinfo === '/campaign/get-groups') {
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getGroup',  '_route' => 'getGroup',);
-                }
-
-                // deleteGroup
-                if ($pathinfo === '/campaign/delete-group') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteGroup',  '_route' => 'deleteGroup',);
                 }
 
                 // addVertical
@@ -510,6 +500,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
+        // menuPages
+        if ($pathinfo === '/nav/menu-pages') {
+            return array (  '_controller' => 'AppBundle\\Controller\\NavmenuController::getMenuPagesAction',  '_route' => 'menuPages',);
+        }
+
         if (0 === strpos($pathinfo, '/tools')) {
             // app_offers_showofferspage
             if ($pathinfo === '/tools/offers') {
@@ -688,23 +683,90 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/api/voluum')) {
-            if (0 === strpos($pathinfo, '/api/voluum-')) {
-                // voluumReport
-                if ($pathinfo === '/api/voluum-report/{$url}/{$query}/{$method}/{$sessionId}') {
-                    return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::getVoluumReportsAction',  '_route' => 'voluumReport',);
+        if (0 === strpos($pathinfo, '/manage-users')) {
+            if (0 === strpos($pathinfo, '/manage-users/groups')) {
+                // groups
+                if ($pathinfo === '/manage-users/groups') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\UsersController::showGroupsAction',  '_route' => 'groups',);
                 }
 
-                // voluumPost
-                if ($pathinfo === '/api/voluum-post/{$url}/{$query}/{$method}/{$sessionId}') {
-                    return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::postVoluumAction',  '_route' => 'voluumPost',);
+                // manageUsersGroups
+                if (0 === strpos($pathinfo, '/manage-users/groups/group-id') && preg_match('#^/manage\\-users/groups/group\\-id(?:/(?P<groupId>[^/]++))?$#s', $pathinfo, $matches)) {
+                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'manageUsersGroups')), array (  'groupId' => NULL,  '_controller' => 'AppBundle\\Controller\\UsersController::showManageUsersGroupAction',));
                 }
 
             }
 
-            // voluumGetCountries
-            if ($pathinfo === '/api/voluum/get-countries') {
-                return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetCountriesAction',  '_route' => 'voluumGetCountries',);
+            // users
+            if ($pathinfo === '/manage-users/users') {
+                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::showUsersAction',  '_route' => 'users',);
+            }
+
+            // addUser
+            if ($pathinfo === '/manage-users/add-user') {
+                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::addUserAction',  '_route' => 'addUser',);
+            }
+
+            // editUser
+            if ($pathinfo === '/manage-users/edit-user') {
+                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::editUserAction',  '_route' => 'editUser',);
+            }
+
+            // deleteUser
+            if ($pathinfo === '/manage-users/delete-user') {
+                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::deleteUserAction',  '_route' => 'deleteUser',);
+            }
+
+            // addGroup
+            if ($pathinfo === '/manage-users/add-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::addGroupAction',  '_route' => 'addGroup',);
+            }
+
+            // editGroup
+            if ($pathinfo === '/manage-users/edit-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::editGroupAction',  '_route' => 'editGroup',);
+            }
+
+            // deleteGroup
+            if ($pathinfo === '/manage-users/delete-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::deleteGroupAction',  '_route' => 'deleteGroup',);
+            }
+
+        }
+
+        if (0 === strpos($pathinfo, '/a')) {
+            if (0 === strpos($pathinfo, '/ajax/get-')) {
+                // app_users_getusers
+                if ($pathinfo === '/ajax/get-users') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\UsersController::getUsersAction',  '_route' => 'app_users_getusers',);
+                }
+
+                // app_users_getgroups
+                if ($pathinfo === '/ajax/get-groups') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\UsersController::getGroupsAction',  '_route' => 'app_users_getgroups',);
+                }
+
+            }
+
+            if (0 === strpos($pathinfo, '/api/voluum')) {
+                if (0 === strpos($pathinfo, '/api/voluum-')) {
+                    // voluumReport
+                    if ($pathinfo === '/api/voluum-report/{$url}/{$query}/{$method}/{$sessionId}') {
+                        return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::getVoluumReportsAction',  '_route' => 'voluumReport',);
+                    }
+
+                    // voluumPost
+                    if ($pathinfo === '/api/voluum-post/{$url}/{$query}/{$method}/{$sessionId}') {
+                        return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::postVoluumAction',  '_route' => 'voluumPost',);
+                    }
+
+                }
+
+                // voluumGetCountries
+                if ($pathinfo === '/api/voluum/get-countries') {
+                    return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetCountriesAction',  '_route' => 'voluumGetCountries',);
+                }
+
             }
 
         }

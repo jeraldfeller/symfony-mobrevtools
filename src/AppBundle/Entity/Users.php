@@ -196,4 +196,62 @@ class Users
     {
         return $this->dateAdded;
     }
+    /**
+     * @var string
+     */
+    private $userLevel;
+
+    /**
+     * @var integer
+     */
+    private $isActive;
+
+
+    /**
+     * Set userLevel
+     *
+     * @param string $userLevel
+     *
+     * @return Users
+     */
+    public function setUserLevel($userLevel)
+    {
+        $this->userLevel = $userLevel;
+
+        return $this;
+    }
+
+    /**
+     * Get userLevel
+     *
+     * @return string
+     */
+    public function getUserLevel()
+    {
+        return $this->userLevel;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param integer $isActive
+     *
+     * @return Users
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return integer
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
 }

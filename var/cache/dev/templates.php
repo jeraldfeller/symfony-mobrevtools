@@ -172,5 +172,6 @@
   ':settings:api_access_list.html.twig' => __DIR__.'/../../../app/Resources/views/settings/api_access_list.html.twig',
   ':settings:presets.html.twig' => __DIR__.'/../../../app/Resources/views/settings/presets.html.twig',
   ':settings:traffic-source.html.twig' => __DIR__.'/../../../app/Resources/views/settings/traffic-source.html.twig',
+  ':users:groups.html.twig' => __DIR__.'/../../../app/Resources/views/users/groups.html.twig',
   ':users:users.html.twig' => __DIR__.'/../../../app/Resources/views/users/users.html.twig',
 );
