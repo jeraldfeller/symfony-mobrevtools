@@ -313,4 +313,85 @@ function deleteGroup(btn, data){
 }
 
 
+function groupAddUser(btn, data){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/manage-users/group-add-user");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                showNotification(response['type'], response['title'], response['message']);
+                if(response['type'] == 'success'){
+                    var oTable =  $('#datatable-responsive').DataTable();
+                    oTable.ajax.reload();
+                }else{
+
+                }
+
+
+                l.stop();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '')
+                l.stop();
+            }
+        }
+
+
+        l.start();
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+    }
+}
+
+
+function deleteUserFromGroup(btn, data){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/manage-users/delete-user-from-group");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                showNotification(response['type'], response['title'], response['message']);
+                var oTable =  $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
+                $('#modalDeleteUser').modal('hide');
+
+                l.stop();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '')
+                l.stop();
+            }
+        }
+
+
+        l.start();
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+
+    }
+}
+
+
 

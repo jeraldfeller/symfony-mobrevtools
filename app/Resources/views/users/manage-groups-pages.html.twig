@@ -32,7 +32,7 @@
             </li>
 
             <li>
-                <span>{{ page }}</span>
+                 <a href="/manage-users/groups">{{ page }}</a>
                 <i class="fa fa-angle-right"></i>
             </li>
 
@@ -90,7 +90,7 @@
                             </div>
                             <div class="col-md-2 col-xs-12">
                                 <div class="caption font-dark">
-                                    <button id="addUserBtn" class="btn blue ladda-button spinnerBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-plus"></i> Add User</span></button>
+                                    <button id="addUserBtn" class="btn blue ladda-button spinnerBtn" data-style="expand-right" data-size="l" disabled><span class="ladda-label"><i class="fa fa-plus"></i> Add User</span></button>
                                 </div>
                             </div>
 
@@ -110,13 +110,14 @@
                                                     <div class="modal-footer">
                                                         <input type="hidden" id="deleteUid" class="form-control">
                                                         <button type="button" class="btn dark btn-outline" data-dismiss="modal">Close</button>
-                                                        <button type="button" id="deleteUserBtn" class="btn blue ladda-button spinnerBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-times"></i> Remove</span></button>
+                                                        <button type="button" id="deleteUserBtn" class="btn red ladda-button spinnerBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-times"></i> Remove</span></button>
                                                     </div>
                                                 </div>
                                                 <!-- /.modal-content -->
                                             </div>
                                             <!-- /.modal-dialog -->
                                         </div>
+
                         </div>
                     </div>
 
@@ -211,14 +212,35 @@
                 ]
             });
 
+            $('#selectUsers').change(function(){
+               if($(this).val != ''){
+                   $('#addUserBtn').prop('disabled', false);
+               }else{
+                   $('#addUserBtn').prop('disabled', true);
+               }
+            });
+
+            $('#addUserBtn').click(function(){
+
+                if($('#selectUsers').val() != ''){
+                    $data = {
+                        groupId: {{ group.groupId }},
+                        userId:  $('#selectUsers').val()
+                    }
+                    groupAddUser($(this)[0], $data);
+                }
+
+            });
+
             $('#deleteUserBtn').click(function(){
                 $btn = $(this)[0]
                 $uid = $('#deleteUid').val();
                 $data = {
-                    uid: $uid
+                    uid: $uid,
+                    guid: {{ group.groupId }}
                 }
 
-                deleteUser($btn, $data);
+                deleteUserFromGroup($btn, $data);
 
             });
 
@@ -228,30 +250,11 @@
 
 
         function pushData(elem){
-            $action = $(elem).data('action');
             $id = $(elem).data('id');
-            $firstName = $(elem).data('first-name');
-            $lastName = $(elem).data('last-name');
-            $email = $(elem).data('email');
-            $password = $(elem).data('password');
-            $isActive = $(elem).data('is-active');
+            $name = $(elem).data('name');
+            $('#userDeleteName').html($name);
+            $('#deleteUid').val($id);
 
-
-            if($action == 'edit'){
-                $('#editUid').val($id);
-                $('#editFirstName').val($firstName);
-                $('#editLastName').val($lastName);
-                $('#editEmail').val($email);
-                $('#editPassword').val($password);
-                if($isActive == 1){
-                    $("input[type=checkbox]#editEnabled").bootstrapSwitch('state', true, true);
-                }else{
-                    $("input[type=checkbox]#editEnabled").bootstrapSwitch('state', false, true);
-                }
-            }else if($action == 'delete'){
-                $('#deleteUid').val($id);
-                $('#userDeleteName').html($firstName + ' ' + $lastName);
-            }
 
         }
 

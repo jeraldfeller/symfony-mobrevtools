@@ -444,6 +444,29 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  'bundle' => NULL,  'column' => NULL,  '_controller' => 'AppBundle\\Controller\\FiltersController::getFiltersAction',  '_route' => 'getFilters',);
         }
 
+        if (0 === strpos($pathinfo, '/html-pages')) {
+            // app_htmldata_showhtmlpages
+            if ($pathinfo === '/html-pages') {
+                return array (  '_controller' => 'AppBundle\\Controller\\HtmlDataController::showHtmlPagesAction',  '_route' => 'app_htmldata_showhtmlpages',);
+            }
+
+            // app_htmldata_getcode
+            if ($pathinfo === '/html-pages/get-code') {
+                return array (  '_controller' => 'AppBundle\\Controller\\HtmlDataController::getCodeAction',  '_route' => 'app_htmldata_getcode',);
+            }
+
+            // app_htmldata_displaycode
+            if ($pathinfo === '/html-pages/display-code') {
+                return array (  '_controller' => 'AppBundle\\Controller\\HtmlDataController::displayCodeAction',  '_route' => 'app_htmldata_displaycode',);
+            }
+
+        }
+
+        // app_htmldata_ajaxgethtmldata
+        if ($pathinfo === '/ajax/get-html-data') {
+            return array (  '_controller' => 'AppBundle\\Controller\\HtmlDataController::ajaxGetHtmlData',  '_route' => 'app_htmldata_ajaxgethtmldata',);
+        }
+
         // app_ip_showipreport
         if ($pathinfo === '/reports/ip') {
             return array (  '_controller' => 'AppBundle\\Controller\\IpController::showIpReportAction',  '_route' => 'app_ip_showipreport',);
@@ -732,18 +755,44 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\UsersController::deleteGroupAction',  '_route' => 'deleteGroup',);
             }
 
+            if (0 === strpos($pathinfo, '/manage-users/g')) {
+                // getGroupByUserId
+                if (0 === strpos($pathinfo, '/manage-users/get-group-by-user-id') && preg_match('#^/manage\\-users/get\\-group\\-by\\-user\\-id(?:/(?P<id>[^/]++))?$#s', $pathinfo, $matches)) {
+                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'getGroupByUserId')), array (  'id' => NULL,  '_controller' => 'AppBundle\\Controller\\UsersController::getGroupByUserIdAction',));
+                }
+
+                // groupAddUser
+                if ($pathinfo === '/manage-users/group-add-user') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\UsersController::groupAddUserAction',  '_route' => 'groupAddUser',);
+                }
+
+            }
+
+            // deleteUserFromGroup
+            if ($pathinfo === '/manage-users/delete-user-from-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::deleteUserFromGroupAction',  '_route' => 'deleteUserFromGroup',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/a')) {
-            if (0 === strpos($pathinfo, '/ajax/get-')) {
-                // app_users_getusers
-                if ($pathinfo === '/ajax/get-users') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\UsersController::getUsersAction',  '_route' => 'app_users_getusers',);
+            if (0 === strpos($pathinfo, '/ajax/g')) {
+                if (0 === strpos($pathinfo, '/ajax/get-')) {
+                    // app_users_getusers
+                    if ($pathinfo === '/ajax/get-users') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\UsersController::getUsersAction',  '_route' => 'app_users_getusers',);
+                    }
+
+                    // app_users_getgroups
+                    if ($pathinfo === '/ajax/get-groups') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\UsersController::getGroupsAction',  '_route' => 'app_users_getgroups',);
+                    }
+
                 }
 
-                // app_users_getgroups
-                if ($pathinfo === '/ajax/get-groups') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\UsersController::getGroupsAction',  '_route' => 'app_users_getgroups',);
+                // app_users_getgroupusers
+                if (0 === strpos($pathinfo, '/ajax/groups/get-users') && preg_match('#^/ajax/groups/get\\-users(?:/(?P<groupId>[^/]++))?$#s', $pathinfo, $matches)) {
+                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'app_users_getgroupusers')), array (  'groupId' => NULL,  '_controller' => 'AppBundle\\Controller\\UsersController::getGroupUsersAction',));
                 }
 
             }

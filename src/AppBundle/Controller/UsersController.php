@@ -140,6 +140,15 @@ class UsersController extends Controller
         return $users;
     }
 
+    public function getGroupUserBy($param){
+        $em = $this->getDoctrine()->getManager();
+        $users = $em->getRepository('AppBundle:UsersGroupMember')->findOneBy($param);
+
+        return $users;
+    }
+
+
+
     /**
      * @Route("/user/login-action")
      */
@@ -154,6 +163,9 @@ class UsersController extends Controller
 
         if(count($users) == 1){
             $return = array('success' => true,
+                'id' => $users->getId(),
+                'firstName' => $users->getFirstName(),
+                'lastName' => $users->getLastName(),
                'email' => $users->getEmail(),
                'password' => $users->getPassword(),
                'isActive' => $users->getIsActive()
@@ -161,16 +173,18 @@ class UsersController extends Controller
 
             $this->get('session')->set('isLoggedIn', true);
             $this->get('session')->set('userData', $return);
-            $voluumToken = json_decode($this->forward('AppBundle:VoluumApi:voluumLogin', array())->getContent(), true);
+           // $voluumToken = json_decode($this->forward('AppBundle:VoluumApi:voluumLogin', array())->getContent(), true);
            // $zeroparkToken = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkLogin', array())->getContent(), true);
-            $exoClickToken = json_decode($this->forward('AppBundle:ExoClickApi:exoClickLogin', array())->getContent(), true);
+          //  $exoClickToken = json_decode($this->forward('AppBundle:ExoClickApi:exoClickLogin', array())->getContent(), true);
 
 
+            /*
            $this->forward('AppBundle:System:registerToken', array(
                 'VOLUUMSESSIONID' => $voluumToken['token'],
                 'EXOSESSIONTOKEN' => $exoClickToken[0]['token']));
 
 
+            */
 
            return $this->redirectToRoute('homepage', array(), 301);
            
@@ -241,7 +255,7 @@ class UsersController extends Controller
         for($x = 0; $x < count($users); $x++){
             if($users[$x]->getUserLevel() != 'Admin'){
                 $data[] = array(
-                    'uid' => $users[$x]->getUid(),
+                    'uid' => $users[$x]->getId(),
                     'name' => $users[$x]->getFirstName() . ' ' . $users[$x]->getLastName()
                 );
             }
@@ -520,6 +534,96 @@ class UsersController extends Controller
 
 
     }
+
+    /**
+     * @Route("/manage-users/get-group-by-user-id/{id}", name="getGroupByUserId")
+     */
+    public function getGroupByUserIdAction($id = null){
+        $userEntity = $this->getUsersBy(array('id' => $id));
+        $groupMemberEntity = $this->getGroupUserBy(array('user' => $userEntity));
+
+
+        var_dump($groupMemberEntity->getUsersGroupId());
+        //$groupEntity = $groupMemberEntity->getUsersGroup();
+       // $pages = $this->getUsersGroupPagesByGroupId($groupEntity->getUsersGroupId());
+
+        return new Response(json_encode($userEntity->getEmail()));
+    }
+
+
+    /**
+     * @Route("/manage-users/group-add-user", name="groupAddUser")
+     */
+    public function groupAddUserAction()
+    {
+        $data = json_decode($_POST['param'], true);
+
+        $userEntity = $this->getUsersBy(array('id' => $data['userId']));
+        $isExists = $this->getGroupUserBy(array('user' => $userEntity));
+        if($isExists){
+            $return = array(
+                'type' => 'warning',
+                'title' => 'Warning',
+                'message' => 'User already on this group'
+            );
+        }else{
+
+            $em = $this->getDoctrine()->getManager();
+            $groupEntity = $em->getRepository('AppBundle:UsersGroup')->findOneByUsersGroupId($data['groupId']);
+            $group = new UsersGroupMember();
+            $group->setUsersGroup($groupEntity);
+            $group->setUser($userEntity);
+                $em->persist($group);
+                // actually executes the queries (i.e. the INSERT query)
+                $em->flush();
+
+
+            $return = array(
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => 'User Successfully Added'
+            );
+            }
+
+
+
+
+
+
+        return new Response(
+            json_encode($return)
+        );
+    }
+
+
+    /**
+     * @Route("/manage-users/delete-user-from-group", name="deleteUserFromGroup")
+     */
+    public function deleteUserFromGroupAction()
+    {
+
+        $data = json_decode($_POST['param'], true);
+        $userEntity = $this->getUsersBy(array('id' => $data['uid']));
+        //$this->forward('AppBundle:Deletes:deleteIndividualColumn', array('appBundle' => 'AppBundle:UsersGroupMember', 'column' => 'user', 'value' => $userEntity))->getContent();
+
+        $uid = $data['uid'];
+        $guid = $data['guid'];
+        $appBundle ='AppBundle:UsersGroupMember';
+        $em = $this->getDoctrine()->getEntityManager();
+        $sql = $em->createQuery(
+            "DELETE FROM $appBundle p WHERE p.user = $uid  AND p.usersGroup = $guid"
+        );
+        $sql->execute();
+
+        $return = array(
+            'type' => 'success',
+            'title' => 'Success',
+            'message' => 'User Successfullu Removed');
+        return new Response(
+            json_encode($return)
+        );
+    }
+
 
 
     /**
@@ -944,5 +1048,155 @@ class UsersController extends Controller
     }
 
 
+    /**
+     * @Route("/ajax/groups/get-users/{groupId}")
+     */
+
+    public function getGroupUsersAction($groupId = null){
+        $em = $this->getDoctrine()->getManager();
+        $groupEntity = $this->getGroupBy(array('usersGroupId' => $groupId));
+        $aColumns = array( 'ugm.usersGroupMemberId', 'p.usersGroup', 'p.user');
+
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'ugm.usersGroupMemberId';
+
+        // DB table to use
+        $sTable = 'AppBundle:UsersGroupMember';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                }
+            }
+
+
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }else{
+            // custom filter
+
+                if (!empty($aFilteringRules)) {
+                    $aFilteringRules = array('('.implode(" AND ", $aFilteringRules).')');
+                }
+
+
+        }
+
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE ugm.user = u.id ".implode(" AND ", $aFilteringRules);
+        } else {
+            $sWhere = "WHERE ugm.user = u.id";
+        }
+
+
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
+
+        $usersGroupMemberBundle = 'AppBundle:UsersGroupMember';
+        $userBundle = 'AppBundle:User';
+        $usersGroupBundle =  'AppBundle:UsersGroup';
+
+        $sQuery = $em->createQuery("
+        SELECT ug.usersGroupId, ug.usersGroupName, u.id, u.firstName, u.lastName, u.email
+        FROM $usersGroupBundle ug, $usersGroupMemberBundle ugm, $userBundle u $sWhere $sOrder ")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+        $rResult = $sQuery->getResult();
+
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($rResult);
+
+        $sQuery = $em->createQuery("
+        SELECT ug, u
+        FROM $usersGroupBundle ug, $usersGroupMemberBundle ugm, $userBundle u $sWhere $sOrder ");
+
+        $iTotal = count($sQuery);
+
+        /**
+         * Output
+         */
+
+
+        $output = array(
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
+        );
+
+
+        foreach($rResult as $column){
+            $row = array();
+                $row[] = $column['firstName'] . ' ' . $column['lastName'];
+                $row[] = $column['email'];
+                $row[] = '<button data-toggle="modal" data-target="#modalDeleteUser" class="btn red btn-sm" onclick="pushData(this)" data-id="' . $column['id'] . '" data-name="' . $column['firstName'] . ' ' . $column['lastName'] . '"><i class="fa fa-times"></i> Remove</button>';
+                $output['aaData'][] = $row;
+
+
+        }
+        return new Response( json_encode( $output ) );
+    }
 
 }

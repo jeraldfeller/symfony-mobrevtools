@@ -17,9 +17,15 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\TrafficSource;
 use AppBundle\Entity\MenuPages;
 
+use Symfony\Component\HttpFoundation\Session\Session;
+
 class NavmenuController extends Controller{
 
     public function getNavmenuAction(){
+
+        $session = new Session();
+        $userData = $session->get('userData');
+
         $uri = explode('/', $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
         $baseUri = $uri[1];
 
@@ -27,6 +33,8 @@ class NavmenuController extends Controller{
         $campNavArr = array();
 
 
+
+      //  $pages = json_decode($this->forward('AppBundle:Users:getGroupByUserId', array('id' => $userData['id']))->getContent(), true);
         foreach($campaignNav as $nav){
             $campNavArr[] = '<li class="nav-item">
                             <a href="/campaign/bot-settings/' . $nav['id'] . '/' . $nav['trafficName'] . '" class="nav-link ">
@@ -59,6 +67,12 @@ class NavmenuController extends Controller{
                                             <a href="/cost-update" class="nav-link nav-toggle">
                                                 <i class="fa fa-money"></i>
                                                 <span class="title">Cost Update</span>
+                                            </a>
+                                        </li>',
+                    'html-pages' => '<li class="nav-item isActiveIdentifier">
+                                            <a href="/html-pages" class="nav-link nav-toggle">
+                                                <i class="fa fa-code"></i>
+                                                <span class="title">HTML Pages</span>
                                             </a>
                                         </li>',
                     'reports' => '<li class="nav-item isActiveIdentifier">

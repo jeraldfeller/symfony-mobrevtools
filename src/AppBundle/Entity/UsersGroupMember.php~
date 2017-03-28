@@ -81,4 +81,3 @@ class UsersGroupMember
         return $this->user;
     }
 }
-

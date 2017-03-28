@@ -81,4 +81,3 @@ class UsersGroupPages
         return $this->usersGroup;
     }
 }
-
