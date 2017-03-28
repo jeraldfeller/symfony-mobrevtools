@@ -20,9 +20,16 @@ class MetricsController extends Controller {
      */
     public function showMetricsReportAction(){
 
-        return $this->render(
-            'reports/metrics.html.twig', array('page' => 'Metrics', 'filters' => array())
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            return $this->render(
+                'reports/metrics.html.twig', array('page' => 'Metrics', 'filters' => array())
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
     }
 
     /**

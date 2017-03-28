@@ -18,8 +18,7 @@ use AppBundle\Entity\ApiAccess;
 use AppBundle\Entity\SettingsPresets;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-
-
+use AppBundle\Controller\SessionController;
 
 
 class SettingsController extends Controller {
@@ -28,9 +27,16 @@ class SettingsController extends Controller {
      * @Route("/global-settings/api-access")
      */
     public function showApiAccessCredentials(){
-        return $this->render(
-            'settings/api-access.html.twig', array('page' => 'api-access')
-        );
+
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            return $this->render(
+                'settings/api-access.html.twig', array('page' => 'api-access')
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
     }
 
     /**

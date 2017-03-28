@@ -16,17 +16,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 use AppBundle\Entity\HtmlData;
-
+use AppBundle\Controller\SessionController;
 class HtmlDataController extends Controller{
 
     /**
      * @Route("/html-pages")
      */
     public function showHtmlPagesAction(){
-        $filters = array();
-        return $this->render(
-            'html-pages/html-pages.html.twig', array('page' => 'HTML PAGES')
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $filters = array();
+            return $this->render(
+                'html-pages/html-pages.html.twig', array('page' => 'HTML PAGES')
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
     }
 
     /**
@@ -222,6 +229,7 @@ class HtmlDataController extends Controller{
             $row[] = ($column['carrier'] != '' ? $column['carrier'] : 'N/A');
             $row[] = $column['xfo'];
             $row[] = ($column['ip'] != '' ? $column['ip'] : 'N/A');
+            $row[] = ($column['url'] != '' ? $column['url'] : 'N/A');
             $row [] = '<div class="btn-group">
                                     <button type="button" class="btn btn-info btn-xs"> <i class="fa fa-eye"></i> View</button>
                                     <button type="button" class="btn btn-info dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">

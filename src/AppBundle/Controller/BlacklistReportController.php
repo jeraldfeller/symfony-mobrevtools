@@ -22,20 +22,29 @@ class BlacklistReportController extends Controller{
      */
     public function showBotReportAction(){
 
-        $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsBlacklist',
-            'column' => 'trafficSource'))->getContent(), true);
-        $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsBlacklist',
-            'column' => 'geo'))->getContent(), true);
-        $verticals = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsBlacklist',
-            'column' => 'vertical'))->getContent(), true);
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsBlacklist',
+                'column' => 'trafficSource'))->getContent(), true);
+            $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsBlacklist',
+                'column' => 'geo'))->getContent(), true);
+            $verticals = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsBlacklist',
+                'column' => 'vertical'))->getContent(), true);
 
 
-        $filters = array('trafficSource' => $trafficSources,
-            'geos' => $geos,
-            'verticals' => $verticals);
-        return $this->render(
-            'reports/blacklist.html.twig', array('page' => 'Blacklist', 'filters' => $filters)
-        );
+            $filters = array('trafficSource' => $trafficSources,
+                'geos' => $geos,
+                'verticals' => $verticals);
+            return $this->render(
+                'reports/blacklist.html.twig', array('page' => 'Blacklist', 'filters' => $filters)
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
+
+
     }
 
     /**

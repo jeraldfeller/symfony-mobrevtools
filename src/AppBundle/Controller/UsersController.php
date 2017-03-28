@@ -216,30 +216,37 @@ class UsersController extends Controller
     public function showGroupsAction()
     {
 
-        $pages = json_decode($this->forward('AppBundle:Navmenu:getMenuPages', array())->getContent(), true);
-        foreach($pages as $page){
-            if($page['parent'] == 0){
-                $navPageMain[$page['pageName']] = array('pageName' => $page['pageName'],
-                                       'pageId' => $page['pageId'],
-                                       'pageLink' => $page['pageLink'],
-                                       'childPages' => array());
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $pages = json_decode($this->forward('AppBundle:Navmenu:getMenuPages', array())->getContent(), true);
+            foreach($pages as $page){
+                if($page['parent'] == 0){
+                    $navPageMain[$page['pageName']] = array('pageName' => $page['pageName'],
+                        'pageId' => $page['pageId'],
+                        'pageLink' => $page['pageLink'],
+                        'childPages' => array());
+                }
             }
-        }
 
-        foreach($navPageMain as $pageMain){
-            foreach($pages as $childpage){
+            foreach($navPageMain as $pageMain){
+                foreach($pages as $childpage){
                     if($childpage['parent'] == $pageMain['pageId']){
                         $navPageMain[$pageMain['pageName']]['childPages'][] = array('pageName' =>$childpage['pageName'],
                             'pageId' => $childpage['pageId'],
                             'pageLink' => $childpage['pageLink']);
                     }
+                }
+
             }
 
+            return $this->render(
+                'users/groups.html.twig', array('page' => 'Groups', 'pages' => $navPageMain)
+            );
+        }else{
+            return $this->redirect('/user/login');
         }
 
-        return $this->render(
-            'users/groups.html.twig', array('page' => 'Groups', 'pages' => $navPageMain)
-        );
+
     }
 
 
@@ -249,23 +256,30 @@ class UsersController extends Controller
      */
     public function showManageUsersGroupAction($groupId = null)
     {
-        $group = $this->getGroupBy(array('usersGroupId' => $groupId));
-        $users = $this->getUsersAll();
-        $data = array();
-        for($x = 0; $x < count($users); $x++){
-            if($users[$x]->getUserLevel() != 'Admin'){
-                $data[] = array(
-                    'uid' => $users[$x]->getId(),
-                    'name' => $users[$x]->getFirstName() . ' ' . $users[$x]->getLastName()
-                );
+
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $group = $this->getGroupBy(array('usersGroupId' => $groupId));
+            $users = $this->getUsersAll();
+            $data = array();
+            for($x = 0; $x < count($users); $x++){
+                if($users[$x]->getUserLevel() != 'Admin'){
+                    $data[] = array(
+                        'uid' => $users[$x]->getId(),
+                        'name' => $users[$x]->getFirstName() . ' ' . $users[$x]->getLastName()
+                    );
+                }
             }
+
+            return $this->render(
+                'users/manage-groups-pages.html.twig', array('page' => 'Groups',
+                    'group' => array('groupId' => $group->getUsersGroupId(), 'groupName' => $group->getUsersGroupName()),
+                    'users' => $data)
+            );
+        }else{
+            return $this->redirect('/user/login');
         }
 
-        return $this->render(
-            'users/manage-groups-pages.html.twig', array('page' => 'Groups',
-                'group' => array('groupId' => $group->getUsersGroupId(), 'groupName' => $group->getUsersGroupName()),
-                'users' => $data)
-        );
     }
 
     /**
@@ -274,9 +288,16 @@ class UsersController extends Controller
     public function showUsersAction()
     {
 
-        return $this->render(
-            'users/users.html.twig', array('page' => 'Users')
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            return $this->render(
+                'users/users.html.twig', array('page' => 'Users')
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
     }
 
     /**

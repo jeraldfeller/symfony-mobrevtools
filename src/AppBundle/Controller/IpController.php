@@ -23,24 +23,30 @@ class IpController extends Controller{
      * @Route("reports/ip")
      */
     public function showIpReportAction(){
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                'column' => 'trafficName'))->getContent(), true);
+            $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                'column' => 'campaignName'))->getContent(), true);
+            $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                'column' => 'geo'))->getContent(), true);
+            $carriers = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                'column' => 'mobileCarrier'))->getContent(), true);
 
-        $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-            'column' => 'trafficName'))->getContent(), true);
-        $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-            'column' => 'campaignName'))->getContent(), true);
-        $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-            'column' => 'geo'))->getContent(), true);
-        $carriers = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-            'column' => 'mobileCarrier'))->getContent(), true);
-
-        $filters = array('trafficSource' => $trafficSources,
-            'campaigns' => $campaigns,
-            'geos' => $geos,
-            'carriers' => $carriers
+            $filters = array('trafficSource' => $trafficSources,
+                'campaigns' => $campaigns,
+                'geos' => $geos,
+                'carriers' => $carriers
             );
-        return $this->render(
-            'reports/ip.html.twig', array('page' => 'IP', 'filters' => $filters)
-        );
+            return $this->render(
+                'reports/ip.html.twig', array('page' => 'IP', 'filters' => $filters)
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
     }
 
     /**

@@ -7,7 +7,11 @@
     <link href="{{ asset('assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/global/plugins/clockface/css/clockface.css') }}" rel="stylesheet" type="text/css" />
-
+    <style>
+        .breakAll {
+            word-break: break-all;
+        }
+    </style>
 {% endblock %}
 {% block nav %}
     {{ render(controller(
@@ -112,7 +116,7 @@
                                             <th>Carrier</th>
                                             <th>XFO</th>
                                             <th>IP </th>
-
+                                            <th>URL </th>
                                             <th>Action </th>
                                         </tr>
                                         </thead>
@@ -319,7 +323,13 @@
                         "visible": false,
                         "searchable": false
                     },
-                    {"width": "5%", "targets": 5}
+                    {"width": "5%", "targets": 1},
+                    {"width": "5%", "targets": 2},
+                    {"width": "5%", "targets": 3},
+                    {"width": "5%", "targets": 4},
+                    {"width": "75%", "targets": 5},
+                    {"width": "5%", "targets": 6},
+                    {className: "breakAll", "targets": 5}
 
                 ],
                 //dom: '<"wrapper"lBfrtip>',

@@ -24,10 +24,16 @@ class LogTrackerController extends Controller{
      * @Route("reports/log-tracker")
      */
     public function showLogTrackerReportAction(){
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            return $this->render(
+                'reports/logtracker.html.twig', array('page' => 'Log Tracker', 'filters' => array())
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
 
-        return $this->render(
-            'reports/logtracker.html.twig', array('page' => 'Log Tracker', 'filters' => array())
-        );
+
     }
 
 

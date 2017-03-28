@@ -23,21 +23,27 @@ class WhitelistReportController extends Controller {
      * @Route("reports/whitelist")
      */
     public function showWhitelistReportAction(){
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsWhitelist',
+                'column' => 'trafficSource'))->getContent(), true);
+            $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsWhitelist',
+                'column' => 'geo'))->getContent(), true);
+            $verticals = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsWhitelist',
+                'column' => 'vertical'))->getContent(), true);
 
-        $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsWhitelist',
-            'column' => 'trafficSource'))->getContent(), true);
-        $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsWhitelist',
-            'column' => 'geo'))->getContent(), true);
-        $verticals = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsWhitelist',
-            'column' => 'vertical'))->getContent(), true);
+
+            $filters = array('trafficSource' => $trafficSources,
+                'geos' => $geos,
+                'verticals' => $verticals);
+            return $this->render(
+                'reports/whitelist.html.twig', array('page' => 'Whitelist', 'filters' => $filters)
+            );
+        }else{
+            return $this->redirect('user/login');
+        }
 
 
-        $filters = array('trafficSource' => $trafficSources,
-            'geos' => $geos,
-            'verticals' => $verticals);
-        return $this->render(
-            'reports/whitelist.html.twig', array('page' => 'Whitelist', 'filters' => $filters)
-        );
     }
 
     /**

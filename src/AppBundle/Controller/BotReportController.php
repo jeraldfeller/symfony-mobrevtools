@@ -24,20 +24,27 @@ class BotReportController extends Controller{
      */
     public function showBotReportAction(){
 
-        $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:Reportsbot',
-            'column' => 'trafficSource'))->getContent(), true);
-        $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:Reportsbot',
-            'column' => 'geo'))->getContent(), true);
-        $verticals = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:Reportsbot',
-            'column' => 'vertical'))->getContent(), true);
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:Reportsbot',
+                'column' => 'trafficSource'))->getContent(), true);
+            $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:Reportsbot',
+                'column' => 'geo'))->getContent(), true);
+            $verticals = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:Reportsbot',
+                'column' => 'vertical'))->getContent(), true);
 
 
-        $filters = array('trafficSource' => $trafficSources,
-            'geos' => $geos,
-            'verticals' => $verticals);
-        return $this->render(
-            'reports/bot.html.twig', array('page' => 'Bot', 'filters' => $filters)
-        );
+            $filters = array('trafficSource' => $trafficSources,
+                'geos' => $geos,
+                'verticals' => $verticals);
+            return $this->render(
+                'reports/bot.html.twig', array('page' => 'Bot', 'filters' => $filters)
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
     }
 
     /**

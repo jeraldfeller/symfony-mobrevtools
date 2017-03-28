@@ -24,14 +24,20 @@ class LandersController extends Controller {
      * @Route("/tools/landers")
      */
     public function showLandersPageAction(){
-        $this->getLandersToFileAction();
-        $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
-        $presets = json_decode($this->forward('AppBundle:Settings:getPresets', array())->getContent(), true);
-        return $this->render(
-            'landers/landers.html.twig', array('countries' => $countries,
-                'presets' => $presets,
-                'page' => 'Landers')
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $this->getLandersToFileAction();
+            $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
+            $presets = json_decode($this->forward('AppBundle:Settings:getPresets', array())->getContent(), true);
+            return $this->render(
+                'landers/landers.html.twig', array('countries' => $countries,
+                    'presets' => $presets,
+                    'page' => 'Landers')
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
     }
 
 

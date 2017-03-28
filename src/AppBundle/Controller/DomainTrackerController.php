@@ -26,10 +26,16 @@ class DomainTrackerController extends Controller{
      * @Route("reports/domain")
      */
     public function showDomainReportAction(){
-        $filters = array();
-        return $this->render(
-            'reports/domaintracker.html.twig', array('page' => 'Domains', 'filters' => $filters)
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $filters = array();
+            return $this->render(
+                'reports/domaintracker.html.twig', array('page' => 'Domains', 'filters' => $filters)
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
     }
 
     /**

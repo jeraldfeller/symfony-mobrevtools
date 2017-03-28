@@ -65,24 +65,30 @@ class CampaignController extends Controller
      */
     public function indexAction($tid, $page)
     {
-        $campaigns = $this->getCampaigns($tid);
-        $groups = $this->getGroups();
-        $verticals = $this->getVerticals();
-        $carriers = array();
-        $dateNow = date('m/d/Y');
-        if ($page == 'ExoClick') {
-            $carriers = $this->getCarriersDistinct($page);
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $campaigns = $this->getCampaigns($tid);
+            $groups = $this->getGroups();
+            $verticals = $this->getVerticals();
+            $carriers = array();
+            $dateNow = date('m/d/Y');
+            if ($page == 'ExoClick') {
+                $carriers = $this->getCarriersDistinct($page);
+            }
+            return $this->render(
+                'campaign/campaign.html.twig', array('page' => $page,
+                    'tid' => $tid,
+                    'campaigns' => $campaigns,
+                    'groups' => $groups,
+                    'verticals' => $verticals,
+                    'carriers' => $carriers,
+                    'dateNow' => $dateNow
+                )
+            );
+        }else{
+            return $this->redirect('/user/login');
         }
-        return $this->render(
-            'campaign/campaign.html.twig', array('page' => $page,
-                'tid' => $tid,
-                'campaigns' => $campaigns,
-                'groups' => $groups,
-                'verticals' => $verticals,
-                'carriers' => $carriers,
-                'dateNow' => $dateNow
-            )
-        );
+
     }
 
 

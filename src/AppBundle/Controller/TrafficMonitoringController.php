@@ -25,23 +25,28 @@ class TrafficMonitoringController extends Controller{
      */
     public function showIpReportAction(){
 
-        $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
-            'column' => 'trafficSourceName'))->getContent(), true);
-        $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
-            'column' => 'campaignName'))->getContent(), true);
-        $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
-            'column' => 'geo'))->getContent(), true);
-        $placements = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
-            'column' => 'placement'))->getContent(), true);
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
+                'column' => 'trafficSourceName'))->getContent(), true);
+            $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
+                'column' => 'campaignName'))->getContent(), true);
+            $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
+                'column' => 'geo'))->getContent(), true);
+            $placements = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
+                'column' => 'placement'))->getContent(), true);
 
-        $filters = array('trafficSource' => $trafficSources,
-            'campaigns' => $campaigns,
-            'geos' => $geos,
-            'placements' => $placements
-        );
-        return $this->render(
-            'reports/trafficmonitoring.html.twig', array('page' => 'Traffic Monitoring', 'filters' => $filters)
-        );
+            $filters = array('trafficSource' => $trafficSources,
+                'campaigns' => $campaigns,
+                'geos' => $geos,
+                'placements' => $placements
+            );
+            return $this->render(
+                'reports/trafficmonitoring.html.twig', array('page' => 'Traffic Monitoring', 'filters' => $filters)
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
     }
 
     /**

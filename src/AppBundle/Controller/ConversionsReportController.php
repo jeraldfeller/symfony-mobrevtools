@@ -29,11 +29,17 @@ class ConversionsReportController extends Controller{
      * @Route("reports/conversions")
      */
     public function showConversionsReportAction(){
-        $this->clearConversionReportAction();
-        $filters = array();
-        return $this->render(
-            'reports/conversions.html.twig', array('page' => 'Conversions', 'filters' => $filters)
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $this->clearConversionReportAction();
+            $filters = array();
+            return $this->render(
+                'reports/conversions.html.twig', array('page' => 'Conversions', 'filters' => $filters)
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
     }
 
 

@@ -156,6 +156,7 @@
   ':campaign:campaign.html.twig' => __DIR__.'/../../../app/Resources/views/campaign/campaign.html.twig',
   ':cost-update:cost-update.html.twig' => __DIR__.'/../../../app/Resources/views/cost-update/cost-update.html.twig',
   ':default:index.html.twig' => __DIR__.'/../../../app/Resources/views/default/index.html.twig',
+  ':html-pages:html-pages.html.twig' => __DIR__.'/../../../app/Resources/views/html-pages/html-pages.html.twig',
   ':landers:landers.html.twig' => __DIR__.'/../../../app/Resources/views/landers/landers.html.twig',
   ':login:login.html.twig' => __DIR__.'/../../../app/Resources/views/login/login.html.twig',
   ':offers:offers.html.twig' => __DIR__.'/../../../app/Resources/views/offers/offers.html.twig',
@@ -173,5 +174,6 @@
   ':settings:presets.html.twig' => __DIR__.'/../../../app/Resources/views/settings/presets.html.twig',
   ':settings:traffic-source.html.twig' => __DIR__.'/../../../app/Resources/views/settings/traffic-source.html.twig',
   ':users:groups.html.twig' => __DIR__.'/../../../app/Resources/views/users/groups.html.twig',
+  ':users:manage-groups-pages.html.twig' => __DIR__.'/../../../app/Resources/views/users/manage-groups-pages.html.twig',
   ':users:users.html.twig' => __DIR__.'/../../../app/Resources/views/users/users.html.twig',
 );

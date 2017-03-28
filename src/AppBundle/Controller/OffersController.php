@@ -24,57 +24,64 @@ class OffersController extends Controller{
      * @Route("/tools/offers")
      */
     public function showOffersPageAction(){
-        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
-        $voluumSessionId = $apiCredentials[0]['voluum'];
-        $from = date('Y-m-d', strtotime('-30 days')) . 'T00:00:00Z';
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+            $voluumSessionId = $apiCredentials[0]['voluum'];
+            $from = date('Y-m-d', strtotime('-30 days')) . 'T00:00:00Z';
 
-        $to = date('Y-m-d').'T00:00:00Z';
-        $tz = 'America/Chicago';
-        $sort = 'conversions';
-        $direction = 'desc';
-        $limit = '5000';
+            $to = date('Y-m-d').'T00:00:00Z';
+            $tz = 'America/Chicago';
+            $sort = 'conversions';
+            $direction = 'desc';
+            $limit = '5000';
 
-        $query = array('from' => $from,
-            'to' => $to,
-            'tz' => $tz,
-            'sort' => $sort,
-            'direction' => $direction,
-            'columns' => 'offerName',
-            'columns' => 'offerId',
-            'columns' => 'offerUrl',
-            'columns' => 'offerCountry',
-            'columns' => 'payout',
-            'columns' => 'visits',
-            'columns' => 'clicks',
-            'columns' => 'conversions',
-            'columns' => 'revenue',
-            'columns' => 'cost',
-            'columns' => 'profit',
-            'columns' => 'cpv',
-            'columns' => 'ctr',
-            'columns' => 'cr',
-            'columns' => 'cv',
-            'columns' => 'roi',
-            'columns' => 'epv',
-            'columns' => 'epc',
-            'columns' => 'ap',
-            'columns' => 'affiliateNetworkName',
-            'columns' => 'errors',
-            'groupBy' => 'offer',
-            'offset' => 0,
-            'limit' => $limit,
-            'include' => 'traffic',
-        );
+            $query = array('from' => $from,
+                'to' => $to,
+                'tz' => $tz,
+                'sort' => $sort,
+                'direction' => $direction,
+                'columns' => 'offerName',
+                'columns' => 'offerId',
+                'columns' => 'offerUrl',
+                'columns' => 'offerCountry',
+                'columns' => 'payout',
+                'columns' => 'visits',
+                'columns' => 'clicks',
+                'columns' => 'conversions',
+                'columns' => 'revenue',
+                'columns' => 'cost',
+                'columns' => 'profit',
+                'columns' => 'cpv',
+                'columns' => 'ctr',
+                'columns' => 'cr',
+                'columns' => 'cv',
+                'columns' => 'roi',
+                'columns' => 'epv',
+                'columns' => 'epc',
+                'columns' => 'ap',
+                'columns' => 'affiliateNetworkName',
+                'columns' => 'errors',
+                'groupBy' => 'offer',
+                'offset' => 0,
+                'limit' => $limit,
+                'include' => 'traffic',
+            );
 
-        $url = 'https://portal.voluum.com/report?';
-        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-            'query' => $query,
-            'method' => 'GET',
-            'sessionId' => $voluumSessionId))->getContent(), true);
+            $url = 'https://portal.voluum.com/report?';
+            $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+                'query' => $query,
+                'method' => 'GET',
+                'sessionId' => $voluumSessionId))->getContent(), true);
 
-        return $this->render(
-            'offers/offers.html.twig', array('apiResponse' => $apiResponse['rows'])
-        );
+            return $this->render(
+                'offers/offers.html.twig', array('apiResponse' => $apiResponse['rows'])
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
     }
 
     /**
