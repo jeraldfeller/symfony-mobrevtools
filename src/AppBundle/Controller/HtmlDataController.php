@@ -222,11 +222,9 @@ class HtmlDataController extends Controller{
             $row[] = ($column['carrier'] != '' ? $column['carrier'] : 'N/A');
             $row[] = $column['xfo'];
             $row[] = ($column['ip'] != '' ? $column['ip'] : 'N/A');
-            $row[] = ($column['url'] != '' ? $column['url'] : 'N/A');
-            $row[] = date('m/d/Y H:i', $column['dateRecorded']);
             $row [] = '<div class="btn-group">
-                                    <button type="button" class="btn btn-info"> <i class="fa fa-eye"></i> View</button>
-                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <button type="button" class="btn btn-info btn-xs"> <i class="fa fa-eye"></i> View</button>
+                                    <button type="button" class="btn btn-info dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">
                                         <span class="caret"></span>
                                         <span class="sr-only">Toggle Dropdown</span>
                                     </button>

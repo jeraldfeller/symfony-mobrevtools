@@ -64,8 +64,8 @@
                 <div class="portlet-title">
 
                 <div class="modal fade bs-example-modal-md" id="modal-display-html-code" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" style="width: 100%; height: 100%; margin: 0; padding: 0;">
-                        <div class="modal-content" style="height: auto; min-height: 100%; border-radius: 0;">
+                    <div class="modal-dialog modal-lg" >
+                        <div class="modal-content">
 
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
@@ -112,8 +112,7 @@
                                             <th>Carrier</th>
                                             <th>XFO</th>
                                             <th>IP </th>
-                                            <th>URL </th>
-                                            <th>Timestamp</th>
+
                                             <th>Action </th>
                                         </tr>
                                         </thead>
@@ -144,6 +143,7 @@
     <script type="text/javascript" src="{{ asset('assets/global/plugins/clipboard/clipboard.min.js') }}"></script>
     <script>
         Ladda.bind( '.spinnerBtn' );
+        new Clipboard('#clipboardBtn');
     </script>
     <script type="text/javascript">
 
@@ -319,7 +319,7 @@
                         "visible": false,
                         "searchable": false
                     },
-                    {"width": "10%", "targets": 5}
+                    {"width": "5%", "targets": 5}
 
                 ],
                 //dom: '<"wrapper"lBfrtip>',

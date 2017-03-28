@@ -24,7 +24,7 @@ function getHTMLCode(id)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
-                $('#modal-title').html(response['url']);
+                $('#modal-title').html('Code');
                 $('#html-code').text(response['html']);
                 $('#modal-display-html-code').modal('show');
             }
