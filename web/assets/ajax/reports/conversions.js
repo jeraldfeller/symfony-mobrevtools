@@ -63,7 +63,7 @@ function getReportConversions(btn, ref, data)
 }
 function reportsConversionsFetchConversionsData(data, btn)
 {
-
+    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
@@ -108,7 +108,7 @@ function reportsConversionsFetchConversionsData(data, btn)
 
 function reportsConversionsFetchIpData(data,  btn)
 {
-
+    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
@@ -175,7 +175,7 @@ function reportsConversionsFetchIpData(data,  btn)
 
 function reportsConversionsMergeIpAndConversionsData(btn)
 {
-
+    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
@@ -228,7 +228,7 @@ function reportsConversionsMergeIpAndConversionsData(btn)
 
 function reportsConversionsMergeIpAndConversionsDataSecondPhase(btn)
 {
-
+    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
@@ -269,7 +269,7 @@ function reportsConversionsMergeIpAndConversionsDataSecondPhase(btn)
 
 function reportsConversionsMergeIpAndConversionsDataThirdPhase(btn)
 {
-
+    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
@@ -310,6 +310,7 @@ function reportsConversionsMergeIpAndConversionsDataThirdPhase(btn)
 function finalizeConversionReportFirstPhase(btn)
 {
 
+    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
@@ -350,7 +351,7 @@ function finalizeConversionReportFirstPhase(btn)
 
 function finalizeConversionReportSecondPhase(btn)
 {
-
+    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
@@ -391,7 +392,7 @@ function finalizeConversionReportSecondPhase(btn)
 
 function finalizeConversionReportThirdPhase(btn)
 {
-
+    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
