@@ -580,9 +580,15 @@ class CampaignController extends Controller
                     FROM $appBundleIptRuleSet p
                     WHERE p.iid = $iid ");
 
+            $data = array();
             $content1 = $query->getResult();
-
-            return $content1;
+            for($x = 0; $x < count($content1); $x++){
+                $data[] = array('icid' => $content1[$x]->getIcid(),
+                                'iid' => $content1[$x]->getIid(),
+                                'carrier' => $content1[$x]->getCarrier()
+                    );
+            }
+            return  $data;
         }else{
             return array();
         }
