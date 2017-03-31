@@ -196,5 +196,33 @@ class HtmlData
     {
         return $this->id;
     }
-}
+    /**
+     * @var string
+     */
+    private $xfo;
 
+
+    /**
+     * Set xfo
+     *
+     * @param string $xfo
+     *
+     * @return HtmlData
+     */
+    public function setXfo($xfo)
+    {
+        $this->xfo = $xfo;
+
+        return $this;
+    }
+
+    /**
+     * Get xfo
+     *
+     * @return string
+     */
+    public function getXfo()
+    {
+        return $this->xfo;
+    }
+}

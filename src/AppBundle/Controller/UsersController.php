@@ -467,8 +467,8 @@ class UsersController extends Controller
 
 
     /**
- * @Route("/manage-users/edit-group", name="editGroup")
- */
+     * @Route("/manage-users/edit-group", name="editGroup")
+     */
     public function editGroupAction()
     {
 

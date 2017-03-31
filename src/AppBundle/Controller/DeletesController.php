@@ -18,6 +18,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use AppBundle\Entity\Reportsbot;
 use AppBundle\Entity\ReportsBlacklist;
 use AppBundle\Entity\ReportsWhitelist;
+use AppBundle\Entity\CakeOffersTmpTbl;
 
 class DeletesController extends Controller{
 

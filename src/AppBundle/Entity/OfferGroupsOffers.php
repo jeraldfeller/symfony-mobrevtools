@@ -1,0 +1,287 @@
+<?php
+
+namespace AppBundle\Entity;
+
+/**
+ * OfferGroupsOffers
+ */
+class OfferGroupsOffers
+{
+    /**
+     * @var integer
+     */
+    private $offerId;
+
+    /**
+     * @var string
+     */
+    private $offerName;
+
+    /**
+     * @var string
+     */
+    private $verticalName;
+
+    /**
+     * @var string
+     */
+    private $payout;
+
+    /**
+     * @var string
+     */
+    private $priceFormat;
+
+    /**
+     * @var string
+     */
+    private $description;
+
+    /**
+     * @var string
+     */
+    private $restrictions;
+
+    /**
+     * @var string
+     */
+    private $advertiserExtendedTerms;
+
+    /**
+     * @var integer
+     */
+    private $ogoid;
+
+    /**
+     * @var \AppBundle\Entity\OfferGroups
+     */
+    private $offerGroup;
+
+
+    /**
+     * Set offerId
+     *
+     * @param integer $offerId
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setOfferId($offerId)
+    {
+        $this->offerId = $offerId;
+
+        return $this;
+    }
+
+    /**
+     * Get offerId
+     *
+     * @return integer
+     */
+    public function getOfferId()
+    {
+        return $this->offerId;
+    }
+
+    /**
+     * Set offerName
+     *
+     * @param string $offerName
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setOfferName($offerName)
+    {
+        $this->offerName = $offerName;
+
+        return $this;
+    }
+
+    /**
+     * Get offerName
+     *
+     * @return string
+     */
+    public function getOfferName()
+    {
+        return $this->offerName;
+    }
+
+    /**
+     * Set verticalName
+     *
+     * @param string $verticalName
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setVerticalName($verticalName)
+    {
+        $this->verticalName = $verticalName;
+
+        return $this;
+    }
+
+    /**
+     * Get verticalName
+     *
+     * @return string
+     */
+    public function getVerticalName()
+    {
+        return $this->verticalName;
+    }
+
+    /**
+     * Set payout
+     *
+     * @param string $payout
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setPayout($payout)
+    {
+        $this->payout = $payout;
+
+        return $this;
+    }
+
+    /**
+     * Get payout
+     *
+     * @return string
+     */
+    public function getPayout()
+    {
+        return $this->payout;
+    }
+
+    /**
+     * Set priceFormat
+     *
+     * @param string $priceFormat
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setPriceFormat($priceFormat)
+    {
+        $this->priceFormat = $priceFormat;
+
+        return $this;
+    }
+
+    /**
+     * Get priceFormat
+     *
+     * @return string
+     */
+    public function getPriceFormat()
+    {
+        return $this->priceFormat;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set restrictions
+     *
+     * @param string $restrictions
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setRestrictions($restrictions)
+    {
+        $this->restrictions = $restrictions;
+
+        return $this;
+    }
+
+    /**
+     * Get restrictions
+     *
+     * @return string
+     */
+    public function getRestrictions()
+    {
+        return $this->restrictions;
+    }
+
+    /**
+     * Set advertiserExtendedTerms
+     *
+     * @param string $advertiserExtendedTerms
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setAdvertiserExtendedTerms($advertiserExtendedTerms)
+    {
+        $this->advertiserExtendedTerms = $advertiserExtendedTerms;
+
+        return $this;
+    }
+
+    /**
+     * Get advertiserExtendedTerms
+     *
+     * @return string
+     */
+    public function getAdvertiserExtendedTerms()
+    {
+        return $this->advertiserExtendedTerms;
+    }
+
+    /**
+     * Get ogoid
+     *
+     * @return integer
+     */
+    public function getOgoid()
+    {
+        return $this->ogoid;
+    }
+
+    /**
+     * Set offerGroup
+     *
+     * @param \AppBundle\Entity\OfferGroups $offerGroup
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setOfferGroup(\AppBundle\Entity\OfferGroups $offerGroup = null)
+    {
+        $this->offerGroup = $offerGroup;
+
+        return $this;
+    }
+
+    /**
+     * Get offerGroup
+     *
+     * @return \AppBundle\Entity\OfferGroups
+     */
+    public function getOfferGroup()
+    {
+        return $this->offerGroup;
+    }
+}
+

@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\TrafficSource;
 use AppBundle\Entity\ApiAccess;
 use AppBundle\Entity\SettingsPresets;
+use AppBundle\Entity\AffiliateNetwork;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use AppBundle\Controller\SessionController;
@@ -714,6 +715,257 @@ class SettingsController extends Controller {
         return new Response(
             json_encode(true)
         );
+
+
+    }
+
+
+    /**
+     * @Route("/global-settings/affiliate")
+     */
+    public function showAffiliateAction(){
+
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            return $this->render(
+                'settings/affiliate.html.twig', array('page' => 'Affiliate Network')
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+    }
+
+
+    /**
+     * @Route("/settings/add-network", name="addNetworkAction")
+     */
+    public function addNetworkAction(){
+        $data = json_decode($_POST['param'], true);
+        $istExists = $this->getDoctrine()
+            ->getRepository('AppBundle:AffiliateNetwork')
+            ->findOneBy(array('networkName' => $data['networkName']));
+        if(!$istExists){
+            $doctrine = new AffiliateNetwork();
+            $doctrine->setNetworkName($data['networkName']);
+            $doctrine->setApiKey($data['apiKey']);
+            $doctrine->setAffiliateId($data['affiliateId']);
+            $em = $this->getDoctrine()->getManager();
+
+            // tells Doctrine you want to (eventually) save the Users (no quesries yet)
+            $em->persist($doctrine);
+
+            // actually executes the queries (i.e. the INSERT query)
+            $em->flush();
+            $return = true;
+        }else{
+            $return = false;
+        }
+
+
+        return new Response(
+            json_encode($return)
+        );
+
+    }
+
+
+    /**
+     * @Route("settings/edit-network", name="editNetwork")
+     */
+    public function editNetworkAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $doctrine = $em->getRepository('AppBundle:AffiliateNetwork')->findOneByAffiliateNetworkId($data['id']);
+        $doctrine->setNetworkName($data['networkName']);
+        $doctrine->setApiKey($data['apiKey']);
+        $doctrine->setAffiliateId($data['affiliateId']);
+        $em->flush();
+
+        return new Response(
+            json_encode(true)
+        );
+
+
+    }
+
+
+    /**
+     * @Route("settings/delete-network", name="deleteNetwork")
+     */
+    public function deleteNetworkAction(){
+        $data = $_POST['param'];
+        $em = $this->getDoctrine()->getManager();
+        $doctrine = $em->getRepository('AppBundle:AffiliateNetwork')->find($data);
+        $em->remove($doctrine);
+        $em->flush();
+
+        return new Response(
+            json_encode(true)
+        );
+
+
+    }
+
+
+
+
+    /**
+     * @Route("/ajax/get-affiliate-network")
+     */
+    public function ajaxGetNetwork(){
+
+        $em = $this->getDoctrine()->getManager();
+        $aColumns = array( 't.affiliateNetworkId', 't.networkName', 't.apiKey', 't.affiliateId' );
+
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'id';
+
+        // DB table to use
+        $sTable = 'AppBundle:AffiliateNetwork';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                }
+            }
+
+
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }
+
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules);
+        } else {
+            $sWhere = "";
+        }
+
+
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
+
+
+
+        $sQuery = $em->createQuery("
+        SELECT $aQueryColumns
+        FROM ".$sTable." t ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+        $rResult = $sQuery->getResult();
+
+
+        $sQuery = $em->createQuery("
+        SELECT t
+        FROM ".$sTable." t ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($paginator);
+
+        $sQuery = $em->createQuery("
+        SELECT t
+        FROM ".$sTable." t ".$sWhere.$sOrder."");
+
+        $iTotal = count($paginator = new Paginator($sQuery));
+
+        /**
+         * Output
+         */
+
+
+        $output = array(
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
+        );
+
+
+        foreach($rResult as $column){
+            $row = array();
+            $row[] = $column['networkName'];
+            $row[] = $column['affiliateId'];
+            $row[] = $column['apiKey'];
+            $row[] = '<div class="btn-group">
+                                        <button type="button" class="btn blue btn-xs"> Action</button>
+                                        <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#" data-toggle="modal" data-target="#modalEditNetwork"  data-action="edit" data-id="' . $column['affiliateNetworkId'] . '" data-name="' . $column['networkName'] . '" data-affiliate-id="' . $column['affiliateId'] .'" data-api-key="' . $column['apiKey'] . '" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
+                                            </li>
+                                            <li><a href="#" data-toggle="modal" data-target="#modalDeleteNetwork" data-action="delete" data-id="' . $column['affiliateNetworkId'] . '" data-name="' . $column['networkName'] . '"  onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
+                                            </li>
+                                        </ul>
+                       </div>';
+            $output['aaData'][] = $row;
+        }
+        return new Response( json_encode( $output ) );
 
 
     }

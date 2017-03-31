@@ -164,6 +164,27 @@ class NavmenuController extends Controller{
                                                     </li>
                                             </ul>
                                         </li>',
+                    'api' => '<li class="nav-item isActiveIdentifier">
+                                            <a href="javascript:;" class="nav-link nav-toggle">
+                                                <i class="fa fa-exchange"></i>
+                                                <span class="title">Cake API</span>
+                                                <span class="selected"></span>
+                                                <span class="arrow open"></span>
+                                            </a>
+                                            <ul class="sub-menu">
+                                                <li class="nav-item">
+                                                    <a href="/offers/offer-search" class="nav-link ">
+                                                        <span class="title">Offer Search</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/offers/offer-groups" class="nav-link ">
+                                                        <span class="title">Offer Groups</span>
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </li>',
                     'manage-users' => '<li class="nav-item isActiveIdentifier">
                                             <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="fa fa-users"></i>
@@ -200,6 +221,11 @@ class NavmenuController extends Controller{
                                                 <li class="nav-item">
                                                     <a href="/global-settings/traffic-source" class="nav-link ">
                                                         <span class="title">Traffic Source</span>
+                                                    </a>
+                                                </li>
+                                                 <li class="nav-item">
+                                                    <a href="/global-settings/affiliate" class="nav-link ">
+                                                        <span class="title">Affiliate Network</span>
                                                     </a>
                                                 </li>
                                             </ul>

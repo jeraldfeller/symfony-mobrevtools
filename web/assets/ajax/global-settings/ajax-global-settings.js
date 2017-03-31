@@ -520,3 +520,160 @@ function deletePresets(btn, presetId)
     return false;
 }
 
+function addNetwork(btn, data)
+{
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/settings/add-network");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+                l.stop();
+                if(response == true){
+                    showNotification('success', 'Success', 'Network Successfully Added!')
+                    $('#modalAddNetwork').modal('hide');
+                    var table =  $('#datatable-responsive').DataTable();
+                    table.ajax.reload();
+                }else{
+                    showNotification('warning', 'Warning', 'Network Already Exisits!')
+                    $('#affiliateNetworkName').focus();
+                }
+
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+        //   $cellValue =  $('#modalCampaignTable tr td:first').text();
+
+        l.start();
+
+        var dataArray = JSON.stringify(data);
+
+        XMLHttpRequestObject.send("param=" + dataArray);
+
+    }
+
+    return false;
+}
+
+
+function editNetwork(btn, data)
+{
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/settings/edit-network");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+                l.stop();
+
+
+
+                if(response == true){
+                    showNotification('success', 'Success', 'Network Successfully Updated!')
+                    $('#modalEditNetwork').modal('hide');
+                    var table =  $('#datatable-responsive').DataTable();
+                    table.ajax.reload();
+                }else{
+                    showNotification('error', '', '');
+                    $('#presetName').focus();
+                }
+
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+        //   $cellValue =  $('#modalCampaignTable tr td:first').text();
+
+        l.start();
+
+        var dataArray = JSON.stringify(data);
+
+        XMLHttpRequestObject.send("param=" + dataArray);
+
+    }
+
+    return false;
+}
+
+function deleteNetwork(btn, presetId)
+{
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/settings/delete-network");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+                l.stop();
+
+
+
+                if(response == true){
+                    showNotification('success', 'Success', 'Network Successfully Deleted!')
+                    $('#modalDeleteNetwork').modal('hide');
+                    var table =  $('#datatable-responsive').DataTable();
+                    table.ajax.reload();
+                }else{
+                    showNotification('error', '', '');
+                    $('#modalDeleteNetwork').modal('hide');
+                }
+
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+        //   $cellValue =  $('#modalCampaignTable tr td:first').text();
+
+        l.start();
+
+
+        XMLHttpRequestObject.send("param=" + presetId);
+
+    }
+
+    return false;
+}
+
+

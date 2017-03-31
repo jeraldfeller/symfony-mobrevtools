@@ -138,6 +138,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\BotReportController::deleteDataAction',  '_route' => 'app_botreport_deletedata',);
         }
 
+        // cakeApiOfferFeed
+        if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}') {
+            return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getOffersAction',  '_route' => 'cakeApiOfferFeed',);
+        }
+
         if (0 === strpos($pathinfo, '/c')) {
             if (0 === strpos($pathinfo, '/campaign')) {
                 // campaign
@@ -541,6 +546,72 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
+        if (0 === strpos($pathinfo, '/offers')) {
+            // offerGroups
+            if ($pathinfo === '/offers/offer-groups') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showGroupsAction',  '_route' => 'offerGroups',);
+            }
+
+            // addOfferGroup
+            if ($pathinfo === '/offers/add-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addGroupAction',  '_route' => 'addOfferGroup',);
+            }
+
+            // editOfferGroup
+            if ($pathinfo === '/offers/edit-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::editGroupAction',  '_route' => 'editOfferGroup',);
+            }
+
+            // deleteOfferGroup
+            if ($pathinfo === '/offers/delete-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteGroupAction',  '_route' => 'deleteOfferGroup',);
+            }
+
+        }
+
+        // app_offers_ajaxgetoffergroups
+        if ($pathinfo === '/ajax/get-offer-groups') {
+            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::ajaxGetOfferGroups',  '_route' => 'app_offers_ajaxgetoffergroups',);
+        }
+
+        if (0 === strpos($pathinfo, '/offers')) {
+            // offerSearch
+            if ($pathinfo === '/offers/offer-search') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOfferSearchAction',  '_route' => 'offerSearch',);
+            }
+
+            // searchOffer
+            if ($pathinfo === '/offers/search-offer') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::searchOfferAction',  '_route' => 'searchOffer',);
+            }
+
+            // addOfferToGroup
+            if ($pathinfo === '/offers/add-offer-to-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOfferToGroupAction',  '_route' => 'addOfferToGroup',);
+            }
+
+        }
+
+        // app_offers_ajaxgetcaketmptbl
+        if ($pathinfo === '/ajax/get-cake-tmp-tbl') {
+            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::ajaxGetCakeTmpTbl',  '_route' => 'app_offers_ajaxgetcaketmptbl',);
+        }
+
+        // offersGroupsOffers
+        if (0 === strpos($pathinfo, '/offers/group') && preg_match('#^/offers/group(?:/(?P<id>[^/]++))?$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'offersGroupsOffers')), array (  'id' => NULL,  '_controller' => 'AppBundle\\Controller\\OffersController::showManageOffersGroupAction',));
+        }
+
+        // app_offers_getgroupoffers
+        if (0 === strpos($pathinfo, '/ajax/offer/group') && preg_match('#^/ajax/offer/group(?:/(?P<groupId>[^/]++))?$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'app_offers_getgroupoffers')), array (  'groupId' => NULL,  '_controller' => 'AppBundle\\Controller\\OffersController::getGroupOffersAction',));
+        }
+
+        // deleteOfferGroupsOffers
+        if ($pathinfo === '/offers/group-delete') {
+            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteOffersAction',  '_route' => 'deleteOfferGroupsOffers',);
+        }
+
         if (0 === strpos($pathinfo, '/global-settings')) {
             // app_settings_showapiaccesscredentials
             if ($pathinfo === '/global-settings/api-access') {
@@ -621,6 +692,34 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::presetDeleteAction',  '_route' => 'deletePresets',);
             }
 
+        }
+
+        // app_settings_showaffiliate
+        if ($pathinfo === '/global-settings/affiliate') {
+            return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::showAffiliateAction',  '_route' => 'app_settings_showaffiliate',);
+        }
+
+        if (0 === strpos($pathinfo, '/settings')) {
+            // addNetworkAction
+            if ($pathinfo === '/settings/add-network') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::addNetworkAction',  '_route' => 'addNetworkAction',);
+            }
+
+            // editNetwork
+            if ($pathinfo === '/settings/edit-network') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::editNetworkAction',  '_route' => 'editNetwork',);
+            }
+
+            // deleteNetwork
+            if ($pathinfo === '/settings/delete-network') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::deleteNetworkAction',  '_route' => 'deleteNetwork',);
+            }
+
+        }
+
+        // app_settings_ajaxgetnetwork
+        if ($pathinfo === '/ajax/get-affiliate-network') {
+            return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::ajaxGetNetwork',  '_route' => 'app_settings_ajaxgetnetwork',);
         }
 
         // registerToken

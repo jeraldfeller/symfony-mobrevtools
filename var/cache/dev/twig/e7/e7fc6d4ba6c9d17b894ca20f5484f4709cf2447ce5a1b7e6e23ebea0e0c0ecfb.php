@@ -15,11 +15,11 @@ class __TwigTemplate_bccc2e4e7282949fab31c42d885634d96f77ca26beb8cf771422670c7c2
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_d96fe804b8dcda149767deb31e02824bfb7d953f2c3301a1ac9bc4d173d641e6 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_d96fe804b8dcda149767deb31e02824bfb7d953f2c3301a1ac9bc4d173d641e6->enter($__internal_d96fe804b8dcda149767deb31e02824bfb7d953f2c3301a1ac9bc4d173d641e6_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "SgDatatablesBundle:Action:action.html.twig"));
+        $__internal_6924c4109e37425f253baa597322cf0a83e02903545e018f85b7af8fbaf7b993 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_6924c4109e37425f253baa597322cf0a83e02903545e018f85b7af8fbaf7b993->enter($__internal_6924c4109e37425f253baa597322cf0a83e02903545e018f85b7af8fbaf7b993_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "SgDatatablesBundle:Action:action.html.twig"));
 
-        $__internal_c0ea7e31ac3b0fae87ba1676a73b5382c84e0f9ae30eaed81c7eff84eff62fc0 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_c0ea7e31ac3b0fae87ba1676a73b5382c84e0f9ae30eaed81c7eff84eff62fc0->enter($__internal_c0ea7e31ac3b0fae87ba1676a73b5382c84e0f9ae30eaed81c7eff84eff62fc0_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "SgDatatablesBundle:Action:action.html.twig"));
+        $__internal_b22124ba9bf3288422583316e7d9d753488bc494ed76c2e54b7ed91d6c525d48 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_b22124ba9bf3288422583316e7d9d753488bc494ed76c2e54b7ed91d6c525d48->enter($__internal_b22124ba9bf3288422583316e7d9d753488bc494ed76c2e54b7ed91d6c525d48_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "SgDatatablesBundle:Action:action.html.twig"));
 
         // line 9
         echo "var actionsString = \"\";
@@ -96,10 +96,10 @@ var routeParameters, attributes, visibleFlag, roleFlag;
 return actionsString;
 ";
         
-        $__internal_d96fe804b8dcda149767deb31e02824bfb7d953f2c3301a1ac9bc4d173d641e6->leave($__internal_d96fe804b8dcda149767deb31e02824bfb7d953f2c3301a1ac9bc4d173d641e6_prof);
+        $__internal_6924c4109e37425f253baa597322cf0a83e02903545e018f85b7af8fbaf7b993->leave($__internal_6924c4109e37425f253baa597322cf0a83e02903545e018f85b7af8fbaf7b993_prof);
 
         
-        $__internal_c0ea7e31ac3b0fae87ba1676a73b5382c84e0f9ae30eaed81c7eff84eff62fc0->leave($__internal_c0ea7e31ac3b0fae87ba1676a73b5382c84e0f9ae30eaed81c7eff84eff62fc0_prof);
+        $__internal_b22124ba9bf3288422583316e7d9d753488bc494ed76c2e54b7ed91d6c525d48->leave($__internal_b22124ba9bf3288422583316e7d9d753488bc494ed76c2e54b7ed91d6c525d48_prof);
 
     }
 

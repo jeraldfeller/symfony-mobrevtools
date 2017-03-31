@@ -15,11 +15,11 @@ class __TwigTemplate_c4e9c942513672280ea52ff703feb168cc1a8dc14015cf0acd306a43479
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_7faca0601acfbbab4557474e03805ae42ca524374472be62188feaf49292d397 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_7faca0601acfbbab4557474e03805ae42ca524374472be62188feaf49292d397->enter($__internal_7faca0601acfbbab4557474e03805ae42ca524374472be62188feaf49292d397_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/features.html.twig"));
+        $__internal_252eef1599cb1250fbea53949a4ffb5fecf73d68cd2523cc38a95f9fe8ddc531 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_252eef1599cb1250fbea53949a4ffb5fecf73d68cd2523cc38a95f9fe8ddc531->enter($__internal_252eef1599cb1250fbea53949a4ffb5fecf73d68cd2523cc38a95f9fe8ddc531_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/features.html.twig"));
 
-        $__internal_b3ac22b9acd6bf4c421deda9564f1b3e26a00af60a9c9c83f1085408ecba65c9 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_b3ac22b9acd6bf4c421deda9564f1b3e26a00af60a9c9c83f1085408ecba65c9->enter($__internal_b3ac22b9acd6bf4c421deda9564f1b3e26a00af60a9c9c83f1085408ecba65c9_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/features.html.twig"));
+        $__internal_5f1b15c8c3a741aa457d69d6164b755f737468ba4b7acc3b04dfa4d93a0c961a = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_5f1b15c8c3a741aa457d69d6164b755f737468ba4b7acc3b04dfa4d93a0c961a->enter($__internal_5f1b15c8c3a741aa457d69d6164b755f737468ba4b7acc3b04dfa4d93a0c961a_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/features.html.twig"));
 
         // line 9
         echo "\"autoWidth\": ";
@@ -180,10 +180,10 @@ class __TwigTemplate_c4e9c942513672280ea52ff703feb168cc1a8dc14015cf0acd306a43479
         unset($context['_seq'], $context['_iterated'], $context['extension'], $context['options'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
         
-        $__internal_7faca0601acfbbab4557474e03805ae42ca524374472be62188feaf49292d397->leave($__internal_7faca0601acfbbab4557474e03805ae42ca524374472be62188feaf49292d397_prof);
+        $__internal_252eef1599cb1250fbea53949a4ffb5fecf73d68cd2523cc38a95f9fe8ddc531->leave($__internal_252eef1599cb1250fbea53949a4ffb5fecf73d68cd2523cc38a95f9fe8ddc531_prof);
 
         
-        $__internal_b3ac22b9acd6bf4c421deda9564f1b3e26a00af60a9c9c83f1085408ecba65c9->leave($__internal_b3ac22b9acd6bf4c421deda9564f1b3e26a00af60a9c9c83f1085408ecba65c9_prof);
+        $__internal_5f1b15c8c3a741aa457d69d6164b755f737468ba4b7acc3b04dfa4d93a0c961a->leave($__internal_5f1b15c8c3a741aa457d69d6164b755f737468ba4b7acc3b04dfa4d93a0c961a_prof);
 
     }
 
