@@ -12,6 +12,13 @@
             text-align: left !important;
             padding-left: 10px !important;
         }
+
+        .popover {
+            min-width: 500px !important;
+            /* If max-width does not work, try using width instead */
+            width: 100% !important;
+            text-align: justify;
+        }
     </style>
 {% endblock %}
 {% block nav %}
@@ -276,11 +283,13 @@
 
 
         function showDetails(elem){
-            $description = $(elem).data('description');
+            $description = '<b>' + $(elem).data('description') + '</b>';
             $restrictions = $(elem).data('restrictions');
             $advertiserTerms = $(elem).data('terms');
-            $(elem).tooltip({
-                title: "<pre><b>" + $description + "<br>" + $restrictions + "</b></pre>", html: true, placement: "top", trigger: "click"});
+            $content = '<div class="col-lg-12"><b>Restrictions:</b><br>' + $restrictions + '</div><div class="col-lg-12"><b>Advertiser Extended Terms:</b><br>' + $advertiserTerms +'</div>';
+            $(elem).popover({
+                template: '<div class="popover" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title popover-primary"></h3><div class="popover-content"></div></div>', title: $description, content: $content,  html: true, placement: "top", animation: true, contentainer: 'body',  trigger: "hover"});
+                $(elem).popover('show');
         }
 
 

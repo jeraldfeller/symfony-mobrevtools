@@ -81,12 +81,14 @@
                                                     <div class="modal-body">
                                                         <div class="row">
                                                             <div class="col-lg-12 col-md-12">
-                                                                <h4>Affiliate Network Name</h4>
+                                                                <h4>Network Name</h4>
                                                                     <input type="text" id="affiliateNetworkName" class="form-control">
-                                                                <h4>Affiliate ID</h4>
+                                                                <h4>User ID</h4>
                                                                     <input type="text" id="affiliateId" class="form-control">
+                                                                <h4>API Url</h4>
+                                                                    <input type="text" id="apiUrl" class="form-control">
                                                                 <h4>API Key</h4>
-                                                                    <input type="email" id="apiKey" class="form-control">
+                                                                    <input type="text" id="apiKey" class="form-control">
                                                             </div>
                                                          </div>
                                                     </div>
@@ -110,12 +112,14 @@
                                                     <div class="modal-body">
                                                         <div class="row">
                                                             <div class="col-lg-12 col-md-12">
-                                                                <h4>Affiliate Network Name</h4>
+                                                                <h4>Network Name</h4>
                                                                     <input type="text" id="editAffiliateNetworkName" class="form-control">
-                                                                <h4>Affiliate ID</h4>
+                                                                <h4>User ID</h4>
                                                                     <input type="text" id="editAffiliateId" class="form-control">
+                                                                <h4>API Url</h4>
+                                                                    <input type="text" id="editApiUrl" class="form-control">
                                                                 <h4>API Key</h4>
-                                                                    <input type="email" id="editApiKey" class="form-control">
+                                                                    <input type="text" id="editApiKey" class="form-control">
                                                             </div>
                                                          </div>
                                                     </div>
@@ -174,8 +178,9 @@
                                     <table class="table table-striped table-bordered table-hover dt-responsive table-checkable order-column table-header-fixed" width="100%" id="datatable-responsive">
                                         <thead>
                                         <tr>
-                                            <th>Affiliate Network</th>
-                                            <th>Affiliate Id</th>
+                                            <th>Network Name</th>
+                                            <th>User Id</th>
+                                            <th>API Url </th>
                                             <th>API Key </th>
                                             <th>Action</th>
                                         </tr>
@@ -246,6 +251,7 @@
                 $data = {
                     networkName: $('#affiliateNetworkName').val(),
                     affiliateId: $('#affiliateId').val(),
+                    apiUrl: $('#apiUrl').val(),
                     apiKey: $('#apiKey').val()
                 }
 
@@ -260,6 +266,7 @@
                     id: $('#editAffiliateNetworkId').val(),
                     networkName: $('#editAffiliateNetworkName').val(),
                     affiliateId: $('#editAffiliateId').val(),
+                    apiUrl: $('#editApiUrl').val(),
                     apiKey: $('#editApiKey').val()
                 }
 
@@ -285,6 +292,7 @@
             $name = $(elem).data('name');
             $affiliateId = $(elem).data('affiliate-id');
             $apiKey = $(elem).data('api-key');
+            $apiUrl = $(elem).data('api-url');
 
 
             if($action == 'edit'){
@@ -292,6 +300,7 @@
                 $('#editAffiliateNetworkName').val($name);
                 $('#editAffiliateId').val($affiliateId);
                 $('#editApiKey').val($apiKey);
+                $('#editApiUrl').val($apiUrl);
             }else if($action == 'delete'){
                 $('#deleteAffiliateNetworkId').val($id);
                 $('#networkDeleteName').html($name);

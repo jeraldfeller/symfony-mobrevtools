@@ -9,14 +9,19 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="apiKey" type="string" column="api_key" length="600" nullable="false">
+    <field name="affiliateId" type="integer" column="affiliate_id" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="apiUrl" type="string" column="api_url" length="60" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="affiliateId" type="integer" column="affiliate_id" nullable="false">
+    <field name="apiKey" type="string" column="api_key" length="600" nullable="false">
       <options>
-        <option name="unsigned"/>
+        <option name="fixed"/>
       </options>
     </field>
   </entity>

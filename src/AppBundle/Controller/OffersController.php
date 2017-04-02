@@ -513,21 +513,244 @@ class OffersController extends Controller{
     {
         $data = json_decode($_POST['param'], true);
         $this->forward('AppBundle:Deletes:deleteReportsAll', array('data' => 'AppBundle:CakeOffersTmpTbl'))->getContent();
-        $network = $this->getDoctrine()
-            ->getRepository('AppBundle:AffiliateNetwork')
-            ->find($data['affiliateNetworkId']);
-        $offers =  json_decode($this->forward('AppBundle:CakeApi:getOffers', array(
-            'affiliateId' => $network->getAffiliateId(),
-            'apiKey' => $network->getApiKey(),
-            'network' => $network->getNetworkName()
-        ))->getContent(), true);
+        if($data['affiliateNetworkId'] == 'All'){
+            $network = $this->getDoctrine()
+                ->getRepository('AppBundle:AffiliateNetwork')
+                ->findAll();
 
-        $batch = 100;
-        $x = 0;
-        $em = $this->getDoctrine()->getManager();
-        foreach($offers['d']['offers'] as $row){
-            if($data['offerKeyword'] != ''){
-                if(strpos($row['offer_name'], $data['offerKeyword']) !== false){
+            $batch = 100;
+            $x = 0;
+            $em = $this->getDoctrine()->getManager();
+
+            for($i = 0; $i < count($network); $i++){
+
+
+                $offers =  json_decode($this->forward('AppBundle:CakeApi:getOffers', array(
+                    'affiliateId' => $network[$i]->getAffiliateId(),
+                    'apiKey' => $network[$i]->getApiKey(),
+                    'network' => $network[$i]->getApiUrl()
+                ))->getContent(), true);
+
+
+                foreach($offers['d']['offers'] as $row){
+                    if($data['offerKeyword'] != ''){
+                        $keys = explode(',', $data['offerKeyword']);
+
+                        for($y = 0; $y < count($keys); $y++){
+                            $hasMatch = array();
+                            $hasAndMatch = array();
+                            $hasAnd = false;
+                            $key = strtolower($keys[$y]);
+                            if(strpos($key, 'or') !== false){
+                                $multiKeys = explode('{or}', $key);
+                                for($z = 0; $z < count($multiKeys); $z++){
+                                    if($z == (count($multiKeys) - 1) && strpos($multiKeys[$z], '{and}') !== false){
+                                        $hasAnd = true;
+                                        $andKey = preg_replace('/\s+/', '', substr($multiKeys[$z], strpos($multiKeys[$z], '{and}')));
+                                       $subKey = substr($multiKeys[$z], 0, strpos($multiKeys[$z], "{and}"));
+                                    }else{
+                                        $subKey = $multiKeys[$z];
+                                    }
+                                    if(strpos(strtolower($row['offer_name']), $subKey) !== false){
+                                        $hasMatch[] = true;
+                                    }
+
+                                    if($hasAnd == true){
+                                        $andMultiKeys = explode('{and}', $andKey);
+                                        for($w = 1; $w < count($andMultiKeys); $w++){
+                                            $andMultiKey = strtolower($andMultiKeys[$w]);
+                                            if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                                $hasAndMatch[] = true;
+                                            }else{
+                                                $hasAndMatch[] = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }else if(strpos($key, '{and}') !== false){
+                                $hasAnd = true;
+                                $hasMatch[] = true;
+                                $andMultiKeys = explode('{and}', preg_replace('/\s+/', '', $key));
+                                for($v = 0; $v < count($andMultiKeys); $v++){
+                                    $andMultiKey = strtolower($andMultiKeys[$v]);
+                                    if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                        $hasAndMatch[] = true;
+                                    }else{
+                                        $hasAndMatch[] = false;
+                                    }
+                                }
+
+
+                            }
+                            else{
+                                if(strpos(strtolower($row['offer_name']), $key) !== false){
+                                    $hasMatch[] = true;
+                                }
+                            }
+
+
+
+                            if(in_array(1, $hasMatch)){
+                                if($hasAnd == true){
+                                    if(!in_array(0, $hasAndMatch)){
+                                        $doctrine = new CakeOffersTmpTbl();
+                                        $doctrine->setOfferId($row['offer_id']);
+                                        $doctrine->setOfferName($row['offer_name']);
+                                        $doctrine->setVerticalName($row['vertical_name']);
+                                        $doctrine->setPayout($row['payout']);
+                                        $doctrine->setPriceFormat($row['price_format']);
+                                        $doctrine->setDescription($row['description']);
+                                        $doctrine->setRestrictions($row['restrictions']);
+                                        $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                        $em->persist($doctrine);
+                                    }
+                                }else{
+                                    $doctrine = new CakeOffersTmpTbl();
+                                    $doctrine->setOfferId($row['offer_id']);
+                                    $doctrine->setOfferName($row['offer_name']);
+                                    $doctrine->setVerticalName($row['vertical_name']);
+                                    $doctrine->setPayout($row['payout']);
+                                    $doctrine->setPriceFormat($row['price_format']);
+                                    $doctrine->setDescription($row['description']);
+                                    $doctrine->setRestrictions($row['restrictions']);
+                                    $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                    $em->persist($doctrine);
+                                }
+
+                            }
+
+                        }
+
+
+                    }else{
+                        $doctrine = new CakeOffersTmpTbl();
+                        $doctrine->setOfferId($row['offer_id']);
+                        $doctrine->setOfferName($row['offer_name']);
+                        $doctrine->setVerticalName($row['vertical_name']);
+                        $doctrine->setPayout($row['payout']);
+                        $doctrine->setPriceFormat($row['price_format']);
+                        $doctrine->setDescription($row['description']);
+                        $doctrine->setRestrictions($row['restrictions']);
+                        $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                        $em->persist($doctrine);
+
+
+                    }
+
+                    if(($x % $batch) == 0){
+                        $em->flush();
+                    }
+
+                }
+
+
+            }
+
+
+        }else{
+            $network = $this->getDoctrine()
+                ->getRepository('AppBundle:AffiliateNetwork')
+                ->find($data['affiliateNetworkId']);
+            $offers =  json_decode($this->forward('AppBundle:CakeApi:getOffers', array(
+                'affiliateId' => $network->getAffiliateId(),
+                'apiKey' => $network->getApiKey(),
+                'network' => $network->getApiUrl()
+            ))->getContent(), true);
+
+            $batch = 100;
+            $x = 0;
+            $em = $this->getDoctrine()->getManager();
+            foreach($offers['d']['offers'] as $row){
+                if($data['offerKeyword'] != ''){
+                    $keys = explode(',', $data['offerKeyword']);
+
+                    for($y = 0; $y < count($keys); $y++){
+                        $hasMatch = array();
+                        $hasAndMatch = array();
+                        $hasAnd = false;
+                        $key = strtolower($keys[$y]);
+                        if(strpos($key, 'or') !== false){
+                            $multiKeys = explode('{or}', $key);
+                            for($z = 0; $z < count($multiKeys); $z++){
+                                if($z == (count($multiKeys) - 1) && strpos($multiKeys[$z], '{and}') !== false){
+                                    $hasAnd = true;
+                                    $andKey = preg_replace('/\s+/', '', substr($multiKeys[$z], strpos($multiKeys[$z], '{and}')));
+                                    $subKey = substr($multiKeys[$z], 0, strpos($multiKeys[$z], "{and}"));
+                                }else{
+                                    $subKey = $multiKeys[$z];
+                                }
+                                if(strpos(strtolower($row['offer_name']), $subKey) !== false){
+                                    $hasMatch[] = true;
+                                }
+
+                                if($hasAnd == true){
+                                    $andMultiKeys = explode('{and}', $andKey);
+                                    for($w = 1; $w < count($andMultiKeys); $w++){
+                                        $andMultiKey = strtolower($andMultiKeys[$w]);
+                                        if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                            $hasAndMatch[] = true;
+                                        }else{
+                                            $hasAndMatch[] = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }else if(strpos($key, '{and}') !== false){
+                            $hasAnd = true;
+                            $hasMatch[] = true;
+                            $andMultiKeys = explode('{and}', preg_replace('/\s+/', '', $key));
+                            for($v = 0; $v < count($andMultiKeys); $v++){
+                                $andMultiKey = strtolower($andMultiKeys[$v]);
+                                if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                    $hasAndMatch[] = true;
+                                }else{
+                                    $hasAndMatch[] = false;
+                                }
+                            }
+
+
+                        }
+                        else{
+                            if(strpos(strtolower($row['offer_name']), $key) !== false){
+                                $hasMatch[] = true;
+                            }
+                        }
+
+
+
+                        if(in_array(1, $hasMatch)){
+                            if($hasAnd == true){
+                                if(!in_array(0, $hasAndMatch)){
+                                    $doctrine = new CakeOffersTmpTbl();
+                                    $doctrine->setOfferId($row['offer_id']);
+                                    $doctrine->setOfferName($row['offer_name']);
+                                    $doctrine->setVerticalName($row['vertical_name']);
+                                    $doctrine->setPayout($row['payout']);
+                                    $doctrine->setPriceFormat($row['price_format']);
+                                    $doctrine->setDescription($row['description']);
+                                    $doctrine->setRestrictions($row['restrictions']);
+                                    $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                    $em->persist($doctrine);
+                                }
+                            }else{
+                                $doctrine = new CakeOffersTmpTbl();
+                                $doctrine->setOfferId($row['offer_id']);
+                                $doctrine->setOfferName($row['offer_name']);
+                                $doctrine->setVerticalName($row['vertical_name']);
+                                $doctrine->setPayout($row['payout']);
+                                $doctrine->setPriceFormat($row['price_format']);
+                                $doctrine->setDescription($row['description']);
+                                $doctrine->setRestrictions($row['restrictions']);
+                                $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                $em->persist($doctrine);
+                            }
+
+                        }
+
+                    }
+
+
+                }else{
                     $doctrine = new CakeOffersTmpTbl();
                     $doctrine->setOfferId($row['offer_id']);
                     $doctrine->setOfferName($row['offer_name']);
@@ -538,29 +761,21 @@ class OffersController extends Controller{
                     $doctrine->setRestrictions($row['restrictions']);
                     $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                     $em->persist($doctrine);
+
+
                 }
-            }else{
-                $doctrine = new CakeOffersTmpTbl();
-                $doctrine->setOfferId($row['offer_id']);
-                $doctrine->setOfferName($row['offer_name']);
-                $doctrine->setVerticalName($row['vertical_name']);
-                $doctrine->setPayout($row['payout']);
-                $doctrine->setPriceFormat($row['price_format']);
-                $doctrine->setDescription($row['description']);
-                $doctrine->setRestrictions($row['restrictions']);
-                $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
-                $em->persist($doctrine);
 
+                if(($x % $batch) == 0){
+                    $em->flush();
+                }
 
             }
-
-            if(($x % $batch) == 0){
-                $em->flush();
-            }
-
         }
+
+
         $em->flush();
         $em->clear();
+
         $return = json_encode(array('type' => 'success', 'title' => 'Success', 'message' => 'Offers Successfully Imported'));
         return new Response($return);
 
@@ -907,7 +1122,7 @@ class OffersController extends Controller{
 
         $sQuery = $em->createQuery("
         SELECT og.ogoid, og.offerId, og.offerName, og.verticalName, og.payout, og.priceFormat, og.description, og.restrictions, og.advertiserExtendedTerms
-        FROM $offerGroupsOffersBundle og, $offerGroupBundle o $sWhere $sOrder ")
+        FROM $offerGroupsOffersBundle og, $offerGroupBundle o $sWhere GROUP BY og.offerId $sOrder")
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults)
         ;
@@ -919,7 +1134,7 @@ class OffersController extends Controller{
 
         $sQuery = $em->createQuery("
         SELECT og, o
-        FROM $offerGroupsOffersBundle og $offerGroupBundle o $sWhere $sOrder ");
+        FROM $offerGroupsOffersBundle og $offerGroupBundle o $sWhere  GROUP BY og.offerId $sOrder");
 
         $iTotal = count($sQuery);
 

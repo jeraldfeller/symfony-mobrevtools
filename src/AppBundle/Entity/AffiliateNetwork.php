@@ -109,4 +109,33 @@ class AffiliateNetwork
     {
         return $this->affiliateNetworkId;
     }
+    /**
+     * @var string
+     */
+    private $apiUrl;
+
+
+    /**
+     * Set apiUrl
+     *
+     * @param string $apiUrl
+     *
+     * @return AffiliateNetwork
+     */
+    public function setApiUrl($apiUrl)
+    {
+        $this->apiUrl = $apiUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get apiUrl
+     *
+     * @return string
+     */
+    public function getApiUrl()
+    {
+        return $this->apiUrl;
+    }
 }

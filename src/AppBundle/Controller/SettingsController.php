@@ -748,6 +748,7 @@ class SettingsController extends Controller {
         if(!$istExists){
             $doctrine = new AffiliateNetwork();
             $doctrine->setNetworkName($data['networkName']);
+            $doctrine->setApiUrl($data['apiUrl']);
             $doctrine->setApiKey($data['apiKey']);
             $doctrine->setAffiliateId($data['affiliateId']);
             $em = $this->getDoctrine()->getManager();
@@ -778,6 +779,7 @@ class SettingsController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $doctrine = $em->getRepository('AppBundle:AffiliateNetwork')->findOneByAffiliateNetworkId($data['id']);
         $doctrine->setNetworkName($data['networkName']);
+        $doctrine->setApiUrl($data['apiUrl']);
         $doctrine->setApiKey($data['apiKey']);
         $doctrine->setAffiliateId($data['affiliateId']);
         $em->flush();
@@ -816,7 +818,7 @@ class SettingsController extends Controller {
     public function ajaxGetNetwork(){
 
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 't.affiliateNetworkId', 't.networkName', 't.apiKey', 't.affiliateId' );
+        $aColumns = array( 't.affiliateNetworkId', 't.networkName', 't.apiUrl', 't.apiKey', 't.affiliateId' );
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'id';
@@ -949,6 +951,7 @@ class SettingsController extends Controller {
             $row = array();
             $row[] = $column['networkName'];
             $row[] = $column['affiliateId'];
+            $row[] = $column['apiUrl'];
             $row[] = $column['apiKey'];
             $row[] = '<div class="btn-group">
                                         <button type="button" class="btn blue btn-xs"> Action</button>

@@ -9,11 +9,11 @@
             width: 100% !important;
         }
 
-        .tooltip-inner {
-            min-width: 350px !important;
+        .popover {
+            min-width: 500px !important;
             /* If max-width does not work, try using width instead */
-            width: 100% !important;,
-            background-color: #fffeee !important;
+            width: 100% !important;
+            text-align: justify;
         }
     </style>
 {% endblock %}
@@ -75,7 +75,7 @@
                         <div class="form-group">
                             <div class="col-md-3 col-xs-12">
                                 <select id="selectNetwork" class="form-control select2">
-                                    <option></option>
+                                    <option value="All" selected>All Networks</option>
                                     {% for item in networks %}
                                         <option value="{{ item.networkId }}">{{ item.networkName }}</option>
                                     {% endfor %}
@@ -83,7 +83,7 @@
                             </div>
 
                             <div class="col-md-7 col-xs-12">
-                                 <input type="text" class="form-control" id="searchOffer">
+                                 <input type="text" class="form-control" id="searchOffer" data-role="tagsinput">
                             </div>
 
 
@@ -336,6 +336,7 @@
                         "className": "dt-right"
                         //"targets": [2]
                     },
+                    {"width": "5%", "targets": 0},
                     {"width": "5%", "targets": 1},
                     {"width": "5%", "targets": 4},
                     {"width": "5%", "targets": 5},
@@ -407,12 +408,14 @@
         });
 
         function showDetails(elem){
-            $description = $(elem).data('description');
+            $description = '<b>' + $(elem).data('description') + '</b>';
             $restrictions = $(elem).data('restrictions');
             $advertiserTerms = $(elem).data('terms');
-            $(elem).tooltip({
-                title: "<pre><b>" + $description + "<br>" + $restrictions + "</b></pre>", html: true, placement: "top", trigger: "click"});
-            }
+            $content = '<div class="col-lg-12"><b>Restrictions:</b><br>' + $restrictions + '</div><div class="col-lg-12"><b>Advertiser Extended Terms:</b><br>' + $advertiserTerms +'</div>';
+            $(elem).popover({
+                template: '<div class="popover" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>', title: $description, content: $content,  html: true, placement: "top", animation: true, contentainer: 'body',  trigger: "hover"});
+            $(elem).popover('show');
+        }
 
 
     </script>
