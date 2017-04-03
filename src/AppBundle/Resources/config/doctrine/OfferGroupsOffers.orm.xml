@@ -7,7 +7,17 @@
     <id name="ogoid" type="integer" column="ogoId">
       <generator strategy="IDENTITY"/>
     </id>
+    <field name="affiliateNetworkId" type="integer" column="affiliate_network_id" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
     <field name="offerId" type="integer" column="offer_id" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="offerContractId" type="integer" column="offer_contract_id" nullable="false">
       <options>
         <option name="unsigned"/>
       </options>
@@ -45,6 +55,11 @@
     <field name="advertiserExtendedTerms" type="text" column="advertiser_extended_terms" nullable="false">
       <options>
         <option name="fixed"/>
+      </options>
+    </field>
+    <field name="status" type="integer" column="status" nullable="true">
+      <options>
+        <option name="unsigned"/>
       </options>
     </field>
     <many-to-one field="offerGroup" target-entity="OfferGroups" fetch="LAZY">

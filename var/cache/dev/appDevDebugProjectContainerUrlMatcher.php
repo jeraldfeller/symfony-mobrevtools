@@ -138,9 +138,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\BotReportController::deleteDataAction',  '_route' => 'app_botreport_deletedata',);
         }
 
-        // cakeApiOfferFeed
-        if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}') {
-            return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getOffersAction',  '_route' => 'cakeApiOfferFeed',);
+        if (0 === strpos($pathinfo, '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}')) {
+            // cakeApiOfferFeed
+            if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}') {
+                return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getOffersAction',  '_route' => 'cakeApiOfferFeed',);
+            }
+
+            // cakeApiApplyOffer
+            if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$contractId}') {
+                return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  'contractId' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::applyOffersAction',  '_route' => 'cakeApiApplyOffer',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/c')) {
@@ -585,9 +593,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\OffersController::searchOfferAction',  '_route' => 'searchOffer',);
             }
 
-            // addOfferToGroup
-            if ($pathinfo === '/offers/add-offer-to-group') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOfferToGroupAction',  '_route' => 'addOfferToGroup',);
+            if (0 === strpos($pathinfo, '/offers/a')) {
+                // applyOffers
+                if ($pathinfo === '/offers/apply-offers') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::applyOfferAction',  '_route' => 'applyOffers',);
+                }
+
+                // addOfferToGroup
+                if ($pathinfo === '/offers/add-offer-to-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOfferToGroupAction',  '_route' => 'addOfferToGroup',);
+                }
+
             }
 
         }

@@ -254,4 +254,91 @@ class CakeOffersTmpTbl
     {
         return $this->cottId;
     }
+    /**
+     * @var string
+     */
+    private $status;
+
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     *
+     * @return CakeOffersTmpTbl
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    /**
+     * @var integer
+     */
+    private $offerContractId;
+
+
+    /**
+     * Set offerContractId
+     *
+     * @param integer $offerContractId
+     *
+     * @return CakeOffersTmpTbl
+     */
+    public function setOfferContractId($offerContractId)
+    {
+        $this->offerContractId = $offerContractId;
+
+        return $this;
+    }
+
+    /**
+     * Get offerContractId
+     *
+     * @return integer
+     */
+    public function getOfferContractId()
+    {
+        return $this->offerContractId;
+    }
+    /**
+     * @var integer
+     */
+    private $affiliateNetworkId;
+
+
+    /**
+     * Set affiliateNetworkId
+     *
+     * @param integer $affiliateNetworkId
+     *
+     * @return CakeOffersTmpTbl
+     */
+    public function setAffiliateNetworkId($affiliateNetworkId)
+    {
+        $this->affiliateNetworkId = $affiliateNetworkId;
+
+        return $this;
+    }
+
+    /**
+     * Get affiliateNetworkId
+     *
+     * @return integer
+     */
+    public function getAffiliateNetworkId()
+    {
+        return $this->affiliateNetworkId;
+    }
 }

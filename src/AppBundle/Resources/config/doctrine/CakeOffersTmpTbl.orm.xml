@@ -4,7 +4,17 @@
     <id name="cottId" type="integer" column="cott_id">
       <generator strategy="IDENTITY"/>
     </id>
+    <field name="affiliateNetworkId" type="integer" column="affiliate_network_id" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
     <field name="offerId" type="integer" column="offer_id" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="offerContractId" type="integer" column="offer_contract_id" nullable="false">
       <options>
         <option name="unsigned"/>
       </options>
@@ -40,6 +50,11 @@
       </options>
     </field>
     <field name="advertiserExtendedTerms" type="text" column="advertiser_extended_terms" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="status" type="string" column="status" length="30" nullable="true">
       <options>
         <option name="fixed"/>
       </options>

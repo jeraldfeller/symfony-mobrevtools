@@ -594,7 +594,9 @@ class OffersController extends Controller{
                                 if($hasAnd == true){
                                     if(!in_array(0, $hasAndMatch)){
                                         $doctrine = new CakeOffersTmpTbl();
+                                        $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
                                         $doctrine->setOfferId($row['offer_id']);
+                                        $doctrine->setOfferContractId($row['offer_contract_id']);
                                         $doctrine->setOfferName($row['offer_name']);
                                         $doctrine->setVerticalName($row['vertical_name']);
                                         $doctrine->setPayout($row['payout']);
@@ -606,7 +608,9 @@ class OffersController extends Controller{
                                     }
                                 }else{
                                     $doctrine = new CakeOffersTmpTbl();
+                                    $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
                                     $doctrine->setOfferId($row['offer_id']);
+                                    $doctrine->setOfferContractId($row['offer_contract_id']);
                                     $doctrine->setOfferName($row['offer_name']);
                                     $doctrine->setVerticalName($row['vertical_name']);
                                     $doctrine->setPayout($row['payout']);
@@ -624,7 +628,9 @@ class OffersController extends Controller{
 
                     }else{
                         $doctrine = new CakeOffersTmpTbl();
+                        $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
                         $doctrine->setOfferId($row['offer_id']);
+                        $doctrine->setOfferContractId($row['offer_contract_id']);
                         $doctrine->setOfferName($row['offer_name']);
                         $doctrine->setVerticalName($row['vertical_name']);
                         $doctrine->setPayout($row['payout']);
@@ -657,10 +663,12 @@ class OffersController extends Controller{
                 'network' => $network->getApiUrl()
             ))->getContent(), true);
 
+
             $batch = 100;
-            $x = 0;
+            $x = 1;
             $em = $this->getDoctrine()->getManager();
             foreach($offers['d']['offers'] as $row){
+
                 if($data['offerKeyword'] != ''){
                     $keys = explode(',', $data['offerKeyword']);
 
@@ -722,7 +730,9 @@ class OffersController extends Controller{
                             if($hasAnd == true){
                                 if(!in_array(0, $hasAndMatch)){
                                     $doctrine = new CakeOffersTmpTbl();
+                                    $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
                                     $doctrine->setOfferId($row['offer_id']);
+                                    $doctrine->setOfferContractId($row['offer_contract_id']);
                                     $doctrine->setOfferName($row['offer_name']);
                                     $doctrine->setVerticalName($row['vertical_name']);
                                     $doctrine->setPayout($row['payout']);
@@ -734,7 +744,9 @@ class OffersController extends Controller{
                                 }
                             }else{
                                 $doctrine = new CakeOffersTmpTbl();
+                                $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
                                 $doctrine->setOfferId($row['offer_id']);
+                                $doctrine->setOfferContractId($row['offer_contract_id']);
                                 $doctrine->setOfferName($row['offer_name']);
                                 $doctrine->setVerticalName($row['vertical_name']);
                                 $doctrine->setPayout($row['payout']);
@@ -752,7 +764,9 @@ class OffersController extends Controller{
 
                 }else{
                     $doctrine = new CakeOffersTmpTbl();
+                    $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
                     $doctrine->setOfferId($row['offer_id']);
+                    $doctrine->setOfferContractId($row['offer_contract_id']);
                     $doctrine->setOfferName($row['offer_name']);
                     $doctrine->setVerticalName($row['vertical_name']);
                     $doctrine->setPayout($row['payout']);
@@ -760,6 +774,7 @@ class OffersController extends Controller{
                     $doctrine->setDescription($row['description']);
                     $doctrine->setRestrictions($row['restrictions']);
                     $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                    $doctrine->setStatus($row['offer_status']['status_id']);
                     $em->persist($doctrine);
 
 
@@ -783,6 +798,45 @@ class OffersController extends Controller{
 
 
     /**
+     * @Route("/offers/apply-offers", name="applyOffers")
+     */
+    public function applyOfferAction(){
+
+        $data = json_decode($_POST['param'], true);
+        for($x = 0; $x < count($data['items']); $x++){
+
+            $network = $this->getDoctrine()
+                ->getRepository('AppBundle:AffiliateNetwork')
+                ->find($data['items'][$x]['affiliateNetworkId']);
+
+
+            $offers =  json_decode($this->forward('AppBundle:CakeApi:applyOffers', array(
+                'affiliateId' => $network->getAffiliateId(),
+                'apiKey' => $network->getApiKey(),
+                'network' => $network->getApiUrl(),
+                'contractId' => $data['items'][$x]['contractId']
+            ))->getContent(), true);
+
+
+            if($offers['d']['success'] == true){
+                $em = $this->getDoctrine()->getManager();
+                $offer = $this->getDoctrine()
+                    ->getRepository('AppBundle:OfferGroupsOffers')
+                    ->find($data['items'][$x]['id']);
+
+                $offer->setStatus(1);
+
+                $em->flush();
+
+            }
+        }
+
+        return new Response(json_encode(true));
+
+    }
+
+
+    /**
      * @Route("/offers/add-offer-to-group", name="addOfferToGroup")
      */
     public function addOfferToGroupAction()
@@ -801,8 +855,10 @@ class OffersController extends Controller{
 
 
             $offer = new OfferGroupsOffers();
+            $offer->setAffiliateNetworkId($cakeOffer->getAffiliateNetworkId());
             $offer->setOfferGroup($groupEntity);
             $offer->setOfferId($cakeOffer->getOfferId());
+            $offer->setOfferContractId($cakeOffer->getOfferContractId());
             $offer->setOfferName($cakeOffer->getOfferName());
             $offer->setVerticalName($cakeOffer->getVerticalName());
             $offer->setPayout($cakeOffer->getPayout());
@@ -810,6 +866,7 @@ class OffersController extends Controller{
             $offer->setDescription($cakeOffer->getDescription());
             $offer->setRestrictions($cakeOffer->getRestrictions());
             $offer->setAdvertiserExtendedTerms($cakeOffer->getAdvertiserExtendedTerms());
+            $offer->setStatus($cakeOffer->getStatus());
             $em->persist($offer);
 
             if(($x % $batch) == 0){
@@ -837,7 +894,7 @@ class OffersController extends Controller{
     public function ajaxGetCakeTmpTbl(){
 
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 't.cottId', 't.offerId', 't.offerName', 't.verticalName', 't.payout', 't.priceFormat', 't.description', 't.restrictions', 't.advertiserExtendedTerms');
+        $aColumns = array( 't.cottId', 't.offerId', 't.offerName', 't.verticalName', 't.payout', 't.priceFormat', 't.status', 't.description', 't.restrictions', 't.advertiserExtendedTerms');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'id';
@@ -968,6 +1025,19 @@ class OffersController extends Controller{
 
         foreach($rResult as $column){
             $row = array();
+
+            if($column['status'] == 1){
+                $status = 'Active';
+            }else if($column['status'] == 2){
+                $status = 'Public';
+            }else if($column['status'] == 3){
+                $status = 'Apply To Run';
+            }else if($column['status'] == 4){
+                $status = 'Pending';
+            }else{
+                $status = 'Inactive';
+            }
+
             $row[] = '<td>
                         <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
                            <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['cottId'] . '" />
@@ -979,6 +1049,7 @@ class OffersController extends Controller{
             $row[] = $column['verticalName'];
             $row[] = $column['payout'];
             $row[] = $column['priceFormat'];
+            $row[] = $status;
             $row[] = '<button class="btn btn-info" data-description="' . $column['description'] . '" data-restrictions="' . $column['restrictions'] . '" data-terms="' . $column['advertiserExtendedTerms'] . '" onclick="showDetails(this)">DETAILS</button>';
             $output['aaData'][] = $row;
         }
@@ -1017,7 +1088,7 @@ class OffersController extends Controller{
     public function getGroupOffersAction($groupId = null){
         $em = $this->getDoctrine()->getManager();
         $groupEntity = $this->getDoctrine()->getRepository('AppBundle:OfferGroups')->findOneBy(array('offerGroupId' => $groupId));
-        $aColumns = array( 'og.ogoid', 'og.offerGroup', 'og.offerId', 'og.offerName', 'og.verticalName', 'og.payout', 'og.priceFormat', 'og.description', 'og.restrictions', 'og.advertiserExtendedTerms');
+        $aColumns = array( 'og.ogoid', 'og.offerGroup', 'og.offerId', 'og.offerName', 'og.verticalName', 'og.payout', 'og.priceFormat', 'og.description', 'og.restrictions', 'og.advertiserExtendedTerms', 'og.status');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'og.ogoid';
@@ -1121,7 +1192,7 @@ class OffersController extends Controller{
         $offerGroupsOffersBundle = 'AppBundle:OfferGroupsOffers';
 
         $sQuery = $em->createQuery("
-        SELECT og.ogoid, og.offerId, og.offerName, og.verticalName, og.payout, og.priceFormat, og.description, og.restrictions, og.advertiserExtendedTerms
+        SELECT og.ogoid, og.affiliateNetworkId, og.offerId, og.offerContractId, og.offerName, og.verticalName, og.payout, og.priceFormat, og.description, og.restrictions, og.advertiserExtendedTerms, og.status
         FROM $offerGroupsOffersBundle og, $offerGroupBundle o $sWhere GROUP BY og.offerId $sOrder")
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults)
@@ -1153,9 +1224,20 @@ class OffersController extends Controller{
 
         foreach($rResult as $column){
             $row = array();
+            if($column['status'] == 1){
+                $status = 'Active';
+            }else if($column['status'] == 2){
+                $status = 'Public';
+            }else if($column['status'] == 3){
+                $status = 'Apply To Run';
+            }else if($column['status'] == 4){
+                $status = 'Pending';
+            }else{
+                $status = 'Inactive';
+            }
             $row[] = '<td>
                         <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['ogoid'] . '" />
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['ogoid'] . '" data-offer-contract-id="' . $column['offerContractId'] . '" data-affiliate-network-id="' . $column['affiliateNetworkId'] . '"/>
                              <span></span>
                         </label>
                       </td>';
@@ -1164,6 +1246,7 @@ class OffersController extends Controller{
             $row[] = $column['verticalName'];
             $row[] = $column['payout'];
             $row[] = $column['priceFormat'];
+            $row[] = $status;
             $row[] = '<button class="btn btn-info" data-description="' . $column['description'] . '" data-restrictions="' . $column['restrictions'] . '" data-terms="' . $column['advertiserExtendedTerms'] . '" onclick="showDetails(this)">DETAILS</button>';
             $output['aaData'][] = $row;
 
