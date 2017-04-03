@@ -370,4 +370,33 @@ class OfferGroupsOffers
     {
         return $this->affiliateNetworkId;
     }
+    /**
+     * @var string
+     */
+    private $networkName;
+
+
+    /**
+     * Set networkName
+     *
+     * @param string $networkName
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setNetworkName($networkName)
+    {
+        $this->networkName = $networkName;
+
+        return $this;
+    }
+
+    /**
+     * Get networkName
+     *
+     * @return string
+     */
+    public function getNetworkName()
+    {
+        return $this->networkName;
+    }
 }

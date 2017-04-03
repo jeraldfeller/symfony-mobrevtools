@@ -27,6 +27,11 @@
         <option name="fixed"/>
       </options>
     </field>
+    <field name="networkName" type="string" column="network_name" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
     <field name="verticalName" type="string" column="vertical_name" length="100" nullable="false">
       <options>
         <option name="fixed"/>
@@ -57,9 +62,9 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="status" type="integer" column="status" nullable="true">
+    <field name="status" type="string" column="status" length="20" nullable="true">
       <options>
-        <option name="unsigned"/>
+        <option name="fixed"/>
       </options>
     </field>
     <many-to-one field="offerGroup" target-entity="OfferGroups" fetch="LAZY">

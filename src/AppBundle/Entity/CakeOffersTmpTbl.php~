@@ -312,4 +312,33 @@ class CakeOffersTmpTbl
     {
         return $this->offerContractId;
     }
+    /**
+     * @var integer
+     */
+    private $affiliateNetworkId;
+
+
+    /**
+     * Set affiliateNetworkId
+     *
+     * @param integer $affiliateNetworkId
+     *
+     * @return CakeOffersTmpTbl
+     */
+    public function setAffiliateNetworkId($affiliateNetworkId)
+    {
+        $this->affiliateNetworkId = $affiliateNetworkId;
+
+        return $this;
+    }
+
+    /**
+     * Get affiliateNetworkId
+     *
+     * @return integer
+     */
+    public function getAffiliateNetworkId()
+    {
+        return $this->affiliateNetworkId;
+    }
 }

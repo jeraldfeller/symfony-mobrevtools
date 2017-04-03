@@ -512,6 +512,7 @@ class OffersController extends Controller{
     public function searchOfferAction()
     {
         $data = json_decode($_POST['param'], true);
+        $includeInactive = $data['includeInactive'];
         $this->forward('AppBundle:Deletes:deleteReportsAll', array('data' => 'AppBundle:CakeOffersTmpTbl'))->getContent();
         if($data['affiliateNetworkId'] == 'All'){
             $network = $this->getDoctrine()
@@ -533,6 +534,397 @@ class OffersController extends Controller{
 
 
                 foreach($offers['d']['offers'] as $row){
+                    if($includeInactive == false){
+                        if($row['offer_status']['status_name'] != 'Inactive'){
+                            if($data['offerKeyword'] != ''){
+                                $keys = explode(',', $data['offerKeyword']);
+
+                                for($y = 0; $y < count($keys); $y++){
+                                    $hasMatch = array();
+                                    $hasAndMatch = array();
+                                    $hasAnd = false;
+                                    $key = strtolower($keys[$y]);
+                                    if(strpos($key, 'or') !== false){
+                                        $multiKeys = explode('{or}', $key);
+                                        for($z = 0; $z < count($multiKeys); $z++){
+                                            if($z == (count($multiKeys) - 1) && strpos($multiKeys[$z], '{and}') !== false){
+                                                $hasAnd = true;
+                                                $andKey = preg_replace('/\s+/', '', substr($multiKeys[$z], strpos($multiKeys[$z], '{and}')));
+                                                $subKey = substr($multiKeys[$z], 0, strpos($multiKeys[$z], "{and}"));
+                                            }else{
+                                                $subKey = $multiKeys[$z];
+                                            }
+                                            if(strpos(strtolower($row['offer_name']), $subKey) !== false){
+                                                $hasMatch[] = true;
+                                            }
+
+                                            if($hasAnd == true){
+                                                $andMultiKeys = explode('{and}', $andKey);
+                                                for($w = 1; $w < count($andMultiKeys); $w++){
+                                                    $andMultiKey = strtolower($andMultiKeys[$w]);
+                                                    if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                                        $hasAndMatch[] = true;
+                                                    }else{
+                                                        $hasAndMatch[] = false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }else if(strpos($key, '{and}') !== false){
+                                        $hasAnd = true;
+                                        $hasMatch[] = true;
+                                        $andMultiKeys = explode('{and}', preg_replace('/\s+/', '', $key));
+                                        for($v = 0; $v < count($andMultiKeys); $v++){
+                                            $andMultiKey = strtolower($andMultiKeys[$v]);
+                                            if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                                $hasAndMatch[] = true;
+                                            }else{
+                                                $hasAndMatch[] = false;
+                                            }
+                                        }
+
+
+                                    }
+                                    else{
+                                        if(strpos(strtolower($row['offer_name']), $key) !== false){
+                                            $hasMatch[] = true;
+                                        }
+                                    }
+
+
+
+                                    if(in_array(1, $hasMatch)){
+                                        if($hasAnd == true){
+                                            if(!in_array(0, $hasAndMatch)){
+                                                $doctrine = new CakeOffersTmpTbl();
+                                                $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                                $doctrine->setOfferId($row['offer_id']);
+                                                $doctrine->setOfferContractId($row['offer_contract_id']);
+                                                $doctrine->setOfferName($row['offer_name']);
+                                                $doctrine->setNetworkName($network[$i]->getNetworkName());
+                                                $doctrine->setVerticalName($row['vertical_name']);
+                                                $doctrine->setPayout($row['payout']);
+                                                $doctrine->setPriceFormat($row['price_format']);
+                                                $doctrine->setDescription($row['description']);
+                                                $doctrine->setRestrictions($row['restrictions']);
+                                                $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                                $doctrine->setStatus($row['offer_status']['status_name']);
+                                                $em->persist($doctrine);
+                                            }
+                                        }else{
+                                            $doctrine = new CakeOffersTmpTbl();
+                                            $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                            $doctrine->setOfferId($row['offer_id']);
+                                            $doctrine->setOfferContractId($row['offer_contract_id']);
+                                            $doctrine->setOfferName($row['offer_name']);
+                                            $doctrine->setNetworkName($network[$i]->getNetworkName());
+                                            $doctrine->setVerticalName($row['vertical_name']);
+                                            $doctrine->setPayout($row['payout']);
+                                            $doctrine->setPriceFormat($row['price_format']);
+                                            $doctrine->setDescription($row['description']);
+                                            $doctrine->setRestrictions($row['restrictions']);
+                                            $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                            $doctrine->setStatus($row['offer_status']['status_name']);
+                                            $em->persist($doctrine);
+                                        }
+
+                                    }
+
+                                }
+
+
+                            }else{
+                                $doctrine = new CakeOffersTmpTbl();
+                                $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                $doctrine->setOfferId($row['offer_id']);
+                                $doctrine->setOfferContractId($row['offer_contract_id']);
+                                $doctrine->setOfferName($row['offer_name']);
+                                $doctrine->setNetworkName($network[$i]->getNetworkName());
+                                $doctrine->setVerticalName($row['vertical_name']);
+                                $doctrine->setPayout($row['payout']);
+                                $doctrine->setPriceFormat($row['price_format']);
+                                $doctrine->setDescription($row['description']);
+                                $doctrine->setRestrictions($row['restrictions']);
+                                $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                $doctrine->setStatus($row['offer_status']['status_name']);
+                                $em->persist($doctrine);
+
+
+                            }
+
+                            if(($x % $batch) == 0){
+                                $em->flush();
+                            }
+
+                        }
+                        }else{
+
+
+                        if($data['offerKeyword'] != ''){
+                            $keys = explode(',', $data['offerKeyword']);
+
+                            for($y = 0; $y < count($keys); $y++){
+                                $hasMatch = array();
+                                $hasAndMatch = array();
+                                $hasAnd = false;
+                                $key = strtolower($keys[$y]);
+                                if(strpos($key, 'or') !== false){
+                                    $multiKeys = explode('{or}', $key);
+                                    for($z = 0; $z < count($multiKeys); $z++){
+                                        if($z == (count($multiKeys) - 1) && strpos($multiKeys[$z], '{and}') !== false){
+                                            $hasAnd = true;
+                                            $andKey = preg_replace('/\s+/', '', substr($multiKeys[$z], strpos($multiKeys[$z], '{and}')));
+                                            $subKey = substr($multiKeys[$z], 0, strpos($multiKeys[$z], "{and}"));
+                                        }else{
+                                            $subKey = $multiKeys[$z];
+                                        }
+                                        if(strpos(strtolower($row['offer_name']), $subKey) !== false){
+                                            $hasMatch[] = true;
+                                        }
+
+                                        if($hasAnd == true){
+                                            $andMultiKeys = explode('{and}', $andKey);
+                                            for($w = 1; $w < count($andMultiKeys); $w++){
+                                                $andMultiKey = strtolower($andMultiKeys[$w]);
+                                                if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                                    $hasAndMatch[] = true;
+                                                }else{
+                                                    $hasAndMatch[] = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }else if(strpos($key, '{and}') !== false){
+                                    $hasAnd = true;
+                                    $hasMatch[] = true;
+                                    $andMultiKeys = explode('{and}', preg_replace('/\s+/', '', $key));
+                                    for($v = 0; $v < count($andMultiKeys); $v++){
+                                        $andMultiKey = strtolower($andMultiKeys[$v]);
+                                        if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                            $hasAndMatch[] = true;
+                                        }else{
+                                            $hasAndMatch[] = false;
+                                        }
+                                    }
+
+
+                                }
+                                else{
+                                    if(strpos(strtolower($row['offer_name']), $key) !== false){
+                                        $hasMatch[] = true;
+                                    }
+                                }
+
+
+
+                                if(in_array(1, $hasMatch)){
+                                    if($hasAnd == true){
+                                        if(!in_array(0, $hasAndMatch)){
+                                            $doctrine = new CakeOffersTmpTbl();
+                                            $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                            $doctrine->setOfferId($row['offer_id']);
+                                            $doctrine->setOfferContractId($row['offer_contract_id']);
+                                            $doctrine->setOfferName($row['offer_name']);
+                                            $doctrine->setNetworkName($network[$i]->getNetworkName());
+                                            $doctrine->setVerticalName($row['vertical_name']);
+                                            $doctrine->setPayout($row['payout']);
+                                            $doctrine->setPriceFormat($row['price_format']);
+                                            $doctrine->setDescription($row['description']);
+                                            $doctrine->setRestrictions($row['restrictions']);
+                                            $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                            $doctrine->setStatus($row['offer_status']['status_name']);
+                                            $em->persist($doctrine);
+                                        }
+                                    }else{
+                                        $doctrine = new CakeOffersTmpTbl();
+                                        $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                        $doctrine->setOfferId($row['offer_id']);
+                                        $doctrine->setOfferContractId($row['offer_contract_id']);
+                                        $doctrine->setOfferName($row['offer_name']);
+                                        $doctrine->setNetworkName($network[$i]->getNetworkName());
+                                        $doctrine->setVerticalName($row['vertical_name']);
+                                        $doctrine->setPayout($row['payout']);
+                                        $doctrine->setPriceFormat($row['price_format']);
+                                        $doctrine->setDescription($row['description']);
+                                        $doctrine->setRestrictions($row['restrictions']);
+                                        $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                        $doctrine->setStatus($row['offer_status']['status_name']);
+                                        $em->persist($doctrine);
+                                    }
+
+                                }
+
+                            }
+
+
+                        }else{
+                            $doctrine = new CakeOffersTmpTbl();
+                            $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                            $doctrine->setOfferId($row['offer_id']);
+                            $doctrine->setOfferContractId($row['offer_contract_id']);
+                            $doctrine->setOfferName($row['offer_name']);
+                            $doctrine->setNetworkName($network[$i]->getNetworkName());
+                            $doctrine->setVerticalName($row['vertical_name']);
+                            $doctrine->setPayout($row['payout']);
+                            $doctrine->setPriceFormat($row['price_format']);
+                            $doctrine->setDescription($row['description']);
+                            $doctrine->setRestrictions($row['restrictions']);
+                            $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                            $doctrine->setStatus($row['offer_status']['status_name']);
+                            $em->persist($doctrine);
+
+
+                        }
+
+                        if(($x % $batch) == 0){
+                            $em->flush();
+                        }
+                    }
+                    }
+
+
+
+            }
+
+
+        }else{
+            $network = $this->getDoctrine()
+                ->getRepository('AppBundle:AffiliateNetwork')
+                ->find($data['affiliateNetworkId']);
+            $offers =  json_decode($this->forward('AppBundle:CakeApi:getOffers', array(
+                'affiliateId' => $network->getAffiliateId(),
+                'apiKey' => $network->getApiKey(),
+                'network' => $network->getApiUrl()
+            ))->getContent(), true);
+
+
+            $batch = 100;
+            $x = 1;
+            $em = $this->getDoctrine()->getManager();
+            foreach($offers['d']['offers'] as $row){
+                if($includeInactive == false) {
+                    if ($row['offer_status']['status_name'] != 'Inactive') {
+                        if($data['offerKeyword'] != ''){
+                            $keys = explode(',', $data['offerKeyword']);
+
+                            for($y = 0; $y < count($keys); $y++){
+                                $hasMatch = array();
+                                $hasAndMatch = array();
+                                $hasAnd = false;
+                                $key = strtolower($keys[$y]);
+                                if(strpos($key, 'or') !== false){
+                                    $multiKeys = explode('{or}', $key);
+                                    for($z = 0; $z < count($multiKeys); $z++){
+                                        if($z == (count($multiKeys) - 1) && strpos($multiKeys[$z], '{and}') !== false){
+                                            $hasAnd = true;
+                                            $andKey = preg_replace('/\s+/', '', substr($multiKeys[$z], strpos($multiKeys[$z], '{and}')));
+                                            $subKey = substr($multiKeys[$z], 0, strpos($multiKeys[$z], "{and}"));
+                                        }else{
+                                            $subKey = $multiKeys[$z];
+                                        }
+                                        if(strpos(strtolower($row['offer_name']), $subKey) !== false){
+                                            $hasMatch[] = true;
+                                        }
+
+                                        if($hasAnd == true){
+                                            $andMultiKeys = explode('{and}', $andKey);
+                                            for($w = 1; $w < count($andMultiKeys); $w++){
+                                                $andMultiKey = strtolower($andMultiKeys[$w]);
+                                                if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                                    $hasAndMatch[] = true;
+                                                }else{
+                                                    $hasAndMatch[] = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }else if(strpos($key, '{and}') !== false){
+                                    $hasAnd = true;
+                                    $hasMatch[] = true;
+                                    $andMultiKeys = explode('{and}', preg_replace('/\s+/', '', $key));
+                                    for($v = 0; $v < count($andMultiKeys); $v++){
+                                        $andMultiKey = strtolower($andMultiKeys[$v]);
+                                        if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
+                                            $hasAndMatch[] = true;
+                                        }else{
+                                            $hasAndMatch[] = false;
+                                        }
+                                    }
+
+
+                                }
+                                else{
+                                    if(strpos(strtolower($row['offer_name']), $key) !== false){
+                                        $hasMatch[] = true;
+                                    }
+                                }
+
+
+
+                                if(in_array(1, $hasMatch)){
+                                    if($hasAnd == true){
+                                        if(!in_array(0, $hasAndMatch)){
+                                            $doctrine = new CakeOffersTmpTbl();
+                                            $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                                            $doctrine->setOfferId($row['offer_id']);
+                                            $doctrine->setOfferContractId($row['offer_contract_id']);
+                                            $doctrine->setOfferName($row['offer_name']);
+                                            $doctrine->setNetworkName($network->getNetworkName());
+                                            $doctrine->setVerticalName($row['vertical_name']);
+                                            $doctrine->setPayout($row['payout']);
+                                            $doctrine->setPriceFormat($row['price_format']);
+                                            $doctrine->setDescription($row['description']);
+                                            $doctrine->setRestrictions($row['restrictions']);
+                                            $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                            $doctrine->setStatus($row['offer_status']['status_name']);
+                                            $em->persist($doctrine);
+                                        }
+                                    }else{
+                                        $doctrine = new CakeOffersTmpTbl();
+                                        $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                                        $doctrine->setOfferId($row['offer_id']);
+                                        $doctrine->setOfferContractId($row['offer_contract_id']);
+                                        $doctrine->setOfferName($row['offer_name']);
+                                        $doctrine->setNetworkName($network->getNetworkName());
+                                        $doctrine->setVerticalName($row['vertical_name']);
+                                        $doctrine->setPayout($row['payout']);
+                                        $doctrine->setPriceFormat($row['price_format']);
+                                        $doctrine->setDescription($row['description']);
+                                        $doctrine->setRestrictions($row['restrictions']);
+                                        $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                        $doctrine->setStatus($row['offer_status']['status_name']);
+                                        $em->persist($doctrine);
+                                    }
+
+                                }
+
+                            }
+
+
+                        }else{
+                            $doctrine = new CakeOffersTmpTbl();
+                            $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                            $doctrine->setOfferId($row['offer_id']);
+                            $doctrine->setOfferContractId($row['offer_contract_id']);
+                            $doctrine->setOfferName($row['offer_name']);
+                            $doctrine->setNetworkName($network->getNetworkName());
+                            $doctrine->setVerticalName($row['vertical_name']);
+                            $doctrine->setPayout($row['payout']);
+                            $doctrine->setPriceFormat($row['price_format']);
+                            $doctrine->setDescription($row['description']);
+                            $doctrine->setRestrictions($row['restrictions']);
+                            $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                            $doctrine->setStatus($row['offer_status']['status_name']);
+                            $em->persist($doctrine);
+
+
+                        }
+
+                        if(($x % $batch) == 0){
+                            $em->flush();
+                        }
+                    }
+                }else{
                     if($data['offerKeyword'] != ''){
                         $keys = explode(',', $data['offerKeyword']);
 
@@ -547,7 +939,7 @@ class OffersController extends Controller{
                                     if($z == (count($multiKeys) - 1) && strpos($multiKeys[$z], '{and}') !== false){
                                         $hasAnd = true;
                                         $andKey = preg_replace('/\s+/', '', substr($multiKeys[$z], strpos($multiKeys[$z], '{and}')));
-                                       $subKey = substr($multiKeys[$z], 0, strpos($multiKeys[$z], "{and}"));
+                                        $subKey = substr($multiKeys[$z], 0, strpos($multiKeys[$z], "{and}"));
                                     }else{
                                         $subKey = $multiKeys[$z];
                                     }
@@ -594,30 +986,34 @@ class OffersController extends Controller{
                                 if($hasAnd == true){
                                     if(!in_array(0, $hasAndMatch)){
                                         $doctrine = new CakeOffersTmpTbl();
-                                        $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                        $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
                                         $doctrine->setOfferId($row['offer_id']);
                                         $doctrine->setOfferContractId($row['offer_contract_id']);
                                         $doctrine->setOfferName($row['offer_name']);
+                                        $doctrine->setNetworkName($network->getNetworkName());
                                         $doctrine->setVerticalName($row['vertical_name']);
                                         $doctrine->setPayout($row['payout']);
                                         $doctrine->setPriceFormat($row['price_format']);
                                         $doctrine->setDescription($row['description']);
                                         $doctrine->setRestrictions($row['restrictions']);
                                         $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                        $doctrine->setStatus($row['offer_status']['status_name']);
                                         $em->persist($doctrine);
                                     }
                                 }else{
                                     $doctrine = new CakeOffersTmpTbl();
-                                    $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                    $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
                                     $doctrine->setOfferId($row['offer_id']);
                                     $doctrine->setOfferContractId($row['offer_contract_id']);
                                     $doctrine->setOfferName($row['offer_name']);
+                                    $doctrine->setNetworkName($network->getNetworkName());
                                     $doctrine->setVerticalName($row['vertical_name']);
                                     $doctrine->setPayout($row['payout']);
                                     $doctrine->setPriceFormat($row['price_format']);
                                     $doctrine->setDescription($row['description']);
                                     $doctrine->setRestrictions($row['restrictions']);
                                     $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                                    $doctrine->setStatus($row['offer_status']['status_name']);
                                     $em->persist($doctrine);
                                 }
 
@@ -628,16 +1024,18 @@ class OffersController extends Controller{
 
                     }else{
                         $doctrine = new CakeOffersTmpTbl();
-                        $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                        $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
                         $doctrine->setOfferId($row['offer_id']);
                         $doctrine->setOfferContractId($row['offer_contract_id']);
                         $doctrine->setOfferName($row['offer_name']);
+                        $doctrine->setNetworkName($network->getNetworkName());
                         $doctrine->setVerticalName($row['vertical_name']);
                         $doctrine->setPayout($row['payout']);
                         $doctrine->setPriceFormat($row['price_format']);
                         $doctrine->setDescription($row['description']);
                         $doctrine->setRestrictions($row['restrictions']);
                         $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
+                        $doctrine->setStatus($row['offer_status']['status_name']);
                         $em->persist($doctrine);
 
 
@@ -646,143 +1044,8 @@ class OffersController extends Controller{
                     if(($x % $batch) == 0){
                         $em->flush();
                     }
-
                 }
 
-
-            }
-
-
-        }else{
-            $network = $this->getDoctrine()
-                ->getRepository('AppBundle:AffiliateNetwork')
-                ->find($data['affiliateNetworkId']);
-            $offers =  json_decode($this->forward('AppBundle:CakeApi:getOffers', array(
-                'affiliateId' => $network->getAffiliateId(),
-                'apiKey' => $network->getApiKey(),
-                'network' => $network->getApiUrl()
-            ))->getContent(), true);
-
-
-            $batch = 100;
-            $x = 1;
-            $em = $this->getDoctrine()->getManager();
-            foreach($offers['d']['offers'] as $row){
-
-                if($data['offerKeyword'] != ''){
-                    $keys = explode(',', $data['offerKeyword']);
-
-                    for($y = 0; $y < count($keys); $y++){
-                        $hasMatch = array();
-                        $hasAndMatch = array();
-                        $hasAnd = false;
-                        $key = strtolower($keys[$y]);
-                        if(strpos($key, 'or') !== false){
-                            $multiKeys = explode('{or}', $key);
-                            for($z = 0; $z < count($multiKeys); $z++){
-                                if($z == (count($multiKeys) - 1) && strpos($multiKeys[$z], '{and}') !== false){
-                                    $hasAnd = true;
-                                    $andKey = preg_replace('/\s+/', '', substr($multiKeys[$z], strpos($multiKeys[$z], '{and}')));
-                                    $subKey = substr($multiKeys[$z], 0, strpos($multiKeys[$z], "{and}"));
-                                }else{
-                                    $subKey = $multiKeys[$z];
-                                }
-                                if(strpos(strtolower($row['offer_name']), $subKey) !== false){
-                                    $hasMatch[] = true;
-                                }
-
-                                if($hasAnd == true){
-                                    $andMultiKeys = explode('{and}', $andKey);
-                                    for($w = 1; $w < count($andMultiKeys); $w++){
-                                        $andMultiKey = strtolower($andMultiKeys[$w]);
-                                        if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
-                                            $hasAndMatch[] = true;
-                                        }else{
-                                            $hasAndMatch[] = false;
-                                        }
-                                    }
-                                }
-                            }
-                        }else if(strpos($key, '{and}') !== false){
-                            $hasAnd = true;
-                            $hasMatch[] = true;
-                            $andMultiKeys = explode('{and}', preg_replace('/\s+/', '', $key));
-                            for($v = 0; $v < count($andMultiKeys); $v++){
-                                $andMultiKey = strtolower($andMultiKeys[$v]);
-                                if(strpos(strtolower($row['offer_name']), $andMultiKey) !== false){
-                                    $hasAndMatch[] = true;
-                                }else{
-                                    $hasAndMatch[] = false;
-                                }
-                            }
-
-
-                        }
-                        else{
-                            if(strpos(strtolower($row['offer_name']), $key) !== false){
-                                $hasMatch[] = true;
-                            }
-                        }
-
-
-
-                        if(in_array(1, $hasMatch)){
-                            if($hasAnd == true){
-                                if(!in_array(0, $hasAndMatch)){
-                                    $doctrine = new CakeOffersTmpTbl();
-                                    $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
-                                    $doctrine->setOfferId($row['offer_id']);
-                                    $doctrine->setOfferContractId($row['offer_contract_id']);
-                                    $doctrine->setOfferName($row['offer_name']);
-                                    $doctrine->setVerticalName($row['vertical_name']);
-                                    $doctrine->setPayout($row['payout']);
-                                    $doctrine->setPriceFormat($row['price_format']);
-                                    $doctrine->setDescription($row['description']);
-                                    $doctrine->setRestrictions($row['restrictions']);
-                                    $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
-                                    $em->persist($doctrine);
-                                }
-                            }else{
-                                $doctrine = new CakeOffersTmpTbl();
-                                $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
-                                $doctrine->setOfferId($row['offer_id']);
-                                $doctrine->setOfferContractId($row['offer_contract_id']);
-                                $doctrine->setOfferName($row['offer_name']);
-                                $doctrine->setVerticalName($row['vertical_name']);
-                                $doctrine->setPayout($row['payout']);
-                                $doctrine->setPriceFormat($row['price_format']);
-                                $doctrine->setDescription($row['description']);
-                                $doctrine->setRestrictions($row['restrictions']);
-                                $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
-                                $em->persist($doctrine);
-                            }
-
-                        }
-
-                    }
-
-
-                }else{
-                    $doctrine = new CakeOffersTmpTbl();
-                    $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
-                    $doctrine->setOfferId($row['offer_id']);
-                    $doctrine->setOfferContractId($row['offer_contract_id']);
-                    $doctrine->setOfferName($row['offer_name']);
-                    $doctrine->setVerticalName($row['vertical_name']);
-                    $doctrine->setPayout($row['payout']);
-                    $doctrine->setPriceFormat($row['price_format']);
-                    $doctrine->setDescription($row['description']);
-                    $doctrine->setRestrictions($row['restrictions']);
-                    $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
-                    $doctrine->setStatus($row['offer_status']['status_id']);
-                    $em->persist($doctrine);
-
-
-                }
-
-                if(($x % $batch) == 0){
-                    $em->flush();
-                }
 
             }
         }
@@ -824,7 +1087,7 @@ class OffersController extends Controller{
                     ->getRepository('AppBundle:OfferGroupsOffers')
                     ->find($data['items'][$x]['id']);
 
-                $offer->setStatus(1);
+                $offer->setStatus('Active');
 
                 $em->flush();
 
@@ -860,6 +1123,7 @@ class OffersController extends Controller{
             $offer->setOfferId($cakeOffer->getOfferId());
             $offer->setOfferContractId($cakeOffer->getOfferContractId());
             $offer->setOfferName($cakeOffer->getOfferName());
+            $offer->setNetworkName($cakeOffer->getNetworkName());
             $offer->setVerticalName($cakeOffer->getVerticalName());
             $offer->setPayout($cakeOffer->getPayout());
             $offer->setPriceFormat($cakeOffer->getPriceFormat());
@@ -894,7 +1158,7 @@ class OffersController extends Controller{
     public function ajaxGetCakeTmpTbl(){
 
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 't.cottId', 't.offerId', 't.offerName', 't.verticalName', 't.payout', 't.priceFormat', 't.status', 't.description', 't.restrictions', 't.advertiserExtendedTerms');
+        $aColumns = array( 't.cottId', 't.offerId', 't.offerName', 't.networkName', 't.verticalName', 't.payout', 't.priceFormat', 't.status', 't.description', 't.restrictions', 't.advertiserExtendedTerms');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'id';
@@ -987,7 +1251,7 @@ class OffersController extends Controller{
 
         $sQuery = $em->createQuery("
         SELECT $aQueryColumns
-        FROM ".$sTable." t ".$sWhere.$sOrder."")
+        FROM $sTable t $sWhere GROUP BY t.offerId $sOrder")
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults)
         ;
@@ -996,7 +1260,7 @@ class OffersController extends Controller{
 
         $sQuery = $em->createQuery("
         SELECT t
-        FROM ".$sTable." t ".$sWhere.$sOrder."")
+        FROM $sTable t $sWhere GROUP BY t.offerId $sOrder")
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults)
         ;
@@ -1006,7 +1270,7 @@ class OffersController extends Controller{
 
         $sQuery = $em->createQuery("
         SELECT t
-        FROM ".$sTable." t ".$sWhere.$sOrder."");
+        FROM $sTable t $sWhere GROUP BY t.offerId $sOrder");
 
         $iTotal = count($paginator = new Paginator($sQuery));
 
@@ -1026,18 +1290,6 @@ class OffersController extends Controller{
         foreach($rResult as $column){
             $row = array();
 
-            if($column['status'] == 1){
-                $status = 'Active';
-            }else if($column['status'] == 2){
-                $status = 'Public';
-            }else if($column['status'] == 3){
-                $status = 'Apply To Run';
-            }else if($column['status'] == 4){
-                $status = 'Pending';
-            }else{
-                $status = 'Inactive';
-            }
-
             $row[] = '<td>
                         <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
                            <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['cottId'] . '" />
@@ -1046,10 +1298,11 @@ class OffersController extends Controller{
                       </td>';
             $row[] = $column['offerId'];
             $row[] = $column['offerName'];
+            $row[] = $column['networkName'];
             $row[] = $column['verticalName'];
             $row[] = $column['payout'];
             $row[] = $column['priceFormat'];
-            $row[] = $status;
+            $row[] = $column['status'];
             $row[] = '<button class="btn btn-info" data-description="' . $column['description'] . '" data-restrictions="' . $column['restrictions'] . '" data-terms="' . $column['advertiserExtendedTerms'] . '" onclick="showDetails(this)">DETAILS</button>';
             $output['aaData'][] = $row;
         }
@@ -1088,7 +1341,7 @@ class OffersController extends Controller{
     public function getGroupOffersAction($groupId = null){
         $em = $this->getDoctrine()->getManager();
         $groupEntity = $this->getDoctrine()->getRepository('AppBundle:OfferGroups')->findOneBy(array('offerGroupId' => $groupId));
-        $aColumns = array( 'og.ogoid', 'og.offerGroup', 'og.offerId', 'og.offerName', 'og.verticalName', 'og.payout', 'og.priceFormat', 'og.description', 'og.restrictions', 'og.advertiserExtendedTerms', 'og.status');
+        $aColumns = array( 'og.ogoid', 'og.offerId', 'og.offerName', 't.networkName', 'og.verticalName', 'og.payout', 'og.priceFormat', 'og.status', 'og.description', 'og.restrictions', 'og.advertiserExtendedTerms');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'og.ogoid';
@@ -1152,14 +1405,6 @@ class OffersController extends Controller{
             if (!empty($aFilteringRules)) {
                 $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
             }
-        }else{
-            // custom filter
-
-            if (!empty($aFilteringRules)) {
-                $aFilteringRules = array('('.implode(" AND ", $aFilteringRules).')');
-            }
-
-
         }
 
 
@@ -1173,7 +1418,7 @@ class OffersController extends Controller{
         }
 
         if (!empty($aFilteringRules)) {
-            $sWhere = " WHERE og.offerGroup = $groupId ".implode(" AND ", $aFilteringRules);
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules) . " AND og.offerGroup = $groupId ";
         } else {
             $sWhere = "WHERE og.offerGroup =  $groupId ";
         }
@@ -1192,7 +1437,7 @@ class OffersController extends Controller{
         $offerGroupsOffersBundle = 'AppBundle:OfferGroupsOffers';
 
         $sQuery = $em->createQuery("
-        SELECT og.ogoid, og.affiliateNetworkId, og.offerId, og.offerContractId, og.offerName, og.verticalName, og.payout, og.priceFormat, og.description, og.restrictions, og.advertiserExtendedTerms, og.status
+        SELECT og.ogoid, og.affiliateNetworkId, og.offerId, og.offerContractId, og.offerName, og.networkName, og.verticalName, og.payout, og.priceFormat, og.description, og.restrictions, og.advertiserExtendedTerms, og.status
         FROM $offerGroupsOffersBundle og, $offerGroupBundle o $sWhere GROUP BY og.offerId $sOrder")
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults)
@@ -1224,17 +1469,6 @@ class OffersController extends Controller{
 
         foreach($rResult as $column){
             $row = array();
-            if($column['status'] == 1){
-                $status = 'Active';
-            }else if($column['status'] == 2){
-                $status = 'Public';
-            }else if($column['status'] == 3){
-                $status = 'Apply To Run';
-            }else if($column['status'] == 4){
-                $status = 'Pending';
-            }else{
-                $status = 'Inactive';
-            }
             $row[] = '<td>
                         <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
                            <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['ogoid'] . '" data-offer-contract-id="' . $column['offerContractId'] . '" data-affiliate-network-id="' . $column['affiliateNetworkId'] . '"/>
@@ -1243,10 +1477,11 @@ class OffersController extends Controller{
                       </td>';
             $row[] = $column['offerId'];
             $row[] = $column['offerName'];
+            $row[] = $column['networkName'];
             $row[] = $column['verticalName'];
             $row[] = $column['payout'];
             $row[] = $column['priceFormat'];
-            $row[] = $status;
+            $row[] = $column['status'];
             $row[] = '<button class="btn btn-info" data-description="' . $column['description'] . '" data-restrictions="' . $column['restrictions'] . '" data-terms="' . $column['advertiserExtendedTerms'] . '" onclick="showDetails(this)">DETAILS</button>';
             $output['aaData'][] = $row;
 

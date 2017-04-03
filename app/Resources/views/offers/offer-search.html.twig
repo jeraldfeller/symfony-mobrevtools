@@ -82,8 +82,23 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-7 col-xs-12">
+                            <div class="col-md-5 col-xs-12">
                                  <input type="text" class="form-control" id="searchOffer" data-role="tagsinput">
+                            </div>
+
+                            <div class="col-md-2 col-xs-12">
+
+                                <div class="md-checkbox-inline">
+                                                <div class="md-checkbox">
+                                                    <input type="checkbox" id="includeInactive" class="md-check">
+                                                    <label for="includeInactive">
+                                                        <span></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span> Include Inactive </label>
+                                                </div>
+
+                                            </div>
+
                             </div>
 
 
@@ -125,6 +140,7 @@
                                             </th>
                                             <th>Offer ID</th>
                                             <th>Offer Name </th>
+                                            <th>Network Name </th>
                                             <th>Vertical </th>
                                             <th>Payout </th>
                                             <th>Price Format </th>
@@ -342,7 +358,8 @@
                     {"width": "5%", "targets": 4},
                     {"width": "5%", "targets": 5},
                     {"width": "5%", "targets": 6},
-                    {"width": "5%", "targets": 7}
+                    {"width": "5%", "targets": 7},
+                    {"width": "5%", "targets": 8}
                 ],
                 "order": [[2, "asc"]],
                 select: {
@@ -379,8 +396,10 @@
                $btn = $(this)[0];
                $data = {
                     affiliateNetworkId: $('#selectNetwork').val(),
-                    offerKeyword: $('#searchOffer').val()
-                };
+                    offerKeyword: $('#searchOffer').val(),
+                    includeInactive: $('#includeInactive').is(':checked')
+
+            };
 
                 searchOffer($btn, $data);
             });
@@ -389,6 +408,8 @@
             $('#addBtn').on('click', function(){
                 $btn = $(this)[0];
                 $group = $('#selectGroup').val();
+
+
                 var data = {group: $group, items:[]};
                 $i = 0;
                 $('input:checkbox.report-record').each(function () {
