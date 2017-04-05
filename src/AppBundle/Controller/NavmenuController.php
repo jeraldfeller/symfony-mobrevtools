@@ -178,6 +178,11 @@ class NavmenuController extends Controller{
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
+                                                    <a href="/offers/offer-preset-searches" class="nav-link ">
+                                                        <span class="title">Preset Searches</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
                                                     <a href="/offers/offer-groups" class="nav-link ">
                                                         <span class="title">Offer Groups</span>
                                                     </a>

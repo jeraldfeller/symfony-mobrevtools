@@ -18,6 +18,7 @@ use AppBundle\Entity\ApiAccess;
 use AppBundle\Entity\OfferGroups;
 use AppBundle\Entity\CakeOffersTmpTbl;
 use AppBundle\Entity\OfferGroupsOffers;
+use AppBundle\Entity\OfferPresets;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -531,9 +532,21 @@ class OffersController extends Controller{
                     'apiKey' => $network[$i]->getApiKey(),
                     'network' => $network[$i]->getApiUrl()
                 ))->getContent(), true);
-
-
                 foreach($offers['d']['offers'] as $row){
+                    if($row['campaign_id'] != null){
+                        $offersAffiliate =  json_decode($this->forward('AppBundle:CakeApi:getCampaignAffiliate', array(
+                            'affiliateId' => $network[$i]->getAffiliateId(),
+                            'apiKey' => $network[$i]->getApiKey(),
+                            'network' => $network[$i]->getApiUrl(),
+                            'campaignId' => $row['campaign_id']
+                        ))->getContent(), true);
+                        $offerUrl = $offersAffiliate['d']['campaign']['creatives'][0]['unique_link'];
+                    }else{
+                        $offerUrl = null;
+                    }
+
+
+
                     if($includeInactive == false){
                         if($row['offer_status']['status_name'] != 'Inactive'){
                             if($data['offerKeyword'] != ''){
@@ -598,6 +611,7 @@ class OffersController extends Controller{
                                             if(!in_array(0, $hasAndMatch)){
                                                 $doctrine = new CakeOffersTmpTbl();
                                                 $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                                $doctrine->setCampaignId($row['campaign_id']);
                                                 $doctrine->setOfferId($row['offer_id']);
                                                 $doctrine->setOfferContractId($row['offer_contract_id']);
                                                 $doctrine->setOfferName($row['offer_name']);
@@ -609,11 +623,13 @@ class OffersController extends Controller{
                                                 $doctrine->setRestrictions($row['restrictions']);
                                                 $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                                 $doctrine->setStatus($row['offer_status']['status_name']);
+                                                $doctrine->setOfferUrl($offerUrl);
                                                 $em->persist($doctrine);
                                             }
                                         }else{
                                             $doctrine = new CakeOffersTmpTbl();
                                             $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                            $doctrine->setCampaignId($row['campaign_id']);
                                             $doctrine->setOfferId($row['offer_id']);
                                             $doctrine->setOfferContractId($row['offer_contract_id']);
                                             $doctrine->setOfferName($row['offer_name']);
@@ -625,6 +641,7 @@ class OffersController extends Controller{
                                             $doctrine->setRestrictions($row['restrictions']);
                                             $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                             $doctrine->setStatus($row['offer_status']['status_name']);
+                                            $doctrine->setOfferUrl($offerUrl);
                                             $em->persist($doctrine);
                                         }
 
@@ -636,6 +653,7 @@ class OffersController extends Controller{
                             }else{
                                 $doctrine = new CakeOffersTmpTbl();
                                 $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                $doctrine->setCampaignId($row['campaign_id']);
                                 $doctrine->setOfferId($row['offer_id']);
                                 $doctrine->setOfferContractId($row['offer_contract_id']);
                                 $doctrine->setOfferName($row['offer_name']);
@@ -647,6 +665,7 @@ class OffersController extends Controller{
                                 $doctrine->setRestrictions($row['restrictions']);
                                 $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                 $doctrine->setStatus($row['offer_status']['status_name']);
+                                $doctrine->setOfferUrl($offerUrl);
                                 $em->persist($doctrine);
 
 
@@ -722,6 +741,7 @@ class OffersController extends Controller{
                                         if(!in_array(0, $hasAndMatch)){
                                             $doctrine = new CakeOffersTmpTbl();
                                             $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                            $doctrine->setCampaignId($row['campaign_id']);
                                             $doctrine->setOfferId($row['offer_id']);
                                             $doctrine->setOfferContractId($row['offer_contract_id']);
                                             $doctrine->setOfferName($row['offer_name']);
@@ -733,11 +753,13 @@ class OffersController extends Controller{
                                             $doctrine->setRestrictions($row['restrictions']);
                                             $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                             $doctrine->setStatus($row['offer_status']['status_name']);
+                                            $doctrine->setOfferUrl($offerUrl);
                                             $em->persist($doctrine);
                                         }
                                     }else{
                                         $doctrine = new CakeOffersTmpTbl();
                                         $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                                        $doctrine->setCampaignId($row['campaign_id']);
                                         $doctrine->setOfferId($row['offer_id']);
                                         $doctrine->setOfferContractId($row['offer_contract_id']);
                                         $doctrine->setOfferName($row['offer_name']);
@@ -749,6 +771,7 @@ class OffersController extends Controller{
                                         $doctrine->setRestrictions($row['restrictions']);
                                         $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                         $doctrine->setStatus($row['offer_status']['status_name']);
+                                        $doctrine->setOfferUrl($offerUrl);
                                         $em->persist($doctrine);
                                     }
 
@@ -760,6 +783,7 @@ class OffersController extends Controller{
                         }else{
                             $doctrine = new CakeOffersTmpTbl();
                             $doctrine->setAffiliateNetworkId($network[$i]->getAffiliateNetworkId());
+                            $doctrine->setCampaignId($row['campaign_id']);
                             $doctrine->setOfferId($row['offer_id']);
                             $doctrine->setOfferContractId($row['offer_contract_id']);
                             $doctrine->setOfferName($row['offer_name']);
@@ -771,6 +795,7 @@ class OffersController extends Controller{
                             $doctrine->setRestrictions($row['restrictions']);
                             $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                             $doctrine->setStatus($row['offer_status']['status_name']);
+                            $doctrine->setOfferUrl($offerUrl);
                             $em->persist($doctrine);
 
 
@@ -802,8 +827,19 @@ class OffersController extends Controller{
             $x = 1;
             $em = $this->getDoctrine()->getManager();
             foreach($offers['d']['offers'] as $row){
+                if($row['campaign_id'] != null){
+                    $offersAffiliate =  json_decode($this->forward('AppBundle:CakeApi:getCampaignAffiliate', array(
+                        'affiliateId' => $network->getAffiliateId(),
+                        'apiKey' => $network->getApiKey(),
+                        'network' => $network->getApiUrl(),
+                        'campaignId' => $row['campaign_id']
+                    ))->getContent(), true);
+                    $offerUrl = $offersAffiliate['d']['campaign']['creatives'][0]['unique_link'];
+                }else{
+                    $offerUrl = null;
+                }
                 if($includeInactive == false) {
-                    if ($row['offer_status']['status_name'] != 'Inactive') {
+                    if ($row['offer_status']['status_name'] != 'Active') {
                         if($data['offerKeyword'] != ''){
                             $keys = explode(',', $data['offerKeyword']);
 
@@ -866,6 +902,7 @@ class OffersController extends Controller{
                                         if(!in_array(0, $hasAndMatch)){
                                             $doctrine = new CakeOffersTmpTbl();
                                             $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                                            $doctrine->setCampaignId($row['campaign_id']);
                                             $doctrine->setOfferId($row['offer_id']);
                                             $doctrine->setOfferContractId($row['offer_contract_id']);
                                             $doctrine->setOfferName($row['offer_name']);
@@ -877,11 +914,13 @@ class OffersController extends Controller{
                                             $doctrine->setRestrictions($row['restrictions']);
                                             $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                             $doctrine->setStatus($row['offer_status']['status_name']);
+                                            $doctrine->setOfferUrl($offerUrl);
                                             $em->persist($doctrine);
                                         }
                                     }else{
                                         $doctrine = new CakeOffersTmpTbl();
                                         $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                                        $doctrine->setCampaignId($row['campaign_id']);
                                         $doctrine->setOfferId($row['offer_id']);
                                         $doctrine->setOfferContractId($row['offer_contract_id']);
                                         $doctrine->setOfferName($row['offer_name']);
@@ -893,6 +932,7 @@ class OffersController extends Controller{
                                         $doctrine->setRestrictions($row['restrictions']);
                                         $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                         $doctrine->setStatus($row['offer_status']['status_name']);
+                                        $doctrine->setOfferUrl($offerUrl);
                                         $em->persist($doctrine);
                                     }
 
@@ -904,6 +944,7 @@ class OffersController extends Controller{
                         }else{
                             $doctrine = new CakeOffersTmpTbl();
                             $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                            $doctrine->setCampaignId($row['campaign_id']);
                             $doctrine->setOfferId($row['offer_id']);
                             $doctrine->setOfferContractId($row['offer_contract_id']);
                             $doctrine->setOfferName($row['offer_name']);
@@ -915,6 +956,7 @@ class OffersController extends Controller{
                             $doctrine->setRestrictions($row['restrictions']);
                             $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                             $doctrine->setStatus($row['offer_status']['status_name']);
+                            $doctrine->setOfferUrl($offerUrl);
                             $em->persist($doctrine);
 
 
@@ -987,6 +1029,7 @@ class OffersController extends Controller{
                                     if(!in_array(0, $hasAndMatch)){
                                         $doctrine = new CakeOffersTmpTbl();
                                         $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                                        $doctrine->setCampaignId($row['campaign_id']);
                                         $doctrine->setOfferId($row['offer_id']);
                                         $doctrine->setOfferContractId($row['offer_contract_id']);
                                         $doctrine->setOfferName($row['offer_name']);
@@ -998,11 +1041,13 @@ class OffersController extends Controller{
                                         $doctrine->setRestrictions($row['restrictions']);
                                         $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                         $doctrine->setStatus($row['offer_status']['status_name']);
+                                        $doctrine->setOfferUrl($offerUrl);
                                         $em->persist($doctrine);
                                     }
                                 }else{
                                     $doctrine = new CakeOffersTmpTbl();
                                     $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                                    $doctrine->setCampaignId($row['campaign_id']);
                                     $doctrine->setOfferId($row['offer_id']);
                                     $doctrine->setOfferContractId($row['offer_contract_id']);
                                     $doctrine->setOfferName($row['offer_name']);
@@ -1014,6 +1059,7 @@ class OffersController extends Controller{
                                     $doctrine->setRestrictions($row['restrictions']);
                                     $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                                     $doctrine->setStatus($row['offer_status']['status_name']);
+                                    $doctrine->setOfferUrl($offerUrl);
                                     $em->persist($doctrine);
                                 }
 
@@ -1025,6 +1071,7 @@ class OffersController extends Controller{
                     }else{
                         $doctrine = new CakeOffersTmpTbl();
                         $doctrine->setAffiliateNetworkId($network->getAffiliateNetworkId());
+                        $doctrine->setCampaignId($row['campaign_id']);
                         $doctrine->setOfferId($row['offer_id']);
                         $doctrine->setOfferContractId($row['offer_contract_id']);
                         $doctrine->setOfferName($row['offer_name']);
@@ -1036,6 +1083,7 @@ class OffersController extends Controller{
                         $doctrine->setRestrictions($row['restrictions']);
                         $doctrine->setAdvertiserExtendedTerms($row['advertiser_extended_terms']);
                         $doctrine->setStatus($row['offer_status']['status_name']);
+                        $doctrine->setOfferUrl($offerUrl);
                         $em->persist($doctrine);
 
 
@@ -1082,12 +1130,25 @@ class OffersController extends Controller{
 
 
             if($offers['d']['success'] == true){
+
+
+                $offersAffiliate =  json_decode($this->forward('AppBundle:CakeApi:getCampaignAffiliate', array(
+                    'affiliateId' => $network->getAffiliateId(),
+                    'apiKey' => $network->getApiKey(),
+                    'network' => $network->getApiUrl(),
+                    'campaignId' => $offers['d']['campaign_id']
+                ))->getContent(), true);
+
+                $offerUrl = $offersAffiliate['d']['campaign']['creatives'][0]['unique_link'];
+
                 $em = $this->getDoctrine()->getManager();
                 $offer = $this->getDoctrine()
                     ->getRepository('AppBundle:OfferGroupsOffers')
                     ->find($data['items'][$x]['id']);
 
                 $offer->setStatus('Active');
+                $offer->setCampaignId($offers['d']['campaign_id']);
+                $offer->setOfferUrl($offerUrl);
 
                 $em->flush();
 
@@ -1120,6 +1181,7 @@ class OffersController extends Controller{
             $offer = new OfferGroupsOffers();
             $offer->setAffiliateNetworkId($cakeOffer->getAffiliateNetworkId());
             $offer->setOfferGroup($groupEntity);
+            $offer->setCampaignId($cakeOffer->getCampaignId());
             $offer->setOfferId($cakeOffer->getOfferId());
             $offer->setOfferContractId($cakeOffer->getOfferContractId());
             $offer->setOfferName($cakeOffer->getOfferName());
@@ -1131,6 +1193,7 @@ class OffersController extends Controller{
             $offer->setRestrictions($cakeOffer->getRestrictions());
             $offer->setAdvertiserExtendedTerms($cakeOffer->getAdvertiserExtendedTerms());
             $offer->setStatus($cakeOffer->getStatus());
+            $offer->setOfferUrl($cakeOffer->getOfferUrl());
             $em->persist($offer);
 
             if(($x % $batch) == 0){
@@ -1303,7 +1366,7 @@ class OffersController extends Controller{
             $row[] = $column['payout'];
             $row[] = $column['priceFormat'];
             $row[] = $column['status'];
-            $row[] = '<button class="btn btn-info" data-description="' . $column['description'] . '" data-restrictions="' . $column['restrictions'] . '" data-terms="' . $column['advertiserExtendedTerms'] . '" onclick="showDetails(this)">DETAILS</button>';
+            $row[] = '<button class="btn btn-info btn-md" data-description="' . $column['description'] . '" data-restrictions="' . $column['restrictions'] . '" data-terms="' . $column['advertiserExtendedTerms'] . '" onclick="showDetails(this)"><i class="fa fa-eye"></i> DETAILS</button>';
             $output['aaData'][] = $row;
         }
         return new Response( json_encode( $output ) );
@@ -1341,13 +1404,13 @@ class OffersController extends Controller{
     public function getGroupOffersAction($groupId = null){
         $em = $this->getDoctrine()->getManager();
         $groupEntity = $this->getDoctrine()->getRepository('AppBundle:OfferGroups')->findOneBy(array('offerGroupId' => $groupId));
-        $aColumns = array( 'og.ogoid', 'og.offerId', 'og.offerName', 't.networkName', 'og.verticalName', 'og.payout', 'og.priceFormat', 'og.status', 'og.description', 'og.restrictions', 'og.advertiserExtendedTerms');
+        $aColumns = array( 'og.ogoid', 'og.offerId', 'og.offerName', 'og.networkName', 'og.verticalName', 'og.payout', 'og.priceFormat', 'og.status', 'og.description', 'og.restrictions', 'og.advertiserExtendedTerms');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'og.ogoid';
 
         // DB table to use
-        $sTable = 'AppBundle:UsersGroupMember';
+        $sTable = 'AppBundle:OfferGroupsOffer';
 
         // Input method (use $_GET, $_POST or $_REQUEST)
         $input = $_GET;
@@ -1418,9 +1481,9 @@ class OffersController extends Controller{
         }
 
         if (!empty($aFilteringRules)) {
-            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules) . " AND og.offerGroup = $groupId ";
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules) . " AND og.offerGroup = $groupId AND og.status != 'Hidden'";
         } else {
-            $sWhere = "WHERE og.offerGroup =  $groupId ";
+            $sWhere = "WHERE og.offerGroup =  $groupId AND og.status != 'Hidden'";
         }
 
 
@@ -1437,7 +1500,7 @@ class OffersController extends Controller{
         $offerGroupsOffersBundle = 'AppBundle:OfferGroupsOffers';
 
         $sQuery = $em->createQuery("
-        SELECT og.ogoid, og.affiliateNetworkId, og.offerId, og.offerContractId, og.offerName, og.networkName, og.verticalName, og.payout, og.priceFormat, og.description, og.restrictions, og.advertiserExtendedTerms, og.status
+        SELECT og.ogoid, og.affiliateNetworkId, og.offerId, og.offerContractId, og.offerName, og.networkName, og.verticalName, og.payout, og.priceFormat, og.description, og.restrictions, og.advertiserExtendedTerms, og.status, og.offerUrl, og.campaignId
         FROM $offerGroupsOffersBundle og, $offerGroupBundle o $sWhere GROUP BY og.offerId $sOrder")
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults)
@@ -1449,10 +1512,10 @@ class OffersController extends Controller{
         $iFilteredTotal = count($rResult);
 
         $sQuery = $em->createQuery("
-        SELECT og, o
-        FROM $offerGroupsOffersBundle og $offerGroupBundle o $sWhere  GROUP BY og.offerId $sOrder");
+       SELECT og
+        FROM $offerGroupsOffersBundle og $sWhere GROUP BY og.offerId $sOrder");
 
-        $iTotal = count($sQuery);
+        $iTotal = count($paginator = new Paginator($sQuery));
 
         /**
          * Output
@@ -1468,6 +1531,11 @@ class OffersController extends Controller{
 
 
         foreach($rResult as $column){
+            if($column['campaignId'] == null){
+                $disableViewUrl = 'disabled';
+            }else{
+                $disableViewUrl = '';
+            }
             $row = array();
             $row[] = '<td>
                         <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
@@ -1482,7 +1550,9 @@ class OffersController extends Controller{
             $row[] = $column['payout'];
             $row[] = $column['priceFormat'];
             $row[] = $column['status'];
-            $row[] = '<button class="btn btn-info" data-description="' . $column['description'] . '" data-restrictions="' . $column['restrictions'] . '" data-terms="' . $column['advertiserExtendedTerms'] . '" onclick="showDetails(this)">DETAILS</button>';
+            $row[] = '<button ' . $disableViewUrl . ' onclick="hideTooltip(this)" class="btn btn-info btn-md clipboardBtn" data-clipboard-text="' . $column['offerUrl'] . '"><i class="fa fa-link"></i> Copy URL</button>
+                        <button class="btn btn-info btn-md" data-description="' . $column['description'] . '" data-restrictions="' . $column['restrictions'] . '" data-terms="' . $column['advertiserExtendedTerms'] . '" onclick="showDetails(this)"><i class="fa fa-eye"></i> DETAILS</button>
+                    ';
             $output['aaData'][] = $row;
 
 
@@ -1496,10 +1566,299 @@ class OffersController extends Controller{
      */
     public function deleteOffersAction(){
         $data = json_decode($_POST['param'], true);
-        $return = $this->forward('AppBundle:Deletes:deleteReports', array('data' => $data))->getContent();
+        foreach($data['items'] as $row){
+            $em = $this->getDoctrine()->getManager();
+            $offer = $this->getDoctrine()
+                ->getRepository($data['bundle'])
+                ->find($row['id']);
+            $offer->setStatus('Hidden');
+            $em->flush();
+        }
         return new Response(
-            $return
+            json_encode(true)
         );
+    }
+
+
+
+    /**
+     * @Route("/offers/offer-preset-searches", name="offerPresetSearch")
+     */
+    public function showOfferPresetAction()
+    {
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            return $this->render(
+                'offers/offer-preset-searches.html.twig', array('page' => 'Offer Preset Search',
+                    'groups' => $this->getOfferGroups())
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
+    }
+
+    /**
+     * @Route("/offers/add-preset", name="addOfferPreset")
+     */
+    public function addPresetAction()
+    {
+        $data = json_decode($_POST['param'], true);
+
+        $isExists = $this->getDoctrine()
+            ->getRepository('AppBundle:OfferPresets')
+            ->findOneBy(array('presetName' => $data['presetName']));
+        if($isExists){
+            $return = array(
+                'type' => 'warning',
+                'title' => 'Warning',
+                'message' => 'Preset already exists'
+            );
+        }else{
+
+
+            $offerGroupEntity = $this->getDoctrine()
+                ->getRepository('AppBundle:OfferGroups')
+                ->findOneBy(array('offerGroupId' => $data['groupId']));
+            $em = $this->getDoctrine()->getManager();
+            $preset = new OfferPresets();
+            $preset->setPresetName($data['presetName']);
+            $preset->setOfferGroup($offerGroupEntity);
+            $preset->setKeywords($data['presetKeyword']);
+
+            $em->persist($preset);
+            $em->flush();
+
+            $return = array(
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => 'Preset Successfully Added'
+            );
+        }
+
+
+        return new Response(
+            json_encode($return)
+        );
+    }
+
+
+
+    /**
+     * @Route("/offers/edit-preset", name="editOfferPreset")
+     */
+    public function editPresetAction()
+    {
+        $data = json_decode($_POST['param'], true);
+            $offerGroupEntity = $this->getDoctrine()
+                ->getRepository('AppBundle:OfferGroups')
+                ->findOneBy(array('offerGroupId' => $data['groupId']));
+            $em = $this->getDoctrine()->getManager();
+            $preset = $this->getDoctrine()->getRepository('AppBundle:OfferPresets')->find($data['presetId']);
+            $preset->setPresetName($data['presetName']);
+            $preset->setOfferGroup($offerGroupEntity);
+            $preset->setKeywords($data['presetKeyword']);
+            $em->flush();
+
+            $return = array(
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => 'Preset Successfully Updated'
+            );
+
+
+
+        return new Response(
+            json_encode($return)
+        );
+    }
+
+
+
+    /**
+     * @Route("/offers/delete-preset", name="deleteOfferPreset")
+     */
+    public function deletePresetAction()
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $preset = $em->getRepository('AppBundle:OfferPresets')->find($_POST['param']);
+        $em->remove($preset);
+        $em->flush();
+        $return = array(
+            'type' => 'success',
+            'title' => 'Success',
+            'message' => 'Preset Successfully Deleted'
+        );
+
+
+
+        return new Response(
+            json_encode($return)
+        );
+    }
+
+
+
+
+    /**
+     * @Route("/ajax/offer/presets")
+     */
+
+    public function getPresetsAction(){
+        $em = $this->getDoctrine()->getManager();
+        $aColumns = array( 'p.offerPresetsId', 'o.offerGroupName', 'p.presetName', 'p.keywords');
+
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'p.offerPresetsId';
+
+        // DB table to use
+        $sTable = 'AppBundle:OfferPresets';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                }
+            }
+
+
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }
+
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules) . " p.offerGroup = o.offerGroupId";
+        } else {
+            $sWhere = "WHERE p.offerGroup = o.offerGroupId";
+            $sWhereCount = "";
+        }
+
+
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
+
+        $offerPresets = 'AppBundle:OfferPresets';
+        $offerGroup = 'AppBundle:OfferGroups';
+
+        $sQuery = $em->createQuery("
+        SELECT p.offerPresetsId, o.offerGroupName, o.offerGroupId,  p.presetName, p.keywords
+        FROM $offerPresets p, $offerGroup o $sWhere $sOrder")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+        $rResult = $sQuery->getResult();
+
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($rResult);
+
+        $sQuery = $em->createQuery("
+        SELECT p
+        FROM $offerPresets p $sWhereCount $sOrder");
+
+        $iTotal = count($paginator = new Paginator($sQuery));
+
+        /**
+         * Output
+         */
+
+
+        $output = array(
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
+        );
+
+
+        foreach($rResult as $column){
+            $keywords = explode(',', $column['keywords']);
+            $keyword = '';
+            for($x = 0; $x < count($keywords); $x++){
+                $keyword .= '<span class="label label-info">' . $keywords[$x] . '</span> ';
+            }
+            $row = array();
+            $row[] = $column['presetName'];
+            $row[] = $column['offerGroupName'];
+            $row[] = $keyword;
+            $row[] = '<div class="btn-group">
+                                        <button type="button" class="btn blue btn-xs"> Action</button>
+                                        <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#" data-toggle="modal" data-target="#modalEditPreset"  data-action="edit" data-id="' . $column['offerPresetsId'] . '" data-name="' . $column['presetName'] . '" data-offer-group="' . $column['offerGroupId'] . '" data-keywords="' . $column['keywords'] . '" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
+                                            </li>
+                                            <li><a href="#" data-toggle="modal" data-target="#modalDeletePreset" data-action="delete" data-id="' . $column['offerPresetsId'] . '" data-name="' . $column['presetName'] . '"  onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
+                                            </li>
+                                        </ul>
+                       </div>';
+            $output['aaData'][] = $row;
+
+
+        }
+        return new Response( json_encode( $output ) );
     }
 
 

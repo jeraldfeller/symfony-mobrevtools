@@ -9,6 +9,11 @@
         <option name="unsigned"/>
       </options>
     </field>
+    <field name="campaignId" type="integer" column="campaign_id" nullable="true">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
     <field name="offerId" type="integer" column="offer_id" nullable="false">
       <options>
         <option name="unsigned"/>
@@ -55,6 +60,11 @@
       </options>
     </field>
     <field name="advertiserExtendedTerms" type="text" column="advertiser_extended_terms" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="offerUrl" type="string" column="offer_url" length="255" nullable="true">
       <options>
         <option name="fixed"/>
       </options>

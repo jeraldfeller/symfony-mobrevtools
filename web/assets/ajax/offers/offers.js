@@ -355,3 +355,134 @@ function applyOffers(btn, data)
 }
 
 
+function addPreset(btn, data){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/offers/add-preset");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                showNotification(response['type'], response['title'], response['message']);
+                if(response['type'] == 'success'){
+                    var oTable =  $('#datatable-responsive').DataTable();
+                    oTable.ajax.reload();
+                    $('#modalAddPreset').modal('hide');
+                    $('#presetName').val('');
+                    $('#presetKeyword').val('');
+                }else{
+                    $('#presetName').focus();
+                }
+
+
+                l.stop();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '')
+                l.stop();
+            }
+        }
+
+
+        l.start();
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+
+    }
+}
+
+
+function editPreset(btn, data){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/offers/edit-preset");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                showNotification(response['type'], response['title'], response['message']);
+                if(response['type'] == 'success'){
+                    var oTable =  $('#datatable-responsive').DataTable();
+                    oTable.ajax.reload();
+                    $('#modalEditPreset').modal('hide');
+                    $('#editPresetName').val('');
+                    $('#editPresetKeyword').val('');
+                }else{
+                    $('#editPresetName').focus();
+                }
+
+
+                l.stop();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '')
+                l.stop();
+            }
+        }
+
+
+        l.start();
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+
+    }
+}
+
+
+function deletePreset(btn, data){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/offers/delete-preset");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                showNotification(response['type'], response['title'], response['message']);
+                if(response['type'] == 'success'){
+                    var oTable =  $('#datatable-responsive').DataTable();
+                    oTable.ajax.reload();
+                    $('#modalDeletePreset').modal('hide');
+                }
+
+                l.stop();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '')
+                l.stop();
+            }
+        }
+
+
+        l.start();
+        XMLHttpRequestObject.send("param="+ data);
+
+
+    }
+}

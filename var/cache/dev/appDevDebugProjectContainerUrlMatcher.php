@@ -144,9 +144,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getOffersAction',  '_route' => 'cakeApiOfferFeed',);
             }
 
-            // cakeApiApplyOffer
-            if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$contractId}') {
-                return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  'contractId' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::applyOffersAction',  '_route' => 'cakeApiApplyOffer',);
+            if (0 === strpos($pathinfo, '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$c')) {
+                // cakeApiApplyOffer
+                if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$contractId}') {
+                    return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  'contractId' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::applyOffersAction',  '_route' => 'cakeApiApplyOffer',);
+                }
+
+                // getCampaignAffiliate
+                if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$campaignId}') {
+                    return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  'campaignId' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getCampaignAffiliateAction',  '_route' => 'getCampaignAffiliate',);
+                }
+
             }
 
         }
@@ -623,9 +631,37 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'app_offers_getgroupoffers')), array (  'groupId' => NULL,  '_controller' => 'AppBundle\\Controller\\OffersController::getGroupOffersAction',));
         }
 
-        // deleteOfferGroupsOffers
-        if ($pathinfo === '/offers/group-delete') {
-            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteOffersAction',  '_route' => 'deleteOfferGroupsOffers',);
+        if (0 === strpos($pathinfo, '/offers')) {
+            // deleteOfferGroupsOffers
+            if ($pathinfo === '/offers/group-delete') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteOffersAction',  '_route' => 'deleteOfferGroupsOffers',);
+            }
+
+            // offerPresetSearch
+            if ($pathinfo === '/offers/offer-preset-searches') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOfferPresetAction',  '_route' => 'offerPresetSearch',);
+            }
+
+            // addOfferPreset
+            if ($pathinfo === '/offers/add-preset') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addPresetAction',  '_route' => 'addOfferPreset',);
+            }
+
+            // editOfferPreset
+            if ($pathinfo === '/offers/edit-preset') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::editPresetAction',  '_route' => 'editOfferPreset',);
+            }
+
+            // deleteOfferPreset
+            if ($pathinfo === '/offers/delete-preset') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deletePresetAction',  '_route' => 'deleteOfferPreset',);
+            }
+
+        }
+
+        // app_offers_getpresets
+        if ($pathinfo === '/ajax/offer/presets') {
+            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::getPresetsAction',  '_route' => 'app_offers_getpresets',);
         }
 
         if (0 === strpos($pathinfo, '/global-settings')) {

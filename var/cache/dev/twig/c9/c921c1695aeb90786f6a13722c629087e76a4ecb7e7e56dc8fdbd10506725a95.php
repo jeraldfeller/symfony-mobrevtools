@@ -15,11 +15,11 @@ class __TwigTemplate_5cf11024df1a4d3fb901712fedb8ca323adcfff7eaca6c9e57324f73d47
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_1978525609ad9071239db05361a883f383374562fdc14aefc20e43a765708bf2 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_1978525609ad9071239db05361a883f383374562fdc14aefc20e43a765708bf2->enter($__internal_1978525609ad9071239db05361a883f383374562fdc14aefc20e43a765708bf2_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/search_columns.html.twig"));
+        $__internal_d4a568e1e98d4455ded1c25a93f4b2a23bfb7e65ea8198ac9664d6abce229454 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_d4a568e1e98d4455ded1c25a93f4b2a23bfb7e65ea8198ac9664d6abce229454->enter($__internal_d4a568e1e98d4455ded1c25a93f4b2a23bfb7e65ea8198ac9664d6abce229454_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/search_columns.html.twig"));
 
-        $__internal_9648489f06d20585f8c87657574aaabb0375b628f2d617ceb3af58513d163d96 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_9648489f06d20585f8c87657574aaabb0375b628f2d617ceb3af58513d163d96->enter($__internal_9648489f06d20585f8c87657574aaabb0375b628f2d617ceb3af58513d163d96_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/search_columns.html.twig"));
+        $__internal_ba6403cc094993a658014b9b239c206fe8578d78cea4ac9677c334e32bd121f5 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_ba6403cc094993a658014b9b239c206fe8578d78cea4ac9677c334e32bd121f5->enter($__internal_ba6403cc094993a658014b9b239c206fe8578d78cea4ac9677c334e32bd121f5_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@SgDatatables/Datatable/search_columns.html.twig"));
 
         // line 9
         echo "\"searchCols\": [
@@ -47,10 +47,10 @@ class __TwigTemplate_5cf11024df1a4d3fb901712fedb8ca323adcfff7eaca6c9e57324f73d47
         echo "]
 ";
         
-        $__internal_1978525609ad9071239db05361a883f383374562fdc14aefc20e43a765708bf2->leave($__internal_1978525609ad9071239db05361a883f383374562fdc14aefc20e43a765708bf2_prof);
+        $__internal_d4a568e1e98d4455ded1c25a93f4b2a23bfb7e65ea8198ac9664d6abce229454->leave($__internal_d4a568e1e98d4455ded1c25a93f4b2a23bfb7e65ea8198ac9664d6abce229454_prof);
 
         
-        $__internal_9648489f06d20585f8c87657574aaabb0375b628f2d617ceb3af58513d163d96->leave($__internal_9648489f06d20585f8c87657574aaabb0375b628f2d617ceb3af58513d163d96_prof);
+        $__internal_ba6403cc094993a658014b9b239c206fe8578d78cea4ac9677c334e32bd121f5->leave($__internal_ba6403cc094993a658014b9b239c206fe8578d78cea4ac9677c334e32bd121f5_prof);
 
     }
 

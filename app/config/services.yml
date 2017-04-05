@@ -11,6 +11,8 @@ services:
             class: AppBundle\Controller\SystemController
     app.voluum_api_controller:
             class: AppBundle\Controller\VoluumApiController
+    app.cake_api:
+            class: AppBundle\Controller\CakeApiController
 
 #    service_name:
 #        class: AppBundle\Directory\ClassName

@@ -370,4 +370,62 @@ class CakeOffersTmpTbl
     {
         return $this->networkName;
     }
+    /**
+     * @var integer
+     */
+    private $campaignId;
+
+    /**
+     * @var string
+     */
+    private $offerUrl;
+
+
+    /**
+     * Set campaignId
+     *
+     * @param integer $campaignId
+     *
+     * @return CakeOffersTmpTbl
+     */
+    public function setCampaignId($campaignId)
+    {
+        $this->campaignId = $campaignId;
+
+        return $this;
+    }
+
+    /**
+     * Get campaignId
+     *
+     * @return integer
+     */
+    public function getCampaignId()
+    {
+        return $this->campaignId;
+    }
+
+    /**
+     * Set offerUrl
+     *
+     * @param string $offerUrl
+     *
+     * @return CakeOffersTmpTbl
+     */
+    public function setOfferUrl($offerUrl)
+    {
+        $this->offerUrl = $offerUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get offerUrl
+     *
+     * @return string
+     */
+    public function getOfferUrl()
+    {
+        return $this->offerUrl;
+    }
 }

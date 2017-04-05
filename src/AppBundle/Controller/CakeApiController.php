@@ -32,8 +32,8 @@ class CakeApiController extends Controller{
             'vertical_id' => 0,
             'offer_status_id' => 0,
             'tag_id' => 0,
-            'start_at_row' => 0,
-            'row_limit' => 2000
+            'start_at_row' => 1,
+            'row_limit' => 20
         );
         $json = json_encode($query);
         // Get cURL resource
@@ -56,6 +56,7 @@ class CakeApiController extends Controller{
         return new Response( $resp );
     }
 
+
     /**
      * @Route("/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$contractId}", name="cakeApiApplyOffer")
      */
@@ -69,6 +70,38 @@ class CakeApiController extends Controller{
             'notes' => '',
             'agreed_to_terms' => true,
             'agreed_from_ip_address' => ''
+        );
+        $json = json_encode($query);
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_URL => $url,
+            CURLOPT_POSTFIELDS => $json,
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Content-Length: ' . strlen($json)),
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+        return new Response( $resp );
+    }
+
+
+    /**
+     * @Route("/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$campaignId}", name="getCampaignAffiliate")
+     */
+    public function getCampaignAffiliateAction($affiliateId = null, $apiKey = null, $network= null, $campaignId = null){
+        $url = 'http://'.$network.'/affiliates/api/2/offers.asmx/GetCampaign';
+        $query = array(
+            'api_key' => $apiKey,
+            'affiliate_id' => $affiliateId,
+            'campaign_id' => $campaignId
         );
         $json = json_encode($query);
         // Get cURL resource

@@ -399,4 +399,62 @@ class OfferGroupsOffers
     {
         return $this->networkName;
     }
+    /**
+     * @var integer
+     */
+    private $campaignId;
+
+    /**
+     * @var string
+     */
+    private $offerUrl;
+
+
+    /**
+     * Set campaignId
+     *
+     * @param integer $campaignId
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setCampaignId($campaignId)
+    {
+        $this->campaignId = $campaignId;
+
+        return $this;
+    }
+
+    /**
+     * Get campaignId
+     *
+     * @return integer
+     */
+    public function getCampaignId()
+    {
+        return $this->campaignId;
+    }
+
+    /**
+     * Set offerUrl
+     *
+     * @param string $offerUrl
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setOfferUrl($offerUrl)
+    {
+        $this->offerUrl = $offerUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get offerUrl
+     *
+     * @return string
+     */
+    public function getOfferUrl()
+    {
+        return $this->offerUrl;
+    }
 }
