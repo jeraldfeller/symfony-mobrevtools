@@ -27,6 +27,10 @@ class ExtrasController extends Controller{
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
+            $data16['data'] = array();
+            $data24['data'] = array();
+            file_put_contents("data_table_tmp_files/ip/16.txt", json_encode($data16, JSON_UNESCAPED_UNICODE));
+            file_put_contents("data_table_tmp_files/ip/24.txt", json_encode($data24, JSON_UNESCAPED_UNICODE));
             return $this->render(
                 'extras/ip-compile.html.twig', array('page' => 'IP Compile')
             );
