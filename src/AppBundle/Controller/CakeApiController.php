@@ -33,7 +33,7 @@ class CakeApiController extends Controller{
             'offer_status_id' => 0,
             'tag_id' => 0,
             'start_at_row' => 1,
-            'row_limit' => 20
+            'row_limit' => 100
         );
         $json = json_encode($query);
         // Get cURL resource

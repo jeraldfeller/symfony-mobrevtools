@@ -460,6 +460,19 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
+        if (0 === strpos($pathinfo, '/extras')) {
+            // ipCompile
+            if ($pathinfo === '/extras/ip-compile') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showIpCompileAction',  '_route' => 'ipCompile',);
+            }
+
+            // executeIpCompile
+            if ($pathinfo === '/extras/execute-compile-ip') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::ipCompile',  '_route' => 'executeIpCompile',);
+            }
+
+        }
+
         // getFilters
         if ($pathinfo === '/filters/{$bundle}/{$column}') {
             return array (  'bundle' => NULL,  'column' => NULL,  '_controller' => 'AppBundle\\Controller\\FiltersController::getFiltersAction',  '_route' => 'getFilters',);
@@ -601,17 +614,19 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\OffersController::searchOfferAction',  '_route' => 'searchOffer',);
             }
 
-            if (0 === strpos($pathinfo, '/offers/a')) {
-                // applyOffers
-                if ($pathinfo === '/offers/apply-offers') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::applyOfferAction',  '_route' => 'applyOffers',);
-                }
+            // applyOffers
+            if ($pathinfo === '/offers/apply-offers') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::applyOfferAction',  '_route' => 'applyOffers',);
+            }
 
-                // addOfferToGroup
-                if ($pathinfo === '/offers/add-offer-to-group') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOfferToGroupAction',  '_route' => 'addOfferToGroup',);
-                }
+            // refreshOffers
+            if ($pathinfo === '/offers/refresh-offers') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::refreshOfferAction',  '_route' => 'refreshOffers',);
+            }
 
+            // addOfferToGroup
+            if ($pathinfo === '/offers/add-offer-to-group') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOfferToGroupAction',  '_route' => 'addOfferToGroup',);
             }
 
         }

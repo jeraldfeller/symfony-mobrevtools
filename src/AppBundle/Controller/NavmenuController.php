@@ -234,6 +234,21 @@ class NavmenuController extends Controller{
                                                     </a>
                                                 </li>
                                             </ul>
+                                        </li>',
+            'extras' => '<li class="nav-item isActiveIdentifier">
+                                            <a href="javascript:;" class="nav-link nav-toggle">
+                                                <i class="fa fa-magic"></i>
+                                                <span class="title">Extras</span>
+                                                <span class="selected"></span>
+                                                <span class="arrow open"></span>
+                                            </a>
+                                            <ul class="sub-menu">
+                                                <li class="nav-item">
+                                                    <a href="/extras/ip-compile" class="nav-link ">
+                                                        <span class="title">IP Compile</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
                                         </li>'
         );
 

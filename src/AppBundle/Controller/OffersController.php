@@ -532,6 +532,7 @@ class OffersController extends Controller{
                     'apiKey' => $network[$i]->getApiKey(),
                     'network' => $network[$i]->getApiUrl()
                 ))->getContent(), true);
+
                 foreach($offers['d']['offers'] as $row){
                     if($row['campaign_id'] != null){
                         $offersAffiliate =  json_decode($this->forward('AppBundle:CakeApi:getCampaignAffiliate', array(
@@ -1161,6 +1162,59 @@ class OffersController extends Controller{
 
 
     /**
+     * @Route("/offers/refresh-offers", name="refreshOffers")
+     */
+    public function refreshOfferAction(){
+
+        $data = json_decode($_POST['param'], true);
+        $message = array();
+        $groupEntity = $this->getDoctrine()
+            ->getRepository('AppBundle:OfferGroups')
+            ->find($data['groupId']);
+        $em = $this->getDoctrine()->getManager();
+        $offerEntity = $this->getDoctrine()
+            ->getRepository('AppBundle:OfferGroupsOffers')
+            ->findBy(array('offerGroup' => $groupEntity));
+        $affiliates = array();
+        for($x = 0; $x < count($offerEntity); $x++) {
+            $affiliates[] = $offerEntity[$x]->getAffiliateNetworkId();
+        }
+        $affiliatesUnique = array_unique($affiliates);
+
+        foreach($affiliatesUnique as $key => $value){
+            $network = $this->getDoctrine()
+                ->getRepository('AppBundle:AffiliateNetwork')
+                ->find($value);
+
+
+            $offers =  json_decode($this->forward('AppBundle:CakeApi:getOffers', array(
+                'affiliateId' => $network->getAffiliateId(),
+                'apiKey' => $network->getApiKey(),
+                'network' => $network->getApiUrl()
+            ))->getContent(), true);
+
+
+            foreach($offers['d']['offers'] as $row){
+                for($x = 0; $x < count($offerEntity); $x++){
+                    if($offerEntity[$x]->getAffiliateNetworkId() == $value){
+                        if($offerEntity[$x]->getOfferId() == $row['offer_id']){
+                            if($offerEntity[$x]->getStatus() != $row['offer_status']['status_name']){
+                                $offerEntity[$x]->setStatus($row['offer_status']['status_name']);
+                                $em->flush();
+                                $message[] = $offerEntity[$x]->getOfferName() . ' status changed to ' . $row['offer_status']['status_name'];
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        return new Response(json_encode($message));
+
+    }
+
+
+    /**
      * @Route("/offers/add-offer-to-group", name="addOfferToGroup")
      */
     public function addOfferToGroupAction()
@@ -1507,9 +1561,14 @@ class OffersController extends Controller{
         ;
         $rResult = $sQuery->getResult();
 
-
+        $sQuery = $em->createQuery("
+        SELECT og
+        FROM $offerGroupsOffersBundle og $sWhere GROUP BY og.offerId $sOrder")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
         $paginator = new Paginator($sQuery);
-        $iFilteredTotal = count($rResult);
+        $iFilteredTotal = count($paginator);
 
         $sQuery = $em->createQuery("
        SELECT og
