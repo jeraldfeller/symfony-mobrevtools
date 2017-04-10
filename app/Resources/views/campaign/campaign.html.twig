@@ -795,7 +795,7 @@
                             var geo = (this.checked ? $(this).data('geo') : "");
                             if(typeof campId != 'undefined'){
                                 if(campId != 0){
-                                    data.items.push({tid: tid, vid: voluumId, campId: campId, campName: campName, geo: geo});
+                                    data.items.push({tid: tid, vid: encodeURIComponent(voluumId), campId:  encodeURIComponent(campId), campName: campName, geo: geo});
                                 }
 
                             }
@@ -807,13 +807,13 @@
                     });
 
                     console.log(data.items);
-                    /*
+
                     if($x > 0){
-                        apiAddCampaign($btnSpinner, {{ tid }}, data);
+                        apiAddCampaign($btnSpinner, {{ tid }} ,data);
                     }else{
                         showNotification('warning', 'Warning', 'Please select campaign to import');
                     }
-                    */
+
 
                 });
 

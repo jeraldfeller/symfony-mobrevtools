@@ -737,6 +737,9 @@ class CampaignController extends Controller
                 $campaignExistsExoClick[] = $x['campId'];
             }
 
+
+            var_dump($apiResponse);
+
         }
 
 
@@ -823,14 +826,21 @@ class CampaignController extends Controller
                         if($geo == 'N/A'){
                             $geo = json_decode($this->forward('AppBundle:Common:getGeoCodeByCountry', array('country' => $voluumRow['campaignCountry']))->getContent(), true);
                         }
+                        if(!isset($geo['geoCode'])){
+                            $geoCode = 'N/A';
+                        }else{
+                            $geoCode = $geo['geoCode'];
+                        }
                         $output .= '<tr>';
-                        $output .= '<td class="a-center"><label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"><input id="checkBoxId_' . $i . '" name="table_records" type="checkbox" data-campid="1" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geo['geoCode'] . '" class="checkboxes camp-record"><span></span></label></td>';
+                        $output .= '<td class="a-center"><label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"><input id="checkBoxId_' . $i . '" name="table_records" type="checkbox" data-campid="1" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geoCode . '" class="checkboxes camp-record"><span></span></label></td>';
 
                         $output .= '<td>' . $voluumRow['campaignName'] . '</td>';
                         $output .= '<td>';
                         $output .= '<select data-selectid="' . $i . '" class="form-control" onchange="setDataAttribute(this)">';
                         $output .= '<option value="0">-- select campaign --</option>';
                         $output .= '<option value="none">None</option>';
+
+
 
                         foreach($apiResponse as $row){
 
@@ -885,7 +895,6 @@ class CampaignController extends Controller
         $em = $this->getDoctrine()->getManager();
         $i = 1;
         $batch = 20;
-
         foreach($data['items'] as $row) {
 
             $tid = $em->getRepository('AppBundle:TrafficSource')->findOneById($row['tid']);
