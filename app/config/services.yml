@@ -9,10 +9,14 @@ services:
             parent: sg_datatables.datatable.abstract
     app.system_controller:
             class: AppBundle\Controller\SystemController
+    app.settings:
+            class: AppBundle\Controller\SettingsController
     app.voluum_api_controller:
             class: AppBundle\Controller\VoluumApiController
     app.cake_api:
             class: AppBundle\Controller\CakeApiController
+    app.exoclick_api:
+            class: AppBundle\Controller\ExoClickApiController
 
 #    service_name:
 #        class: AppBundle\Directory\ClassName

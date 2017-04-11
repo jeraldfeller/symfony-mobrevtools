@@ -22,35 +22,28 @@ use AppBundle\Entity\ReportsCampaignsManualCostUpdate;
 class VoluumApiController extends Controller{
 
 
-    public function voluumLoginAction(){
-        $credential = json_decode($this->forward('AppBundle:Settings:getApiAccessByTraffic', array('traffic' => 'Voluum'
-        ))->getContent(), true);
+        public function voluumLoginAction($userName, $password){
+
+            $auth = base64_encode($userName . ':' . $password);
+            $url = 'https://security.voluum.com/login';
+            // Get cURL resource
+            $curl = curl_init();
+            // Set some options - we are passing in a useragent too here
+            curl_setopt_array($curl, array(
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_URL => $url,
+                CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $auth . ''),
+            ));
+            // Send the request & save response to $resp
+            $resp = curl_exec($curl);
+            // Close request to clear up some resources
+            curl_close($curl);
+
+            var_dump($resp);
+            return new Response($resp);
 
 
-        $user = $credential['userName'];
-        $password = str_replace('|', '&', $credential['password']);
-        $auth = base64_encode($user . ':' . $password);
-        $url = 'https://security.voluum.com/login';
-        // Get cURL resource
-        $curl = curl_init();
-        // Set some options - we are passing in a useragent too here
-        curl_setopt_array($curl, array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $url,
-            CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $auth . ''),
-        ));
-        // Send the request & save response to $resp
-        $resp = curl_exec($curl);
-        // Close request to clear up some resources
-        curl_close($curl);
-
-
-
-
-        return new Response($resp);
-
-
-    }
+        }
 
 
     /**

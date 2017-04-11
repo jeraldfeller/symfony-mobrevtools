@@ -18,11 +18,7 @@ use AppBundle\Controller\ExoClickRequest;
 class ExoClickApiController extends Controller{
 
 
-    public function exoClickLoginAction(){
-
-        $credential = json_decode($this->forward('AppBundle:Settings:getApiAccessByTraffic', array('traffic' => 'exoclick'
-        ))->getContent(), true);
-        $token = $credential['userName'];
+    public function exoClickLoginAction($token = null){
 
         $url = 'https://api.exoclick.com/v1/login';
 
@@ -54,6 +50,7 @@ class ExoClickApiController extends Controller{
 
             return new Response(json_encode($errorResponse));
         }
+
     }
     /**
      * @Route("/api/exoclick/get-campaigns/{$token}", name="exoClickGetCampaigns")

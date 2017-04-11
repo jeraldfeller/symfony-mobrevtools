@@ -738,7 +738,6 @@ class CampaignController extends Controller
             }
 
 
-            var_dump($apiResponse);
 
         }
 
