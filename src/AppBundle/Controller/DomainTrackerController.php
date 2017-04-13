@@ -23,7 +23,7 @@ class DomainTrackerController extends Controller{
 
 
     /**
-     * @Route("reports/domain")
+     * @Route("monitoring/domain")
      */
     public function showDomainReportAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');

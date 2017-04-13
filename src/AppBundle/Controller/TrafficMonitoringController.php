@@ -21,7 +21,7 @@ use AppBundle\Entity\ReportsTrafficMonitoring;
 class TrafficMonitoringController extends Controller{
 
     /**
-     * @Route("reports/traffic-monitoring")
+     * @Route("monitoring/traffic")
      */
     public function showIpReportAction(){
 
@@ -42,7 +42,7 @@ class TrafficMonitoringController extends Controller{
                 'placements' => $placements
             );
             return $this->render(
-                'reports/trafficmonitoring.html.twig', array('page' => 'Traffic Monitoring', 'filters' => $filters)
+                'reports/trafficmonitoring.html.twig', array('page' => 'Traffic', 'filters' => $filters)
             );
         }else{
             return $this->redirect('/user/login');

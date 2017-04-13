@@ -20,7 +20,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 class ExtrasController extends Controller{
 
     /**
-     * @Route("/extras/ip-compile", name="ipCompile")
+     * @Route("/tools/ip-compiler", name="ipCompile")
      */
     public function showIpCompileAction()
     {
@@ -32,7 +32,7 @@ class ExtrasController extends Controller{
             file_put_contents("data_table_tmp_files/ip/16.txt", json_encode($data16, JSON_UNESCAPED_UNICODE));
             file_put_contents("data_table_tmp_files/ip/24.txt", json_encode($data24, JSON_UNESCAPED_UNICODE));
             return $this->render(
-                'extras/ip-compile.html.twig', array('page' => 'IP Compile')
+                'extras/ip-compile.html.twig', array('page' => 'IP Compiler')
             );
         }else{
             return $this->redirect('/user/login');

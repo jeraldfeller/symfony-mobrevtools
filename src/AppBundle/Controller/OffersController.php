@@ -186,7 +186,7 @@ class OffersController extends Controller{
 
 
     /**
-     * @Route("/offers/offer-groups", name="offerGroups")
+     * @Route("/offer-search/offer-groups", name="offerGroups")
      */
     public function showGroupsAction()
     {
@@ -440,7 +440,7 @@ class OffersController extends Controller{
                                             <span class="sr-only">Toggle Dropdown</span>
                                         </button>
                                         <ul class="dropdown-menu" role="menu">
-                                            <li><a href="/offers/group/' . $column['offerGroupId'] . '"><i class="fa fa-eye"></i> View Offers</a>
+                                            <li><a href="/offer-search/group/' . $column['offerGroupId'] . '"><i class="fa fa-eye"></i> View Offers</a>
                                             </li>
                                             <li><a href="#" data-toggle="modal" data-target="#modalEditGroup"  data-action="edit" data-id="' . $column['offerGroupId'] . '" data-name="' . $column['offerGroupName'] . '" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
                                             </li>
@@ -487,7 +487,7 @@ class OffersController extends Controller{
 
 
     /**
-     * @Route("/offers/offer-search", name="offerSearch")
+     * @Route("/offer-search", name="offerSearch")
      */
     public function showOfferSearchAction()
     {
@@ -496,7 +496,7 @@ class OffersController extends Controller{
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
             return $this->render(
-                'offers/offer-search.html.twig', array('page' => 'Offer Groups',
+                'offers/offer-search.html.twig', array('page' => 'Offer Search',
                                                        'networks' => $this->getAffiliateNetworks(),
                                                        'groups' => $this->getOfferGroups())
             );
@@ -1431,7 +1431,7 @@ class OffersController extends Controller{
 
 
     /**
-     * @Route("/offers/group/{id}", name="offersGroupsOffers")
+     * @Route("/offer-search/group/{id}", name="offersGroupsOffers")
      */
     public function showManageOffersGroupAction($id = null)
     {
@@ -1641,7 +1641,7 @@ class OffersController extends Controller{
 
 
     /**
-     * @Route("/offers/offer-preset-searches", name="offerPresetSearch")
+     * @Route("/offer-search/offer-preset-searches", name="offerPresetSearch")
      */
     public function showOfferPresetAction()
     {

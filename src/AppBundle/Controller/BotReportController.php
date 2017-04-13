@@ -38,7 +38,7 @@ class BotReportController extends Controller{
                 'geos' => $geos,
                 'verticals' => $verticals);
             return $this->render(
-                'reports/bot.html.twig', array('page' => 'Bot', 'filters' => $filters)
+                'reports/bot.html.twig', array('page' => 'Bot Lists', 'filters' => $filters)
             );
         }else{
             return $this->redirect('/user/login');

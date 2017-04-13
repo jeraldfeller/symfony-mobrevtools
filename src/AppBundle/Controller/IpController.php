@@ -40,7 +40,7 @@ class IpController extends Controller{
                 'carriers' => $carriers
             );
             return $this->render(
-                'reports/ip.html.twig', array('page' => 'IP', 'filters' => $filters)
+                'reports/ip.html.twig', array('page' => 'IP Data', 'filters' => $filters)
             );
         }else{
             return $this->redirect('/user/login');

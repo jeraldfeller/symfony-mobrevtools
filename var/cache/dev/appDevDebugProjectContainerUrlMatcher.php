@@ -434,17 +434,14 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/reports')) {
-            // app_domaintracker_showdomainreport
-            if ($pathinfo === '/reports/domain') {
-                return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::showDomainReportAction',  '_route' => 'app_domaintracker_showdomainreport',);
-            }
+        // app_domaintracker_showdomainreport
+        if ($pathinfo === '/monitoring/domain') {
+            return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::showDomainReportAction',  '_route' => 'app_domaintracker_showdomainreport',);
+        }
 
-            // app_domaintracker_updatedomaincheck
-            if ($pathinfo === '/reports/update-domain-check') {
-                return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::updateDomainCheckAction',  '_route' => 'app_domaintracker_updatedomaincheck',);
-            }
-
+        // app_domaintracker_updatedomaincheck
+        if ($pathinfo === '/reports/update-domain-check') {
+            return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::updateDomainCheckAction',  '_route' => 'app_domaintracker_updatedomaincheck',);
         }
 
         if (0 === strpos($pathinfo, '/a')) {
@@ -460,17 +457,14 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/extras')) {
-            // ipCompile
-            if ($pathinfo === '/extras/ip-compile') {
-                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showIpCompileAction',  '_route' => 'ipCompile',);
-            }
+        // ipCompile
+        if ($pathinfo === '/tools/ip-compiler') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showIpCompileAction',  '_route' => 'ipCompile',);
+        }
 
-            // executeIpCompile
-            if ($pathinfo === '/extras/execute-compile-ip') {
-                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::ipCompile',  '_route' => 'executeIpCompile',);
-            }
-
+        // executeIpCompile
+        if ($pathinfo === '/extras/execute-compile-ip') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::ipCompile',  '_route' => 'executeIpCompile',);
         }
 
         // getFilters
@@ -478,12 +472,12 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  'bundle' => NULL,  'column' => NULL,  '_controller' => 'AppBundle\\Controller\\FiltersController::getFiltersAction',  '_route' => 'getFilters',);
         }
 
-        if (0 === strpos($pathinfo, '/html-pages')) {
-            // app_htmldata_showhtmlpages
-            if ($pathinfo === '/html-pages') {
-                return array (  '_controller' => 'AppBundle\\Controller\\HtmlDataController::showHtmlPagesAction',  '_route' => 'app_htmldata_showhtmlpages',);
-            }
+        // app_htmldata_showhtmlpages
+        if ($pathinfo === '/monitoring/exploit-log') {
+            return array (  '_controller' => 'AppBundle\\Controller\\HtmlDataController::showHtmlPagesAction',  '_route' => 'app_htmldata_showhtmlpages',);
+        }
 
+        if (0 === strpos($pathinfo, '/html-pages')) {
             // app_htmldata_getcode
             if ($pathinfo === '/html-pages/get-code') {
                 return array (  '_controller' => 'AppBundle\\Controller\\HtmlDataController::getCodeAction',  '_route' => 'app_htmldata_getcode',);
@@ -535,7 +529,7 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         // app_logtracker_showlogtrackerreport
-        if ($pathinfo === '/reports/log-tracker') {
+        if ($pathinfo === '/monitoring/data-log') {
             return array (  '_controller' => 'AppBundle\\Controller\\LogTrackerController::showLogTrackerReportAction',  '_route' => 'app_logtracker_showlogtrackerreport',);
         }
 
@@ -575,25 +569,28 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/offers')) {
+        if (0 === strpos($pathinfo, '/offer')) {
             // offerGroups
-            if ($pathinfo === '/offers/offer-groups') {
+            if ($pathinfo === '/offer-search/offer-groups') {
                 return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showGroupsAction',  '_route' => 'offerGroups',);
             }
 
-            // addOfferGroup
-            if ($pathinfo === '/offers/add-group') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addGroupAction',  '_route' => 'addOfferGroup',);
-            }
+            if (0 === strpos($pathinfo, '/offers')) {
+                // addOfferGroup
+                if ($pathinfo === '/offers/add-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addGroupAction',  '_route' => 'addOfferGroup',);
+                }
 
-            // editOfferGroup
-            if ($pathinfo === '/offers/edit-group') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::editGroupAction',  '_route' => 'editOfferGroup',);
-            }
+                // editOfferGroup
+                if ($pathinfo === '/offers/edit-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::editGroupAction',  '_route' => 'editOfferGroup',);
+                }
 
-            // deleteOfferGroup
-            if ($pathinfo === '/offers/delete-group') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteGroupAction',  '_route' => 'deleteOfferGroup',);
+                // deleteOfferGroup
+                if ($pathinfo === '/offers/delete-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteGroupAction',  '_route' => 'deleteOfferGroup',);
+                }
+
             }
 
         }
@@ -603,30 +600,33 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\OffersController::ajaxGetOfferGroups',  '_route' => 'app_offers_ajaxgetoffergroups',);
         }
 
-        if (0 === strpos($pathinfo, '/offers')) {
+        if (0 === strpos($pathinfo, '/offer')) {
             // offerSearch
-            if ($pathinfo === '/offers/offer-search') {
+            if ($pathinfo === '/offer-search') {
                 return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOfferSearchAction',  '_route' => 'offerSearch',);
             }
 
-            // searchOffer
-            if ($pathinfo === '/offers/search-offer') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::searchOfferAction',  '_route' => 'searchOffer',);
-            }
+            if (0 === strpos($pathinfo, '/offers')) {
+                // searchOffer
+                if ($pathinfo === '/offers/search-offer') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::searchOfferAction',  '_route' => 'searchOffer',);
+                }
 
-            // applyOffers
-            if ($pathinfo === '/offers/apply-offers') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::applyOfferAction',  '_route' => 'applyOffers',);
-            }
+                // applyOffers
+                if ($pathinfo === '/offers/apply-offers') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::applyOfferAction',  '_route' => 'applyOffers',);
+                }
 
-            // refreshOffers
-            if ($pathinfo === '/offers/refresh-offers') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::refreshOfferAction',  '_route' => 'refreshOffers',);
-            }
+                // refreshOffers
+                if ($pathinfo === '/offers/refresh-offers') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::refreshOfferAction',  '_route' => 'refreshOffers',);
+                }
 
-            // addOfferToGroup
-            if ($pathinfo === '/offers/add-offer-to-group') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOfferToGroupAction',  '_route' => 'addOfferToGroup',);
+                // addOfferToGroup
+                if ($pathinfo === '/offers/add-offer-to-group') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOfferToGroupAction',  '_route' => 'addOfferToGroup',);
+                }
+
             }
 
         }
@@ -637,7 +637,7 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         // offersGroupsOffers
-        if (0 === strpos($pathinfo, '/offers/group') && preg_match('#^/offers/group(?:/(?P<id>[^/]++))?$#s', $pathinfo, $matches)) {
+        if (0 === strpos($pathinfo, '/offer-search/group') && preg_match('#^/offer\\-search/group(?:/(?P<id>[^/]++))?$#s', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'offersGroupsOffers')), array (  'id' => NULL,  '_controller' => 'AppBundle\\Controller\\OffersController::showManageOffersGroupAction',));
         }
 
@@ -646,30 +646,33 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'app_offers_getgroupoffers')), array (  'groupId' => NULL,  '_controller' => 'AppBundle\\Controller\\OffersController::getGroupOffersAction',));
         }
 
-        if (0 === strpos($pathinfo, '/offers')) {
+        if (0 === strpos($pathinfo, '/offer')) {
             // deleteOfferGroupsOffers
             if ($pathinfo === '/offers/group-delete') {
                 return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteOffersAction',  '_route' => 'deleteOfferGroupsOffers',);
             }
 
             // offerPresetSearch
-            if ($pathinfo === '/offers/offer-preset-searches') {
+            if ($pathinfo === '/offer-search/offer-preset-searches') {
                 return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOfferPresetAction',  '_route' => 'offerPresetSearch',);
             }
 
-            // addOfferPreset
-            if ($pathinfo === '/offers/add-preset') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addPresetAction',  '_route' => 'addOfferPreset',);
-            }
+            if (0 === strpos($pathinfo, '/offers')) {
+                // addOfferPreset
+                if ($pathinfo === '/offers/add-preset') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addPresetAction',  '_route' => 'addOfferPreset',);
+                }
 
-            // editOfferPreset
-            if ($pathinfo === '/offers/edit-preset') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::editPresetAction',  '_route' => 'editOfferPreset',);
-            }
+                // editOfferPreset
+                if ($pathinfo === '/offers/edit-preset') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::editPresetAction',  '_route' => 'editOfferPreset',);
+                }
 
-            // deleteOfferPreset
-            if ($pathinfo === '/offers/delete-preset') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deletePresetAction',  '_route' => 'deleteOfferPreset',);
+                // deleteOfferPreset
+                if ($pathinfo === '/offers/delete-preset') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deletePresetAction',  '_route' => 'deleteOfferPreset',);
+                }
+
             }
 
         }
@@ -729,7 +732,7 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         // app_settings_showpresetssettings
-        if ($pathinfo === '/tools/settings/presets') {
+        if ($pathinfo === '/tools/lander-presets') {
             return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::showPresetsSettings',  '_route' => 'app_settings_showpresetssettings',);
         }
 
@@ -794,17 +797,14 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
         }
 
-        if (0 === strpos($pathinfo, '/reports')) {
-            // app_trafficmonitoring_showipreport
-            if ($pathinfo === '/reports/traffic-monitoring') {
-                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::showIpReportAction',  '_route' => 'app_trafficmonitoring_showipreport',);
-            }
+        // app_trafficmonitoring_showipreport
+        if ($pathinfo === '/monitoring/traffic') {
+            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::showIpReportAction',  '_route' => 'app_trafficmonitoring_showipreport',);
+        }
 
-            // app_trafficmonitoring_gettrafficmonitoringreportsfilters
-            if ($pathinfo === '/reports/get-traffic-source-monitoring-reports-filter') {
-                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::getTrafficMonitoringReportsFiltersAction',  '_route' => 'app_trafficmonitoring_gettrafficmonitoringreportsfilters',);
-            }
-
+        // app_trafficmonitoring_gettrafficmonitoringreportsfilters
+        if ($pathinfo === '/reports/get-traffic-source-monitoring-reports-filter') {
+            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::getTrafficMonitoringReportsFiltersAction',  '_route' => 'app_trafficmonitoring_gettrafficmonitoringreportsfilters',);
         }
 
         // app_trafficmonitoring_ajaxgetreportstrafficmonitoring
@@ -872,25 +872,28 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/manage-users')) {
-            if (0 === strpos($pathinfo, '/manage-users/groups')) {
+        if (0 === strpos($pathinfo, '/global-settings/manage-users')) {
+            if (0 === strpos($pathinfo, '/global-settings/manage-users/groups')) {
                 // groups
-                if ($pathinfo === '/manage-users/groups') {
+                if ($pathinfo === '/global-settings/manage-users/groups') {
                     return array (  '_controller' => 'AppBundle\\Controller\\UsersController::showGroupsAction',  '_route' => 'groups',);
                 }
 
                 // manageUsersGroups
-                if (0 === strpos($pathinfo, '/manage-users/groups/group-id') && preg_match('#^/manage\\-users/groups/group\\-id(?:/(?P<groupId>[^/]++))?$#s', $pathinfo, $matches)) {
+                if (0 === strpos($pathinfo, '/global-settings/manage-users/groups/group-id') && preg_match('#^/global\\-settings/manage\\-users/groups/group\\-id(?:/(?P<groupId>[^/]++))?$#s', $pathinfo, $matches)) {
                     return $this->mergeDefaults(array_replace($matches, array('_route' => 'manageUsersGroups')), array (  'groupId' => NULL,  '_controller' => 'AppBundle\\Controller\\UsersController::showManageUsersGroupAction',));
                 }
 
             }
 
             // users
-            if ($pathinfo === '/manage-users/users') {
+            if ($pathinfo === '/global-settings/manage-users/users') {
                 return array (  '_controller' => 'AppBundle\\Controller\\UsersController::showUsersAction',  '_route' => 'users',);
             }
 
+        }
+
+        if (0 === strpos($pathinfo, '/manage-users')) {
             // addUser
             if ($pathinfo === '/manage-users/add-user') {
                 return array (  '_controller' => 'AppBundle\\Controller\\UsersController::addUserAction',  '_route' => 'addUser',);
@@ -987,7 +990,7 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         // app_voluumapi_showlanderspage
-        if ($pathinfo === '/cost-update') {
+        if ($pathinfo === '/tools/cost-update') {
             return array (  '_controller' => 'AppBundle\\Controller\\VoluumApiController::showLandersPageAction',  '_route' => 'app_voluumapi_showlanderspage',);
         }
 

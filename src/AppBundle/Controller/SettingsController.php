@@ -32,7 +32,7 @@ class SettingsController extends Controller {
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
             return $this->render(
-                'settings/api-access.html.twig', array('page' => 'api-access')
+                'settings/api-access.html.twig', array('page' => 'Api Access')
             );
         }else{
             return $this->redirect('/user/login');
@@ -84,7 +84,7 @@ class SettingsController extends Controller {
      */
     public function showTrafficSourceSettings(){
         return $this->render(
-            'settings/traffic-source.html.twig', array('page' => 'traffic-source')
+            'settings/traffic-source.html.twig', array('page' => 'Traffic Source')
         );
     }
 
@@ -459,11 +459,11 @@ class SettingsController extends Controller {
 
 
     /**
-     * @Route("/tools/settings/presets")
+     * @Route("/tools/lander-presets")
      */
     public function showPresetsSettings(){
         return $this->render(
-            'settings/presets.html.twig', array('page' => 'Presets')
+            'settings/presets.html.twig', array('page' => 'Lander Presets')
         );
     }
 

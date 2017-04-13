@@ -36,7 +36,7 @@ class BlacklistReportController extends Controller{
                 'geos' => $geos,
                 'verticals' => $verticals);
             return $this->render(
-                'reports/blacklist.html.twig', array('page' => 'Blacklist', 'filters' => $filters)
+                'reports/blacklist.html.twig', array('page' => 'Blacklists', 'filters' => $filters)
             );
         }else{
             return $this->redirect('/user/login');

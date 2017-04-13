@@ -20,14 +20,14 @@ use AppBundle\Controller\SessionController;
 class HtmlDataController extends Controller{
 
     /**
-     * @Route("/html-pages")
+     * @Route("/monitoring/exploit-log")
      */
     public function showHtmlPagesAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
             $filters = array();
             return $this->render(
-                'html-pages/html-pages.html.twig', array('page' => 'HTML PAGES')
+                'html-pages/html-pages.html.twig', array('page' => 'Exploit Log')
             );
         }else{
             return $this->redirect('/user/login');

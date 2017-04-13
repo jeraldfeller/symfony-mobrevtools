@@ -211,7 +211,7 @@ class UsersController extends Controller
 
 
     /**
-     * @Route("/manage-users/groups", name="groups")
+     * @Route("/global-settings/manage-users/groups", name="groups")
      */
     public function showGroupsAction()
     {
@@ -252,7 +252,7 @@ class UsersController extends Controller
 
 
     /**
-     * @Route("/manage-users/groups/group-id/{groupId}", name="manageUsersGroups")
+     * @Route("/global-settings/manage-users/groups/group-id/{groupId}", name="manageUsersGroups")
      */
     public function showManageUsersGroupAction($groupId = null)
     {
@@ -283,7 +283,7 @@ class UsersController extends Controller
     }
 
     /**
-     * @Route("/manage-users/users", name="users")
+     * @Route("/global-settings/manage-users/users", name="users")
      */
     public function showUsersAction()
     {

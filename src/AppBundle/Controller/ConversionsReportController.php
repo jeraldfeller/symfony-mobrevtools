@@ -34,7 +34,7 @@ class ConversionsReportController extends Controller{
             $this->clearConversionReportAction();
             $filters = array();
             return $this->render(
-                'reports/conversions.html.twig', array('page' => 'Conversions', 'filters' => $filters)
+                'reports/conversions.html.twig', array('page' => 'Conversion Data', 'filters' => $filters)
             );
         }else{
             return $this->redirect('/user/login');

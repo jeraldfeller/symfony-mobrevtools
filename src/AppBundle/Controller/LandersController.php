@@ -167,7 +167,6 @@ class LandersController extends Controller {
             'query' => $query,
             'method' => 'GET',
             'sessionId' => $voluumSessionId))->getContent(), true);
-
         foreach($apiResponse['rows'] as $row){
                 if($row['landerCountry'] == null){
                     $country = 'Global';

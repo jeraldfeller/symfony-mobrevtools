@@ -37,7 +37,7 @@ class WhitelistReportController extends Controller {
                 'geos' => $geos,
                 'verticals' => $verticals);
             return $this->render(
-                'reports/whitelist.html.twig', array('page' => 'Whitelist', 'filters' => $filters)
+                'reports/whitelist.html.twig', array('page' => 'Whitelists', 'filters' => $filters)
             );
         }else{
             return $this->redirect('user/login');

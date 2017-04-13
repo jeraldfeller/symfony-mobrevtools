@@ -63,59 +63,93 @@ class NavmenuController extends Controller{
                                         </ul>
                                     </li>
                                     ',
-                    'cost-update' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="/cost-update" class="nav-link nav-toggle">
-                                                <i class="fa fa-money"></i>
-                                                <span class="title">Cost Update</span>
+                    'offer-search' => '<li class="nav-item isActiveIdentifier">
+                                            <a href="/offer-search" class="nav-link nav-toggle">
+                                                <i class="fa fa-exchange"></i>
+                                                <span class="title">Offer Search</span>
+                                                <span class="selected"></span>
+                                                <span class="arrow open"></span>
                                             </a>
+                                            <ul class="sub-menu">
+                                                <li class="nav-item">
+                                                    <a href="/offer-search/offer-preset-searches" class="nav-link ">
+                                                        <span class="title">Preset Searches</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/offer-search/offer-groups" class="nav-link ">
+                                                        <span class="title">Offer Groups</span>
+                                                    </a>
+                                                </li>
+
+                                            </ul>
                                         </li>',
-                    'html-pages' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="/html-pages" class="nav-link nav-toggle">
-                                                <i class="fa fa-code"></i>
-                                                <span class="title">HTML Pages</span>
-                                            </a>
-                                        </li>',
+                    'tools' => '<li class="nav-item isActiveIdentifier">
+                                                    <a href="javascript:;" class="nav-link nav-toggle">
+                                                        <i class="fa fa-cubes"></i>
+                                                        <span class="title">Tools</span>
+                                                        <span class="selected"></span>
+                                                        <span class="arrow open"></span>
+                                                    </a>
+                                                    <ul class="sub-menu">
+                                                        <li class="nav-item">
+                                                            <a href="/tools/cost-update" class="nav-link nav-toggle">
+                                                                <span class="title">Cost Update</span>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="/tools/offers" class="nav-link ">
+                                                                <span class="title">Offers</span>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="/tools/landers" class="nav-link ">
+                                                                <span class="title">Landers</span>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="/tools/lander-presets" class="nav-link ">
+                                                                <span class="title">Lander Presets</span>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="/tools/ip-compiler" class="nav-link ">
+                                                                <span class="title">IP Compiler</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </li>',
                     'reports' => '<li class="nav-item isActiveIdentifier">
                                             <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="icon icon-docs"></i>
-                                                <span class="title">Reports</span>
+                                                <span class="title">Data Reports</span>
                                                 <span class="selected"></span>
                                                 <span class="arrow open"></span>
                                             </a>
                                             <ul class="sub-menu">
                                                 <li class="nav-item">
                                                     <a href="/reports/bot" class="nav-link ">
-                                                        <span class="title">Bot</span>
+                                                        <span class="title">Bot Lists</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a href="/reports/blacklist" class="nav-link ">
-                                                        <span class="title">Blacklist</span>
+                                                        <span class="title">Blacklists</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a href="/reports/whitelist" class="nav-link ">
-                                                        <span class="title">Whitelist</span>
+                                                        <span class="title">Whitelists</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a href="/reports/ip" class="nav-link ">
-                                                        <span class="title">IP</span>
-                                                    </a>
-                                                </li>
-                                                 <li class="nav-item">
-                                                    <a href="/reports/domain" class="nav-link ">
-                                                        <span class="title">Domains</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/reports/log-tracker" class="nav-link ">
-                                                        <span class="title">Log Tracker</span>
+                                                        <span class="title">IP Data</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a href="/reports/conversions" class="nav-link ">
-                                                        <span class="title">Conversions</span>
+                                                        <span class="title">Conversion Data</span>
                                                     </a>
                                                  </li>
                                                 <li class="nav-item">
@@ -123,89 +157,34 @@ class NavmenuController extends Controller{
                                                         <span class="title">Metrics</span>
                                                     </a>
                                                 </li>
+                                            </ul>
+                                        </li>',
+                    'monitoring' => '<li class="nav-item isActiveIdentifier">
+                                            <a href="javascript:;" class="nav-link nav-toggle">
+                                                <i class="fa fa-desktop"></i>
+                                                <span class="title">Monitoring</span>
+                                                <span class="selected"></span>
+                                                <span class="arrow open"></span>
+                                            </a>
+                                            <ul class="sub-menu">
+                                                <li class="nav-item">
+                                                    <a href="/monitoring/domain" class="nav-link ">
+                                                        <span class="title">Domains</span>
+                                                    </a>
+                                                </li>
                                                  <li class="nav-item">
-                                                    <a href="/reports/traffic-monitoring" class="nav-link ">
-                                                        <span class="title">Traffic Monitoring</span>
-                                                    </a>
-                                                 </li>
-                                            </ul>
-                                        </li>',
-                    'tools' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="fa fa-cubes"></i>
-                                                <span class="title">Tools</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
-                                                <li class="nav-item">
-                                                    <a href="/tools/offers" class="nav-link ">
-                                                        <span class="title">Offers</span>
+                                                    <a href="/monitoring/traffic" class="nav-link ">
+                                                        <span class="title">Traffic</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="/tools/landers" class="nav-link ">
-                                                        <span class="title">Landers</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item start isActiveIdentifier">
-                                                        <a href="javascript:;" class="nav-link nav-toggle">
-                                                            <span class="title">Settings</span>
-                                                            <span class="selected"></span>
-                                                            <span class="arrow open"></span>
-                                                        </a>
-                                                        <ul class="sub-menu">
-                                                            <li class="nav-item">
-                                                                <a href="/tools/settings/presets" class="nav-link ">
-                                                                    <span class="title">Presets</span>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                            </ul>
-                                        </li>',
-                    'api' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="fa fa-exchange"></i>
-                                                <span class="title">Cake API</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
-                                                <li class="nav-item">
-                                                    <a href="/offers/offer-search" class="nav-link ">
-                                                        <span class="title">Offer Search</span>
+                                                    <a href="/monitoring/exploit-log" class="nav-link ">
+                                                        <span class="title">Exploit Log</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="/offers/offer-preset-searches" class="nav-link ">
-                                                        <span class="title">Preset Searches</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/offers/offer-groups" class="nav-link ">
-                                                        <span class="title">Offer Groups</span>
-                                                    </a>
-                                                </li>
-
-                                            </ul>
-                                        </li>',
-                    'manage-users' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="fa fa-users"></i>
-                                                <span class="title">Manage Users</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
-                                                <li class="nav-item">
-                                                    <a href="/manage-users/groups" class="nav-link ">
-                                                        <span class="title">Groups</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/manage-users/users" class="nav-link ">
-                                                        <span class="title">Users</span>
+                                                    <a href="/monitoring/data-log" class="nav-link ">
+                                                        <span class="title">Data Log</span>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -233,22 +212,25 @@ class NavmenuController extends Controller{
                                                         <span class="title">Affiliate Network</span>
                                                     </a>
                                                 </li>
-                                            </ul>
-                                        </li>',
-            'extras' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="fa fa-magic"></i>
-                                                <span class="title">Extras</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
                                                 <li class="nav-item">
-                                                    <a href="/extras/ip-compile" class="nav-link ">
-                                                        <span class="title">IP Compile</span>
+                                                    <a href="javascript:;" class="nav-link nav-toggle">
+                                                        <span class="title">Manage Users</span>
+                                                        <span class="selected"></span>
+                                                        <span class="arrow open"></span>
                                                     </a>
+                                                    <ul class="sub-menu">
+                                                        <li class="nav-item">
+                                                            <a href="/global-settings/manage-users/groups" class="nav-link ">
+                                                                <span class="title">Groups</span>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="/global-settings/manage-users/users" class="nav-link ">
+                                                                <span class="title">Users</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
                                                 </li>
-                                            </ul>
                                         </li>'
         );
 

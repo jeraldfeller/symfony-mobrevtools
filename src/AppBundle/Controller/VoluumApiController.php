@@ -121,7 +121,7 @@ class VoluumApiController extends Controller{
     }
 
     /**
-     * @Route("/cost-update")
+     * @Route("/tools/cost-update")
      */
     public function showLandersPageAction(){
         $this->forward('AppBundle:Deletes:deleteReportsAll', array('data' => 'AppBundle:ReportsCampaignsManualCostUpdate'))->getContent();
