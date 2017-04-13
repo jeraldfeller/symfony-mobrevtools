@@ -7,27 +7,6 @@
     <link href="{{ asset('assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/global/plugins/clockface/css/clockface.css') }}" rel="stylesheet" type="text/css" />
-    {% if page == 'ExoClick' %}
-        <style>
-            @media screen and (min-width: 780px) {
-                #rulesDivContainer{
-                    min-height: 100%;
-                    height: auto;
-
-                }
-                #rulesDivContainer > .row {
-                    overflow-x:scroll;
-                    overflow-y:hidden;
-                    white-space:nowrap;
-                }
-                #rulesDivContainer > .row [class*="col-lg"], #rulesDivContainer > .row [class*="col-md"], #rulesDivContainer > .row [class*="col-sm"] {
-                    float:none;
-                    display:inline-block;
-                }
-            }
-
-        </style>
-    {% endif %}
 
 {% endblock %}
 {% block nav %}
@@ -472,7 +451,7 @@
                                     {% endif %}
 
                                     <!-- Bid Rules -->
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4" style="display: none;">
                                         <div class="portlet box blue">
                                             <div class="portlet-title">
                                                 <div class="caption">

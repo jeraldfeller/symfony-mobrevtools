@@ -58,10 +58,10 @@ class CronApiCredentialsCommand extends ContainerAwareCommand {
         }
 
         $voluumToken = json_decode($voluumService->voluumLoginAction($voluumApi['userName'], $voluumApi['password'])->getContent(), true);
-        $exoClickToken = json_decode($exoClickService->exoClickLoginAction($exoClickApi['userName'])->getContent(), true);
+        //$exoClickToken = json_decode($exoClickService->exoClickLoginAction($exoClickApi['userName'])->getContent(), true);
         $credentials = $em->getRepository('AppBundle:ApiCredentials')->findOneById(1);
         $credentials->setVoluum($voluumToken['token']);
-        $credentials->setExoClick($exoClickToken[0]['token']);
+       // $credentials->setExoClick($exoClickToken[0]['token']);
         $em->flush();
             $output->writeln([
                'Success'

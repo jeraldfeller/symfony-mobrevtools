@@ -39,7 +39,7 @@ class VoluumApiController extends Controller{
             // Close request to clear up some resources
             curl_close($curl);
 
-            var_dump($resp);
+
             return new Response($resp);
 
 
