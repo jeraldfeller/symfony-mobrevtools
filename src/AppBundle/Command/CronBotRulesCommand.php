@@ -118,7 +118,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $tz = 'America/Chicago';
                     $sort = 'visits';
                     $direction = 'desc';
-                    $limit = '10000';
+                    $limit = '1000';
 
                     $query = array('from' => $timeSetStart,
                         'to' => $dateTimeTo,
@@ -141,22 +141,22 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                         'columns' => 'epv',
                         'columns' => 'epc',
                         'columns' => 'ap',
-                        'columns' => 'errors',
                         'groupBy' => $customVariable,
                         'offset' => 0,
                         'limit' => $limit,
-                        'include' => 'active',
+                        'include' => 'ACTIVE',
+                        'conversionTimeMode' => 'VISIT',
                         'filter1' => 'campaign',
                         'filter1Value' => $key['vid']
                     );
-                    $url = 'https://portal.voluum.com/report?';
+                    $url = 'https://panel-api.voluum.com/report?';
                     $returnedData = json_decode($voluumService->getVoluumReportsAction($url, $query, 'GET', $voluumSessionId)->getContent(), true);
                     if ($key['active'] == 1) {
                         if (!isset($returnedData['error'])) {
                             $targets = array();
                             foreach ($returnedData['rows'] as $item) {
-                                if ($key['traffic_name'] == 'Zeropark') {
-                                    if ($item['status'] == 'ACTIVE') {
+                                if ($key['trafficName'] == 'Zeropark') {
+
                                         $ruleSetCount = 1;
 
                                         if (count($botConditions) > 0) {
@@ -208,7 +208,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     $this->insertBotReport($key['bid'],
                                                         $key['tid'],
                                                         $key['cgid'],
-                                                        $key['traffic_name'],
+                                                        $key['trafficName'],
                                                         $key['geo'],
                                                         $key['verticalName'],
                                                         $item[$customVariable],
@@ -218,7 +218,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                         $item['cost'],
                                                         $item['conversions'],
                                                         $item['roi'],
-                                                        $key['camp_name'],
+                                                        $key['campName'],
                                                         $key['frequency'],
                                                         $key['dateTimeUnix'],
                                                         $timeStamp
@@ -241,11 +241,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                         }
 
 
-
-                                    }
-
-
-                                }else if($key['traffic_name'] == 'ExoClick'){
+                                }else if($key['trafficName'] == 'ExoClick'){
                                     $ruleSetCount = 1;
                                     if (count($botConditions) > 0) {
 
@@ -296,7 +292,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 $this->insertBotReport($key['bid'],
                                                     $key['tid'],
                                                     $key['cgid'],
-                                                    $key['traffic_name'],
+                                                    $key['trafficName'],
                                                     $key['geo'],
                                                     $key['verticalName'],
                                                     $item[$customVariable],
@@ -306,7 +302,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     $item['cost'],
                                                     $item['conversions'],
                                                     $item['roi'],
-                                                    $key['camp_name'],
+                                                    $key['campName'],
                                                     $key['frequency'],
                                                     $key['dateTimeUnix'],
                                                     $timeStamp
@@ -377,7 +373,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 $this->insertBotReport($key['bid'],
                                                     $key['tid'],
                                                     $key['cgid'],
-                                                    $key['traffic_name'],
+                                                    $key['trafficName'],
                                                     $key['geo'],
                                                     $key['verticalName'],
                                                     $item[$customVariable],
@@ -387,7 +383,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     $item['cost'],
                                                     $item['conversions'],
                                                     $item['roi'],
-                                                    $key['camp_name'],
+                                                    $key['campName'],
                                                     $key['frequency'],
                                                     $key['dateTimeUnix'],
                                                     $timeStamp
@@ -408,7 +404,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                 }
 
                             }
-                            switch($key['traffic_name']){
+                            switch($key['trafficName']){
                                 case 'Zeropark':
                                     if(count($targets) > 0){
                                         $targetsToPause = array_unique($targets);
@@ -425,11 +421,11 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
                                                 $query = array('hash' => implode(',', $targetArray)
                                                 );
-                                                $url = 'https://panel.zeropark.com/api/campaign/' . $key['camp_id'] . '/targets/pause/?' . http_build_query($query);
+                                                $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
                                                 $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
-                                                echo $key['traffic_name'] . '<br>';
-                                                echo $key['camp_id'] . '<br>';
-                                                echo $key['camp_name'] . '<br>';
+                                                echo $key['trafficName'] . '<br>';
+                                                echo $key['campId'] . '<br>';
+                                                echo $key['campName'] . '<br>';
                                                 echo '<pre>' , var_dump($response) , '</pre>';
                                                 echo '<hr>';
                                             }
@@ -437,15 +433,13 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                         }else{
                                             $query = array('hash' => implode(',', $targetsToPause)
                                             );
-                                            $url = 'https://panel.zeropark.com/api/campaign/' . $key['camp_id'] . '/targets/pause/?' . http_build_query($query);
+                                            $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
                                             $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
-                                            echo $key['traffic_name'] . '<br>';
-                                            echo $key['camp_id'] . '<br>';
-                                            echo $key['camp_name'] . '<br>';
+                                            echo $key['trafficName'] . '<br>';
+                                            echo $key['campId'] . '<br>';
+                                            echo $key['campName'] . '<br>';
                                             echo '<pre>' , var_dump($response) , '</pre>';
                                         }
-
-
 
                                     }
 
@@ -456,10 +450,10 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
                                 case 'ExoClick':
                                     if(count($targets) > 0){
-                                        $response = json_decode($exoClickService->exoClickPostBlockDomain($exoclickSessionId, $key['camp_id'], array_unique($targets))->getContent(), true);
-                                        echo $key['traffic_name'] . '<br>';
-                                        echo $key['camp_id'] . '<br>';
-                                        echo $key['camp_name'] . '<br>';
+                                        $response = json_decode($exoClickService->exoClickPostBlockDomain($exoclickSessionId, $key['campId'], array_unique($targets))->getContent(), true);
+                                        echo $key['trafficName'] . '<br>';
+                                        echo $key['campId'] . '<br>';
+                                        echo $key['campName'] . '<br>';
                                         echo '<pre>' , var_dump($response) , '</pre>';
                                     }
                                     break;
