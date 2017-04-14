@@ -115,6 +115,146 @@ class ExoClickApiController extends Controller{
 
     }
 
+
+
+    /**
+     * @Route("/api/exoclick/block-domain/{$token}/{$vid}/{$targets}", name="exoClickBlockDomain")
+     */
+    public function exoClickPostBlockDomain($token = null, $vid = null, $targets = null){
+
+        $url = 'https://api.exoclick.com/v1/campaigns/' . $vid . '/blocked/sites';
+
+        // Specify the campaign id
+
+        foreach($targets as $domain){
+            $params = array('sites' => $domain);
+
+            $request = new  ExoClickRequest($url, 'POST', $params);
+            $type = 'Bearer';
+
+            // Set the Authorization Header, retrieved from earlier Login request
+            $request->setAuthorizationHeader($type, $token);
+
+            // Send the request
+            $request->send();
+
+            // Get the response object
+            $response = $request->getResponse();
+
+            if($response->getStatusCode() == 200) {
+
+                $statistics = $response->getBodyDecoded();
+
+                $data[] = $statistics;
+
+
+            }
+            else {
+                // Campaign statistics not found
+                $data[] = $response->getStatusCode() . PHP_EOL;
+                $data[] = $response->getReasonPhrase() . PHP_EOL;
+                $data[] = $response->getBody() . PHP_EOL;
+
+
+            }
+
+        }
+
+        return  new Response(json_encode($data));
+
+    }
+
+
+    public function exoClickDeleteBlockDomain($token, $vid, $target){
+
+        $url = 'https://api.exoclick.com/v1/campaigns/' . $vid . '/blocked/sites';
+
+        // Specify the campaign id
+
+        $params = array('sites' => $target);
+
+        $request = new  ExoClickRequest($url, 'POST', $params);
+        $type = 'Bearer';
+
+        // Set the Authorization Header, retrieved from earlier Login request
+        $request->setAuthorizationHeader($type, $token);
+
+        // Send the request
+        $request->send();
+
+        // Get the response object
+        $response = $request->getResponse();
+
+        if($response->getStatusCode() == 200) {
+
+            $statistics = $response->getBodyDecoded();
+
+            $data[] = $statistics;
+
+
+        }
+        else {
+            // Campaign statistics not found
+            $data[] = $response->getStatusCode() . PHP_EOL;
+            $data[] = $response->getReasonPhrase() . PHP_EOL;
+            $data[] = $response->getBody() . PHP_EOL;
+
+        }
+
+        return $data;
+
+    }
+
+
+    public function exoClickPostBlockIp($token, $vid, $ips){
+
+        $url = 'https://api.exoclick.com/v1/campaigns/' . $vid . '/blocked/ip_ranges';
+
+        // Specify the campaign id
+
+        $count = 1;
+        $batchSize = 100;
+        foreach($ips as $ip){
+            if(($count % $batchSize) == 0){
+                sleep(60);
+            }
+            $params = array('ip' => $ip );
+
+            $request = new  ExoClickRequest($url, 'POST', $params);
+            $type = 'Bearer';
+
+            // Set the Authorization Header, retrieved from earlier Login request
+            $request->setAuthorizationHeader($type, $token);
+
+            // Send the request
+            $request->send();
+
+            // Get the response object
+            $response = $request->getResponse();
+
+            if($response->getStatusCode() == 200) {
+
+                $statistics = $response->getBodyDecoded();
+
+                $data[] = $statistics;
+
+
+            }
+            else {
+                // Campaign statistics not found
+                $data[] = $response->getStatusCode() . PHP_EOL;
+                $data[] = $response->getReasonPhrase() . PHP_EOL;
+                $data[] = $response->getBody() . PHP_EOL;
+
+
+            }
+
+        }
+
+        return $data;
+
+    }
+
 }
 
 

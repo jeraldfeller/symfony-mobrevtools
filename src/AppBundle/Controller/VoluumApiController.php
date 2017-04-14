@@ -36,8 +36,10 @@ class VoluumApiController extends Controller{
             ));
             // Send the request & save response to $resp
             $resp = curl_exec($curl);
+            $resp = curl_error($curl);
             // Close request to clear up some resources
             curl_close($curl);
+
 
 
             return new Response($resp);
@@ -50,6 +52,8 @@ class VoluumApiController extends Controller{
      * @Route("/api/voluum-report/{$url}/{$query}/{$method}/{$sessionId}", name="voluumReport")
      */
     public function getVoluumReportsAction($url = null, $query = null , $method = null, $sessionId = null){
+
+
         $url = $url . http_build_query($query);
         // Get cURL resource
         $curl = curl_init();
