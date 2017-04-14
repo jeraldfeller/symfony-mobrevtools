@@ -17,7 +17,7 @@ function getWithTrafficCampaigns(bol, include)
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "get-campaign-traffic-settings");
+        XMLHttpRequestObject.open("POST", "/monitoring/get-campaign-traffic-settings");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');

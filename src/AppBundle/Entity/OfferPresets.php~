@@ -109,4 +109,33 @@ class OfferPresets
     {
         return $this->offerPresetsId;
     }
+    /**
+     * @var \AppBundle\Entity\OfferGroups
+     */
+    private $offerGroup;
+
+
+    /**
+     * Set offerGroup
+     *
+     * @param \AppBundle\Entity\OfferGroups $offerGroup
+     *
+     * @return OfferPresets
+     */
+    public function setOfferGroup(\AppBundle\Entity\OfferGroups $offerGroup = null)
+    {
+        $this->offerGroup = $offerGroup;
+
+        return $this;
+    }
+
+    /**
+     * Get offerGroup
+     *
+     * @return \AppBundle\Entity\OfferGroups
+     */
+    public function getOfferGroup()
+    {
+        return $this->offerGroup;
+    }
 }

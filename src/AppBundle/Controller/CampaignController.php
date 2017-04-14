@@ -868,6 +868,83 @@ class CampaignController extends Controller
             }
 
 
+        }else{
+
+            $traffic = $this->getTrafficSourceByName($trafficName);
+            $dateNow = date('Y-m-d');
+            $from = date('Y-m-d', strtotime('-30 days'));
+            $to = date('Y-m-d', strtotime('+1 days'));
+            $tz = 'America/Chicago';
+            $sort = 'visit';
+            $direction = 'desc';
+            $limit = 1000;
+
+            $query = array('from' => $from,
+                'to' => $to,
+                'tz' => $tz,
+                'sort' => $sort,
+                'direction' => $direction,
+                'columns' => 'campaignName',
+                'columns' => 'campaignId',
+                'columns' => 'status',
+                'columns' => 'cpv',
+                'columns' => 'ctr',
+                'columns' => 'cr',
+                'columns' => 'cv',
+                'columns' => 'roi',
+                'columns' => 'epv',
+                'columns' => 'epc',
+                'columns' => 'ap',
+                'columns' => 'errors',
+                'groupBy' => 'campaign',
+                'offset' => 0,
+                'limit' => $limit,
+                'include' => 'traffic',
+                'filter1' => 'traffic-source',
+                'filter1Value' => $traffic[0]->getTrafficSourceId()
+            );
+            $url = 'https://portal.voluum.com/report?';
+
+
+
+            $voluumCampaignToMatchGetCampid = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+                'query' => $query,
+                'method' => 'GET',
+                'sessionId' => $voluumSessionId))->getContent(), true);
+
+            $noExists = 1;
+            if(!isset($voluumCampaignToMatchGetCampid['error'])){
+                $i = 0;
+                foreach($voluumCampaignToMatchGetCampid['rows'] as $voluumRow){
+                    if(!in_array($voluumRow['campaignId'], $campaignExists )){
+                        $geo = (isset($voluumRow['geo']) ? $voluumRow['geo'] : 'N/A');
+                        if($geo == 'N/A'){
+                            $geo = json_decode($this->forward('AppBundle:Common:getGeoCodeByCountry', array('country' => $voluumRow['campaignCountry']))->getContent(), true);
+                        }
+                        if($geo){
+                            $geoCode = $geo;
+
+                        }else{
+                            $geoCode = 'N/A';
+                        }
+                        $output .= '<tr>';
+                        $output .= '<td class="a-center"><label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"><input id="checkBoxId_' . $i . '" name="table_records" type="checkbox" data-campid="1" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geoCode . '" class="checkboxes camp-record"><span></span></label></td>';
+
+                        $output .= '<td>' . $voluumRow['campaignName'] . '</td>';
+                        $output .= '<td>' . $voluumRow['campaignId'] . '</td>';
+                        $output .= '</tr>';
+                        $disable = '';
+                        $noExists = 0;
+                        $i++;
+                    }else{
+                        $noExists = 1;
+
+                    }
+
+
+                }
+            }
+
         }
 
 
@@ -1494,13 +1571,14 @@ class CampaignController extends Controller
         }
         if (isset($input['trafficName']) || $input['trafficName'] != '') {
             $trafficName = $input['trafficName'];
+            $em = $this->getDoctrine()->getEntityManager();
+            $trafficSourceEntity = $em->getRepository('AppBundle:TrafficSource')
+                                    ->findOneBy(array('trafficName' => $trafficName));
+
+            $customVariable = $trafficSourceEntity->getCustomVariable();
+            $customVariableKey = $trafficSourceEntity->getCustomVariableKey();
         }
 
-        if ($trafficName == 'Zeropark') {
-            $customVariable = 'customVariable1';
-        } else if ($trafficName == 'ExoClick') {
-            $customVariable = 'customVariable3';
-        }
 
         $sLimit = "";
         if (isset($input['iDisplayStart']) && $input['iDisplayLength'] != '-1') {
@@ -1525,20 +1603,19 @@ class CampaignController extends Controller
         $split = explode(':', date('H:m'));
         $yesterday = date('Y-m-d', strtotime('-1 days')) . 'T00:00:00Z';
         $today = date('Y-m-d') . 'T' . $split[0] . ':00:00Z';
-        $threeDay = $today = date('Y-m-d', strtotime('-3 days')) . 'T' . $split[0] . ':00:00Z';
-        $sevenDay = $today = date('Y-m-d', strtotime('-7 days')) . 'T' . $split[0] . ':00:00Z';
+        $threeDay = date('Y-m-d', strtotime('-3 days')) . 'T' . $split[0] . ':00:00Z';
+        $sevenDay = date('Y-m-d', strtotime('-7 days')) . 'T' . $split[0] . ':00:00Z';
         $tz = 'America/Chicago';
         $sort = 'revenue';
         $direction = 'desc';
         $limit = $input['iDisplayLength'];
         $url = 'https://portal.voluum.com/report?';
-        if ($trafficName == 'Zeropark') {
             $query = array('from' => $yesterday,
                 'to' => $today,
                 'tz' => $tz,
                 'sort' => $sort,
                 'direction' => $direction,
-                'columns' => 'customVariable1',
+                'columns' => $customVariableKey,
                 'columns' => 'campaignId',
                 'columns' => 'visits',
                 'columns' => 'clicks',
@@ -1555,7 +1632,7 @@ class CampaignController extends Controller
                 'columns' => 'epc',
                 'columns' => 'ap',
                 'columns' => 'errors',
-                'groupBy' => 'custom-variable1',
+                'groupBy' => $customVariable,
                 'offset' => 0,
                 'limit' => $limit,
                 'include' => 'active',
@@ -1567,51 +1644,12 @@ class CampaignController extends Controller
                 'query' => $query,
                 'method' => 'GET',
                 'sessionId' => $voluumSessionId))->getContent(), true);
-        } else if ($trafficName == 'ExoClick') {
-            $query = array('from' => $yesterday,
-                'to' => $today,
-                'tz' => $tz,
-                'sort' => $sort,
-                'direction' => $direction,
-                'columns' => 'customVariable3',
-                'columns' => 'campaignId',
-                'columns' => 'visits',
-                'columns' => 'clicks',
-                'columns' => 'conversions',
-                'columns' => 'revenue',
-                'columns' => 'cost',
-                'columns' => 'profit',
-                'columns' => 'cpv',
-                'columns' => 'ctr',
-                'columns' => 'cr',
-                'columns' => 'cv',
-                'columns' => 'roi',
-                'columns' => 'epv',
-                'columns' => 'epc',
-                'columns' => 'ap',
-                'columns' => 'errors',
-                'groupBy' => 'custom-variable3',
-                'offset' => 0,
-                'limit' => $limit,
-                'include' => 'active',
-                'filter1' => 'campaign',
-                'filter1Value' => $vid
-            );
-
-            $returnedDataYesterday = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-                'query' => $query,
-                'method' => 'GET',
-                'sessionId' => $voluumSessionId))->getContent(), true);
-        }
-
         if (!isset($returnedDataYesterday['error'])) {
             foreach ($returnedDataYesterday['rows'] as $item) {
                 $row = array();
-
-                if ($trafficName == 'Zeropark') {
                     $tz = 'America/Chicago';
                     $limit = 100;
-                    $placement = $item[$customVariable];
+                    $placement = $item[$customVariableKey];
                     $queryThreeDay = array('from' => $threeDay,
                         'to' => $today,
                         'tz' => $tz,
@@ -1638,7 +1676,7 @@ class CampaignController extends Controller
                         'include' => 'traffic',
                         'filter1' => 'campaign',
                         'filter1Value' => $vid,
-                        'filter2' => 'custom-variable-1',
+                        'filter2' => $customVariable,
                         'filter2Value' => $placement
                     );
 
@@ -1669,83 +1707,7 @@ class CampaignController extends Controller
                         'include' => 'traffic',
                         'filter1' => 'campaign',
                         'filter1Value' => $vid,
-                        'filter2' => 'custom-variable-1',
-                        'filter2Value' => $placement
-                    );
-
-
-                    $returnedDataThreeDay = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-                        'query' => $queryThreeDay,
-                        'method' => 'GET',
-                        'sessionId' => $voluumSessionId))->getContent(), true);
-
-                    $returnedDataSevenDay = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-                        'query' => $querySevenDay,
-                        'method' => 'GET',
-                        'sessionId' => $voluumSessionId))->getContent(), true);
-
-                } else if ($trafficName == 'ExoClick') {
-                    $tz = 'America/Chicago';
-                    $limit = 100;
-                    $placement = $item[$customVariable];
-                    $queryThreeDay = array('from' => $threeDay,
-                        'to' => $today,
-                        'tz' => $tz,
-                        'columns' => 'offerName',
-                        'columns' => 'visits',
-                        'columns' => 'clicks',
-                        'columns' => 'visits',
-                        'columns' => 'conversions',
-                        'columns' => 'revenue',
-                        'columns' => 'cost',
-                        'columns' => 'profit',
-                        'columns' => 'cpv',
-                        'columns' => 'ctr',
-                        'columns' => 'cr',
-                        'columns' => 'cv',
-                        'columns' => 'roi',
-                        'columns' => 'epv',
-                        'columns' => 'epc',
-                        'columns' => 'ap',
-                        'columns' => 'errors',
-                        'groupBy' => 'offer',
-                        'offset' => 0,
-                        'limit' => $limit,
-                        'include' => 'traffic',
-                        'filter1' => 'campaign',
-                        'filter1Value' => $vid,
-                        'filter2' => 'custom-variable-3',
-                        'filter2Value' => $placement
-                    );
-
-
-                    $querySevenDay = array('from' => $sevenDay,
-                        'to' => $today,
-                        'tz' => $tz,
-                        'columns' => 'offerName',
-                        'columns' => 'visits',
-                        'columns' => 'clicks',
-                        'columns' => 'visits',
-                        'columns' => 'conversions',
-                        'columns' => 'revenue',
-                        'columns' => 'cost',
-                        'columns' => 'profit',
-                        'columns' => 'cpv',
-                        'columns' => 'ctr',
-                        'columns' => 'cr',
-                        'columns' => 'cv',
-                        'columns' => 'roi',
-                        'columns' => 'epv',
-                        'columns' => 'epc',
-                        'columns' => 'ap',
-                        'columns' => 'errors',
-                        'groupBy' => 'offer',
-                        'offset' => 0,
-                        'limit' => $limit,
-                        'include' => 'traffic',
-                        'filter1' => 'campaign',
-                        'filter1Value' => $vid,
-                        'filter2' => 'custom-variable-3',
+                        'filter2' => $customVariable,
                         'filter2Value' => $placement
                     );
 
@@ -1762,7 +1724,7 @@ class CampaignController extends Controller
 
                     if (!isset($returnedDataThreeDay['error']) && !isset($returnedDataSevenDay['error'])) {
                         for ($i = 0; $i < $iColumnCount; $i++) {
-                            $row[] = $item[$customVariable];
+                            $row[] = $item[$customVariableKey];
                             $row[] = '$' . number_format($item['profit'], 2) . ' / ' . number_format($item['roi'], 2) . '%';
                             $row[] = '$' . number_format($returnedDataThreeDay['totals']['profit'], 2) . ' / ' . number_format($returnedDataThreeDay['totals']['roi'], 2) . '%';
                             $row[] = '$' . number_format($returnedDataSevenDay['totals']['profit'], 2) . ' / ' . number_format($returnedDataSevenDay['totals']['roi'], 2) . '%';
@@ -1787,12 +1749,8 @@ class CampaignController extends Controller
 
             }
 
-
             //var_dump( $output['aaData']);
 
-
-
-        }
 
         return new Response(json_encode($output));
     }

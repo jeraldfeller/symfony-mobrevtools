@@ -266,7 +266,7 @@ class TrafficMonitoringController extends Controller{
     }
 
     /**
-     * @Route("reports/get-campaign-traffic-settings")
+     * @Route("/monitoring/get-campaign-traffic-settings")
      */
     public function getCampaignTrafficSettingsAction(){
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);

@@ -812,23 +812,20 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::ajaxGetReportsTrafficMonitoring',  '_route' => 'app_trafficmonitoring_ajaxgetreportstrafficmonitoring',);
         }
 
-        if (0 === strpos($pathinfo, '/reports')) {
-            // app_trafficmonitoring_getcampaigntrafficsettings
-            if ($pathinfo === '/reports/get-campaign-traffic-settings') {
-                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::getCampaignTrafficSettingsAction',  '_route' => 'app_trafficmonitoring_getcampaigntrafficsettings',);
+        // app_trafficmonitoring_getcampaigntrafficsettings
+        if ($pathinfo === '/monitoring/get-campaign-traffic-settings') {
+            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::getCampaignTrafficSettingsAction',  '_route' => 'app_trafficmonitoring_getcampaigntrafficsettings',);
+        }
+
+        if (0 === strpos($pathinfo, '/reports/update-traffic-monitoring-')) {
+            // app_trafficmonitoring_updatecampaigntrafficsettingsvisits
+            if ($pathinfo === '/reports/update-traffic-monitoring-settings') {
+                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficSettingsVisits',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficsettingsvisits',);
             }
 
-            if (0 === strpos($pathinfo, '/reports/update-traffic-monitoring-')) {
-                // app_trafficmonitoring_updatecampaigntrafficsettingsvisits
-                if ($pathinfo === '/reports/update-traffic-monitoring-settings') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficSettingsVisits',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficsettingsvisits',);
-                }
-
-                // app_trafficmonitoring_updatecampaigntrafficnotificationsettings
-                if ($pathinfo === '/reports/update-traffic-monitoring-notification-settings') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettings',);
-                }
-
+            // app_trafficmonitoring_updatecampaigntrafficnotificationsettings
+            if ($pathinfo === '/reports/update-traffic-monitoring-notification-settings') {
+                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettings',);
             }
 
         }

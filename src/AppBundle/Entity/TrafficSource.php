@@ -80,4 +80,62 @@ class TrafficSource
     {
         return $this->trafficName;
     }
+    /**
+     * @var string
+     */
+    private $customVariable;
+
+    /**
+     * @var string
+     */
+    private $customVariableKey;
+
+
+    /**
+     * Set customVariable
+     *
+     * @param string $customVariable
+     *
+     * @return TrafficSource
+     */
+    public function setCustomVariable($customVariable)
+    {
+        $this->customVariable = $customVariable;
+
+        return $this;
+    }
+
+    /**
+     * Get customVariable
+     *
+     * @return string
+     */
+    public function getCustomVariable()
+    {
+        return $this->customVariable;
+    }
+
+    /**
+     * Set customVariableKey
+     *
+     * @param string $customVariableKey
+     *
+     * @return TrafficSource
+     */
+    public function setCustomVariableKey($customVariableKey)
+    {
+        $this->customVariableKey = $customVariableKey;
+
+        return $this;
+    }
+
+    /**
+     * Get customVariableKey
+     *
+     * @return string
+     */
+    public function getCustomVariableKey()
+    {
+        return $this->customVariableKey;
+    }
 }

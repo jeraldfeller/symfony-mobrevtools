@@ -339,7 +339,7 @@ class SettingsController extends Controller {
 
        if(count($noExists) == 0){
            $output .= '<tr>';
-           $output .='<td colspan="3">Traffic Source Available</td>';
+           $output .='<td colspan="3">No Traffic Source Available</td>';
            $output .='</tr>';
            $disable = 'disabled';
        }
@@ -363,18 +363,24 @@ class SettingsController extends Controller {
             $traffic->setTrafficSourceId($row['trafficSourceId']);
             $em->persist($traffic);
             $em->flush();
+
+
             $lastId = $traffic->getId();
-            $trafficSource = $traffic->getTrafficName();
+            /*
+           $trafficSource = $traffic->getTrafficName();
+           $trafficSourceEntity = $this->getDoctrine()
+               ->getRepository('AppBundle:TrafficSource')
+               ->find($lastId);
 
-                $apiAccess = new ApiAccess();
-                $apiAccess->setTid($lastId);
-                $apiAccess->setTrafficSource($trafficSource);
-                $apiAccess->setUserName('youremail@dummy.com');
-                $apiAccess->setPassword('12345');
-                $em->persist($apiAccess);
-                $em->flush();
+               $apiAccess = new ApiAccess();
+               $apiAccess->setTid($trafficSourceEntity);
+               $apiAccess->setTrafficSource($trafficSource);
+               $apiAccess->setUserName('youremail@dummy.com');
+               $apiAccess->setPassword('12345');
+               $em->persist($apiAccess);
+               $em->flush();
 
-
+           */
 
         }
 

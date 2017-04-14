@@ -14,5 +14,15 @@
         <option name="fixed"/>
       </options>
     </field>
+    <field name="customVariable" type="string" column="custom_variable" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="customVariableKey" type="string" column="custom_variable_key" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
   </entity>
 </doctrine-mapping>

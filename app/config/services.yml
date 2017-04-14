@@ -7,6 +7,8 @@ services:
     app.datatable.users:
             class: AppBundle\Datatables\UsersEntityDatatable
             parent: sg_datatables.datatable.abstract
+    app.common_controller:
+            class: AppBundle\Controller\CommonController
     app.system_controller:
             class: AppBundle\Controller\SystemController
     app.settings:
@@ -17,6 +19,9 @@ services:
             class: AppBundle\Controller\CakeApiController
     app.exoclick_api:
             class: AppBundle\Controller\ExoClickApiController
+    app.campaign_controller:
+            class: AppBundle\Controller\CampaignController
+
 
 #    service_name:
 #        class: AppBundle\Directory\ClassName
