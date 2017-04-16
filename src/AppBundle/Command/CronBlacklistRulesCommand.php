@@ -17,21 +17,22 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use AppBundle\Controller\SessionController;
 
 
-use AppBundle\Entity\BotRules;
-use AppBundle\Entity\BotRuleSet;
-use AppBundle\Entity\BotConditions;
-use AppBundle\Entity\Reportsbot;
+use AppBundle\Entity\BlacklistRules;
+use AppBundle\Entity\BlacklistRuleSet;
+use AppBundle\Entity\BlacklistConditions;
+use AppBundle\Entity\ReportsBlacklist;
 use AppBundle\Entity\BannedPlacement;
-class CronBotRulesCommand extends ContainerAwareCommand{
+
+class CronBlacklistRulesCommand extends ContainerAwareCommand{
 
     protected function configure()
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('cron:bot-rules')
+            ->setName('cron:blacklist-rules')
 
             // the short description shown while running "php bin/console list"
-            ->setDescription('Executes Bot Rules')
+            ->setDescription('Executes Blacklist Rules')
 
             // the full command description shown when running the command with
             // the "--help" option
@@ -57,6 +58,8 @@ class CronBotRulesCommand extends ContainerAwareCommand{
         $campaignGroups = $this->getCampaignDetailsAllAction();
         $date = date('Y-m-d');
         $timeStamp = time();
+
+
         foreach($campaignGroups as $key) {
 
             $em = $this->getContainer()->get('doctrine')->getManager();
@@ -66,10 +69,10 @@ class CronBotRulesCommand extends ContainerAwareCommand{
             $customVariable = $trafficSourceEntity->getCustomVariable();
             $customVariableKey = $trafficSourceEntity->getCustomVariableKey();
 
-            $botConditions = $this->getCampaignBotConditionsById($key['cgid']);
+            $blacklistConditions = $this->getCampaignBlacklistConditionsById($key['cgid']);
 
 
-            $dateFrom = (array) $key['datefrom'];
+            $dateFrom = (array) $key['startfrom'];
             $timeStart = date('c', $key['datetimeunix']);
             $split = explode(':', $key['datetime']);
             $timeSetStart =  date('Y-m-d', strtotime($dateFrom['date'])) . 'T' . $split[0] . ':00:00' . date('P');
@@ -141,23 +144,23 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                         if (!isset($returnedData['error'])) {
                             $targets = array();
                             foreach ($returnedData['rows'] as $item) {
-                                if ($key['trafficName'] == 'Zeropark') {
-                                    if($item['status'] == 'ACTIVE'){
+                                if ($key['traffic_name'] == 'Zeropark') {
+                                    if ($item['status'] == 'ACTIVE') {
                                         $ruleSetCount = 1;
+                                        if (count($blacklistConditions) > 0) {
 
-                                        if (count($botConditions) > 0) {
-                                            foreach ($botConditions as $index => $conditions ) {
+                                            foreach ($blacklistConditions as $index => $conditions) {
+
                                                 $match = array();
                                                 $tomatch = array();
                                                 $pauseMatchCount = 0;
                                                 $conditionCount = 0;
                                                 $matchCount = 0;
-
-                                                foreach($conditions as $botCon){
-                                                    $variable = $botCon['rule_variable'];
-                                                    $condition = $botCon['rule_condition'];
-                                                    $value1 = $botCon['value1'];
-                                                    $value2 = $botCon['value2'];
+                                                foreach($conditions as $blacklistCon){
+                                                    $variable = $blacklistCon['rule_variable'];
+                                                    $condition = $blacklistCon['rule_condition'];
+                                                    $value1 = $blacklistCon['value1'];
+                                                    $value2 = $blacklistCon['value2'];
 
                                                     $match[] = $variable;
                                                     if ($condition == 'lessthan') {
@@ -179,6 +182,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     }
 
                                                     $result = array_diff($match, $tomatch);
+
                                                     if (count($result) == 0) {
                                                         $matchCount = $matchCount + 1;
                                                     }
@@ -186,12 +190,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     $conditionCount++;
                                                 }
 
-
-
-
                                                 if ($conditionCount == $matchCount) {
-                                                    $targets[] = $item[$customVariable];
-                                                    $this->insertBotReport($key['bid'],
+                                                    $targets[] = $item[$customVariableKey];
+                                                    $this->insertBlacklistReport($key['bid'],
                                                         $key['tid'],
                                                         $key['cgid'],
                                                         $key['trafficName'],
@@ -206,44 +207,123 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                         $item['roi'],
                                                         $key['campName'],
                                                         $key['frequency'],
-                                                        $key['dateTimeUnix'],
+                                                        $key['datetimeunix'],
                                                         $timeStamp
                                                     );
-
-
-                                                    $this->insertBannedPlacement($item[$customVariableKey],  $item['visits'], $item['cost'], $item['conversions'], $item['ctr'], $item['roi']);
 
                                                 }
 
                                                 unset($match);
                                                 unset($tomatch);
-                                                $ruleSetCount++;
+
+
+
                                             }
 
+                                            $ruleSetCount++;
+                                        }
 
 
+
+                                    }else if($item['status'] == 'PAUSED') {
+
+                                        if (count($blacklistConditions) > 0) {
+                                            $isResumed = 0;
+                                            foreach ($blacklistConditions as $index => $conditions) {
+                                                $matchUnpause = array();
+                                                $tomatchUnpause = array();
+                                                $unpauseMatchCount = 0;
+                                                $unpauseConditionCount = 0;
+                                                $unpauseMatchCount = 0;
+                                                foreach($conditions as $blacklistCon) {
+                                                    $variable = $blacklistCon['rule_variable'];
+                                                    $condition = $blacklistCon['rule_condition'];
+                                                    $value1 = $blacklistCon['value1'];
+                                                    $value2 = $blacklistCon['value2'];
+
+                                                    $matchUnpause[] = $variable;
+                                                    if ($condition == 'lessthan') {
+
+                                                        if ($item[$variable] <= $value1) {
+                                                            $tomatchUnpause[] = $variable;
+
+                                                        }
+                                                    } else if ($condition == 'greaterthan') {
+
+                                                        if ($item[$variable] >= $value1) {
+                                                            $tomatchUnpause[] = $variable;
+                                                        }
+                                                    } else {
+
+                                                        if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                            $tomatchUnpause[] = $variable;
+                                                        }
+                                                    }
+                                                    $result = array_diff($matchUnpause, $tomatchUnpause);
+                                                    if (count($result) > 0) {
+                                                        $unpauseMatchCount = $unpauseMatchCount + 1;
+
+                                                    }
+
+                                                    $unpauseConditionCount++;
+                                                }
+
+
+
+                                                if ($unpauseMatchCount == $unpauseConditionCount) {
+                                                    if($isResumed == 0){
+                                                        $isBan = $this->getBannedPlacement($item[$customVariableKey]);
+                                                        if(count($isBan) == 0){
+                                                            $query = array('hash' => implode(',', $item[$customVariableKey])
+                                                            );
+                                                            $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/resume/?' . http_build_query($query);
+                                                            $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);                                                            echo '<pre>' , var_dump($response) , '</pre>';
+                                                            //$campaignClass->updateBlacklistReport($key['cgid'], $item[$customVariable]);
+
+
+                                                            if(!isset($response['error'])){
+                                                                $this->updateBlacklistReport(
+                                                                    $key['cgid'],
+                                                                    $item[$customVariable],
+                                                                    $item['visits'],
+                                                                    $item['clicks'],
+                                                                    $item['ctr'],
+                                                                    $item['cost'],
+                                                                    $item['roi'],
+                                                                    $item['conversions'],
+                                                                    $key['frequency'],
+                                                                    $key['dateTimeUnix'],
+                                                                    $timeStamp);
+                                                                $isResumed = 1;
+                                                            }
+                                                        }
+
+                                                    }
+
+                                                }
+                                                unset($matchUnpause);
+                                                unset($tomatchUnpause);
+
+                                            }
 
 
                                         }
                                     }
 
 
-
-                                }else if($key['trafficName'] == 'ExoClick'){
-                                    $ruleSetCount = 1;
-                                    if (count($botConditions) > 0) {
-
-                                        foreach ($botConditions as $index => $conditions ) {
-                                            $match = array();
-                                            $tomatch = array();
-                                            $pauseMatchCount = 0;
-                                            $conditionCount = 0;
-                                            $matchCount = 0;
-                                            foreach($conditions as $botCon){
-                                                $variable = $botCon['rule_variable'];
-                                                $condition = $botCon['rule_condition'];
-                                                $value1 = $botCon['value1'];
-                                                $value2 = $botCon['value2'];
+                                }else if($key['traffic_name'] == 'ExoClick'){
+                                    $match = array();
+                                    $tomatch = array();
+                                    $pauseMatchCount = 0;
+                                    $conditionCount = 0;
+                                    $matchCount = 0;
+                                    if (count($blacklistConditions) > 0) {
+                                        foreach ($blacklistConditions as $index => $conditions) {
+                                            foreach($conditions as $blacklistCon){
+                                                $variable = $blacklistCon['rule_variable'];
+                                                $condition = $blacklistCon['rule_condition'];
+                                                $value1 = $blacklistCon['value1'];
+                                                $value2 = $blacklistCon['value2'];
 
                                                 $match[] = $variable;
                                                 if ($condition == 'lessthan') {
@@ -265,100 +345,20 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 }
 
                                                 $result = array_diff($match, $tomatch);
+
+
                                                 if (count($result) == 0) {
                                                     $matchCount = $matchCount + 1;
+
                                                 }
 
                                                 $conditionCount++;
                                             }
-
-
-
-                                            if ($conditionCount == $matchCount) {
-                                                $targets[] = $item[$customVariableKey];
-
-                                                $this->insertBotReport($key['bid'],
-                                                    $key['tid'],
-                                                    $key['cgid'],
-                                                    $key['trafficName'],
-                                                    $key['geo'],
-                                                    $key['verticalName'],
-                                                    $item[$customVariableKey],
-                                                    $item['visits'],
-                                                    $item['clicks'],
-                                                    $item['ctr'],
-                                                    $item['cost'],
-                                                    $item['conversions'],
-                                                    $item['roi'],
-                                                    $key['campName'],
-                                                    $key['frequency'],
-                                                    $key['dateTimeUnix'],
-                                                    $timeStamp
-                                                );
-
-                                                $this->insertBannedPlacement($item[$customVariableKey],  $item['visits'], $item['cost'], $item['conversions'], $item['ctr'], $item['roi']);
-
-                                            }
-
-                                            unset($match);
-                                            unset($tomatch);
-
-                                        }
-
-
-
-                                        $ruleSetCount++;
-
-                                    }
-                                }else{
-                                    $ruleSetCount = 1;
-                                    if (count($botConditions) > 0) {
-
-                                        foreach ($botConditions as $index => $conditions ) {
-                                            $match = array();
-                                            $tomatch = array();
-                                            $pauseMatchCount = 0;
-                                            $conditionCount = 0;
-                                            $matchCount = 0;
-                                            foreach($conditions as $botCon){
-                                                $variable = $botCon['rule_variable'];
-                                                $condition = $botCon['rule_condition'];
-                                                $value1 = $botCon['value1'];
-                                                $value2 = $botCon['value2'];
-
-                                                $match[] = $variable;
-                                                if ($condition == 'lessthan') {
-
-                                                    if ($item[$variable] <= $value1) {
-                                                        $tomatch[] = $variable;
-
-                                                    }
-                                                } else if ($condition == 'greaterthan') {
-
-                                                    if ($item[$variable] >= $value1) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                } else {
-
-                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                }
-
-                                                $result = array_diff($match, $tomatch);
-                                                if (count($result) == 0) {
-                                                    $matchCount = $matchCount + 1;
-                                                }
-
-                                                $conditionCount++;
-                                            }
-
-
+                                            //  echo '<pre>' , var_dump($result) , '</pre>';
+                                            // echo $key['camp_name'] . '| ' .  $item[$customVariable] . ' - ' . count($result) . ': ' . $item['visits'] . '<br>';
 
                                             if ($conditionCount == $matchCount) {
-                                                $targets[] = $item[$customVariableKey];
-
-                                                $this->insertBotReport($key['bid'],
+                                                $this->insertBlacklistReport($key['bid'],
                                                     $key['tid'],
                                                     $key['cgid'],
                                                     $key['trafficName'],
@@ -374,30 +374,283 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     $key['campName'],
                                                     $key['frequency'],
                                                     $key['datetimeunix'],
-                                                    $timeStamp
-                                                );
+                                                    $timeStamp);
                                             }
 
                                             unset($match);
                                             unset($tomatch);
 
+
                                         }
 
 
+                                    }
 
-                                        $ruleSetCount++;
+
+                                    /**
+                                     * Match Unpause
+                                     */
+
+                                    $matchUnpause = array();
+                                    $tomatchUnpause = array();
+                                    $unpauseMatchCount = 0;
+                                    $unpauseConditionCount = 0;
+                                    $unpauseMatchCount = 0;
+
+                                    if (count($blacklistConditions) > 0) {
+                                        $isResumed = 0;
+                                        foreach ($blacklistConditions as $index => $conditions) {
+                                            foreach($conditions as $blacklistCon) {
+                                                $variable = $blacklistCon['rule_variable'];
+                                                $condition = $blacklistCon['rule_condition'];
+                                                $value1 = $blacklistCon['value1'];
+                                                $value2 = $blacklistCon['value2'];
+
+                                                $matchUnpause[] = $variable;
+                                                if ($condition == 'lessthan') {
+
+                                                    if ($item[$variable] <= $value1) {
+                                                        $tomatchUnpause[] = $variable;
+
+                                                    }
+                                                } else if ($condition == 'greaterthan') {
+
+                                                    if ($item[$variable] >= $value1) {
+                                                        $tomatchUnpause[] = $variable;
+                                                    }
+                                                } else {
+
+                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                        $tomatchUnpause[] = $variable;
+                                                    }
+                                                }
+                                                $result = array_diff($matchUnpause, $tomatchUnpause);
+
+
+                                                if (count($result) > 0) {
+                                                    $unpauseMatchCount = $unpauseMatchCount + 1;
+
+                                                }
+
+                                                $unpauseConditionCount++;
+                                            }
+
+
+
+                                            if ($unpauseMatchCount == $unpauseConditionCount) {
+                                                if($isResumed == 0){
+                                                    if ($key['traffic_name'] = 'ExoClick') {
+
+                                                        $isBan = $this->getBannedPlacement($item[$customVariableKey]);
+                                                        if(count($isBan) == 0){
+                                                            $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
+                                                            if(!isset($response['error'])){
+                                                                $this->updateBlacklistReport(
+                                                                    $key['cgid'],
+                                                                    $item[$customVariableKey],
+                                                                    $item['visits'],
+                                                                    $item['clicks'],
+                                                                    $item['ctr'],
+                                                                    $item['cost'],
+                                                                    $item['roi'],
+                                                                    $item['conversions'],
+                                                                    $key['frequency'],
+                                                                    $key['datetimeunix'],
+                                                                    $timeStamp);
+                                                            }
+                                                        }
+
+                                                        $isResumed = 1;
+                                                    }
+                                                }
+
+                                            }
+
+                                            unset($matchUnpause);
+                                            unset($tomatchUnpause);
+
+                                        }
+
 
                                     }
+
+
+
+
+                                }else{
+                                    $match = array();
+                                    $tomatch = array();
+                                    $pauseMatchCount = 0;
+                                    $conditionCount = 0;
+                                    $matchCount = 0;
+                                    if (count($blacklistConditions) > 0) {
+                                        foreach ($blacklistConditions as $index => $conditions) {
+                                            foreach($conditions as $blacklistCon){
+                                                $variable = $blacklistCon['rule_variable'];
+                                                $condition = $blacklistCon['rule_condition'];
+                                                $value1 = $blacklistCon['value1'];
+                                                $value2 = $blacklistCon['value2'];
+
+                                                $match[] = $variable;
+                                                if ($condition == 'lessthan') {
+
+                                                    if ($item[$variable] <= $value1) {
+                                                        $tomatch[] = $variable;
+
+                                                    }
+                                                } else if ($condition == 'greaterthan') {
+
+                                                    if ($item[$variable] >= $value1) {
+                                                        $tomatch[] = $variable;
+                                                    }
+                                                } else {
+
+                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                        $tomatch[] = $variable;
+                                                    }
+                                                }
+
+                                                $result = array_diff($match, $tomatch);
+
+
+                                                if (count($result) == 0) {
+                                                    $matchCount = $matchCount + 1;
+
+                                                }
+
+                                                $conditionCount++;
+                                            }
+                                            //  echo '<pre>' , var_dump($result) , '</pre>';
+                                            // echo $key['camp_name'] . '| ' .  $item[$customVariable] . ' - ' . count($result) . ': ' . $item['visits'] . '<br>';
+
+                                            if ($conditionCount == $matchCount) {
+                                                $this->insertBlacklistReport($key['bid'],
+                                                    $key['tid'],
+                                                    $key['cgid'],
+                                                    $key['trafficName'],
+                                                    $key['geo'],
+                                                    $key['verticalName'],
+                                                    $item[$customVariableKey],
+                                                    $item['visits'],
+                                                    $item['clicks'],
+                                                    $item['ctr'],
+                                                    $item['cost'],
+                                                    $item['conversions'],
+                                                    $item['roi'],
+                                                    $key['campName'],
+                                                    $key['frequency'],
+                                                    $key['datetimeunix'],
+                                                    $timeStamp);
+                                            }
+
+                                            unset($match);
+                                            unset($tomatch);
+
+
+                                        }
+
+
+                                    }
+
+
+                                    /**
+                                     * Match Unpause
+                                     */
+
+                                    $matchUnpause = array();
+                                    $tomatchUnpause = array();
+                                    $unpauseMatchCount = 0;
+                                    $unpauseConditionCount = 0;
+                                    $unpauseMatchCount = 0;
+
+                                    if (count($blacklistConditions) > 0) {
+                                        $isResumed = 0;
+                                        foreach ($blacklistConditions as $index => $conditions) {
+                                            foreach($conditions as $blacklistCon) {
+                                                $variable = $blacklistCon['rule_variable'];
+                                                $condition = $blacklistCon['rule_condition'];
+                                                $value1 = $blacklistCon['value1'];
+                                                $value2 = $blacklistCon['value2'];
+
+                                                $matchUnpause[] = $variable;
+                                                if ($condition == 'lessthan') {
+
+                                                    if ($item[$variable] <= $value1) {
+                                                        $tomatchUnpause[] = $variable;
+
+                                                    }
+                                                } else if ($condition == 'greaterthan') {
+
+                                                    if ($item[$variable] >= $value1) {
+                                                        $tomatchUnpause[] = $variable;
+                                                    }
+                                                } else {
+
+                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                        $tomatchUnpause[] = $variable;
+                                                    }
+                                                }
+                                                $result = array_diff($matchUnpause, $tomatchUnpause);
+
+
+                                                if (count($result) > 0) {
+                                                    $unpauseMatchCount = $unpauseMatchCount + 1;
+
+                                                }
+
+                                                $unpauseConditionCount++;
+                                            }
+
+
+
+                                            if ($unpauseMatchCount == $unpauseConditionCount) {
+                                                if($isResumed == 0){
+                                                    if ($key['traffic_name'] = 'ExoClick') {
+
+                                                        $isBan = $this->getBannedPlacement($item[$customVariableKey]);
+                                                        if(count($isBan) == 0){
+                                                                $this->updateBlacklistReport(
+                                                                    $key['cgid'],
+                                                                    $item[$customVariableKey],
+                                                                    $item['visits'],
+                                                                    $item['clicks'],
+                                                                    $item['ctr'],
+                                                                    $item['cost'],
+                                                                    $item['roi'],
+                                                                    $item['conversions'],
+                                                                    $key['frequency'],
+                                                                    $key['datetimeunix'],
+                                                                    $timeStamp);
+                                                        }
+
+                                                        $isResumed = 1;
+                                                    }
+                                                }
+
+                                            }
+
+                                            unset($matchUnpause);
+                                            unset($tomatchUnpause);
+
+                                        }
+
+
+                                    }
+
+
+
+
                                 }
                             }
 
 
-                            switch($key['trafficName']){
+                            switch($key['traffic_name']){
                                 case 'Zeropark':
+
                                     if(count($targets) > 0){
                                         $targetsToPause = array_unique($targets);
 
-                                        echo count( $targetsToPause);
+                                        echo 'Target count: ' . count( $targetsToPause) . '<br>';
                                         if(count($targetsToPause) > 100){
 
                                             $chunks = array_chunk($targetsToPause, 100, true);
@@ -406,7 +659,6 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 foreach($chunk as $target){
                                                     $targetArray[] = $target;
                                                 }
-
                                                 $query = array('hash' => implode(',', $targetArray)
                                                 );
                                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
@@ -429,10 +681,8 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             echo '<pre>' , var_dump($response) , '</pre>';
                                         }
 
-                                    }
 
-                                    foreach($targets as $x){
-                                        echo $x . '<br>';
+
                                     }
                                     break;
 
@@ -446,13 +696,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                     }
                                     break;
                             }
-
-                        }else {
+                        } else {
                             echo '<pre>', var_dump($returnedData['error']), '</pre>';
                         }
-
-
-
                     }
                 }
 
@@ -466,6 +712,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
         ]);
 
     }
+
 
 
     public function getApiCredentialsAllAction(){
@@ -497,7 +744,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
         $campaignGroups = "AppBundle:Campaigngroups";
         $groups = "AppBundle:Groups";
         $verticals = "AppBundle:Verticals";
-        $botRules = "AppBundle:BotRules";
+        $blacklistRules = "AppBundle:BlacklistRules";
         $em = $this->getContainer()->get('doctrine')->getManager();
         $sql = $em->createQuery(
             "SELECT
@@ -512,14 +759,14 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                        g.groupName,
                        cg.id as cgid,
                        v.verticalName,
-                       b.bid,
-                       b.datetimeunix,
-                       b.datefrom,
-                       b.datetime,
-                       b.frequency,
+                       b.blid,
                        b.active,
-                       b.dateupdated
-                FROM $campaign ca, $trafficSource t, $groups g, $campaignGroups cg, $verticals v, $botRules b
+                       b.actiontype,
+                       b.datetimeunix,
+                       b.startfrom,
+                       b.datetime,
+                       b.frequency
+                FROM $campaign ca, $trafficSource t, $groups g, $campaignGroups cg, $verticals v, $blacklistRules b
                 WHERE ca.id = cg.cid
                 AND ca.tid = t.id
                 AND g.id = cg.gid
@@ -535,48 +782,47 @@ class CronBotRulesCommand extends ContainerAwareCommand{
     }
 
 
-    public function getCampaignBotConditionsById($cgid)
+    public function getCampaignBlacklistConditionsById($cgid)
     {
         $ruleSet = array();
 
-        $appBundleBotRules = 'AppBundle:BotRules';
-        $appBundleBotRuleSet = 'AppBundle:BotRuleSet';
-        $appBundleBotConditions = 'AppBundle:BotConditions';
+        $appBundleBlacklistRules = 'AppBundle:BlacklistRules';
+        $appBundleBlacklistRuleSet = 'AppBundle:BlacklistRuleSet';
+        $appBundleBlacklistConditions = 'AppBundle:BlacklistConditions';
         $em = $this->getContainer()->get('doctrine')->getManager();
         $query = $em->createQuery("
-                    SELECT p.bid
-                    FROM $appBundleBotRules p
+                    SELECT p.blid
+                    FROM $appBundleBlacklistRules p
                     WHERE p.cgid = $cgid ");
 
         $content = $query->getResult();
 
         if (count($content) > 0) {
-            $bid = $content[0]['bid'];
+            $blid = $content[0]['blid'];
             $em = $this->getContainer()->get('doctrine')->getManager();
             $query = $em->createQuery("
                     SELECT p
-                    FROM $appBundleBotRuleSet p
-                    WHERE p.bid = $bid ");
+                    FROM $appBundleBlacklistRuleSet p
+                    WHERE p.blid = $blid");
 
             $content1 = $query->getResult();
 
             if (count($content1) > 0) {
 
-
                 foreach ($content1 as $row) {
-
-
-                    $brsid = $row->getBrsid();
+                    $blrsid = $row->getBlrsid();
                     $query = $em->createQuery("
                     SELECT p
-                    FROM $appBundleBotConditions p
-                    WHERE p.brsid = $brsid ");
+                    FROM $appBundleBlacklistConditions p
+                    WHERE p.blrsid = $blrsid");
+
+
                     $return = $query->getResult();
                     $ruleConditions = array();
                     for($i = 0; $i < count($return); $i++){
                         $ruleConditions[] = array(
-                            'bcid' => $return[$i]->getBcid(),
-                            'brsid' => $return[$i]->getBrsid()->getBrsid(),
+                            'blcid' => $return[$i]->getBlcid(),
+                            'blrsid' => $return[$i]->getBlrsid()->getBlrsid(),
                             'rule_condition' => $return[$i]->getRuleCondition(),
                             'rule_variable' => $return[$i]->getRuleVariable(),
                             'value1' => $return[$i]->getValue1(),
@@ -593,16 +839,15 @@ class CronBotRulesCommand extends ContainerAwareCommand{
         }
 
 
-
-
         return $ruleSet;
+
     }
 
-    public function insertBotReport($bid, $tid, $cgid, $traffic_source, $geo, $vertical, $placement, $visits, $clicks, $ctr, $cost, $conversions, $roi, $campaignName, $frequency, $startFrom, $dateExecuted){
+    public function insertBlacklistReport($bid, $tid, $cgid, $traffic_source, $geo, $vertical, $placement, $visits, $clicks, $ctr, $cost, $conversions, $roi, $campaignName, $frequency, $startFrom, $dateExecuted){
 
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $botReportEntity = $em->getRepository('AppBundle:Reportsbot')->findOneBy(array('cgid' => $cgid, 'placement' => $placement));
+        $botReportEntity = $em->getRepository('AppBundle:ReportsBlacklist')->findOneBy(array('cgid' => $cgid, 'placement' => $placement));
 
         if($botReportEntity){
             $botReportEntity->setBid($bid);
@@ -653,18 +898,39 @@ class CronBotRulesCommand extends ContainerAwareCommand{
     }
 
 
-    public function insertBannedPlacement($placement, $visits, $cost, $conversions, $ctr, $roi){
+    public function updateBlacklistReport($cgid, $placement, $visits, $clicks, $ctr, $cost, $roi, $conversions, $frequency, $dateTimeUnix, $timestamp){
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $botReportEntity = new BannedPlacement();
-        $botReportEntity->setPlacement($placement);
+        $botReportEntity = $em->getRepository('AppBundle:ReportsBlacklist')->findOneBy(array('cgid' => $cgid, 'placement' => $placement));
         $botReportEntity->setVisits($visits);
+        $botReportEntity->setClicks($clicks);
+        $botReportEntity->setCtr($ctr);
         $botReportEntity->setCost($cost);
         $botReportEntity->setConversions($conversions);
-        $botReportEntity->setCtr($ctr);
         $botReportEntity->setRoi($roi);
+        $botReportEntity->setFrequency($frequency);
+        $botReportEntity->setStartFrom($dateTimeUnix);
+        $botReportEntity->setDateExecuted($timestamp);
+        $botReportEntity->setStatus('RESUMED');
         $em->persist($botReportEntity);
         $em->flush();
+    }
+
+
+    public function getBannedPlacement($placement){
+
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $bannedPlacementEntity = $em->getRepository('AppBundle:BannedPlacement')->findOneBy(array('placement' => $placement));
+
+        if($bannedPlacementEntity){
+            $data = array('placement' => $bannedPlacementEntity->getPlacement());
+        }else{
+            $data = array();
+        }
+
+
+        return $data;
+
     }
 
 }

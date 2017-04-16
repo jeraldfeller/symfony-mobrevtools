@@ -36,7 +36,6 @@ class VoluumApiController extends Controller{
             ));
             // Send the request & save response to $resp
             $resp = curl_exec($curl);
-            $resp = curl_error($curl);
             // Close request to clear up some resources
             curl_close($curl);
 

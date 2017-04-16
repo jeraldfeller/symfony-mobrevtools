@@ -165,6 +165,9 @@ class ExoClickApiController extends Controller{
     }
 
 
+    /**
+     * @Route("/api/exoclick/delete-block-domain/{$token}/{$vid}/{$target}", name="exoClickDeleteBlockDomain")
+     */
     public function exoClickDeleteBlockDomain($token, $vid, $target){
 
         $url = 'https://api.exoclick.com/v1/campaigns/' . $vid . '/blocked/sites';

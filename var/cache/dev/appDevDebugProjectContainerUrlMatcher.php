@@ -450,9 +450,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::ajaxGetReportsDomain',  '_route' => 'app_domaintracker_ajaxgetreportsdomain',);
             }
 
-            // exoClickGetCampaigns
-            if ($pathinfo === '/api/exoclick/get-campaigns/{$token}') {
-                return array (  'token' => NULL,  '_controller' => 'AppBundle\\Controller\\ExoClickApiController::exoClickGetCampaignsAction',  '_route' => 'exoClickGetCampaigns',);
+            if (0 === strpos($pathinfo, '/api/exoclick')) {
+                // exoClickGetCampaigns
+                if ($pathinfo === '/api/exoclick/get-campaigns/{$token}') {
+                    return array (  'token' => NULL,  '_controller' => 'AppBundle\\Controller\\ExoClickApiController::exoClickGetCampaignsAction',  '_route' => 'exoClickGetCampaigns',);
+                }
+
+                // exoClickBlockDomain
+                if ($pathinfo === '/api/exoclick/block-domain/{$token}/{$vid}/{$targets}') {
+                    return array (  'token' => NULL,  'vid' => NULL,  'targets' => NULL,  '_controller' => 'AppBundle\\Controller\\ExoClickApiController::exoClickPostBlockDomain',  '_route' => 'exoClickBlockDomain',);
+                }
+
             }
 
         }
