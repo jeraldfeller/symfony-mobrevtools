@@ -461,6 +461,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     return array (  'token' => NULL,  'vid' => NULL,  'targets' => NULL,  '_controller' => 'AppBundle\\Controller\\ExoClickApiController::exoClickPostBlockDomain',  '_route' => 'exoClickBlockDomain',);
                 }
 
+                // exoClickDeleteBlockDomain
+                if ($pathinfo === '/api/exoclick/delete-block-domain/{$token}/{$vid}/{$target}') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\ExoClickApiController::exoClickDeleteBlockDomain',  '_route' => 'exoClickDeleteBlockDomain',);
+                }
+
             }
 
         }
@@ -522,6 +527,16 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             // app_landers_addlanders
             if ($pathinfo === '/tools/add-landers') {
                 return array (  '_controller' => 'AppBundle\\Controller\\LandersController::addLandersAction',  '_route' => 'app_landers_addlanders',);
+            }
+
+            // app_landers_editlander
+            if ($pathinfo === '/tools/get-edit-lander') {
+                return array (  '_controller' => 'AppBundle\\Controller\\LandersController::editLanderAction',  '_route' => 'app_landers_editlander',);
+            }
+
+            // app_landers_putlanders
+            if ($pathinfo === '/tools/put-lander') {
+                return array (  '_controller' => 'AppBundle\\Controller\\LandersController::putLandersAction',  '_route' => 'app_landers_putlanders',);
             }
 
         }
@@ -985,9 +1000,22 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
                 }
 
-                // voluumGetCountries
-                if ($pathinfo === '/api/voluum/get-countries') {
-                    return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetCountriesAction',  '_route' => 'voluumGetCountries',);
+                if (0 === strpos($pathinfo, '/api/voluum/get-')) {
+                    // voluumGetCountries
+                    if ($pathinfo === '/api/voluum/get-countries') {
+                        return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetCountriesAction',  '_route' => 'voluumGetCountries',);
+                    }
+
+                    // voluumGetLander
+                    if ($pathinfo === '/api/voluum/get-lander/{$landerId}') {
+                        return array (  'landerId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetLanderAction',  '_route' => 'voluumGetLander',);
+                    }
+
+                }
+
+                // voluumPutLander
+                if ($pathinfo === '/api/voluum/put-lander/{$url}/{$query}/{$sessionId}') {
+                    return array (  'url' => NULL,  'query' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumPutLanderAction',  '_route' => 'voluumPutLander',);
                 }
 
             }

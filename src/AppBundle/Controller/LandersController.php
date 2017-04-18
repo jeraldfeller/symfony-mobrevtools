@@ -111,6 +111,101 @@ class LandersController extends Controller {
         return new Response($return);
     }
 
+    /**
+     * @Route("/tools/get-edit-lander")
+     */
+    public function editLanderAction(){
+
+        $data = $_POST['param'];
+        $presets = json_decode($this->forward('AppBundle:Settings:getPresets', array())->getContent(), true);
+        $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
+        $offer = json_decode($this->forward('AppBundle:VoluumApi:voluumGetLander', array('landerId' => $data))->getContent(), true);
+        $fullUrl = explode('?', $offer['url']);
+        $url = $fullUrl[0];
+        $presetsParameter = explode('&', $fullUrl[1]);
+        $presetArray = array();
+        for($x = 0; $x < count($presetsParameter); $x++){
+            $trimPreset = substr($presetsParameter[$x], 0, strpos($presetsParameter[$x], "="));
+            $presetArray[] = $trimPreset . '={' . $trimPreset . '}';
+        }
+
+        $preset = implode('&', $presetArray);
+
+
+        $return = array(
+            'countries' => $countries,
+            'presets' => $presets,
+            'offer' => $offer,
+            'url' => $url,
+            'preset' => '?'.$preset
+        );
+        return new Response(json_encode($return));
+    }
+
+    /**
+     * @Route("/tools/put-lander")
+     */
+    public function putLandersAction(){
+
+        $data = json_decode($_POST['param'], true);
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $query = array();
+        $url = 'https://panel-api.voluum.com/lander/' . trim($data['landerId']);
+        $success = array();
+        $failed = array();
+        $apiResponse = array();
+
+
+
+            $landerName = trim($data['landerName']);
+            $presets = '';
+
+            if($data['landerPresets'] == 'No Preset'){
+                $presets = '';
+            }else{
+                $presets = $data['landerPresets'];
+            }
+
+            $landerOffer = trim($data['landerOffer']);
+            $landerUrl = trim($data['landerUrl']);
+            $landerGeo = trim($data['landerGeo']);
+
+            if($landerGeo == 'Global'){
+                $query = array('namePostfix' => $landerName,
+                    'numberOfOffers' =>  $landerOffer,
+                    'tags' => array(),
+                    'url' => $landerUrl.$presets
+                );
+            }else {
+
+                $query = array( 'country' => array('code' => $landerGeo),
+                    'namePostfix' => $landerName,
+                    'numberOfOffers' =>  $landerOffer,
+                    'tags' => array(),
+                    'url' => $landerUrl.$presets
+                );
+            }
+
+
+            $apiResponse[] = json_decode($this->forward('AppBundle:VoluumApi:voluumPutLander', array('url' => $url,
+                'query' => $query,
+                'sessionId' => $voluumSessionId))->getContent(), true);
+            if(!isset($apiResponse['error'])){
+                $success[] = $landerName;
+            }else{
+                $failed[] = $landerName;
+            }
+
+        $this->getLandersToFileAction();
+        $message = 'Lander Successfully Updated';
+        $error = FALSE;
+        $data = array('success' => $success, 'failed' => $failed, 'apiResponse' => $apiResponse);
+        $return = $this->makeResponse($error,$message, $data);
+
+        return new Response($return);
+    }
+
 
     /**
      * @Route("/ajax/get-landers-to-file")
@@ -178,7 +273,26 @@ class LandersController extends Controller {
                 $row['landerName'],
                 $row['landerUrl'],
                 $row['numberOfOffers'],
-                $country
+                $country,
+                '<div class="btn-group">
+                                        <button type="button" class="btn blue btn-xs"> Action</button>
+                                        <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#"
+                                                data-action="edit"
+                                                data-id="' . $row['landerId'] . '"
+                                                onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
+                                            </li>
+                                            <li><a href="#" data-toggle="modal" data-target="#modalDeleteGroup" data-action="delete"
+                                                data-action="delete"
+                                                data-id="' . $row['landerId'] . '"
+                                                onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
+                                            </li>
+                                        </ul>
+                       </div>'
             );
 
         }

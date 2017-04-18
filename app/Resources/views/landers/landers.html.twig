@@ -77,6 +77,31 @@
                             </div>
 
                     </div>
+
+
+                    <!-- modal -->
+                    <div class="modal fade" id="editModal" role="basic" aria-hidden="true">
+                        <div class="modal-dialog modal-md">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                   <h4>Edit <span id="editLanderNameDisplay"></span></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row" id="displayEditLander">
+
+                                    </div>
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">Close</button>
+                                    <button type="button" id="updateLander"  class="btn blue ladda-button spinnerBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <br>
                 </div>
 
@@ -93,6 +118,7 @@
                                             <th>Url </th>
                                             <th>Offer </th>
                                             <th>Geo </th>
+                                            <th>Action </th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -131,6 +157,8 @@
                     placeholder: 'Select Geo',
                     width: null
                 });
+
+
 
                 $(".selectPreset").select2({
                     allowClear: true,
@@ -327,6 +355,20 @@
             addLanders($btn, $landerData);
         });
 
+        $('#updateLander').on('click', function(){
+            $btn = $(this)[0];
+            $data = {
+                landerId: $('#editLanderId').val(),
+                landerName: $('#editLanderName').val(),
+                landerUrl: $('#editLanderUrl').val(),
+                landerOffer: $('#editLanderOffer').val(),
+                landerGeo: $('#editLanderGeo').val(),
+                landerPresets: encodeURIComponent($('#editLanderPresets').val())
+            }
+
+            editLander($btn, $data);
+        });
+
 
         function removeAppend(elem){
             var index = elem.dataset.index;
@@ -338,6 +380,20 @@
             });
 
 
+        }
+
+        function pushData(elem){
+
+            $('#displayEditLander').html(
+                    '<div class="col-md-12">' +
+                    '<img src="{{ asset('assets/global/img/loading-spinner-grey.gif') }}" alt="" class="loading">' +
+                    '<span> &nbsp;&nbsp;Loading... </span>' +
+                    '</div>'
+            );
+            var action = elem.getAttribute('data-action');
+            var id = elem.getAttribute('data-id');
+            $('#editModal').modal('show');
+            getEditLander(id);
         }
 
 

@@ -113,12 +113,14 @@
                                             <th>Campaign </th>
                                             <th>Visits </th>
                                             <th>Cost </th>
+                                            <th>Update</th>
+
 
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="3"><button class="btn blue spinnerBtn ladda-button pull-right" id="saveBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save </span></button></th>
+                                            <th colspan="4"><button class="btn blue spinnerBtn ladda-button pull-right" id="saveBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save </span></button></th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
@@ -179,7 +181,10 @@
                 ],
                 "order": [[0, "asc"]],
                 "columnDefs": [
-                    {"width": "85%", "targets": 0},
+                    {"width": "75%", "targets": 0},
+                    {"width": "15%", "targets": 1},
+                    {"width": "5%", "targets": 2},
+                    {"width": "5%", "targets": 3},
                     {className: "align-left", "targets": 0}
                 ]
             });

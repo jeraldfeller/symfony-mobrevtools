@@ -144,7 +144,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
                         if (!isset($returnedData['error'])) {
                             $targets = array();
                             foreach ($returnedData['rows'] as $item) {
-                                if ($key['traffic_name'] == 'Zeropark') {
+                                if ($key['trafficName'] == 'Zeropark') {
                                     if ($item['status'] == 'ACTIVE') {
                                         $ruleSetCount = 1;
                                         if (count($blacklistConditions) > 0) {
@@ -192,7 +192,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
 
                                                 if ($conditionCount == $matchCount) {
                                                     $targets[] = $item[$customVariableKey];
-                                                    $this->insertBlacklistReport($key['bid'],
+                                                    $this->insertBlacklistReport($key['blid'],
                                                         $key['tid'],
                                                         $key['cgid'],
                                                         $key['trafficName'],
@@ -284,7 +284,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
                                                             if(!isset($response['error'])){
                                                                 $this->updateBlacklistReport(
                                                                     $key['cgid'],
-                                                                    $item[$customVariable],
+                                                                    $item[$customVariableKey],
                                                                     $item['visits'],
                                                                     $item['clicks'],
                                                                     $item['ctr'],
@@ -311,7 +311,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
                                     }
 
 
-                                }else if($key['traffic_name'] == 'ExoClick'){
+                                }else if($key['trafficName'] == 'ExoClick'){
                                     $match = array();
                                     $tomatch = array();
                                     $pauseMatchCount = 0;
@@ -358,7 +358,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
                                             // echo $key['camp_name'] . '| ' .  $item[$customVariable] . ' - ' . count($result) . ': ' . $item['visits'] . '<br>';
 
                                             if ($conditionCount == $matchCount) {
-                                                $this->insertBlacklistReport($key['bid'],
+                                                $this->insertBlacklistReport($key['blid'],
                                                     $key['tid'],
                                                     $key['cgid'],
                                                     $key['trafficName'],
@@ -439,7 +439,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
 
                                             if ($unpauseMatchCount == $unpauseConditionCount) {
                                                 if($isResumed == 0){
-                                                    if ($key['traffic_name'] = 'ExoClick') {
+                                                    if ($key['trafficName'] = 'ExoClick') {
 
                                                         $isBan = $this->getBannedPlacement($item[$customVariableKey]);
                                                         if(count($isBan) == 0){
@@ -524,7 +524,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
                                             // echo $key['camp_name'] . '| ' .  $item[$customVariable] . ' - ' . count($result) . ': ' . $item['visits'] . '<br>';
 
                                             if ($conditionCount == $matchCount) {
-                                                $this->insertBlacklistReport($key['bid'],
+                                                $this->insertBlacklistReport($key['blid'],
                                                     $key['tid'],
                                                     $key['cgid'],
                                                     $key['trafficName'],
@@ -605,7 +605,6 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
 
                                             if ($unpauseMatchCount == $unpauseConditionCount) {
                                                 if($isResumed == 0){
-                                                    if ($key['traffic_name'] = 'ExoClick') {
 
                                                         $isBan = $this->getBannedPlacement($item[$customVariableKey]);
                                                         if(count($isBan) == 0){
@@ -624,7 +623,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
                                                         }
 
                                                         $isResumed = 1;
-                                                    }
+
                                                 }
 
                                             }
@@ -644,7 +643,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
                             }
 
 
-                            switch($key['traffic_name']){
+                            switch($key['trafficName']){
                                 case 'Zeropark':
 
                                     if(count($targets) > 0){
@@ -850,7 +849,7 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
         $botReportEntity = $em->getRepository('AppBundle:ReportsBlacklist')->findOneBy(array('cgid' => $cgid, 'placement' => $placement));
 
         if($botReportEntity){
-            $botReportEntity->setBid($bid);
+            $botReportEntity->setBlid($bid);
             $botReportEntity->setTid($tid);
             $botReportEntity->setCgid($cgid);
             $botReportEntity->setTrafficSource($traffic_source);
@@ -872,8 +871,8 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
             $em->flush();
 
         }else{
-            $botReportEntity = new Reportsbot();
-            $botReportEntity->setBid($bid);
+            $botReportEntity = new ReportsBlacklist();
+            $botReportEntity->setBlid($bid);
             $botReportEntity->setTid($tid);
             $botReportEntity->setCgid($cgid);
             $botReportEntity->setTrafficSource($traffic_source);
@@ -902,18 +901,20 @@ class CronBlacklistRulesCommand extends ContainerAwareCommand{
 
         $em = $this->getContainer()->get('doctrine')->getManager();
         $botReportEntity = $em->getRepository('AppBundle:ReportsBlacklist')->findOneBy(array('cgid' => $cgid, 'placement' => $placement));
-        $botReportEntity->setVisits($visits);
-        $botReportEntity->setClicks($clicks);
-        $botReportEntity->setCtr($ctr);
-        $botReportEntity->setCost($cost);
-        $botReportEntity->setConversions($conversions);
-        $botReportEntity->setRoi($roi);
-        $botReportEntity->setFrequency($frequency);
-        $botReportEntity->setStartFrom($dateTimeUnix);
-        $botReportEntity->setDateExecuted($timestamp);
-        $botReportEntity->setStatus('RESUMED');
-        $em->persist($botReportEntity);
-        $em->flush();
+        if($botReportEntity) {
+            $botReportEntity->setVisits($visits);
+            $botReportEntity->setClicks($clicks);
+            $botReportEntity->setCtr($ctr);
+            $botReportEntity->setCost($cost);
+            $botReportEntity->setConversions($conversions);
+            $botReportEntity->setRoi($roi);
+            $botReportEntity->setFrequency($frequency);
+            $botReportEntity->setStartFrom($dateTimeUnix);
+            $botReportEntity->setDateExecuted($timestamp);
+            $botReportEntity->setStatus('RESUMED');
+            $em->persist($botReportEntity);
+            $em->flush();
+        }
     }
 
 

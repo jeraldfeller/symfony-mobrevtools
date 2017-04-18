@@ -60,6 +60,8 @@ class VoluumApiController extends Controller{
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
             CURLOPT_HTTPHEADER => array('cwauth-token: ' . $sessionId . ''),
         ));
         // Send the request & save response to $resp
@@ -112,6 +114,60 @@ class VoluumApiController extends Controller{
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
             CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+
+        return new Response($resp);
+
+    }
+
+
+    /**
+     * @Route("/api/voluum/get-lander/{$landerId}", name="voluumGetLander")
+     */
+    public function voluumGetLanderAction($landerId = null){
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $query = array();
+        $url = 'https://panel-api.voluum.com/lander/' . trim($landerId);
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+
+        return new Response($resp);
+
+    }
+
+    /**
+     * @Route("/api/voluum/put-lander/{$url}/{$query}/{$sessionId}", name="voluumPutLander")
+     */
+    public function voluumPutLanderAction($url = null, $query = null, $sessionId = null){
+        $json = json_encode($query);
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            //CURLOPT_PUT => 1,
+            CURLOPT_CUSTOMREQUEST=> 'PUT',
+            CURLOPT_POSTFIELDS => $json,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $sessionId . '', 'Content-Type: application/json')
         ));
         // Send the request & save response to $resp
         $resp = curl_exec($curl);
@@ -408,6 +464,7 @@ class VoluumApiController extends Controller{
             $row = array();
             $row[] = $column['campaignName'];
             $row[] = $column['visits'];
+            $row[] = '$' . number_format($column['cost']);
             $row[] = '<input type="text" class="form-control inputCost" onKeyPress="return isNumberKey(event)"
                       data-campaign-id="' . $column['campaignId'] . '"
                       data-campaign-name="' . $column['campaignName'] . '"
