@@ -114,6 +114,11 @@
                             <div class="col-md-2">
                                 <button class="btn blue pull-right" data-toggle="modal" href="#modalDisplayTrafficMonitoringSettings"><i class="fa fa-gear"></i> Settings</button>
                             </div>
+                            <br><br><br>
+                            <div class="col-md-3">
+                                <input type="checkbox" class="make-switch" data-size="mini" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="ON" data-off-text="OFF" type="checkbox" value="1" name="globalSwitch" id="globalSwitch">  Enable/Disable Traffic Monitoring
+                            </div>
+                            <br><br>
                             <div class="modal fade" id="modalDisplayTrafficMonitoringSettings" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-md">
                                 <div class="modal-content">
@@ -149,9 +154,10 @@
                         </div>
                         </div>
                     </div>
-                    <br>
-                    <br>
-                    <div class="tools"> </div>
+
+
+
+
                 </div>
 
                     <div class="portlet-body">
@@ -419,6 +425,19 @@
                 //dom: '<"wrapper"lBfrtip>',
                 //dom: '<lB<frt>ip>',
                 "dom": "<'row' <'col-md-12'>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>"
+            });
+
+
+            $('#globalSwitch').bootstrapSwitch('state', true, {{ globalSettings }});
+
+            $('#globalSwitch').on('switchChange.bootstrapSwitch', function(){
+                if($('#globalSwitch').is(':checked') == true){
+                    $isActive = 1;
+                }else {
+                    $isActive = 0;
+                }
+
+                updateTrafficMonitoringGlobalSettings($isActive);
             });
 
 

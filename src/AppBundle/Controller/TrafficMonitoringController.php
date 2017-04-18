@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 use AppBundle\Entity\TrafficMonitoringCampaignSettings;
+use AppBundle\Entity\TrafficMonitoringCampaignGlobalSettings;
 use AppBundle\Entity\ReportsTrafficMonitoring;
 
 class TrafficMonitoringController extends Controller{
@@ -27,6 +28,8 @@ class TrafficMonitoringController extends Controller{
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
+
+            $globalSettings = $this->getGlobalSettings();
             $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
                 'column' => 'trafficSourceName'))->getContent(), true);
             $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
@@ -42,11 +45,17 @@ class TrafficMonitoringController extends Controller{
                 'placements' => $placements
             );
             return $this->render(
-                'reports/trafficmonitoring.html.twig', array('page' => 'Traffic', 'filters' => $filters)
+                'reports/trafficmonitoring.html.twig', array('page' => 'Traffic', 'filters' => $filters, 'globalSettings' => $globalSettings)
             );
         }else{
             return $this->redirect('/user/login');
         }
+    }
+
+    function getGlobalSettings(){
+        $em =$em = $this->getDoctrine()->getManager();
+        $settings = $em->getRepository('AppBundle:TrafficMonitoringCampaignSettingsGlobal')->find(1);
+        return $settings->getIsActive();
     }
 
     /**
@@ -271,7 +280,7 @@ class TrafficMonitoringController extends Controller{
     public function getCampaignTrafficSettingsAction(){
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
-        $from = date('Y-m-d') . 'T00:00:00Z';
+        $from = date('Y-m-d', strtotime('-3 days')) . 'T00:00:00Z';
         $to = date('Y-m-d', strtotime('+1 days')) . 'T00:00:00Z';
         $tz = 'America/Chicago';
         $sort = 'campaignName';
@@ -315,16 +324,28 @@ class TrafficMonitoringController extends Controller{
         $defaultCount = 100;
         if (!isset($activeCampaigns['error'])) {
             foreach ($activeCampaigns['rows'] as $row) {
-                $isExist =  $this->getCampaignTrafficSettingsByCampid($row['campaignId']);
-                if(count($isExist) == 1){
-                    $this->updateCampaignTrafficSettingsByCampid($row['campaignId'], $row['campaignName']);
-                }else{
+                if($row['visits'] > 1){
+                    $isExist =  $this->getCampaignTrafficSettingsByCampid($row['campaignId']);
+                    if(count($isExist) == 1){
+                        $this->updateCampaignTrafficSettingsByCampid($row['campaignId'], $row['campaignName']);
+                    }else{
 
-                    $values[] = array(
-                        'campaignName' => $row['campaignName'],
-                        'campaignId' => $row['campaignId'],
-                        'count' => $defaultCount
-                    );
+                        $values[] = array(
+                            'campaignName' => $row['campaignName'],
+                            'campaignId' => $row['campaignId'],
+                            'count' => $defaultCount
+                        );
+                    }
+                }else{
+                    $em = $this->getDoctrine()->getEntityManager();
+                    $entity = $em
+                        ->getRepository('AppBundle:TrafficMonitoringCampaignSettings')
+                        ->findOneBy(array('campaignId' => $row['campaignId']));
+                    if($entity){
+                        $em->remove($entity);
+                        $em->flush();
+                        $em->clear();
+                    }
                 }
             }
         }
@@ -425,6 +446,22 @@ class TrafficMonitoringController extends Controller{
             $em->clear();
         }
 
+        return new Response(
+            json_encode(true)
+        );
+    }
+
+    /**
+     * @Route("monitoring/update-traffic-monitoring-global-settings"), name="updateTrafficMonitoringGlobalSettings")
+     */
+    public function updateCampaignTrafficGlobalSettings(){
+        $data = $_POST['param'];
+
+            $em = $this->getDoctrine()->getManager();
+            $settings = $em->getRepository('AppBundle:TrafficMonitoringCampaignSettingsGlobal')->find(1);
+            $settings->setIsActive($data);
+            $em->flush();
+            $em->clear();
         return new Response(
             json_encode(true)
         );

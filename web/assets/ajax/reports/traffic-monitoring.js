@@ -54,6 +54,37 @@ function getWithTrafficCampaigns(bol, include)
     return false;
 }
 
+function updateTrafficMonitoringGlobalSettings(isActive)
+{
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "update-traffic-monitoring-global-settings");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+            }else if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500 || XMLHttpRequestObject.status == 504){
+                showNotification('error', '', '');
+
+            }
+
+        }
+
+
+
+        XMLHttpRequestObject.send("param="+ isActive);
+
+    }
+
+    return false;
+}
 
 function updateTrafficMonitoringSettings(data, btn)
 {
