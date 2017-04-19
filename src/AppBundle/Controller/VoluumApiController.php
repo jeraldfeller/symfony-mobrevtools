@@ -464,8 +464,8 @@ class VoluumApiController extends Controller{
             $row = array();
             $row[] = $column['campaignName'];
             $row[] = $column['visits'];
-            $row[] = '$' . number_format($column['cost']);
-            $row[] = '<input type="text" class="form-control inputCost" onKeyPress="return isNumberKey(event)"
+            $row[] = '$' . number_format($column['cost'], 2);
+            $row[] = '<input type="text" class="form-control inputCost" onChange="formatCurrency(this)"
                       data-campaign-id="' . $column['campaignId'] . '"
                       data-campaign-name="' . $column['campaignName'] . '"
                       data-time-zone="' . $column['timeZone'] . '"
