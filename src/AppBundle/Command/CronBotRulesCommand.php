@@ -843,7 +843,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $botReportEntity = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findOneBy(array('cid' => $cid, 'placement' => $placement));
+        $botReportEntity = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findOneBy(array('cid' => $cid, 'placement' => $placement, 'type' => $type));
 
         if($botReportEntity){
             $botReportEntity->setCampaignRulesId($campaignRulesId);
