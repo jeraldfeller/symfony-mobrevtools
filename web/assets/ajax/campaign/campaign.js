@@ -117,13 +117,6 @@ function addRule(btn, data, selCamp, indexes){
                 $('#selectFrequencyFormat').val('minutes').trigger("change");
                 $('#selectLogicalOperator').val('').trigger("change");
                 showNotification('success', 'Success', 'Rules Successfully Added');
-
-
-
-
-
-
-                $('#appendAppendActiveRules').empty();
                 getCampaignMatch(selCamp);
 
 
@@ -171,7 +164,6 @@ function updateRule(btn, data, selCamp){
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
                 l.stop();
-                $('#appendAppendActiveRules').empty();
                 showNotification('success', 'Success', 'Rules Successfully Updated');
                 getCampaignMatch(selCamp);
             }
@@ -216,7 +208,6 @@ function deleteCampaignRule(btn, id, selCamp){
                 l.stop();
                 $('#deleteRuleModal').modal('hide');
                 showNotification('success', 'Success', 'Rules Successfully Deleted');
-                $('#appendAppendActiveRules').empty();
                 getCampaignMatch(selCamp);
 
             }
@@ -423,7 +414,7 @@ function getCampaignMatch(voluumId)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
-
+                $('#appendAppendActiveRules').empty();
                 console.log(response);
                 $dataConditionsActive = [];
                 $.each(response['data']['details']['elements'], function(campaign, obj){
@@ -751,7 +742,7 @@ function updateChangeRuleStatus(btn, data, selCamp)
                 showNotification('success', 'Success', 'Rule Successfully Updated');
 
 
-                $('#appendAppendActiveRules').empty();
+
                 getCampaignMatch(selCamp);
 
                 l.stop();

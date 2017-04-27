@@ -106,7 +106,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $tz = 'America/New_York';
                     $sort = 'visits';
                     $direction = 'desc';
-                    $limit = 1000;
+                    $limit = 50000;
                     $output->writeln([
                         $key['ruleType'], $key['trafficName'], $key['campName']
                     ]);
@@ -146,10 +146,6 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                             $targets = array();
                             foreach ($returnedData['rows'] as $item) {
                                 if ($key['trafficName'] == 'Zeropark') {
-                                    if($item['status'] == 'ACTIVE'){
-
-
-
                                         $ruleSetCount = 1;
                                         if (count($ruleConditions) > 0) {
                                             $match = array();
@@ -259,7 +255,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
 
                                         }
-                                    }else if($item['status'] == 'PAUSED') {
+
                                         if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
                                             $isResumed = 0;
                                             if (count($ruleConditions) > 0) {
@@ -360,7 +356,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             }
                                         }
 
-                                    }
+
 
                                 }else if($key['trafficName'] == 'ExoClick'){
                                     $ruleSetCount = 1;
@@ -681,8 +677,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                 case 'Zeropark':
                                     if(count($targets) > 0){
                                         $targetsToPause = array_unique($targets);
-
-                                        echo count( $targetsToPause);
+                                        
                                         if(count($targetsToPause) > 100){
 
                                             $chunks = array_chunk($targetsToPause, 100, true);
@@ -695,39 +690,37 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 $query = array('hash' => implode(',', $targetArray)
                                                 );
                                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
-                                             //   $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                             /*   $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
                                                 echo $key['trafficName'] . '<br>';
                                                 echo $key['campId'] . '<br>';
                                                 echo $key['campName'] . '<br>';
                                               //  echo '<pre>' , var_dump($response) , '</pre>';
-                                                echo '<hr>';
+                                                echo '<hr>'; */
                                             }
 
                                         }else{
                                             $query = array('hash' => implode(',', $targetsToPause)
                                             );
                                             $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
-                                           // $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                           /* $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
                                             echo $key['trafficName'] . '<br>';
                                             echo $key['campId'] . '<br>';
                                             echo $key['campName'] . '<br>';
-                                          //  echo '<pre>' , var_dump($response) , '</pre>';
+                                          echo '<pre>' , var_dump($response) , '</pre>';
+                                           */
                                         }
 
                                     }
 
-                                    foreach($targets as $x){
-                                        echo $x . '<br>';
-                                    }
                                     break;
 
                                 case 'ExoClick':
                                     if(count($targets) > 0){
-                                      //  $response = json_decode($exoClickService->exoClickPostBlockDomain($exoclickSessionId, $key['campId'], array_unique($targets))->getContent(), true);
+                                       /*  $response = json_decode($exoClickService->exoClickPostBlockDomain($exoclickSessionId, $key['campId'], array_unique($targets))->getContent(), true);
                                         echo $key['trafficName'] . '<br>';
                                         echo $key['campId'] . '<br>';
                                         echo $key['campName'] . '<br>';
-                                       // echo '<pre>' , var_dump($response) , '</pre>';
+                                       // echo '<pre>' , var_dump($response) , '</pre>'; */
                                     }
                                     break;
                             }
@@ -749,8 +742,6 @@ class CronBotRulesCommand extends ContainerAwareCommand{
         ]);
 
     }
-
-
 
 
     public function getApiCredentialsAllAction(){
@@ -843,7 +834,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $botReportEntity = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findOneBy(array('cid' => $cid, 'placement' => $placement, 'type' => $type));
+        $botReportEntity = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findOneBy(array('cid' => $cid, 'placement' => $placement));
 
         if($botReportEntity){
             $botReportEntity->setCampaignRulesId($campaignRulesId);

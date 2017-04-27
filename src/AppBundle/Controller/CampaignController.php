@@ -1091,7 +1091,7 @@ class CampaignController extends Controller
         $em = $this->getDoctrine()->getManager();
         foreach($data['items'] as $row){
             $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
-            $listExists = $em->getRepository('AppBundle:ListReports')->findOneBy(array('cid' => $listData->getCid(), 'placement' => $listData->getPlacement(), 'type' => $listData->getType()));
+            $listExists = $em->getRepository('AppBundle:ListReports')->findOneBy(array('cid' => $listData->getCid(), 'placement' => $listData->getPlacement()));
             if($listExists){
                 $listExists->setTid($listData->getTid());
                 $listExists->setCid($listData->getCid());

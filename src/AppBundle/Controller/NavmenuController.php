@@ -60,6 +60,11 @@ class NavmenuController extends Controller{
                                         </a>
                                         <ul class="sub-menu">
                                             ' .  $campNav . '
+                                            <li class="nav-item" style="border-top: rgba(192,192,192,0.1) .05em solid;">
+                                                <a href="/settings/presets-rules" class="nav-link">
+                                                    <span class="title">Presets Rules</span>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </li>
                                     ',

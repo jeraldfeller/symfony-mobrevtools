@@ -25,9 +25,9 @@
                 <a href="/">Home</a>
                 <i class="fa fa-angle-right"></i>
             </li>
-             <li>
-                <span>Campaign</span>
-             <i class="fa fa-angle-right"></i>
+            <li>
+                <span>Settings</span>
+                <i class="fa fa-angle-right"></i>
             </li>
             <li>
                 <span>{{ page }}</span>
@@ -66,125 +66,6 @@
         <div class="col-lg-12">
             <div class="portlet light">
                 <div class="portlet-title">
-                     <div class="caption font-green-sharp">
-                        <i class="fa fa-bullhorn font-green-sharp"></i>
-                        <span class="caption-subject bold uppercase" id="campaignTitleName">Campaign Name</span>
-                            <input type="hidden" id="id" value="0">
-
-                     </div>
-                     <div class="actions">
-                        <a href="javascript:;" class="btn btn-circle btn-danger" data-toggle="modal" data-target="#delete-modal" data-style="expand-right" data-size="l" disabled>
-                            <span class="ladda-label"><i class="fa fa-trash"></i> Delete </span></a>
-                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;"> </a>
-
-                        <!-- Delete Modal -->
-                         <div id="delete-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
-                             <div class="modal-dialog modal-md">
-                                 <div class="modal-content">
-
-                                     <div class="modal-header">
-                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                                         </button>
-                                         <h4 class="modal-title" id="myModalLabel"><i class="fa fa-alert"></i> Warning</h4>
-                                     </div>
-                                     <div class="modal-body">
-                                         <h4>Are you sure do want to delete <span id="campaignToDelete"></span>?</h4>
-
-                                     </div>
-                                     <div class="modal-footer">
-
-                                         <button type="button" name="deleteCampaignBtnSubmit" id="deleteCampaignBtnSave" class="btn btn-danger spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="lada-label">  Delete</span></button>
-
-                                     </div>
-
-                                 </div>
-                             </div>
-                         </div>
-                        <!-- end modal -->
-                         <!-- Delete Modal -->
-                         <div id="deleteRuleModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
-                             <div class="modal-dialog modal-sm">
-                                 <div class="modal-content">
-
-                                     <div class="modal-header">
-                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                                         </button>
-                                         <h4 class="modal-title" id="myModalLabel"><i class="fa fa-warning"></i> Warning</h4>
-                                     </div>
-                                     <div class="modal-body">
-                                         <h4>Are you sure do want to delete rule?</h4>
-
-                                     </div>
-                                     <div class="modal-footer">
-                                            <input type="hidden" id="campaignRuleIdDelete">
-                                         <button type="button" id="deleteRuleBtnSubmit" class="btn btn-danger spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="lada-label">  Delete</span></button>
-
-                                     </div>
-
-                                 </div>
-                             </div>
-                         </div>
-                         <!-- end modal -->
-                     </div>
-                </div>
-
-                    <div class="portlet-body">
-
-                        <div class="row">
-                            <div class="form-group">
-                                <div class="col-md-3 col-xs-12">
-
-                                    <select id="selectCampaign" class="select2_single form-control" tabindex="-1" name="campaign">
-                                        <option></option>
-                                        {% for campaign in campaigns %}
-                                            <option data-geo="{{ campaign.geo }}" value="{{ campaign.id }}">{{ campaign.campName }}</option>
-                                        {% endfor  %}
-                                    </select>
-                                </div>
-                                <div class="col-md-3 col-xs-12">
-                                    <div class="input-group">
-                                        <select id="selectAddVertical" class="select2" tabindex="-1">
-                                            <option></option>
-                                            {% for vertical in verticals %}
-                                                <option value="{{ vertical.id }}">{{ vertical.verticalName }}</option>
-                                            {% endfor  %}
-                                        </select>
-                                        <span style="cursor:pointer;" class="add-on input-group-addon label-info" id="addVerticalBtn"><i style="color: #fff;" class="glyphicon glyphicon-plus"></i></span>
-                                        <span style="cursor:pointer;" class="add-on input-group-addon label-warning" id="removeVerticalBtn"><i style="color: #fff;" class="glyphicon glyphicon-remove"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2 col-xs-12">
-                                    <div class="input-prepend input-group">
-                                        <span class="add-on input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
-                                        <input type="text" class="form-control" name="geo" id="campGeo" disabled>
-                                    </div>
-
-                                </div>
-
-                                <div class="col-md-2 col-xs-12">
-                                    <div class="md-checkbox-inline">
-                                        <div class="md-checkbox has-dark">
-                                            <input type="checkbox" id="checkboxShowCampaigns" value="1" class="md-check">
-                                            <label for="checkboxShowCampaigns">
-                                                <span></span>
-                                                <span class="check"></span>
-                                                <span class="box"></span> Show All Campaigns </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-1 col-xs-12">
-                                    <button id="addCampaignBtn" class="btn blue spinnerBtn ladda-button"  data-style="expand-right" data-size="l"> <span class="ladda-label"><i class="fa fa-save"></i> Save </span></button>
-                                </div>
-                            </div>
-                        </div>
-
-
-                </div>
-                <div class="clearfix"></div>
-                <br>
-                <div class="portlet-title">
                     <div class="caption font-green-sharp">
                         <i class="fa fa-book font-green-sharp"></i>
                         <span class="caption-subject bold uppercase" id="campaignTitleName">Rules</span>
@@ -213,19 +94,19 @@
                                 <div class="portlet-title">
                                     <div class="actions pull-left col-md-2 col-xs-12">
 
-                                            <select id="selectRuleType" class="select2_single form-control" tabindex="-1">
-                                                <option></option>
-                                                <option value="botRule">Bot Rule</option>
-                                                <option value="blacklistRule">Blacklist Rule</option>
-                                                <option value="whitelist">Whitelist</option>
-                                                <option value="autobid">Autobid</option>
-                                            </select>
+                                        <select id="selectRuleType" class="select2_single form-control" tabindex="-1">
+                                            <option></option>
+                                            <option value="botRule">Bot Rule</option>
+                                            <option value="blacklistRule">Blacklist Rule</option>
+                                            <option value="whitelist">Whitelist</option>
+                                            <option value="autobid">Autobid</option>
+                                        </select>
                                     </div>
                                     <div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                <input type="text" class="form-control date-picker" placeholder="Start From" id="startFrom">
-                                            </div><!-- input-group -->
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                            <input type="text" class="form-control date-picker" placeholder="Start From" id="startFrom">
+                                        </div><!-- input-group -->
 
                                     </div>
                                     <div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">
@@ -237,15 +118,15 @@
                                     </div>
                                     <div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">
 
-                                            <input type="text" class="form-control" id="frequency" placeholder="Frequency" onkeypress="return isNumberKey(event)" value="5">
+                                        <input type="text" class="form-control" id="frequency" placeholder="Frequency" onkeypress="return isNumberKey(event)" value="5">
 
                                     </div>
                                     <div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">
 
-                                            <select id="selectFrequencyFormat" class="select2_single form-control" tabindex="-1">
-                                                <option value="minutes">Minutes</option>
-                                                <option value="hours">Hours</option>
-                                            </select>
+                                        <select id="selectFrequencyFormat" class="select2_single form-control" tabindex="-1">
+                                            <option value="minutes">Minutes</option>
+                                            <option value="hours">Hours</option>
+                                        </select>
 
                                     </div>
 
@@ -284,18 +165,6 @@
                     </div>
                 </div>
 
-                <div class="clearfix"></div>
-                <br>
-                <div class="portlet-title">
-                    <div class="caption font-green-sharp">
-                        <i class="fa fa-rocket font-green-sharp"></i>
-                        <span class="caption-subject bold uppercase">Active Rules</span>
-                    </div>
-                </div>
-                <div class="portlet-body" id="appendAppendActiveRules">
-
-                </div>
-
 
                 <div class="clearfix"></div>
                 <br>
@@ -304,18 +173,6 @@
                         <i class="fa fa-table font-green-sharp"></i>
                         <span class="caption-subject bold uppercase">Data Table</span>
                     </div>
-                    <div class="col-md-2 col-xs-6">
-                        <select id="filterByType" class="select2_single form-control" tabindex="-1">
-                            <option></option>
-                            <option value="botRule">Bot Rule</option>
-                            <option value="blacklistRule">Blacklist Rule</option>
-                            <option value="whitelist">Whitelist</option>
-                            <option value="autobid">Autobid</option>
-                        </select>
-                    </div>
-
-
-
                 </div>
                 <div class="portlet-body">
                     <div class="row">
@@ -729,7 +586,7 @@
 
                 $('#addVerticalBtn').tooltip({title: "<div class='row'><div class='col-lg-12'>Vertical<br><input class='form-control' type='text' id='vertical-value'/><br><hr><a onClick='insertVertical(this)' id='save_vertical' class='btn btn-info btn-xs spinnerBtn ladda-button' data-style='expand-right' data-size='s' ><span class='ladda-label'>Add</span></a><br><br></div></div>", html: true, placement: "top", trigger: "click"});
                 $('#addVerticalBtn').on('click', function(){
-                $('#vertical-value').focus();});
+                    $('#vertical-value').focus();});
 
                 $('#removeVerticalBtn').tooltip({title: "<div style='width: 150px;' class='row'>" +
                 "<div class='col-lg-12'>Select vertical" +
@@ -827,34 +684,34 @@
                             '<div class="row" id="row-'+$i+'">' +
                             '<br>' +
                             '<div class="col-md-3">' +
-                                '<select id="metric-'+$i+'" class="select2_single form-control metric" tabindex="-1">' +
-                                '<option></option>' +
-                                '<option value="visits">Visits</option>' +
-                                '<option value="conversions">Conversion</option>' +
-                                '<option value="cost">Cost</option>' +
-                                '<option value="cpv">CPV</option>' +
-                                '<option value="ctr">CTR</option>' +
-                                '<option value="epv">EPV</option>' +
-                                '<option value="roi">ROI</option>' +
-                                '</select>' +
+                            '<select id="metric-'+$i+'" class="select2_single form-control metric" tabindex="-1">' +
+                            '<option></option>' +
+                            '<option value="visits">Visits</option>' +
+                            '<option value="conversions">Conversion</option>' +
+                            '<option value="cost">Cost</option>' +
+                            '<option value="cpv">CPV</option>' +
+                            '<option value="ctr">CTR</option>' +
+                            '<option value="epv">EPV</option>' +
+                            '<option value="roi">ROI</option>' +
+                            '</select>' +
                             '</div>' +
                             '<div class="col-md-3">' +
-                                '<select data-index="' +$i+ '" onChange="enableInputValue(this)" id="option-'+$i+'" class="select2_single form-control option" tabindex="-1">' +
-                                '<option></option>' +
-                                '<option value="greaterThan">Greater Than</option>' +
-                                '<option value="lessThan">Less Than</option>' +
-                                '<option value="between">Between</option>' +
-                                '<option value="equalTo">Equal To</option>' +
-                                '</select>' +
+                            '<select data-index="' +$i+ '" onChange="enableInputValue(this)" id="option-'+$i+'" class="select2_single form-control option" tabindex="-1">' +
+                            '<option></option>' +
+                            '<option value="greaterThan">Greater Than</option>' +
+                            '<option value="lessThan">Less Than</option>' +
+                            '<option value="between">Between</option>' +
+                            '<option value="equalTo">Equal To</option>' +
+                            '</select>' +
                             '</div>' +
                             '<div class="col-md-2">' +
-                                '<input type="text" class="form-control" id="value1-'+$i+'" placeholder="Enter Value" onkeypress="isNumberKey(event)">'+
+                            '<input type="text" class="form-control" id="value1-'+$i+'" placeholder="Enter Value" onkeypress="isNumberKey(event)">'+
                             '</div>' +
                             '<div class="col-md-2">' +
-                                '<input type="text" class="form-control" id="value2-'+$i+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" disabled>'+
+                            '<input type="text" class="form-control" id="value2-'+$i+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" disabled>'+
                             '</div>' +
                             '<div class="col-md-2">' +
-                                '<button class="btn red btn-md" data-index="'+$i+'" onclick="removeAppend(this)"><i class="fa fa-times"></i> Remove</button">' +
+                            '<button class="btn red btn-md" data-index="'+$i+'" onclick="removeAppend(this)"><i class="fa fa-times"></i> Remove</button">' +
                             '</div>' +
                             '</div>'
 
@@ -900,24 +757,24 @@
                     }else{
                         $frequency = parseInt($('#frequency').val()) * 60;
                     }
-                     $data = {
-                         ruleType: $('#selectRuleType').val(),
-                         startFrom: $('#startFrom').val(),
-                         startTime: $('#startTime').val(),
-                         frequency: $frequency,
-                         logicalOperator: $('#selectLogicalOperator').val(),
-                         cid: $('#id').val(),
-                         conditions: []
-                     }
+                    $data = {
+                        ruleType: $('#selectRuleType').val(),
+                        startFrom: $('#startFrom').val(),
+                        startTime: $('#startTime').val(),
+                        frequency: $frequency,
+                        logicalOperator: $('#selectLogicalOperator').val(),
+                        cid: $('#id').val(),
+                        conditions: []
+                    }
                     $indexes = [];
                     $.each($dataConditions.items, function(i, val) {
                         if (typeof val != 'undefined') {
-                                $data.conditions.push({
-                                    metric: $('#' + val['metric']).val(),
-                                    option: $('#' + val['option']).val(),
-                                    value1: $('#' + val['value1']).val(),
-                                    value2: $('#' + val['value2']).val()
-                                });
+                            $data.conditions.push({
+                                metric: $('#' + val['metric']).val(),
+                                option: $('#' + val['option']).val(),
+                                value1: $('#' + val['value1']).val(),
+                                value2: $('#' + val['value2']).val()
+                            });
                             $indexes.push(i);
                         }
                     });
@@ -1105,18 +962,18 @@
                 conditions: []
             }
 
-                $.each($dataConditionsActive[index].items, function(i, val) {
-                    if (typeof i != 'undefined') {
-                        if (typeof val != 'undefined') {
-                            $dataActive.conditions.push({
-                                metric: $('#' + val['metric']).val(),
-                                option: $('#' + val['option']).val(),
-                                value1: $('#' + val['value1']).val(),
-                                value2: $('#' + val['value2']).val()
-                            });
-                        }
+            $.each($dataConditionsActive[index].items, function(i, val) {
+                if (typeof i != 'undefined') {
+                    if (typeof val != 'undefined') {
+                        $dataActive.conditions.push({
+                            metric: $('#' + val['metric']).val(),
+                            option: $('#' + val['option']).val(),
+                            value1: $('#' + val['value1']).val(),
+                            value2: $('#' + val['value2']).val()
+                        });
                     }
-                });
+                }
+            });
 
 
             var selCamp = encodeURIComponent($('#selectCampaign').val());
