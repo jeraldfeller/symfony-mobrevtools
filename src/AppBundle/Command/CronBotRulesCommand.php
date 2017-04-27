@@ -682,11 +682,11 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 $query = array('hash' => implode(',', $targetArray)
                                                 );
                                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
-                                                $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                             //   $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
                                                 echo $key['trafficName'] . '<br>';
                                                 echo $key['campId'] . '<br>';
                                                 echo $key['campName'] . '<br>';
-                                                echo '<pre>' , var_dump($response) , '</pre>';
+                                              //  echo '<pre>' , var_dump($response) , '</pre>';
                                                 echo '<hr>';
                                             }
 
@@ -694,11 +694,11 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             $query = array('hash' => implode(',', $targetsToPause)
                                             );
                                             $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
-                                            $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                           // $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
                                             echo $key['trafficName'] . '<br>';
                                             echo $key['campId'] . '<br>';
                                             echo $key['campName'] . '<br>';
-                                            echo '<pre>' , var_dump($response) , '</pre>';
+                                          //  echo '<pre>' , var_dump($response) , '</pre>';
                                         }
 
                                     }
@@ -710,11 +710,11 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
                                 case 'ExoClick':
                                     if(count($targets) > 0){
-                                        $response = json_decode($exoClickService->exoClickPostBlockDomain($exoclickSessionId, $key['campId'], array_unique($targets))->getContent(), true);
+                                      //  $response = json_decode($exoClickService->exoClickPostBlockDomain($exoclickSessionId, $key['campId'], array_unique($targets))->getContent(), true);
                                         echo $key['trafficName'] . '<br>';
                                         echo $key['campId'] . '<br>';
                                         echo $key['campName'] . '<br>';
-                                        echo '<pre>' , var_dump($response) , '</pre>';
+                                       // echo '<pre>' , var_dump($response) , '</pre>';
                                     }
                                     break;
                             }
