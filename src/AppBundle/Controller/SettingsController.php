@@ -399,10 +399,10 @@ class SettingsController extends Controller {
         $data = array();
 
         for($x = 0; $x < count($trafficSources); $x++){
-            $apiCredentials = $this->getApiAccessCredentialsById($trafficSources[$x]['id']);
-            $data[] = $apiCredentials;
-
-
+            if($trafficSources[$x]['trafficName'] == 'Voluum' || $trafficSources[$x]['trafficName'] == 'Zeropark' || $trafficSources[$x]['trafficName'] == 'ExoClick'){
+                $apiCredentials = $this->getApiAccessCredentialsById($trafficSources[$x]['id']);
+                $data[] = $apiCredentials;
+            }
         }
 
         return $this->render(

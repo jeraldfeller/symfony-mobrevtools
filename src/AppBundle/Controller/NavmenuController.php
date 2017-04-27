@@ -37,7 +37,7 @@ class NavmenuController extends Controller{
       //  $pages = json_decode($this->forward('AppBundle:Users:getGroupByUserId', array('id' => $userData['id']))->getContent(), true);
         foreach($campaignNav as $nav){
             $campNavArr[] = '<li class="nav-item">
-                            <a href="/campaign/bot-settings/' . $nav['id'] . '/' . $nav['trafficName'] . '" class="nav-link ">
+                            <a href="/campaign/' . $nav['id'] . '/' . $nav['trafficName'] . '" class="nav-link ">
                                 <span class="title">' . $nav['trafficName'] . '</span>
                             </a>
                           </li>';

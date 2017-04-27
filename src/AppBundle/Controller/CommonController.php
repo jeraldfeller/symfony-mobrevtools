@@ -29,7 +29,13 @@ class CommonController extends Controller {
         $country = $em->getRepository('AppBundle:AppsCountries')
             ->findOneBy(array('countryName' => $country));
 
-        return new Response(json_encode($country->getCountryCode()));
+        if($country){
+            return new Response(json_encode($country->getCountryCode()));
+        }else{
+            return new Response(json_encode(false));
+        }
+
+
 
     }
 

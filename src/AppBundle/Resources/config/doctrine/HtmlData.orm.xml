@@ -24,7 +24,7 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="url" type="string" column="url" length="100" nullable="false">
+    <field name="url" type="string" column="url" length="255" nullable="false">
       <options>
         <option name="fixed"/>
       </options>

@@ -125,5 +125,10 @@
         <option name="fixed"/>
       </options>
     </field>
+    <field name="serverTimestamp" type="integer" column="server_timestamp" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
   </entity>
 </doctrine-mapping>

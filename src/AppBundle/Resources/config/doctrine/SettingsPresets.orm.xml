@@ -9,7 +9,7 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="parameters" type="string" column="parameters" length="255" nullable="false">
+    <field name="parameters" type="text" column="parameters" nullable="false">
       <options>
         <option name="fixed"/>
       </options>

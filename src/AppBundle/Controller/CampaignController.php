@@ -33,6 +33,10 @@ use AppBundle\Entity\BidAdjustmentConditions;
 use AppBundle\Entity\IpRules;
 use AppBundle\Entity\IpCon;
 
+use AppBundle\Entity\CampaignRules;
+use AppBundle\Entity\CampaignRulesConditions;
+use AppBundle\Entity\ListReports;
+
 
 
 
@@ -61,9 +65,9 @@ class CampaignController extends Controller
 
 
     /**
-     * @Route("/campaign/bot-settings/{tid}/{page}", name="campaign")
+     * @Route("/campaign/bot-settings/{tid}/{page}", name="campaignB")
      */
-    public function indexAction($tid, $page)
+    public function indexBAction($tid, $page)
     {
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
@@ -76,10 +80,42 @@ class CampaignController extends Controller
                 $carriers = $this->getCarriersDistinct($page);
             }
             return $this->render(
-                'campaign/campaign.html.twig', array('page' => $page,
+                'campaign/campaign-b.html.twig', array('page' => $page,
                     'tid' => $tid,
                     'campaigns' => $campaigns,
                     'groups' => $groups,
+                    'verticals' => $verticals,
+                    'carriers' => $carriers,
+                    'dateNow' => $dateNow
+                )
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+    }
+
+    /**
+     * @Route("/campaign/{tid}/{page}", name="campaign")
+     */
+    public function indexAction($tid, $page)
+    {
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $trafficSource = $this->getTrafficSourceByName($page);
+            $campaigns = $this->getCampaigns($tid);
+            $verticals = $this->getVerticals();
+            $carriers = array();
+            $dateNow = date('m/d/Y');
+            if ($page == 'ExoClick') {
+                $carriers = $this->getCarriersDistinct($page);
+            }
+            return $this->render(
+                'campaign/campaign.html.twig', array('page' => $page,
+                    'tid' => $trafficSource[0]->getId(),
+                    'trafficSourceId' => $trafficSource[0]->getTrafficSourceId(),
+                    'trafficSourceName' => $trafficSource[0]->getTrafficName(),
+                    'campaigns' => $campaigns,
                     'verticals' => $verticals,
                     'carriers' => $carriers,
                     'dateNow' => $dateNow
@@ -253,7 +289,7 @@ class CampaignController extends Controller
                 WHERE ca.id = cg.cid
                 AND ca.tid = t.id
                 AND g.id = cg.gid
-                AND v.id = cg.verId
+                AND v.id = ca.verId
                 "
         );
         $result = $sql->getResult();
@@ -265,49 +301,52 @@ class CampaignController extends Controller
     }
 
 
-    public function getCampaignDetailsAllByMatch($cid, $cgid)
+    /**
+     * @Route("/campaign/get-campaign-match", name="getCampaignMatch")
+     */
+    public function getGroupCampaignMatch(){
+        $data = $_POST['param'];
+        $em = $this->getDoctrine()->getManager();
+        $campaignGroups = $em->getRepository('AppBundle:Campaign')->findBy(array('vid' => trim($data)));
+        if($campaignGroups){
+            $error = FALSE;
+            $message = 'Campaign Group Matched';
+            $data = $this->getCampaignDetailsAllByMatch($campaignGroups[0]->getId());
+        }else{
+            $error = FALSE;
+            $message = 'No Campaign Matched (add as new)';
+            $data = array();
+        }
+        return new Response($this->makeResponse($error, $message, $data));
+    }
+
+    public function getCampaignDetailsAllByMatch($id)
     {
 
         $campaign = "AppBundle:Campaign";
         $trafficSource = "AppBundle:Trafficsource";
-        $campaignGroups = "AppBundle:Campaigngroups";
-        $groups = "AppBundle:Groups";
         $verticals = "AppBundle:Verticals";
         $em = $this->getDoctrine()->getEntityManager();
         $sql = $em->createQuery(
-            "SELECT ca.id as cid,
+            "SELECT ca.id,
                        ca.campId,
                        ca.vid,
                        ca.campName,
-                       g.id as gid,
-                       g.groupName,
-                       cg.id as cgid,
-                       cg.geo,
                        v.verticalName,
                        v.id as verId,
                        t.trafficName
-                FROM $campaign ca, $trafficSource t, $groups g, $campaignGroups cg, $verticals v
-                WHERE ca.id = $cid
-                AND ca.id = cg.cid
-                AND g.id = cg.gid
-                AND v.id = cg.verId
+                FROM $campaign ca, $trafficSource t, $verticals v
+                WHERE ca.id = $id
+                AND v.id = ca.verId
                 AND t.id = ca.tid
                 "
         );
         $result = $sql->getResult();
-
-        $return = array($cid =>
+        $rules = $this->getCampaignRulesBydId($id);
+        $return = array($id =>
             array('info' => $result,
-                'botRules' => $this->getCampaignBotRulesById($cgid),
-                'botConditions' => $this->getCampaignBotConditionsById($cgid),
-                'blacklistRules' => $this->getCampaignBlacklistRulesById($cgid),
-                'blacklistConditions' => $this->getCampaignBlacklistConditionsById($cgid),
-                'ipRules' => $this->getCampaignIpRulesById($cgid),
-                'ipConditions' => $this->getCampaignIpConditionsById($cgid),
-                'carriers' => $this->getCarriersDistinct($result[0]['trafficName']),
-                'bidAdjustmentRules' => $this->getCampaignBidAdjustmentRulesById($cgid),
-                'bidAdjustmentConditions' => $this->getCampaignBidAdjustmentConditionsById($cgid)
-
+                'rulesConditions' => $rules,
+                'carriers' => $this->getCarriersDistinct($result[0]['trafficName'])
             )
         );
 
@@ -315,21 +354,21 @@ class CampaignController extends Controller
     }
 
 
-    public function getCampaignBotRulesById($cgid)
+    public function getCampaignRulesBydId($id)
     {
 
-        $appBundle = 'AppBundle:BotRules';
+        $appBundle = 'AppBundle:CampaignRules';
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery("
                     SELECT p
                     FROM $appBundle p
-                    WHERE p.cgid = $cgid ");
+                    WHERE p.cid = $id");
 
         $result =  $query->getResult();
         $return = array();
 
         for($i = 0; $i < count($result); $i++){
-            $dateFrom = (array)$result[$i]->getDateFrom();
+            $dateFrom = (array)$result[$i]->getStartFrom();
             $dateFromObject = new \DateTime($dateFrom['date']);
             $dateFromFormat = $dateFromObject->format('m/d/Y');
             $dateUpdated = (array)$result[$i]->getDateUpdated();
@@ -338,16 +377,14 @@ class CampaignController extends Controller
 
             $return[] = array(
                 'active' => $result[$i]->getActive(),
-                'bid' => $result[$i]->getBid(),
-                'cgid' => $result[$i]->getCgid()->getId(),
-                'dateFrom' => $dateFromFormat,
-                'dateTime' => $result[$i]->getDatetime(),
-                'dateTimeUnix' => $result[$i]->getDateTimeUnix(),
+                'campaignRulesId' => $result[$i]->getCampaignRulesId(),
+                'cid' => $result[$i]->getCid()->getId(),
+                'startFrom' => $dateFromFormat,
                 'dateUpdated' => $dateUpdatedFormat,
                 'frequency' => $result[$i]->getFrequency(),
-                'opt' => $result[$i]->getOpt(),
-                'val' => $result[$i]->getVal(),
-                'visits' => $result[$i]->getVisits()
+                'ruleType' => $result[$i]->getRuleType(),
+                'operator' => $result[$i]->getOperator(),
+                'conditions' => $this->getRuleConditionsById($result[$i]->getCampaignRulesId())
             );
 
 
@@ -358,59 +395,24 @@ class CampaignController extends Controller
         return $return;
     }
 
-    public function getCampaignBotConditionsById($cgid)
+    public function getRuleConditionsById($id)
     {
-        $ruleSet = array();
-
-        $appBundleBotRules = 'AppBundle:BotRules';
-        $appBundleBotRuleSet = 'AppBundle:BotRuleSet';
-        $appBundleBotConditions = 'AppBundle:BotConditions';
+        $ruleConditions = array();
         $em = $this->getDoctrine()->getManager();
-        $query = $em->createQuery("
-                    SELECT p.bid
-                    FROM $appBundleBotRules p
-                    WHERE p.cgid = $cgid ");
+        $campaignRulesEntity = $em->getRepository('AppBundle:CampaignRules')->find($id);
 
-        $content = $query->getResult();
+        $return = $em->getRepository('AppBundle:CampaignRulesConditions')->findBy(array('campaignRule' => $campaignRulesEntity));
 
-        if (count($content) > 0) {
-            $bid = $content[0]['bid'];
-            $em = $this->getDoctrine()->getManager();
-            $query = $em->createQuery("
-                    SELECT p
-                    FROM $appBundleBotRuleSet p
-                    WHERE p.bid = $bid ");
-
-            $content1 = $query->getResult();
-
-            if (count($content1) > 0) {
-
-
-                foreach ($content1 as $row) {
-
-
-                    $brsid = $row->getBrsid();
-                    $query = $em->createQuery("
-                    SELECT p
-                    FROM $appBundleBotConditions p
-                    WHERE p.brsid = $brsid ");
-                    $return = $query->getResult();
-                    $ruleConditions = array();
-                    for($i = 0; $i < count($return); $i++){
-                        $ruleConditions[] = array(
-                            'bcid' => $return[$i]->getBcid(),
-                            'brsid' => $return[$i]->getBrsid()->getBrsid(),
-                            'rule_condition' => $return[$i]->getRuleCondition(),
-                            'rule_variable' => $return[$i]->getRuleVariable(),
-                            'value1' => $return[$i]->getValue1(),
-                            'value2' => $return[$i]->getValue2()
-                        );
-                    }
-
-                    $ruleSet[] = $ruleConditions;
-                }
-
-
+        if (count($return) > 0) {
+            for($i = 0; $i < count($return); $i++){
+                $ruleConditions[] = array(
+                    'campaignRulesConditionId' => $return[$i]->getCampaignRulesConditionId(),
+                    'campaignRuleId' => $campaignRulesEntity->getCampaignRulesId(),
+                    'rule_condition' => $return[$i]->getRuleCondition(),
+                    'rule_variable' => $return[$i]->getRuleVariable(),
+                    'value1' => $return[$i]->getValue1(),
+                    'value2' => $return[$i]->getValue2()
+                );
             }
 
         }
@@ -418,7 +420,7 @@ class CampaignController extends Controller
 
 
 
-        return $ruleSet;
+        return $ruleConditions;
 
     }
 
@@ -584,9 +586,9 @@ class CampaignController extends Controller
             $content1 = $query->getResult();
             for($x = 0; $x < count($content1); $x++){
                 $data[] = array('icid' => $content1[$x]->getIcid(),
-                                'iid' => $content1[$x]->getIid(),
-                                'carrier' => $content1[$x]->getCarrier()
-                    );
+                    'iid' => $content1[$x]->getIid(),
+                    'carrier' => $content1[$x]->getCarrier()
+                );
             }
             return  $data;
         }else{
@@ -695,8 +697,8 @@ class CampaignController extends Controller
 
         $data = json_decode($_POST['data'], true);
 
-        $trafficName = $data['trafficName'];
-        $tid = $data['tid'];
+        $trafficSourceName = $data['trafficSourceName'];
+        $trafficSourceId = $data['trafficSourceId'];
 
 
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
@@ -707,14 +709,18 @@ class CampaignController extends Controller
 
         $campaignExists = array();
 
-        $campaigns = $this->getCampaigns($tid);
-        if($trafficName == 'Zeropark'){
+        $campaigns = $this->getCampaigns($trafficSourceId);
+        if($trafficSourceName == 'Zeropark'){
 
+            $dateFrom = date('d/m/Y', strtotime('-'.$data['days'].' days'));
+            $dateTo = date('d/m/Y');
             foreach($campaigns as $x){
                 $campaignExists[] = $x['campId'];
             }
 
-            $query = array('interval' => 'TODAY',
+            $query = array('interval' => 'CUSTOM',
+                'startDate' => $dateFrom,
+                'endDate'=> $dateTo,
                 'page' => 0,
                 'limit' => 1000,
                 'sortColumn' => 'SPENT',
@@ -726,7 +732,7 @@ class CampaignController extends Controller
                 'method' => 0,
                 'token' => $zeroParkToken))->getContent(), true);
 
-        }else if($trafficName == 'ExoClick'){
+        }else if($trafficSourceName == 'ExoClick'){
             $campaignExistsExoClick = array();
             $url = 'https://api.exoclick.com/v1/campaigns';
             $params = array();
@@ -738,31 +744,20 @@ class CampaignController extends Controller
             }
 
 
-
         }
 
 
 
         $output = '';
-        if($trafficName == 'Zeropark'){
+        $output .= '<option></option>';
+        if($trafficSourceName == 'Zeropark'){
 
             foreach($apiResponse['elements'] as $key => $details){
                 if(!in_array($details['details']['id'], $campaignExists )){
                     $url = explode("/", $details['details']['url']);
                     $geo = (isset($details['details']['geo']) ? $details['details']['geo'] : 'N/A');
-                    $output .= '<tr>';
-                    $output .= '<td>';
-                    $output .= '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">';
-                    $output .= '<input type="checkbox" class="checkboxes camp-record" value="1" name="table_records" data-voluumid="' . end($url) . '" data-campid="'. $details['details']['id'] . '" data-campname="' . $details['details']['name'] . '" data-geo="' . $geo . '" />';
-                    $output .= '<span></span>';
-                    $output .= '</label>';
-                    $output .= '</td>';
-                    $output .= '<td>' . $details['details']['name'] . '</td>';
-                    $output .= '<td>' . end($url) . '</td>';
-                    $output .= '</tr>';
-
-
-
+                    $urlSplit = explode('?', end($url));
+                    $output .= '<option value="' . $urlSplit[0] . '" data-voluumid="' .  $urlSplit[0] . '" data-campid="'. $details['details']['id'] . '" data-campname="' . $details['details']['name'] . '" data-geo="' . $geo . '">' . $details['details']['name'] . '</option>';
                     $disable = '';
                     $noExists = 0;
                 }else{
@@ -771,12 +766,9 @@ class CampaignController extends Controller
                 }
             }
 
-        }else if($trafficName == 'ExoClick'){
-            $dateNow = date('Y-m-d');
+        }else if($trafficSourceName == 'ExoClick'){
             $exoClick = $this->getTrafficSourceByName('ExoClick');
-
-
-            $from = date('Y-m-d', strtotime('-30 days'));
+            $from = date('Y-m-d', strtotime('-' . $data['days']. ' days'));
             $to = date('Y-m-d', strtotime('+1 days'));
             $tz = 'America/Chicago';
             $sort = 'visit';
@@ -815,54 +807,44 @@ class CampaignController extends Controller
                 'query' => $query,
                 'method' => 'GET',
                 'sessionId' => $voluumSessionId))->getContent(), true);
-
             $noExists = 1;
+
             if(!isset($voluumCampaignToMatchGetCampid['error'])){
                 $i = 0;
                 foreach($voluumCampaignToMatchGetCampid['rows'] as $voluumRow){
-                    if(!in_array($voluumRow['campaignId'], $campaignExists )){
-                        $geo = (isset($voluumRow['geo']) ? $voluumRow['geo'] : 'N/A');
-                        if($geo == 'N/A'){
-                            $geo = json_decode($this->forward('AppBundle:Common:getGeoCodeByCountry', array('country' => $voluumRow['campaignCountry']))->getContent(), true);
-                        }
-                        if(!isset($geo['geoCode'])){
-                            $geoCode = 'N/A';
-                        }else{
-                            $geoCode = $geo['geoCode'];
-                        }
-                        $output .= '<tr>';
-                        $output .= '<td class="a-center"><label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"><input id="checkBoxId_' . $i . '" name="table_records" type="checkbox" data-campid="1" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geoCode . '" class="checkboxes camp-record"><span></span></label></td>';
-
-                        $output .= '<td>' . $voluumRow['campaignName'] . '</td>';
-                        $output .= '<td>';
-                        $output .= '<select data-selectid="' . $i . '" class="form-control" onchange="setDataAttribute(this)">';
-                        $output .= '<option value="0">-- select campaign --</option>';
-                        $output .= '<option value="none">None</option>';
-
-
-
-                        foreach($apiResponse as $row){
-
-                            if($row['status'] != -1){
-                                if(!in_array($row['id'], $campaignExistsExoClick )){
-                                    $output .= '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
+                    if($voluumRow['visits'] > 0){
+                        if(!in_array($voluumRow['campaignId'], $campaignExists )){
+                            $geo = (isset($voluumRow['geo']) ? $voluumRow['geo'] : 'N/A');
+                            if($geo == 'N/A'){
+                                $geoCode = json_decode($this->forward('AppBundle:Common:getGeoCodeByCountry', array('country' => $voluumRow['campaignCountry']))->getContent(), true);
+                                if($geoCode == false){
+                                    $geoCode = 'N/A';
                                 }
+                            }else{
+                                $geoCode = $geo;
                             }
 
 
+                            foreach($apiResponse as $row){
+                                if($row['status'] != -1){
+                                    if(!in_array($row['id'], $campaignExistsExoClick )){
+                                        if($voluumRow['campaignNamePostfix'] == $row['name']){
+                                            $output .= '<option value="' . $voluumRow['campaignId'] . '" data-campid="' . $row['id'] . '" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geoCode . '">' . $voluumRow['campaignName'] . '</option>';
+                                        }
+
+                                    }
+                                }
+
+
+                            }
+                            $disable = '';
+                            $noExists = 0;
+                            $i++;
+                        }else{
+                            $noExists = 1;
+
                         }
-                        $output .= '</select>';
-
-                        $output .= '</td>';
-                        $output .= '</tr>';
-                        $disable = '';
-                        $noExists = 0;
-                        $i++;
-                    }else{
-                        $noExists = 1;
-
                     }
-
 
                 }
             }
@@ -870,9 +852,8 @@ class CampaignController extends Controller
 
         }else{
 
-            $traffic = $this->getTrafficSourceByName($trafficName);
-            $dateNow = date('Y-m-d');
-            $from = date('Y-m-d', strtotime('-30 days'));
+            $traffic = $this->getTrafficSourceByName($trafficSourceName);
+            $from = date('Y-m-d', strtotime('-' . $data['days']. ' days'));
             $to = date('Y-m-d', strtotime('+1 days'));
             $tz = 'America/Chicago';
             $sort = 'visit';
@@ -916,32 +897,27 @@ class CampaignController extends Controller
             if(!isset($voluumCampaignToMatchGetCampid['error'])){
                 $i = 0;
                 foreach($voluumCampaignToMatchGetCampid['rows'] as $voluumRow){
-                    if(!in_array($voluumRow['campaignId'], $campaignExists )){
-                        $geo = (isset($voluumRow['geo']) ? $voluumRow['geo'] : 'N/A');
-                        if($geo == 'N/A'){
-                            $geo = json_decode($this->forward('AppBundle:Common:getGeoCodeByCountry', array('country' => $voluumRow['campaignCountry']))->getContent(), true);
-                        }
-                        if($geo){
-                            $geoCode = $geo;
+                    if($voluumRow['visits'] > 0){
+                        if(!in_array($voluumRow['campaignId'], $campaignExists )){
+                            $geo = (isset($voluumRow['geo']) ? $voluumRow['geo'] : 'N/A');
+                            if($geo == 'N/A'){
+                                $geoCode = json_decode($this->forward('AppBundle:Common:getGeoCodeByCountry', array('country' => $voluumRow['campaignCountry']))->getContent(), true);
+                                if($geoCode == false){
+                                    $geoCode = 'N/A';
+                                }
+                            }else{
+                                $geoCode = $geo;
+                            }
 
+                            $output .= '<option value="' . $voluumRow['campaignId'] . '" data-campid="1" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geoCode . '">' . $voluumRow['campaignName'] . '</option>';
+                            $disable = '';
+                            $noExists = 0;
+                            $i++;
                         }else{
-                            $geoCode = 'N/A';
+                            $noExists = 1;
+
                         }
-                        $output .= '<tr>';
-                        $output .= '<td class="a-center"><label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"><input id="checkBoxId_' . $i . '" name="table_records" type="checkbox" data-campid="1" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geoCode . '" class="checkboxes camp-record"><span></span></label></td>';
-
-                        $output .= '<td>' . $voluumRow['campaignName'] . '</td>';
-                        $output .= '<td>' . $voluumRow['campaignId'] . '</td>';
-                        $output .= '</tr>';
-                        $disable = '';
-                        $noExists = 0;
-                        $i++;
-                    }else{
-                        $noExists = 1;
-
                     }
-
-
                 }
             }
 
@@ -949,9 +925,7 @@ class CampaignController extends Controller
 
 
         if($noExists == 1){
-            $output .= '<tr>';
-            $output .='<td colspan="3">No Campaign Available</td>';
-            $output .='</tr>';
+            $output .= '<option>No Campaign Available</option>';
             $disable = 'disabled';
         }
 
@@ -964,28 +938,196 @@ class CampaignController extends Controller
     }
 
     /**
-     * @Route("/campaign/import-campaigns", name="importCampaigns")
+     * @Route("/campaign/add-campaign", name="addCampaign")
      */
-    public function importCampaignAction(){
+    public function addCampaignAction(){
         $data = json_decode($_POST['param'], true);
         $em = $this->getDoctrine()->getManager();
-        $i = 1;
-        $batch = 20;
-        foreach($data['items'] as $row) {
+        $campaignEntity = $em->getRepository('AppBundle:Campaign')->findOneBy(array('vid' => $data['voluumId']));
+        $tid = $em->getRepository('AppBundle:TrafficSource')->find($data['trafficSourceId']);
 
-            $tid = $em->getRepository('AppBundle:TrafficSource')->findOneById($row['tid']);
-            $campaign = new Campaign();
-            $campaign->setTid($tid);
-            $campaign->setCampId($row['campId']);
-            $campaign->setVid($row['vid']);
-            $campaign->setCampName($row['campName']);
-            $campaign->setGeo($row['geo']);
-            $em->persist($campaign);
-            if(($i % $batch) == 0){
+        if($campaignEntity){
+            $campaignEntity->setTid($tid);
+            $campaignEntity->setCampId($data['campaignId']);
+            $campaignEntity->setVid($data['voluumId']);
+            $campaignEntity->setCampName($data['campaignName']);
+            $campaignEntity->setVerId($data['verticalId']);
+            $campaignEntity->setGeo($data['geo']);
+            $em->flush();
+            $id = $campaignEntity->getId();
+            $return = array(
+                'id' => $id,
+                'campaignName' => $data['campaignName']
+            );
+        }else{
+            $campaignEntity = new Campaign();
+            $campaignEntity->setTid($tid);
+            $campaignEntity->setCampId($data['campaignId']);
+            $campaignEntity->setVid($data['voluumId']);
+            $campaignEntity->setCampName($data['campaignName']);
+            $campaignEntity->setVerId($data['verticalId']);
+            $campaignEntity->setGeo($data['geo']);
+            $em->persist($campaignEntity);
+            $em->flush();
+            $em->clear();
+            $id = $campaignEntity->getId();
+            $return = array(
+                'id' => $id,
+                'campaignName' => $data['campaignName']
+            );
+        }
+
+        return new Response(json_encode($return));
+    }
+
+
+
+    /**
+     * @Route("/campaign/add-rule", name="addRule")
+     */
+    public function addRuleAction(){
+        $data = json_decode($_POST['param'], true);
+        $dateTimeUnix = strtotime($data['startFrom']);
+        $em = $this->getDoctrine()->getManager();
+        $campaignEntity = $em->getRepository('AppBundle:Campaign')->find($data['cid']);
+        $campaignRuleEntity = new CampaignRules();
+        $campaignRuleEntity->setCid($campaignEntity);
+        $campaignRuleEntity->setRuleType($data['ruleType']);
+        $campaignRuleEntity->setStartFrom(new \DateTime(date('Y-m-d', strtotime($data['startFrom']))));
+        $campaignRuleEntity->setDatetimeunix($dateTimeUnix);
+        $campaignRuleEntity->setFrequency($data['frequency']);
+        $campaignRuleEntity->setOperator($data['logicalOperator']);
+        $campaignRuleEntity->setActive(1);
+        $campaignRuleEntity->setDateUpdated(new \DateTime(date('Y-m-d')));
+        $em->persist($campaignRuleEntity);
+        $em->flush();
+        for($x = 0; $x < count($data['conditions']); $x++){
+            $campaignConditionEntity = new CampaignRulesConditions();
+            $campaignConditionEntity->setCampaignRule($campaignRuleEntity);
+            $campaignConditionEntity->setRuleVariable($data['conditions'][$x]['metric']);
+            $campaignConditionEntity->setRuleCondition(strtolower($data['conditions'][$x]['option']));
+            $campaignConditionEntity->setValue1($data['conditions'][$x]['value1']);
+            $campaignConditionEntity->setValue2($data['conditions'][$x]['value2']);
+            $em->persist($campaignConditionEntity);
+            $em->flush();
+        }
+        $em->clear();
+        return new Response(json_encode($data));
+    }
+
+
+    /**
+     * @Route("/campaign/update-rule", name="editRule")
+     */
+    public function editRuleAction(){
+        $data = json_decode($_POST['param'], true);
+        $dateTimeUnix = strtotime($data['startFrom']);
+        $em = $this->getDoctrine()->getManager();
+        $campaignRulesEntity = $em->getRepository('AppBundle:CampaignRules')->find($data['campaignRulesId']);
+        $campaignRulesEntity->setRuleType($data['ruleType']);
+        $campaignRulesEntity->setStartFrom(new \DateTime(date('Y-m-d', strtotime($data['startFrom']))));
+        $campaignRulesEntity->setDatetimeunix($dateTimeUnix);
+        $campaignRulesEntity->setFrequency($data['frequency']);
+        $campaignRulesEntity->setOperator($data['logicalOperator']);
+        $campaignRulesEntity->setDateUpdated(new \DateTime(date('Y-m-d')));
+        $em->flush();
+
+        $campaignCondition = $em->getRepository('AppBundle:CampaignRulesConditions')->findBy(array('campaignRule' => $campaignRulesEntity));
+        for($x = 0; $x < count($campaignCondition); $x++){
+            $em->remove($campaignCondition[$x]);
+        }
+        $em->flush();
+
+        for($x = 0; $x < count($data['conditions']); $x++){
+            $campaignConditionEntity = new CampaignRulesConditions();
+            $campaignConditionEntity->setCampaignRule($campaignRulesEntity);
+            $campaignConditionEntity->setRuleVariable($data['conditions'][$x]['metric']);
+            $campaignConditionEntity->setRuleCondition(strtolower($data['conditions'][$x]['option']));
+            $campaignConditionEntity->setValue1($data['conditions'][$x]['value1']);
+            $campaignConditionEntity->setValue2($data['conditions'][$x]['value2']);
+            $em->persist($campaignConditionEntity);
+            $em->flush();
+        }
+        $em->clear();
+        return new Response(json_encode($data));
+    }
+
+
+    /**
+     * @Route("/campaign/update-change-rule-status", name="updateChangeRuleStatus")
+     */
+    public function updatChangeRuleStatusAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $campaignRulesEntity = $em->getRepository('AppBundle:CampaignRules')->find($data['campaignRulesId']);
+        $campaignRulesEntity->setActive($data['active']);
+        $em->flush();
+        $em->clear();
+
+        return new Response(json_encode(true));
+    }
+
+    /**
+     * @Route("/campaign/delete-campaign-rule", name="deleteCampaignRule")
+     */
+    public function deleteCampaignRuleAction(){
+        $data = $_POST['param'];
+        $em = $this->getDoctrine()->getManager();
+        $campaignRulesEntity = $em->getRepository('AppBundle:CampaignRules')->find($data);
+        $em->remove($campaignRulesEntity);
+        $em->flush();
+        return new Response(json_encode(true));
+    }
+
+
+    /**
+     * @Route("/campaign/save-data", name="saveData")
+     */
+    public function saveDataAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        foreach($data['items'] as $row){
+            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
+            $listExists = $em->getRepository('AppBundle:ListReports')->find($listData->getCid());
+            if($listExists){
+                $listExists->setTid($listData->getTid());
+                $listExists->setCid($listData->getCid());
+                $listExists->setType($listData->getType());
+                $listExists->setPlacement($listData->getPlacement());
+                $listExists->setVisits($listData->getVisits());
+                $listExists->setClicks($listData->getClicks());
+                $listExists->setCtr($listData->getCtr());
+                $listExists->setConversions($listData->getConversions());
+                $listExists->setRevenue($listData->getRevenue());
+                $listExists->setCost($listData->getCost());
+                $listExists->setProfit($listData->getProfit());
+                $listExists->setCpv($listData->getCpv());
+                $listExists->setEpv($listData->getEpv());
+                $listExists->setRoi($listData->getRoi());
+                $listExists->setDateExecuted($listData->getDateExecuted());
+                $listExists->setStatus($listData->getStatus());
                 $em->flush();
-                $em->clear();
+            }else{
+                $listEntity = new ListReports();
+                $listEntity->setTid($listData->getTid());
+                $listEntity->setCid($listData->getCid());
+                $listEntity->setType($listData->getType());
+                $listEntity->setPlacement($listData->getPlacement());
+                $listEntity->setVisits($listData->getVisits());
+                $listEntity->setClicks($listData->getClicks());
+                $listEntity->setCtr($listData->getCtr());
+                $listEntity->setConversions($listData->getConversions());
+                $listEntity->setRevenue($listData->getRevenue());
+                $listEntity->setCost($listData->getCost());
+                $listEntity->setProfit($listData->getProfit());
+                $listEntity->setCpv($listData->getCpv());
+                $listEntity->setEpv($listData->getEpv());
+                $listEntity->setRoi($listData->getRoi());
+                $listEntity->setDateExecuted($listData->getDateExecuted());
+                $listEntity->setStatus($listData->getStatus());
+                $em->persist($listEntity);
             }
-            $i++;
+
         }
 
         $em->flush();
@@ -994,106 +1136,24 @@ class CampaignController extends Controller
         return new Response(json_encode(true));
     }
 
+
     /**
-     * @Route("/campaign/add-group", name="addGroup")
+     * @Route("/campaign/delete-data", name="deleteData")
      */
-    public function addGroup(){
-        $data = $_POST['param'];
+    public function deleteDataAction(){
+        $data = json_decode($_POST['param'], true);
         $em = $this->getDoctrine()->getManager();
-
-        $group = $em->getRepository('AppBundle:Groups')
-            ->findByGroupName($data);
-        if ($group) {
-            $message = 'Group already exists';
-            $data = array();
-            $error = TRUE;
-        }else{
-
-            $newGroup = new Groups();
-            $newGroup->setGroupName($data);
-            $em->persist($newGroup);
-            $em->flush();
-            $lastId = $newGroup->getId();
-
-            $message = 'Group successfully added';
-            $error = FALSE;
-            $data = array('id' => $lastId, 'groupName' => $group);
-
-
-        }
-
-
-        return new Response (
-            $this->makeResponse($error,$message, $data)
-        );
-
-
-    }
-
-    /**
-     * @Route("/campaign/get-groups", name="getGroup")
-     */
-    public function getGroup(){
-
-        $groups = $this->getDoctrine()
-            ->getRepository('AppBundle:Groups')
-            ->findAll();
-
-
-
-        $output = '';
-        $output .= '<option></option>';
-
-
-        if(count($groups) == 0){
-            return new Response(json_encode(array()));
-        }else{
-            for($x = 0; $x < count($groups); $x++){
-                $output .= '<option value="' . $groups[$x]->getId() . '">' . $groups[$x]->getGroupName() . '</option>';
-
+        foreach($data['items'] as $row){
+            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
+            if($listData){
+                $em->remove($listData);
+                $em->flush($listData);
             }
-            return new Response($output);
         }
 
-        return new Response($output);
+        $em->clear();
 
-    }
-
-    /**
-     * @Route("/campaign/delete-group", name="deleteGroup")
-     */
-    public function deleteGroup(){
-        $gid = $_POST['param'];
-        $em = $this->getDoctrine()->getManager();
-
-
-        //$group = $em->getRepository('AppBundle:Groups')->find($gid);
-
-        $campaignGroups = $em->getRepository('AppBundle:Campaigngroups')->findByGid($gid);
-
-
-        if ($campaignGroups) {
-            $message = 'Cannot delete group. This group is used.';
-            $data = array();
-            $error = TRUE;
-        }else{
-
-            $deleteGroup = $em->getRepository('AppBundle:Groups')->find($gid);
-            $em->remove($deleteGroup);
-            $em->flush($deleteGroup);
-
-
-            $message = 'Group successfully deleted';
-            $error = FALSE;
-            $data = array('id' => $gid);
-
-
-        }
-
-        return new Response (
-            $this->makeResponse($error,$message, $data)
-        );
-
+        return new Response(json_encode(true));
     }
 
 
@@ -1298,181 +1358,6 @@ class CampaignController extends Controller
     }
 
     /**
-     * @Route("/campaign/get-group-campaign-match", name="getGroupCampaignMatch")
-     */
-    public function getGroupCampaignMatch(){
-
-        $data = explode(',', $_POST['param']);
-        $cid = $data[0];
-        $em = $this->getDoctrine()->getManager();
-
-        $campaignGroups = $em->getRepository('AppBundle:Campaigngroups')->findByCid($cid);
-
-        if($campaignGroups){
-            $error = FALSE;
-            $message = 'Campaign Group Matched';
-            $data = $this->getCampaignDetailsAllByMatch($cid, $campaignGroups[0]->getId());
-        }else{
-            $error = FALSE;
-            $message = 'No Campaign Matched (add as new)';
-            $data = array();
-        }
-
-        return new Response($this->makeResponse($error, $message, $data));
-
-    }
-
-    /**
- * @Route("/campaign/add-bot-rule", name="addBotRule")
- */
-    public function addBotRule(){
-
-        $data = json_decode($_POST['param'], true);
-        $this->deleteRules('AppBundle:BotRules', $data['options'][0]['cgid']);
-        $startFrom = date("Y-m-d", strtotime($data['options'][0]['startDate']));
-        $time = explode(':', $data['options'][0]['startTime']);
-        $dateTimeUnix = strtotime($data['options'][0]['startDate'] . ' ' . $time[0] . ':00');
-        $dateNow = date('Y-m-d');
-
-
-        $em = $this->getDoctrine()->getManager();
-        $cgid = $em->getRepository('AppBundle:Campaigngroups')->findOneById($data['options'][0]['cgid']);
-        $newBot = new BotRules();
-        $newBot->setCgid($cgid);
-        $newBot->setOpt(0);
-        $newBot->setVisits(0);
-        $newBot->setVal(0);
-        $newBot->setDateTimeUnix($dateTimeUnix);
-        $newBot->setDateFrom(new \DateTime($startFrom));
-        $newBot->setDateTime($time[0] . ':00');
-        $newBot->setFrequency($data['options'][0]['frequency']);
-        $newBot->setActive($data['options'][0]['active']);
-        $newBot->setDateUpdated(new \DateTime($dateNow));
-        $em->persist($newBot);
-        $em->flush();
-        $lastId = $newBot->getBid();
-        $bid = $em->getRepository('AppBundle:BotRules')->findOneByBid($lastId);
-        $values = array();
-        if(count($data['items']) > 0){
-
-            foreach($data['items'] as $set){
-                $newBotSet = new BotRuleSet();
-                $newBotSet->setBid($bid);
-                $em->persist($newBotSet);
-                $em->flush();
-                $lastSetId = $newBotSet->getBrsid();
-                foreach($set['conditions'] as $con => $var){
-                    $brsid = $em->getRepository('AppBundle:BotRuleSet')->findOneByBrsid($lastSetId);
-                    $botConditions = new BotConditions();
-                    $botConditions->setBrsid($brsid);
-                    $botConditions->setRuleVariable($var['variable']);
-                    $botConditions->setRuleCondition($var['operator']);
-                    $botConditions->setValue1($var['value1']);
-                    $botConditions->setValue2($var['value2']);
-                    $em->persist($botConditions);
-                    $em->flush();
-                }
-
-
-            }
-
-        }
-
-        $message = 'Bot Rule successfully added';
-        $error = FALSE;
-        $returnData = array('cgid' => $data['options'][0]['cgid'],
-            'botRule' =>
-                array($data
-                )
-        );
-
-        return new Response($this->makeResponse($error, $message, $returnData));
-
-
-    }
-
-
-    /**
-     * @Route("/campaign/add-blacklist-rule", name="addBlacklistRule")
-     */
-    public function addBlacklistRule(){
-
-        $data = json_decode($_POST['param'], true);
-        $this->deleteRules('AppBundle:BlacklistRules', $data['options'][0]['cgid']);
-        $startFrom = date("Y-m-d", strtotime($data['options'][0]['startDate']));
-        $time = explode(':', $data['options'][0]['startTime']);
-        $dateTimeUnix = strtotime($data['options'][0]['startDate'] . ' ' . $time[0] . ':00');
-        $dateNow = date('Y-m-d');
-
-
-        $em = $this->getDoctrine()->getManager();
-        $cgid = $em->getRepository('AppBundle:Campaigngroups')->findOneById($data['options'][0]['cgid']);
-        $newBlacklist = new BlacklistRules();
-        $newBlacklist->setCgid($cgid);
-        $newBlacklist->setDateTimeUnix($dateTimeUnix);
-        $newBlacklist->setStartFrom(new \DateTime($startFrom));
-        $newBlacklist->setDateTime($time[0] . ':00');
-        $newBlacklist->setFrequency($data['options'][0]['frequency']);
-        $newBlacklist->setActive($data['options'][0]['active']);
-        $newBlacklist->setActiontype('pause');
-        $newBlacklist->setDateUpdated(new \DateTime($dateNow));
-        $em->persist($newBlacklist);
-        $em->flush();
-        $lastId = $newBlacklist->getBlid();
-        $blid = $em->getRepository('AppBundle:BlacklistRules')->findOneByBlid($lastId);
-        $values = array();
-        if(count($data['items']) > 0){
-            foreach($data['items'] as $set){
-                $newBlacklistSet = new BlacklistRuleSet();
-                $newBlacklistSet->setBlid($blid);
-                $em->persist($newBlacklistSet);
-                $em->flush();
-                $lastSetId = $newBlacklistSet->getBlrsid();
-                foreach($set['conditions'] as $con => $var){
-                    $blrsid = $em->getRepository('AppBundle:BlacklistRuleSet')->findOneByBlrsid($lastSetId);
-                    $blacklistConditions = new BlacklistConditions();
-                    $blacklistConditions->setBlrsid($blrsid);
-                    $blacklistConditions->setRuleVariable($var['variable']);
-                    $blacklistConditions->setRuleCondition($var['operator']);
-                    $blacklistConditions->setValue1($var['value1']);
-                    $blacklistConditions->setValue2($var['value2']);
-                    $em->persist($blacklistConditions);
-                    $em->flush();
-                }
-
-            }
-
-        }
-
-        $message = 'Blacklist Rule successfully added';
-        $error = FALSE;
-        $returnData = array('cgid' => $data['options'][0]['cgid'],
-            'blacklistRule' =>
-                array($data
-                )
-        );
-
-        return new Response($this->makeResponse($error, $message, $returnData));
-
-
-    }
-
-    public function deleteRules($appBundle, $cgid){;
-        $em = $this->getDoctrine()->getEntityManager();
-        $sql = $em->createQuery(
-            "DELETE FROM $appBundle p
-             WHERE p.cgid = $cgid
-            "
-        );
-        $numDeleted = $sql->execute();
-        return new Response(
-            json_encode($numDeleted)
-        );
-
-    }
-
-
-    /**
      * @Route("/campaign/add-bid-adjustment-rule", name="addBidAdjustmentRule")
      */
     public function addBidAdjustmentRule(){
@@ -1550,209 +1435,176 @@ class CampaignController extends Controller
 
 
     /**
-     * @Route("/campaign/get-placement-report", name="getPlacementReport")
+     * @Route("/ajax/get-placement-list/{trafficSourceId}")
      */
-    public function getPlacementReport()
-    {
 
-        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
-        $voluumSessionId = $apiCredentials[0]['voluum'];
+    public function ajaxGetReportsBot($trafficSourceId = null){
+        $em = $this->getDoctrine()->getManager();
+        $aColumns = array( 'p.campaignRulesPlacementId', 'p.type', 'p.placement', 'p.visits', 'p.clicks' , 'p.ctr', 'p.conversions', 'p.revenue', 'p.cost', 'p.profit', 'p.cpv', 'p.epv', 'p.roi', 'p.status' );
 
-        $aColumns = array('yesterday', '3day', '7day', 'placement', 'conversions', 'revenue', 'cost', 'profit', 'cpv', 'epv', 'roi');
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'p.campaignRulesPlacementId';
+
+        // DB table to use
+        $sTable = 'AppBundle:CampaignRulesPlacementList';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
         $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                }
+            }
 
 
-        $input =& $_GET;
-        $vid = '';
-        $trafficName = '';
-        $interval = '';
-        if (isset($input['vid']) || $input['vid'] != '') {
-            $vid = $input['vid'];
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }else{
+            // custom filter
+
+
+            if(isset($input['type'])){
+
+                if($input['type'] != '' || $input['type'] != null){
+
+                    $aFilteringRules[] = "p.type = '". $input['type'] ."'";
+                }
+            }
+
         }
-        if (isset($input['trafficName']) || $input['trafficName'] != '') {
-            $trafficName = $input['trafficName'];
-            $em = $this->getDoctrine()->getEntityManager();
-            $trafficSourceEntity = $em->getRepository('AppBundle:TrafficSource')
-                                    ->findOneBy(array('trafficName' => $trafficName));
 
-            $customVariable = $trafficSourceEntity->getCustomVariable();
-            $customVariableKey = $trafficSourceEntity->getCustomVariableKey();
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE p.tid = '" . $trafficSourceId . "' AND ".implode(" AND ", $aFilteringRules) ;
+        } else {
+            $sWhere = "WHERE p.tid = '" . $trafficSourceId . "'";
         }
 
 
-        $sLimit = "";
-        if (isset($input['iDisplayStart']) && $input['iDisplayLength'] != '-1') {
-            $sLimit = $input['iDisplayStart'];
-        }
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
 
 
-        $iTotal = 20;
+
+        $sQuery = $em->createQuery("
+        SELECT $aQueryColumns
+        FROM ".$sTable." p ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+        $rResult = $sQuery->getResult();
+
+
+        $sQuery = $em->createQuery("
+        SELECT p
+        FROM ".$sTable." p ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($paginator);
+
+        $sQuery = $em->createQuery("
+        SELECT p
+        FROM ".$sTable." p ".$sWhere.$sOrder."");
+
+        $iTotal = count($paginator = new Paginator($sQuery));
 
         /**
          * Output
          */
 
+
         $output = array(
-            "sEcho" => intval($input['sEcho']),
-            "iTotalRecords" => $iTotal,
-            "iTotalDisplayRecords" => $input['iDisplayLength'],
-            "aaData" => array()
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
         );
 
 
-        $split = explode(':', date('H:m'));
-        $yesterday = date('Y-m-d', strtotime('-1 days')) . 'T00:00:00Z';
-        $today = date('Y-m-d') . 'T' . $split[0] . ':00:00Z';
-        $threeDay = date('Y-m-d', strtotime('-3 days')) . 'T' . $split[0] . ':00:00Z';
-        $sevenDay = date('Y-m-d', strtotime('-7 days')) . 'T' . $split[0] . ':00:00Z';
-        $tz = 'America/Chicago';
-        $sort = 'revenue';
-        $direction = 'desc';
-        $limit = $input['iDisplayLength'];
-        $url = 'https://portal.voluum.com/report?';
-            $query = array('from' => $yesterday,
-                'to' => $today,
-                'tz' => $tz,
-                'sort' => $sort,
-                'direction' => $direction,
-                'columns' => $customVariableKey,
-                'columns' => 'campaignId',
-                'columns' => 'visits',
-                'columns' => 'clicks',
-                'columns' => 'conversions',
-                'columns' => 'revenue',
-                'columns' => 'cost',
-                'columns' => 'profit',
-                'columns' => 'cpv',
-                'columns' => 'ctr',
-                'columns' => 'cr',
-                'columns' => 'cv',
-                'columns' => 'roi',
-                'columns' => 'epv',
-                'columns' => 'epc',
-                'columns' => 'ap',
-                'columns' => 'errors',
-                'groupBy' => $customVariable,
-                'offset' => 0,
-                'limit' => $limit,
-                'include' => 'active',
-                'filter1' => 'campaign',
-                'filter1Value' => $vid
-            );
-
-            $returnedDataYesterday = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-                'query' => $query,
-                'method' => 'GET',
-                'sessionId' => $voluumSessionId))->getContent(), true);
-        if (!isset($returnedDataYesterday['error'])) {
-            foreach ($returnedDataYesterday['rows'] as $item) {
-                $row = array();
-                    $tz = 'America/Chicago';
-                    $limit = 100;
-                    $placement = $item[$customVariableKey];
-                    $queryThreeDay = array('from' => $threeDay,
-                        'to' => $today,
-                        'tz' => $tz,
-                        'columns' => 'offerName',
-                        'columns' => 'visits',
-                        'columns' => 'clicks',
-                        'columns' => 'visits',
-                        'columns' => 'conversions',
-                        'columns' => 'revenue',
-                        'columns' => 'cost',
-                        'columns' => 'profit',
-                        'columns' => 'cpv',
-                        'columns' => 'ctr',
-                        'columns' => 'cr',
-                        'columns' => 'cv',
-                        'columns' => 'roi',
-                        'columns' => 'epv',
-                        'columns' => 'epc',
-                        'columns' => 'ap',
-                        'columns' => 'errors',
-                        'groupBy' => 'offer',
-                        'offset' => 0,
-                        'limit' => $limit,
-                        'include' => 'traffic',
-                        'filter1' => 'campaign',
-                        'filter1Value' => $vid,
-                        'filter2' => $customVariable,
-                        'filter2Value' => $placement
-                    );
-
-
-                    $querySevenDay = array('from' => $sevenDay,
-                        'to' => $today,
-                        'tz' => $tz,
-                        'columns' => 'offerName',
-                        'columns' => 'visits',
-                        'columns' => 'clicks',
-                        'columns' => 'visits',
-                        'columns' => 'conversions',
-                        'columns' => 'revenue',
-                        'columns' => 'cost',
-                        'columns' => 'profit',
-                        'columns' => 'cpv',
-                        'columns' => 'ctr',
-                        'columns' => 'cr',
-                        'columns' => 'cv',
-                        'columns' => 'roi',
-                        'columns' => 'epv',
-                        'columns' => 'epc',
-                        'columns' => 'ap',
-                        'columns' => 'errors',
-                        'groupBy' => 'offer',
-                        'offset' => 0,
-                        'limit' => $limit,
-                        'include' => 'traffic',
-                        'filter1' => 'campaign',
-                        'filter1Value' => $vid,
-                        'filter2' => $customVariable,
-                        'filter2Value' => $placement
-                    );
-
-
-                    $returnedDataThreeDay = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-                        'query' => $queryThreeDay,
-                        'method' => 'GET',
-                        'sessionId' => $voluumSessionId))->getContent(), true);
-
-                    $returnedDataSevenDay = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-                        'query' => $querySevenDay,
-                        'method' => 'GET',
-                        'sessionId' => $voluumSessionId))->getContent(), true);
-
-                    if (!isset($returnedDataThreeDay['error']) && !isset($returnedDataSevenDay['error'])) {
-                        for ($i = 0; $i < $iColumnCount; $i++) {
-                            $row[] = $item[$customVariableKey];
-                            $row[] = '$' . number_format($item['profit'], 2) . ' / ' . number_format($item['roi'], 2) . '%';
-                            $row[] = '$' . number_format($returnedDataThreeDay['totals']['profit'], 2) . ' / ' . number_format($returnedDataThreeDay['totals']['roi'], 2) . '%';
-                            $row[] = '$' . number_format($returnedDataSevenDay['totals']['profit'], 2) . ' / ' . number_format($returnedDataSevenDay['totals']['roi'], 2) . '%';
-                            $row[] = $item['conversions'];
-                            $row[] = '$' . number_format($item['revenue'], 2);
-                            $row[] = '$' . number_format($item['cost'], 2);
-                            $row[] = '$' . number_format($item['profit'], 2);
-                            $row[] = '$' . number_format($item['cpv'], 4);
-                            $row[] = '$' . number_format($item['epv'], 4);
-                            $row[] = number_format($item['roi'], 2) . '%';
-                            //$row[] = bcdiv($item['roi'], 1, 2) . '%';  // set decimal without rounding
-
-
-                        }
-
-                        $output['aaData'][] = $row;
-                    }
-
-
-                }
-
-
-            }
-
-            //var_dump( $output['aaData']);
-
-
-        return new Response(json_encode($output));
+        foreach($rResult as $column){
+            $row = array();
+            $row[] = '<td>
+                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['campaignRulesPlacementId'] . '" />
+                             <span></span>
+                        </label>
+                      </td>';
+            $row[] = strtoupper($column['type']);
+            $row[] = $column['placement'];
+            $row[] = $column['visits'];
+            $row[] = $column['clicks'];
+            $row[] = bcdiv($column['ctr'], 1, 2) . '%';
+            $row[] = $column['conversions'];
+            $row[] = '$' . bcdiv($column['revenue'], 1, 2);
+            $row[] = '$' . bcdiv($column['cost'], 1, 2);
+            $row[] = '$' . bcdiv($column['profit'], 1, 2);
+            $row[] = bcdiv($column['cpv'], 1, 4);
+            $row[] = bcdiv($column['epv'], 1, 4);
+            $row[] = bcdiv($column['roi'], 1, 2) . '%';
+            $row[] = $column['status'];
+            $output['aaData'][] = $row;
+        }
+        return new Response( json_encode( $output ) );
     }
 
     /**
@@ -1793,7 +1645,7 @@ class CampaignController extends Controller
         $dateNow = date('Y-m-d');
 
         $em = $this->getDoctrine()->getManager();
-       // $cgid = $em->getRepository('AppBundle:Campaigngroups')->findOneById($data['options'][0]['cgid']);
+        // $cgid = $em->getRepository('AppBundle:Campaigngroups')->findOneById($data['options'][0]['cgid']);
         $newIpRules = new IpRules();
         $newIpRules->setCgid($data['options'][0]['cgid']);
         $newIpRules->setActive($data['options'][0]['active']);

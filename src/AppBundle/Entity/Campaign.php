@@ -167,4 +167,33 @@ class Campaign
     {
         return $this->tid;
     }
+    /**
+     * @var integer
+     */
+    private $verId;
+
+
+    /**
+     * Set verId
+     *
+     * @param integer $verId
+     *
+     * @return Campaign
+     */
+    public function setVerId($verId)
+    {
+        $this->verId = $verId;
+
+        return $this;
+    }
+
+    /**
+     * Get verId
+     *
+     * @return integer
+     */
+    public function getVerId()
+    {
+        return $this->verId;
+    }
 }

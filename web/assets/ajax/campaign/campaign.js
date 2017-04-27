@@ -24,141 +24,7 @@ function apiGetCampaign(data)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response = XMLHttpRequestObject.responseText;
-                $('#displayCampaignToImport').html(
-
-                    '<table class="table table-striped table-bordered table-hover table-checkable order-column" id="modalCampaignTable">'
-                    + '<thead>'
-                    + '<tr>'
-                    + '<th>'
-                    + '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">'
-                    + '<input type="checkbox" class="group-checkable" data-set="#modalCampaignTable .checkboxes" />'
-                    + '<span></span>'
-                    + '</label>'
-                    + '</th>'
-                    + '<th>Name</th>'
-                    + '<th>CampId</th>'
-
-                    + '</tr>'
-                    + '</thead>'
-
-                    + '<tbody id="displayCampaignTable">'
-
-
-                    + '</tbody>'
-                    + '</table>'
-                );
-                $('#displayCampaignTable').html(response);
-
-                var TableDatatablesManaged = function () {
-
-                    var initTable2 = function () {
-
-                        var table = $('#modalCampaignTable');
-
-                        // begin first table
-                        table.dataTable({
-                            responsive: true,
-                            // Internationalisation. For more info refer to http://datatables.net/manual/i18n
-                            "language": {
-                                "aria": {
-                                    "sortAscending": ": activate to sort column ascending",
-                                    "sortDescending": ": activate to sort column descending"
-                                },
-                                "emptyTable": "No data available in table",
-                                "info": "Showing _START_ to _END_ of _TOTAL_ records",
-                                "infoEmpty": "No records found",
-                                "infoFiltered": "(filtered1 from _MAX_ total records)",
-                                "lengthMenu": "Show _MENU_",
-                                "search": "Search:",
-                                "zeroRecords": "No matching records found",
-                                "paginate": {
-                                    "previous":"Prev",
-                                    "next": "Next",
-                                    "last": "Last",
-                                    "first": "First"
-                                }
-                            },
-
-                            // Or you can use remote translation file
-                            //"language": {
-                            //   url: '//cdn.datatables.net/plug-ins/3cfcc339e89/i18n/Portuguese.json'
-                            //},
-
-                            // Uncomment below line("dom" parameter) to fix the dropdown overflow issue in the datatable cells. The default datatable layout
-                            // setup uses scrollable div(table-scrollable) with overflow:auto to enable vertical scroll(see: assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js).
-                            // So when dropdowns used the scrollable div should be removed.
-                            //"dom": "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
-
-                            "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
-
-                            "lengthMenu": [
-                                [20, 50, 100, 200, -1],
-                                [20, 50, 100, 200, "All"] // change per page values here
-                            ],
-                            // set the initial value
-                            "pageLength": 20,
-                            "pagingType": "bootstrap_full_number",
-                            "columnDefs": [
-                                {  // set default column settings
-                                    'orderable': false,
-                                    'targets': [0]
-                                },
-                                {
-                                    "searchable": false,
-                                    "targets": [0]
-                                },
-                                {
-                                    "className": "dt-right"
-                                    //"targets": [2]
-                                }
-                            ],
-                            "order": [
-                                [1, "asc"]
-                            ] // set first column as a default sort by asc
-                        });
-
-                        var tableWrapper = jQuery('#sample_1_wrapper');
-
-                        table.find('.group-checkable').change(function () {
-                            var set = jQuery(this).attr("data-set");
-                            var checked = jQuery(this).is(":checked");
-                            jQuery(set).each(function () {
-                                if (checked) {
-                                    $(this).prop("checked", true);
-                                    $(this).parents('tr').addClass("active");
-                                } else {
-                                    $(this).prop("checked", false);
-                                    $(this).parents('tr').removeClass("active");
-                                }
-                            });
-                        });
-
-                        table.on('change', 'tbody tr .checkboxes', function () {
-                            $(this).parents('tr').toggleClass("active");
-                        });
-                    }
-
-
-                    return {
-
-                        //main function to initiate the module
-                        init: function () {
-                            if (!jQuery().dataTable) {
-                                return;
-                            }
-
-                            initTable2();
-                        }
-
-                    };
-
-                }();
-                if (App.isAngularJsApp() === false) {
-                    jQuery(document).ready(function() {
-                        TableDatatablesManaged.init();
-                    });
-                }
-
+                $('#selectCampaign').html(response);
             }
         }
 
@@ -174,13 +40,13 @@ function apiGetCampaign(data)
 }
 
 
-function apiAddCampaign(btn, tid, data)
+function addCampaign(btn, data, selCamp)
 {
     var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "/campaign/import-campaigns");
+        XMLHttpRequestObject.open("POST", "/campaign/add-campaign");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -189,12 +55,12 @@ function apiAddCampaign(btn, tid, data)
         {
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
-                var response = XMLHttpRequestObject.responseText;
-                getCampaignForSelect(tid);
-                showNotification('success', 'Success', 'Campaigns Successfully Imported');
-
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                $('#campaignTitleName').html(response['campaignName']);
+                $('#id').val(response['id']);
+                showNotification('success', 'Success', 'Campaign Successfully Added');
                 l.stop();
-                $('#import-modal').modal('hide');
+                getCampaignMatch(selCamp);
 
             }
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
@@ -202,14 +68,86 @@ function apiAddCampaign(btn, tid, data)
             }
         }
 
+        l.start();
+        if(typeof data.campaignId == 'undefined'){
+            showNotification('warning', 'Warning', 'Please Select Campaign');
+            $('#selectCampaign').focus();
+            setTimeout(function(){
+                l.stop();
+            }, 1000);
+        }else if(data.verticalId == ''){
+            showNotification('warning', 'Warning', 'Please Select Vertical');
+            $('#selectVertical').focus();
+            setTimeout(function(){
+                l.stop();
+            }, 1000);
+        }else{
+            var dataArray = JSON.stringify(data);
+            XMLHttpRequestObject.send("param=" + dataArray);
+        }
 
-        //   $cellValue =  $('#modalCampaignTable tr td:first').text();
+
+    }
+
+    return false;
+}
+
+
+function addRule(btn, data, selCamp, indexes){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/add-rule");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                l.stop();
+
+                console.log(response);
+                $('#selectRuleType').val('').trigger("change");
+                $('#startFrom').val('');
+                $('#frequency').val(5);
+                $('#selectFrequencyFormat').val('minutes').trigger("change");
+                $('#selectLogicalOperator').val('').trigger("change");
+                showNotification('success', 'Success', 'Rules Successfully Added');
+
+
+
+
+
+
+                $('#appendAppendActiveRules').empty();
+                getCampaignMatch(selCamp);
+
+
+                for($a = 0; $a < indexes.length; $a++){
+                    $('#row-'+indexes[$a]).remove();
+                    delete $dataConditions.items[indexes[$a]];
+                }
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+                l.stop();
+            }
+        }
+
+
 
         l.start();
+
 
         var dataArray = JSON.stringify(data);
-
         XMLHttpRequestObject.send("param=" + dataArray);
+
+
 
     }
 
@@ -217,13 +155,12 @@ function apiAddCampaign(btn, tid, data)
 }
 
 
-function addCampaignGroup(btn, cid, gid, verId, geo)
-{
+function updateRule(btn, data, selCamp){
     var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "/campaign/add-campaign-group");
+        XMLHttpRequestObject.open("POST", "/campaign/update-rule");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -232,73 +169,55 @@ function addCampaignGroup(btn, cid, gid, verId, geo)
         {
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
-                var addCampaignGroupResponse = $.parseJSON(XMLHttpRequestObject.responseText);
-                $.each(addCampaignGroupResponse, function(i, val) {
-                    $.each(val, function(x, obj) {
-                        if(obj['error'] != true){
-                            $('#campaignTitleName').html(obj['elements']['campaign']['name']);
-                            $('#campaignGroupId').val(obj['elements']['campaign']['cgid']);
-                            $('#campaignId').val(obj['elements']['campaign']['cid']);
-                            $('#deleteCampaignBtn').attr('disabled', false);
-
-                            $('#appendRuleSetBotBtn').attr('disabled', false);
-                            $('#appendRuleSetBlacklistBtn').attr('disabled', false);
-                            $('#appendRuleSetIpBtn').attr('disabled', false);
-
-                            $('#botRadioOption1').attr('disabled', false);
-                            $('#botRadioOption2').attr('disabled', false);
-                            $('#botRulesValue1').attr('disabled', false);
-                            $('#botRulesValue2').attr('disabled', false);
-                            $('#botRulesVisit1').attr('disabled', false);
-                            $('#botRulesVisit2').attr('disabled', false);
-                            $('#botRulesDatePicker').attr('disabled', false);
-                            $('#botRulesTimePicker').attr('disabled', false);
-                            $('#botRulesFrequency').attr('disabled', false);
-                            $('#chooseTimeFormat1').attr('disabled', false);
-                            $('#chooseTimeFormat2').attr('disabled', false);
-                            $('#botRulesSubmitBtn').attr('disabled', false);
-                            $("input[type=checkbox]#bot-active-switch").bootstrapSwitch('disabled', false, true)
-
-
-                            $("input[type=checkbox]#blacklist-active-switch").bootstrapSwitch('disabled', false, true);
-                            $('#blacklistRadioOption1').attr('disabled', false);
-                            $('#blacklistRadioOption2').attr('disabled', false);
-                            $('#blacklistCheckBoxVisits').attr('disabled', false);
-                            $('#blacklistVisits1').attr('disabled', false);
-                            $('#blacklistCheckBoxCost').attr('disabled', false);
-                            $('#blacklistCost1').attr('disabled', false);
-                            $('#blacklistCheckBoxConv').attr('disabled', false);
-                            $('#blacklistConv1').attr('disabled', false);
-                            $('#blacklistCheckBoxCTR').attr('disabled', false);
-                            $('#blacklistCTR1').attr('disabled', false);
-                            $('#blacklistCheckBoxROI').attr('disabled', false);
-                            $('#blacklistROI1').attr('disabled', false);
-                            $('#blacklistDatePicker').attr('disabled', false);
-                            $('#blacklistTimePicker').attr('disabled', false);
-                            $('#blacklistFrequency').attr('disabled', false);
-                            $('#blacklistChooseTimeFormat1').attr('disabled', false);
-                            $('#blacklistChooseTimeFormat2').attr('disabled', false);
-                            $('#blacklistSubmitBtn').attr('disabled', false);
-
-                            $("input[type=checkbox]#ip-active-switch").bootstrapSwitch('disabled', false, true);
-                            $('#ipRulesFrequency').attr('disabled', false);
-                            $('#ipChooseTimeFormat1').attr('disabled', false);
-                            $('#ipChooseTimeFormat2').attr('disabled', false);
-                            $('#ipRulesSubmitBtn').attr('disabled', false);
-
-
-
-                            showNotification('success', 'Success', 'Campaign Saved');
-
-                        }else{
-                            showNotification('success', 'Success', 'Campaign Updated');
-                            console.log(obj['message']);
-                        }
-                    });
-                });
-
-
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
                 l.stop();
+                $('#appendAppendActiveRules').empty();
+                showNotification('success', 'Success', 'Rules Successfully Updated');
+                getCampaignMatch(selCamp);
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+                l.stop();
+            }
+        }
+
+
+
+        l.start();
+
+
+        var dataArray = JSON.stringify(data);
+        XMLHttpRequestObject.send("param=" + dataArray);
+
+
+
+    }
+
+    return false;
+}
+
+
+function deleteCampaignRule(btn, id, selCamp){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/delete-campaign-rule");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                l.stop();
+                $('#deleteRuleModal').modal('hide');
+                showNotification('success', 'Success', 'Rules Successfully Deleted');
+                $('#appendAppendActiveRules').empty();
+                getCampaignMatch(selCamp);
 
             }
 
@@ -313,7 +232,8 @@ function addCampaignGroup(btn, cid, gid, verId, geo)
         l.start();
 
 
-        XMLHttpRequestObject.send("param= "+ cid + "," + gid + "," + verId + "," + geo);
+
+        XMLHttpRequestObject.send("param=" + id);
 
 
 
@@ -322,99 +242,6 @@ function addCampaignGroup(btn, cid, gid, verId, geo)
     return false;
 }
 
-
-function deleteCampaignGroup(btn, cid, traffic)
-{
-    var l = Ladda.create(btn);
-    if(XMLHttpRequestObject)
-    {
-
-        XMLHttpRequestObject.open("POST", "/campaign/delete-campaign-group");
-
-
-        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-
-        XMLHttpRequestObject.onreadystatechange = function()
-        {
-            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
-            {
-                var deleteCampaignGroupResponse = $.parseJSON(XMLHttpRequestObject.responseText);
-                $.each(deleteCampaignGroupResponse, function(i, val) {
-                    $.each(val, function(x, obj) {
-                        if(obj['error'] != true){
-                            console.log(obj['elements'])
-
-
-                            $("#selectCampaign").val("").trigger("change");
-                            $("#selectAddGroup").val("").trigger("change");
-                            $("#selectAddVertical").val("").trigger("change");
-
-                            $("input[type=checkbox]#bot-active-switch").bootstrapSwitch('disabled', true, true)
-
-                            $('#botRadioOption1').attr('disabled', true);
-                            $('#botRadioOption2').attr('disabled', true);
-                            $('#botRulesValue1').attr('disabled', true);
-                            $('#botRulesValue2').attr('disabled', true);
-                            $('#botRulesVisit1').attr('disabled', true);
-                            $('#botRulesVisit2').attr('disabled', true);
-                            $('#botRulesDatePicker').attr('disabled', true);
-                            $('#botRulesTimePicker').attr('disabled', true);
-                            $('#botRulesFrequency').attr('disabled', true);
-                            $('#chooseTimeFormat1').attr('disabled', true);
-                            $('#chooseTimeFormat2').attr('disabled', true);
-                            $('#botRulesSubmitBtn').attr('disabled', true);
-                            $('#botRadioOption1').attr('disabled', false);
-                            $('#botRadioOption2').attr('disabled', false);
-                            $('#botRulesValue1').attr('disabled', false);
-                            $('#botRulesValue2').attr('disabled', false);
-                            $('#botRulesVisit1').attr('disabled', false);
-                            $('#botRulesVisit2').attr('disabled', false);
-
-                            $('#delete-modal').modal('hide');
-                            $('#campaignTitleName').html('Campaign Name');
-                            $("#botRadioOption2").prop("checked", true);
-                            $('#botRulesVisit1').val('');
-                            $('#botRulesValue1').val('');
-                            $('#botRulesVisit2').val('');
-                            $('#botRulesValue2').val('');
-
-                            $('#botRulesFrequency').val('');
-
-                            $('#botRulesTimePicker').val('00:00');
-                            $('#botRulesDatePicker').val(formatDateFromYMD(Date.now()));
-
-                            getCampaignForSelect(traffic);
-                            showNotification('success', 'Success', 'Campaign Deleted')
-
-
-                        }else{
-                            console.log(obj['message']);
-                        }
-                    });
-                });
-
-
-                l.stop();
-
-            }
-            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
-                showNotification('error', '', '')
-            }
-        }
-
-
-
-        l.start();
-        console.log(cid);
-
-        XMLHttpRequestObject.send("param= "+ cid);
-
-
-
-    }
-
-    return false;
-}
 
 function getCampaignForSelect(tid) {
 
@@ -442,143 +269,6 @@ function getCampaignForSelect(tid) {
 
 }
 
-
-function addGroup(btn, group)
-{
-
-    var l = Ladda.create(btn);
-    if(XMLHttpRequestObject)
-    {
-
-        XMLHttpRequestObject.open("POST", "/campaign/add-group");
-
-
-        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-
-        XMLHttpRequestObject.onreadystatechange = function()
-        {
-            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
-            {
-                var addGroupResponse = $.parseJSON(XMLHttpRequestObject.responseText);
-                $.each(addGroupResponse, function(i, val) {
-                    $.each(val, function(x, item) {
-                        if(item['error'] == true){
-                            showNotification('warning', 'Warning', ' ' +group+ ' already exists');
-                        }else{
-                            showNotification('success', 'Success', ' ' +group+ ' succesfully added');
-                        }
-                    });
-                });
-
-                l.stop();
-                getGroups();
-
-
-
-
-
-
-            }
-            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
-                showNotification('error', '', '');
-            }
-        }
-
-
-        if(group != ''){
-
-
-            l.start();
-            XMLHttpRequestObject.send("param=" + group);
-        }
-
-
-    }
-
-    return false;
-}
-
-
-function getGroups() {
-
-    if (XMLHttpRequestObject) {
-
-        XMLHttpRequestObject.open("POST", "/campaign/get-groups");
-
-
-        XMLHttpRequestObject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-        XMLHttpRequestObject.onreadystatechange = function () {
-            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200) {
-                var returnedData = XMLHttpRequestObject.responseText;
-                var element_id = document.getElementById('selectAddGroup');
-                var selectRemoveGroup = document.getElementById('selectRemoveGroup');
-                element_id.innerHTML = returnedData;
-                selectRemoveGroup.innerHTML = returnedData;
-
-
-
-
-            }
-        }
-
-        XMLHttpRequestObject.send("param=x");
-
-    }
-    return false;
-
-}
-
-function deleteGroup(btn, group)
-{
-    var l = Ladda.create(btn);
-    if(XMLHttpRequestObject)
-    {
-
-        XMLHttpRequestObject.open("POST", "/campaign/delete-group");
-
-
-        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-
-        XMLHttpRequestObject.onreadystatechange = function()
-        {
-            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
-            {
-                var addGroupResponse = $.parseJSON(XMLHttpRequestObject.responseText);
-                $.each(addGroupResponse, function(i, val) {
-                    $.each(val, function(x, item) {
-                        if(item['error'] == false) {
-                            showNotification('success', 'Success', 'Group Deleted');
-                        }else{
-                            console.log(item['message']);
-                            showNotification('warning', 'Warning', item['message']);
-                        }
-                    });
-                });
-
-                    getGroups();
-
-                    l.stop();
-
-
-            }
-            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
-                showNotification('error', '', '');
-            }
-        }
-
-
-
-        if(group != ''){
-            l.start();
-            XMLHttpRequestObject.send("param=" + group);
-        }
-
-
-    }
-
-    return false;
-}
 
 function addVertical(btn, vertical)
 {
@@ -718,12 +408,319 @@ function deleteVertical(btn, vertical)
     return false;
 }
 
-function getGroupCampaignMatch(selCamp)
+function getCampaignMatch(voluumId)
 {
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "/campaign/get-group-campaign-match");
+        XMLHttpRequestObject.open("POST", "/campaign/get-campaign-match");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                console.log(response);
+                $dataConditionsActive = [];
+                $.each(response['data']['details']['elements'], function(campaign, obj){
+                    console.log(obj['info'][0]['verId'])
+                    $('#id').val(obj['info'][0]['id']);
+                    $('#selectAddVertical').val(obj['info'][0]['verId']).trigger("change");
+                    $.each(obj['rulesConditions'], function(index, info){
+
+
+                        $botRuleSelected = '';
+                        $blacklistRuleSelected = '';
+                        $whitelistRuleSelected = '';
+                        $autobidRuleSelected = '';
+
+                        $operatorAndSelected = '';
+                        $operatorOrSelected = '';
+
+                        $minutesSelected = '';
+                        $hoursSelected = '';
+
+                        if(info['ruleType'] == 'botRule'){
+                            $botRuleSelected = 'selected';
+                        }
+                        if(info['ruleType'] == 'blacklistRule'){
+                            $blacklistRuleSelected = 'selected';
+                        }
+                        if(info['ruleType'] == 'whitelist'){
+                            $whitelistRuleSelected = 'selected';
+                        }
+                        if(info['ruleType'] == 'autobid'){
+                            $autobidRuleSelected = 'selected';
+                        }
+
+
+                        if(info['frequency']  >= 3600){
+                            $hoursSelected = 'selected';
+                            $frequency = info['frequency'] / 3600;
+                        }else{
+                            $minutesSelected = 'selected';
+                            $frequency = info['frequency'] / 60;
+                        }
+
+
+                        if(info['operator'] == 'and'){
+                            $operatorAndSelected = 'selected';
+                        }
+                        if(info['operator'] == 'or'){
+                            $operatorOrSelected = 'selected';
+                        }
+
+                        $conditions = '';
+                        $dataConditionsActive[index] = {
+                            items:[]
+                        };
+
+                        for($z = 0; $z < info['conditions'].length; $z++){
+
+                            $selectedVisits = '';
+                            $selectedConversions = '';
+                            $selectedCost = '';
+                            $selectedCPV = '';
+                            $selectedCTR = '';
+                            $selectedEPV = '';
+                            $selectedROI = '';
+
+                            $selectedGreater = '';
+                            $selectedLess = '';
+                            $selectedBetween = '';
+                            $selectedEqual = '';
+
+                            if(info['conditions'][$z]['rule_variable'] == 'visits'){
+                                $selectedVisits = 'selected';
+                            }
+                            else if(info['conditions'][$z]['rule_variable'] == 'conversions'){
+                                $selectedConversions = 'selected';
+                            }
+                            else if(info['conditions'][$z]['rule_variable'] == 'cost'){
+                                $selectedCost = 'selected';
+                            }
+                            else if(info['conditions'][$z]['rule_variable'] == 'cpv'){
+                                $selectedCPV = 'selected';
+                            }
+                            else if(info['conditions'][$z]['rule_variable'] == 'ctr'){
+                                $selectedCTR = 'selected';
+                            }
+                            else if(info['conditions'][$z]['rule_variable'] == 'epv'){
+                                $selectedEPV = 'selected';
+                            }else{
+                                $selectedROI = 'selected';
+                            }
+
+                            if(info['conditions'][$z]['rule_condition'] == 'greaterthan'){
+                                $selectedGreater = 'selected';
+                            }
+                            else if(info['conditions'][$z]['rule_condition'] == 'lessthan'){
+                                $selectedLess = 'selected';
+                            }
+                            else if(info['conditions'][$z]['rule_condition'] == 'between'){
+                                $selectedBetween = 'selected';
+                            }else if(info['conditions'][$z]['rule_condition'] == 'equalto'){
+                                $selectedEqual = 'selected';
+                            }
+
+
+
+                            if(info['active'] == 1){
+                                $classStatus = 'green';
+                                $buttons = '<div class="row" id="buttonsContainer-'+index+'"><div class="col-md-5 pull-left">' +
+                                '<button data-index="'+index+'" data-id="'+info['campaignRulesId']+'" data-action="pause" class="btn yellow ladda-button spinnerBtn" data-style="expand-right" data-size="s" onclick="changeRuleStatus(this)"> ' +
+                                '<span class="ladda-label">' +
+                                '<i class="fa fa-pause"></i> Pause </span></button>' +
+                                '<button style="margin-left: 10px;" data-action="edit" data-index="'+index+'" class="btn blue" onclick="editRule(this)"> ' +
+                                '<i class="fa fa-pencil"></i> Edit </button>' +
+                                '<button style="margin-left: 10px;" data-index="'+index+'" data-id="'+info['campaignRulesId']+'" onclick="pushDataDelete(this)" data-toggle="modal" data-target="#deleteRuleModal" class="btn red"><i class="fa fa-trash"></i> Delete</button>' +
+                                '<label style="margin-left: 10px;">Status: Running</label>'+
+                                '</div>' +
+                                '</div>';
+                            }else{
+                                $classStatus = 'yellow';
+                                $buttons = '<div class="row" id="buttonsContainer-'+index+'"><div class="col-md-5 pull-left">' +
+                                '<button data-index="'+index+'" data-id="'+info['campaignRulesId']+'" data-action="resume" class="btn green ladda-button spinnerBtn" data-style="expand-right" data-size="s" onclick="changeRuleStatus(this)"> ' +
+                                '<span class="ladda-label">' +
+                                '<i class="fa fa-play"></i> Resume </span></button>' +
+                                '<button style="margin-left: 10px;" data-action="edit" data-index="'+index+'" class="btn blue" onclick="editRule(this)"> ' +
+                                '<i class="fa fa-pencil"></i> Edit </button>' +
+                                '<button style="margin-left: 10px;" data-index="'+index+'" data-id="'+info['campaignRulesId']+'" onclick="pushDataDelete(this)" data-toggle="modal" data-target="#deleteRuleModal" class="btn red"><i class="fa fa-trash"></i> Delete</button>' +
+                                '<label style="margin-left: 10px;">Status: Paused</label>'+
+                                '</div>' +
+                                '</div>';
+                            }
+
+                            $conditions += '<div class="row" id="row-'+index+'-'+$z+'">' +
+                            '<br>' +
+                            '<div class="col-md-3">' +
+                            '<select id="metric-'+index+'-'+$z+'" class="select2_single form-control metric disableTrigger-'+index+'" tabindex="-1" disabled>' +
+                            '<option></option>' +
+                            '<option value="visits" '+ $selectedVisits +'>Visits</option>' +
+                            '<option value="conversions" '+ $selectedConversions +'>Conversion</option>' +
+                            '<option value="cost" '+ $selectedCost +'>Cost</option>' +
+                            '<option value="cpv" '+ $selectedCPV +'>CPV</option>' +
+                            '<option value="ctr" '+ $selectedCTR +'>CTR</option>' +
+                            '<option value="epv" '+ $selectedEPV +'>EPV</option>' +
+                            '<option value="roi" '+ $selectedROI +'>ROI</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="col-md-3">' +
+                            '<select data-index="'+index+'-'+$z+'" onChange="enableInputValue(this)" id="option-'+index+'-'+$z+'" class="select2_single form-control option disableTrigger-'+index+'" tabindex="-1" disabled>' +
+                            '<option></option>' +
+                            '<option value="greaterThan" '+ $selectedGreater +'>Greater Than</option>' +
+                            '<option value="lessThan" '+ $selectedLess +'>Less Than</option>' +
+                            '<option value="between" '+ $selectedBetween +'>Between</option>' +
+                            '<option value="equalTo" '+ $selectedEqual +'>Equal To</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<input type="text" class="form-control disableTrigger-'+index+'" id="value1-'+index+'-'+$z+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" value="'+info['conditions'][$z]['value1']+'" disabled>'+
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<input type="text" class="form-control disableTrigger-'+index+'" id="value2-'+index+'-'+$z+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" value="'+info['conditions'][$z]['value2']+'" disabled>'+
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<button onclick="removeActiveAppend(this)" class="btn red btn-md disableTrigger-'+index+'" data-index-row="'+index+'-'+$z+'" data-index="'+index+'" data-key="'+$z+'" disabled><i class="fa fa-times"></i> Remove</button">' +
+                            '</div>' +
+                            '</div>'
+
+                                $dataConditionsActive[index].items.push({
+                                    metric: 'metric-'+index+'-'+$z,
+                                    option: 'option-'+index+'-'+$z,
+                                    value1: 'value1-'+index+'-'+$z,
+                                    value2: 'value2-'+index+'-'+$z
+                                });
+
+
+                        }
+                        $('#appendAppendActiveRules').append(
+                            '<div class="row">' +
+                            '<div class="clearfix"></div>' +
+                            '<br>' +
+                            '<div class="col-md-12">' +
+                            '<div class="portlet box '+ $classStatus +'">' +
+                            '<div class="portlet-title">' +
+                            '<div class="actions pull-left col-md-2 col-xs-12">' +
+                            '<input type="hidden" id="campaignRulesId-'+index+'" value="'+ info['campaignRulesId'] +'">' +
+                            '<select id="activeRuleType-'+index+'" class="select2_single form-control ruleType disableTrigger-'+index+'" tabindex="-1" disabled>' +
+                            '<option></option>' +
+                            '<option value="botRule"' +  $botRuleSelected + '>Bot Rule</option>' +
+                            '<option value="blacklistRule"' +  $blacklistRuleSelected + '>Blacklist Rule</option>' +
+                            '<option value="whitelist"' +  $whitelistRuleSelected + '>Whitelist</option>' +
+                            '<option value="autobid"' +  $autobidRuleSelected + '>Autobid</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="actions pull-left col-md-2 col-xs-12 " style="margin-left: 10px;">' +
+                            '<div class="input-group">' +
+                            '<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>' +
+                            '<input type="text" class="form-control date-picker disableTrigger-'+index+'" placeholder="Start From" id="activeStartFrom-'+index+'" value="'+ info['startFrom'] +'" disabled>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">' +
+                            '<input type="text" class="form-control disableTrigger-'+index+'" id="activeFrequency-'+index+'" placeholder="Frequency" value="'+ $frequency +'" onkeypress="return isNumberKey(event)" disabled>' +
+                            '</div>' +
+                            '<div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">' +
+                            '<select id="activeFrequencyFormat-'+index+'" class="select2_single form-control frequencyFormat disableTrigger-'+index+'" tabindex="-1" disabled>' +
+                            '<option value="minutes" '+ $minutesSelected +'>Minutes</option>' +
+                            '<option value="hours" '+ $hoursSelected +'>Hours</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">' +
+                            '<select id="activeLogicalOperator-'+index+'" class="select2_single form-control logicalOperator disableTrigger-'+index+'" tabindex="-1" disabled>' +
+                            '<option></option>' +
+                            '<option value="and" '+ $operatorAndSelected + '>And</option>' +
+                            '<option value="or" '+ $operatorOrSelected + '>Or</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="actions">' +
+                            '<button data-index="'+index+'" type="button" class="btn btn-circle blue btn-sm ladda-button pull-right spinnerBtn disableTrigger-'+index+'" id="addRuleBtn" data-style="expand-right" data-size="s" onclick="saveRule(this)" disabled>' +
+                            '<span class="ladda-label">' +
+                            '<i class="fa fa-save"></i> Save Rule</span>' +
+                            '</button>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="portlet-body" >' +
+                            '<div id="appendRuleSetActive-'+index+'">' +
+                                $conditions +
+                            '</div>' +
+                            '<br>' +
+                                $buttons +
+                            '<div class="clearfix"></div>' +
+                            '<br>' +
+                            '<div class="row" id="addConditionActiveContainer-'+index+'" style="display: none;">' +
+                            '<div class="col-md-2">' +
+                            '<a data-index="'+index+'" onclick="appendConditionActive(this)">[ add condition ]</a>' +
+                            '</div>' +
+                            '<br>' +
+                            '<br>' +
+                            '<div class="col-md-12">' +
+                            '<button onclick="editRule(this)" class="btn red btn-xs" data-action="cancel" data-index="'+index+'">cancel update</button>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>'
+
+                        );
+
+                            $('#startFrom-'+index+'-'+$z+'').datepicker({
+                                rtl: App.isRTL(),
+                                orientation: "left",
+                                autoclose: true
+                            });
+
+
+                            $(".ruleType").select2({
+                                allowClear: true,
+                                placeholder: 'Select Rule Type',
+                                width: null
+                            });
+
+
+                            $(".frequencyFormat").select2({
+                                allowClear: true,
+                                placeholder: 'Select Frequency Format',
+                                width: null
+                            });
+
+
+                            $(".logicalOperator").select2({
+                                allowClear: true,
+                                placeholder: 'Select Logical Operator',
+                                width: null
+                            });
+
+
+
+
+                    });
+
+                });
+            }
+        }
+
+        XMLHttpRequestObject.send("param= "+ voluumId);
+
+
+
+    }
+
+    return false;
+}
+
+function updateChangeRuleStatus(btn, data, selCamp)
+{
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/update-change-rule-status");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -735,736 +732,93 @@ function getGroupCampaignMatch(selCamp)
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
 
 
-                $.each(response, function(i, val) {
+                showNotification('success', 'Success', 'Rule Successfully Updated');
 
-                    console.log(val);
-                    if(val['details']['error'] == false){
-                        console.log(val['details']['message']);
 
-                        if(val['details']['message'] == 'No Campaign Matched (add as new)'){
+                $('#appendAppendActiveRules').empty();
+                getCampaignMatch(selCamp);
 
+                l.stop();
 
-                            $('#appendRuleSetBot tr').remove();
-                            $('#appendRuleSetBlacklist tr').remove();
-                            $('#appendRuleSetIp tr').remove();
-                            $('#ajaxAppenedReturnRuleSetCountBot').val('');
-                            $('#ajaxAppenedReturnConditionstCountBot').val('');
-                            $('#ajaxAppenedReturnRuleSetCountBlacklist').val('');
-                            $('#ajaxAppenedReturnConditionstCountBlacklist').val('');
-                            $('#ajaxAppenedReturnConditionstCountIp').val('');
-                            var table =  $('#datatable-responsive').DataTable();
-                            table.clear();
-                            $("input[type=checkbox]#bot-active-switch").bootstrapSwitch('state', false, true);
+            }
 
-                            $('#botRulesFrequency').val(1);
-
-                            $('#botRulesTimePicker').val('00:00');
-                            $('#botRulesDatePicker').val(formatDateFromYMD(Date.now()));
-
-
-                            $("input[type=checkbox]#bot-active-switch").bootstrapSwitch('disabled', true, true)
-
-                            $('#appendRuleSetBotBtn').attr('disabled', true);
-                            $('#botRulesDatePicker').attr('disabled', true);
-                            $('#botRulesTimePicker').attr('disabled', true);
-                            $('#botRulesFrequency').attr('disabled', true);
-                            $('#chooseTimeFormat1').attr('disabled', true);
-                            $('#chooseTimeFormat2').attr('disabled', true);
-                            $('#botRulesSubmitBtn').attr('disabled', true);
-
-
-
-
-                            $("input[type=checkbox]#blacklist-active-switch").bootstrapSwitch('disabled', true, true);
-                            $('#blacklistRadioOption1').attr('disabled', true);
-                            $('#blacklistRadioOption2').attr('disabled', true);
-                            $('#blacklistCheckBoxVisits').attr('disabled', true);
-                            $('#blacklistVisits1').attr('disabled', true);
-                            $('#blacklistVisits2').attr('disabled', true);
-                            $('#blacklistCheckBoxCost').attr('disabled', true);
-                            $('#blacklistCost1').attr('disabled', true);
-                            $('#blacklistCost2').attr('disabled', true);
-                            $('#blacklistCheckBoxConv').attr('disabled', true);
-                            $('#blacklistConv1').attr('disabled', true);
-                            $('#blacklistConv2').attr('disabled', true);
-                            $('#blacklistCheckBoxCTR').attr('disabled', true);
-                            $('#blacklistCTR1').attr('disabled', true);
-                            $('#blacklistCTR2').attr('disabled', true);
-                            $('#blacklistCheckBoxROI').attr('disabled', true);
-                            $('#blacklistROI1').attr('disabled', true);
-                            $('#blacklistROI2').attr('disabled', true);
-                            $('#blacklistDatePicker').attr('disabled', true);
-                            $('#blacklistTimePicker').attr('disabled', true);
-                            $('#blacklistFrequency').attr('disabled', true);
-                            $('#blacklistChooseTimeFormat1').attr('disabled', true);
-                            $('#blacklistChooseTimeFormat2').attr('disabled', true);
-                            $('#blacklistSubmitBtn').attr('disabled', true);
-
-
-                            $('#blacklistCheckBoxVisits').prop("checked", false);
-                            $('#blacklistCheckBoxCost').prop("checked", false);
-                            $('#blacklistCheckBoxConv').prop("checked", false);
-                            $('#blacklistCheckBoxCTR').prop("checked", false);
-                            $('#blacklistCheckBoxROI').prop("checked", false);
-
-
-                            $('#blacklistVisitsLessThan').addClass('label label-info');
-                            $('#blacklistVisitsBetween').removeClass('label label-info');
-                            $('#blacklistVisitsGreaterThan').removeClass('label label-info');
-
-
-                            $('#blacklistVisits1').val('');
-                            $('#blacklistVisits2').val('');
-                            $('#blacklistCost1').val('');
-                            $('#blacklistCost2').val('');
-                            $('#blacklistConv1').val('');
-                            $('#blacklistConv2').val('');
-                            $('#blacklistCTR1').val('');
-                            $('#blacklistCTR2').val('');
-                            $('#blacklistROI1').val('');
-                            $('#blacklistROI2').val('');
-
-                            $('#blacklistCostLessThan').addClass('label label-info');
-                            $('#blacklistCostBetween').removeClass('label label-info');
-                            $('#blacklistCostGreaterThan').removeClass('label label-info');
-
-
-                            $('#blacklistConvLessThan').addClass('label label-info');
-                            $('#blacklistConvBetween').removeClass('label label-info');
-                            $('#blacklistConvGreaterThan').removeClass('label label-info');
-
-
-                            $('#blacklistCTRLessThan').addClass('label label-info');
-                            $('#blacklistCTRBetween').removeClass('label label-info');
-                            $('#blacklistCTRGreaterThan').removeClass('label label-info');
-
-                            $('#blacklistROILessThan').addClass('label label-info');
-                            $('#blacklistROIBetween').removeClass('label label-info');
-                            $('#blacklistROIGreaterThan').removeClass('label label-info');
-
-                            $("input[type=checkbox]#ip-active-switch").bootstrapSwitch('disabled', false, true);
-                            $('#appendRuleSetIpBtn').attr('disabled', true);
-                            $('#ipRulesFrequency').attr('disabled', true);
-                            $('#ipChooseTimeFormat1').attr('disabled', true);
-                            $('#ipChooseTimeFormat2').attr('disabled', true);
-                            $('#ipRulesSubmitBtn').attr('disabled', true);
-
-
-                            $("input[type=checkbox]#bid-active-switch").bootstrapSwitch('disabled', true, true);
-
-
-                        }else{
-
-                            $.each(val['details']['elements'], function(x, obj) {
-                                $.each(obj['info'], function(y, infoKey) {
-
-                                    console.log(obj['info']);
-                                    $('#appendRuleSetBot tr').remove();
-                                    $('#appendRuleSetBlacklist tr').remove();
-                                    $('#appendRuleSetIp tr').remove();
-                                    $('#ajaxAppenedReturnRuleSetCountBot').val('');
-                                    $('#ajaxAppenedReturnConditionstCountBot').val('');
-                                    $('#ajaxAppenedReturnRuleSetCountBlacklist').val('');
-                                    $('#ajaxAppenedReturnConditionstCountBlacklist').val('');
-                                    $('#ajaxAppenedReturnConditionstCountIp').val('');
-                                    $("input[type=checkbox]#bot-active-switch").bootstrapSwitch('disabled', false, true)
-
-                                    $('#appendRuleSetBotBtn').attr('disabled', false);
-                                    $('#botRulesDatePicker').attr('disabled', false);
-                                    $('#botRulesTimePicker').attr('disabled', false);
-                                    $('#botRulesFrequency').attr('disabled', false);
-                                    $('#chooseTimeFormat1').attr('disabled', false);
-                                    $('#chooseTimeFormat2').attr('disabled', false);
-                                    $('#botRulesSubmitBtn').attr('disabled', false);
-
-
-                                    $('#campaignTitleName').html(infoKey['campName']);
-                                    $('#campaignGroupId').val(infoKey['cgid']);
-                                    $('#campaignId').val(infoKey['cid']);
-                                    $('#voluumId').val(infoKey['vid']);
-
-                                    $('#selectAddGroup').val(infoKey['gid']).trigger('change');
-                                    $('#selectAddVertical').val(infoKey['verId']).trigger('change');
-                                    $('#deleteCampaignBtn').attr('disabled', false);
-
-                                    //$('#selectAddGroup  option[value="'+ infoKey['gid'] + '"]').prop('selected', 'selected');
-                                    //  $('#selectAddVertical option[value="'+ infoKey['verId'] + '"]').prop('selected', 'selected');
-
-                                    $("input[type=checkbox]#blacklist-active-switch").bootstrapSwitch('disabled', false, true);
-                                    $('#blacklistRadioOption1').attr('disabled', false);
-                                    $('#blacklistRadioOption2').attr('disabled', false);
-
-                                    $('#appendRuleSetBlacklistBtn').attr('disabled', false);
-                                    $('#blacklistDatePicker').attr('disabled', false);
-                                    $('#blacklistTimePicker').attr('disabled', false);
-                                    $('#blacklistFrequency').attr('disabled', false);
-                                    $('#blacklistChooseTimeFormat1').attr('disabled', false);
-                                    $('#blacklistChooseTimeFormat2').attr('disabled', false);
-                                    $('#blacklistSubmitBtn').attr('disabled', false);
-
-
-                                    $("input[type=checkbox]#ip-active-switch").bootstrapSwitch('disabled', false, true);
-                                    $('#appendRuleSetIpBtn').attr('disabled', false);
-                                    $('#ipRulesFrequency').attr('disabled', false);
-                                    $('#ipChooseTimeFormat1').attr('disabled', false);
-                                    $('#ipChooseTimeFormat2').attr('disabled', false);
-                                    $('#ipRulesSubmitBtn').attr('disabled', false);
-
-
-                                    $("input[type=checkbox]#bid-active-switch").bootstrapSwitch('disabled', false, true);
-                                    $('#reviewLast').attr('disabled', false);
-                                    $('#bidMinimumConversions').attr('disabled', false);
-                                    $('#bidDatePicker').attr('disabled', false);
-                                    $('#bidTimePicker').attr('disabled', false);
-                                    $('#bidFrequency').attr('disabled', false);
-                                    $('#appendConditionBtn').attr('disabled', false);
-                                    $('#bidSubmitBtn').attr('disabled', false);
-
-                                });
-
-
-                                $.each(obj['botRules'], function(z, botKey) {
-
-
-
-                                    if(botKey['active'] == 1){
-                                        $("input[type=checkbox]#bot-active-switch").bootstrapSwitch('state', true, true);
-                                    }else{
-                                        $("input[type=checkbox]#bot-active-switch").bootstrapSwitch('state', false, true);
-                                    }
-
-                                    $('#botRulesTimePicker').val(botKey['dateTime']);
-                                    $('#botRulesDatePicker').val(botKey['dateFrom']);
-                                    //$('#botRulesFrequency option[value="'+ botKey['frequency'] + '"]').attr('selected', true)
-
-                                    if(botKey['frequency']  >= 3600){
-                                        $('#chooseTimeFormat1').prop('checked', 'checked');
-
-                                    }else{
-                                        $('#chooseTimeFormat2').prop('checked', 'checked');
-                                    }
-
-                                    if(botKey['frequency']  >= 3600){
-                                        $('#chooseTimeFormat1').prop('checked', 'checked');
-                                        $('#botRulesFrequency').val(botKey['frequency'] / 3600);
-
-                                    }else{
-                                        $('#chooseTimeFormat2').prop('checked', 'checked');
-                                        $('#botRulesFrequency').val(botKey['frequency'] / 60);
-                                    }
-
-                                    // $('#botRulesFrequency option[value="'+ botKey['frequency'] + '"]').prop('selected', 'selected');
-
-
-
-                                });
-
-
-
-                                if(obj['botConditions'] != null){
-                                    if(Object.keys(obj['botConditions']).length > 0){
-
-                                        var iBot = 0;
-                                        var iConBot = 0;
-                                        $.each(obj['botConditions'], function(z, botConKey) {
-
-
-                                            $('#appendRuleSetBot').append(
-                                                '<tr class="appendRuleSetBot" id="ruleSetBot'+iBot+'">' +
-                                                '<td>' +
-                                                '<table>' +
-
-                                                '<tr>' +
-                                                '<td><hr></td>' +
-                                                '</tr>' +
-                                                '<tr>' +
-                                                '<td><button onClick="removeAppend(this)" class="btn btn-danger btn-xs removeConditionBot" data-index="' + iBot + '"><i class="glyphicon glyphicon-remove"></i> Remove Ruleset</button></td>' +
-                                                '</tr>' +
-                                                '<tr>' +
-                                                '<td>' +
-                                                '<table style="border-spacing: 10px; border-collapse: separate;" id="appendConditionsBot'+iBot+'">' +
-
-                                                '</table>' +
-                                                '</td>' +
-                                                '</tr>' +
-                                                '<tr>' +
-                                                '<td colspan="5"><a style="cursor: pointer;" onClick="appendConditions(this)" data-parent="ruleSetBot'+iBot+'" data-target="appendConditionsBot'+iBot+'" data-index="'+iBot+'">[add condition]</a></td>' +
-                                                '</tr>' +
-
-
-                                                '</table>' +
-                                                '</td>' +
-                                                '</tr>'
-                                            );
-                                            dataRulesBot.items['ruleSetBot'+iBot] = {conditions:[]};
-
-
-                                            $.each(botConKey, function(x, botConditions) {
-
-                                                var secondValueDisable  = 'disabled';
-                                                var visitsSelected = '';
-                                                var costSelected = '';
-                                                var convSelected = '';
-                                                var ctrSelected = '';
-                                                var roiSelected ='';
-                                                var lessthanSelected ='';
-                                                var betweenSelected = '';
-                                                var greaterThanSelected ='';
-                                                if(botConditions['rule_variable'] == 'visits'){
-                                                    visitsSelected = 'selected="selected"';
-                                                }else if(botConditions['rule_variable'] == 'cost'){
-                                                    costSelected = 'selected="selected"';
-                                                }else if(botConditions['rule_variable'] == 'conversions'){
-                                                    convSelected = 'selected="selected"';
-                                                }else if(botConditions['rule_variable'] == 'ctr'){
-                                                    ctrSelected = 'selected="selected"';
-                                                }else if(botConditions['rule_variable'] == 'roi'){
-                                                    roiSelected = 'selected="selected"';
-                                                }
-
-                                                if(botConditions['rule_condition'] == 'lessthan'){
-                                                    lessthanSelected = 'selected="selected"';
-                                                }
-                                                else if(botConditions['rule_condition'] == 'between') {
-                                                    betweenSelected = 'selected="selected"';
-                                                    secondValueDisable = '';
-
-                                                }else if(botConditions['rule_condition'] == 'greaterthan'){
-                                                    greaterThanSelected = 'selected="selected"';
-                                                }
-
-
-                                                $('#appendConditionsBot'+iBot).append(
-                                                    '<tr id="conditionsBot'+iBot+'_'+iConBot+'">' +
-                                                    '<td style="width: 25%; vertical-align: middle; text-align: center">' +
-                                                    '<select class="form-control" id="rulesVariablesBot'+iBot+'_'+iConBot+'">' +
-                                                    '<option style="text-align: center;" value="visits" '+ visitsSelected +'>Visits</option>' +
-                                                    '<option value="cost" '+ costSelected + '>Cost</option>' +
-                                                    '<option value="conversions" '+ convSelected +'>Conv</option>' +
-                                                    '<option value="ctr" '+ ctrSelected +'>CTR</option>' +
-                                                    '<option value="roi" '+ roiSelected +'>ROI</option>' +
-                                                    '</select>' +
-                                                    '</td>' +
-                                                    '<td style="width: 15%; vertical-align: middle; text-align: center">' +
-                                                    '<select class="form-control" id="rulesOperatorsBot'+iBot+'_'+iConBot+'" data-id="'+iBot+'_'+iConBot+'" data-type="Bot" onchange="checkOperator(this)">' +
-                                                    '<option value="lessthan" '+ lessthanSelected +'><</option>' +
-                                                    '<option value="between" '+ betweenSelected +'>=</option>' +
-                                                    '<option value="greaterthan" '+ greaterThanSelected +'>></option>' +
-                                                    '</select>' +
-                                                    '</td>' +
-                                                    '<td style="width: 25%; vertical-align: middle;">' +
-                                                    '<input type="text" class="form-control" value="'+ botConditions['value1'] +'" id="rulesFirstValueBot'+iBot+'_'+iConBot+'" onkeypress="return isNumberKey(event)">' +
-                                                    '</td>' +
-                                                    '<td style="width: 25%; vertical-align: middle;">' +
-                                                    '<input type="text" class="form-control" value="'+ botConditions['value2'] +'" id="rulesSecondValueBot'+iBot+'_'+iConBot+'" onkeypress="return isNumberKey(event)" ' + secondValueDisable + '>' +
-                                                    '</td>' +
-                                                    '<td style="width: 10%; vertical-align: middle;">' +
-                                                    '<button class="btn btn-danger btn-xs" onClick="removeAppendConditions(this)" data-targetid="' + iConBot + '" data-index="'+iBot+'"><i class="glyphicon glyphicon-remove"></i></button>' +
-                                                    '</td>' +
-                                                    '</tr>'
-                                                );
-
-                                                dataRulesBot.items['ruleSetBot'+iBot].conditions.push({
-                                                    targetIndex: iBot+'_'+iConBot,
-                                                    rulesVariablesBot: 'rulesVariablesBot'+iBot+'_'+iConBot,
-                                                    rulesOperatorsBot: 'rulesOperatorsBot'+iBot+'_'+iConBot,
-                                                    rulesFirstValueBot: 'rulesFirstValueBot'+iBot+'_'+iConBot,
-                                                    rulesSecondValueBot: 'rulesSecondValueBot'+iBot+'_'+iConBot
-                                                });
-
-                                                iConBot++;
-                                            });
-
-                                            iBot++;
-
-                                        });
-
-                                        $('#ajaxAppenedReturnRuleSetCountBot').val(iBot);
-                                        $('#ajaxAppenedReturnConditionstCountBot').val(iConBot);
-
-                                    }
-                                }
-
-                                $.each(obj['blacklistRules'], function(z, blacklistKey) {
-
-
-                                    if(blacklistKey['active'] == 1){
-                                        $("input[type=checkbox]#blacklist-active-switch").bootstrapSwitch('state', true, true);
-                                    }else{
-                                        $("input[type=checkbox]#blacklist-active-switch").bootstrapSwitch('state', false, true);
-                                    }
-
-                                    $('#blacklistTimePicker').val(blacklistKey['dateTime']);
-                                    $('#blacklistDatePicker').val(blacklistKey['startFrom']);
-                                    //$('#botRulesFrequency option[value="'+ botKey['frequency'] + '"]').attr('selected', true)
-
-                                    if(blacklistKey['frequency']  >= 3600){
-                                        $('#blacklistChooseTimeFormat1').prop('checked', 'checked');
-
-                                    }else{
-                                        $('#blacklistChooseTimeFormat2').prop('checked', 'checked');
-                                    }
-
-                                    if(blacklistKey['frequency']  >= 3600){
-                                        $('#blacklistChooseTimeFormat1').prop('checked', 'checked');
-                                        $('#blacklistFrequency').val(blacklistKey['frequency'] / 3600);
-
-                                    }else{
-                                        $('#blacklistChooseTimeFormat2').prop('checked', 'checked');
-                                        $('#blacklistFrequency').val(blacklistKey['frequency'] / 60);
-                                    }
-
-                                    // $('#botRulesFrequency option[value="'+ botKey['frequency'] + '"]').prop('selected', 'selected');
-
-
-
-                                });
-
-
-                                if(obj['blacklistConditions'] != null){
-                                    if(Object.keys(obj['blacklistConditions']).length > 0){
-
-                                        var iBlacklist = 0;
-                                        var iConBlacklist = 0;
-                                        $.each(obj['blacklistConditions'], function(z, blacklistConKey) {
-
-                                            $('#appendRuleSetBlacklist').append(
-                                                '<tr class="appendRuleSetBlacklist" id="ruleSetBlacklist'+iBlacklist+'">' +
-                                                '<td>' +
-                                                '<table>' +
-
-                                                '<tr>' +
-                                                '<td><hr></td>' +
-                                                '</tr>' +
-                                                '<tr>' +
-                                                '<td><button onClick="removeAppendBlacklist(this)" class="btn btn-danger btn-xs removeConditionBlacklist" data-index="' + iBlacklist + '"><i class="glyphicon glyphicon-remove"></i> Remove Ruleset</button></td>' +
-                                                '</tr>' +
-                                                '<tr>' +
-                                                '<td>' +
-                                                '<table style="border-spacing: 10px; border-collapse: separate;" id="appendConditionsBlacklist'+iBlacklist+'">' +
-
-                                                '</table>' +
-                                                '</td>' +
-                                                '</tr>' +
-                                                '<tr>' +
-                                                '<td colspan="5"><a style="cursor: pointer;" onClick="appendConditionsBlacklist(this)" data-parent="ruleSetBlacklist'+iBlacklist+'" data-target="appendConditionsBlacklist'+iBlacklist+'" data-index="'+iBlacklist+'">[add condition]</a></td>' +
-                                                '</tr>' +
-
-                                                '</table>' +
-                                                '</td>' +
-                                                '</tr>'
-                                            );
-                                            dataRulesBlacklist.items['ruleSetBlacklist'+iBlacklist] = {conditions:[]};
-
-
-
-                                            $.each(blacklistConKey, function(x, blacklistConditions) {
-                                                var secondValueDisable  = 'disabled';
-                                                var visitsSelected = '';
-                                                var costSelected = '';
-                                                var convSelected = '';
-                                                var ctrSelected = '';
-                                                var roiSelected ='';
-                                                var lessthanSelected ='';
-                                                var betweenSelected = '';
-                                                var greaterThanSelected ='';
-                                                if(blacklistConditions['rule_variable'] == 'visits'){
-                                                    visitsSelected = 'selected="selected"';
-                                                }else if(blacklistConditions['rule_variable'] == 'cost'){
-                                                    costSelected = 'selected="selected"';
-                                                }else if(blacklistConditions['rule_variable'] == 'conversions'){
-                                                    convSelected = 'selected="selected"';
-                                                }else if(blacklistConditions['rule_variable'] == 'ctr'){
-                                                    ctrSelected = 'selected="selected"';
-                                                }else if(blacklistConditions['rule_variable'] == 'roi'){
-                                                    roiSelected = 'selected="selected"';
-                                                }
-
-                                                if(blacklistConditions['rule_condition'] == 'lessthan'){
-                                                    lessthanSelected = 'selected="selected"';
-                                                }
-                                                else if(blacklistConditions['rule_condition'] == 'between') {
-                                                    betweenSelected = 'selected="selected"';
-                                                    secondValueDisable = '';
-
-                                                }else if(blacklistConditions['rule_condition'] == 'greaterthan'){
-                                                    greaterThanSelected = 'selected="selected"';
-                                                }
-
-
-                                                $('#appendConditionsBlacklist'+iBlacklist).append(
-                                                    '<tr id="conditionsBlacklist'+iBlacklist+'_'+iConBlacklist+'">' +
-                                                    '<td style="width: 25%; vertical-align: middle; text-align: center">' +
-                                                    '<select class="form-control" id="rulesVariablesBlacklist'+iBlacklist+'_'+iConBlacklist+'">' +
-                                                    '<option style="text-align: center;" value="visits" '+ visitsSelected +'>Visits</option>' +
-                                                    '<option value="cost" '+ costSelected + '>Cost</option>' +
-                                                    '<option value="conversions" '+ convSelected +'>Conv</option>' +
-                                                    '<option value="ctr" '+ ctrSelected +'>CTR</option>' +
-                                                    '<option value="roi" '+ roiSelected +'>ROI</option>' +
-                                                    '</select>' +
-                                                    '</td>' +
-                                                    '<td style="width: 15%; vertical-align: middle; text-align: center">' +
-                                                    '<select class="form-control" id="rulesOperatorsBlacklist'+iBlacklist+'_'+iConBlacklist+'" data-id="'+iBlacklist+'_'+iConBlacklist+'" data-type="Blacklist" onchange="checkOperator(this)">' +
-                                                    '<option value="lessthan" '+ lessthanSelected +'><</option>' +
-                                                    '<option value="between" '+ betweenSelected +'>=</option>' +
-                                                    '<option value="greaterthan" '+ greaterThanSelected +'>></option>' +
-                                                    '</select>' +
-                                                    '</td>' +
-                                                    '<td style="width: 25%; vertical-align: middle;">' +
-                                                    '<input type="text" class="form-control" value="'+ blacklistConditions['value1'] +'" id="rulesFirstValueBlacklist'+iBlacklist+'_'+iConBlacklist+'" onkeypress="return isNumberKey(event)">' +
-                                                    '</td>' +
-                                                    '<td style="width: 25%; vertical-align: middle;">' +
-                                                    '<input type="text" class="form-control" value="'+ blacklistConditions['value2'] +'" id="rulesSecondValueBlacklist'+iBlacklist+'_'+iConBlacklist+'" onkeypress="return isNumberKey(event)" ' + secondValueDisable + '>' +
-                                                    '</td>' +
-                                                    '<td style="width: 10%; vertical-align: middle;">' +
-                                                    '<button class="btn btn-danger btn-xs" onClick="removeAppendConditionsBlacklist(this)" data-targetid="' + iConBlacklist + '" data-index="'+iBlacklist+'"><i class="glyphicon glyphicon-remove"></i></button>' +
-                                                    '</td>' +
-                                                    '</tr>'
-                                                );
-
-                                                dataRulesBlacklist.items['ruleSetBlacklist'+iBlacklist].conditions.push({
-                                                    targetIndex: iBlacklist+'_'+iConBlacklist,
-                                                    rulesVariablesBlacklist: 'rulesVariablesBlacklist'+iBlacklist+'_'+iConBlacklist,
-                                                    rulesOperatorsBlacklist: 'rulesOperatorsBlacklist'+iBlacklist+'_'+iConBlacklist,
-                                                    rulesFirstValueBlacklist: 'rulesFirstValueBlacklist'+iBlacklist+'_'+iConBlacklist,
-                                                    rulesSecondValueBlacklist: 'rulesSecondValueBlacklist'+iBlacklist+'_'+iConBlacklist
-                                                });
-
-                                                iConBlacklist++;
-                                            });
-
-                                            iBlacklist++;
-
-                                        });
-
-                                        $('#ajaxAppenedReturnRuleSetCountBlacklist').val(iBlacklist);
-                                        $('#ajaxAppenedReturnConditionstCountBlacklist').val(iConBlacklist);
-
-                                    }
-                                }
-
-
-
-                                $.each(obj['ipRules'], function(z, ipKey) {
-
-
-                                    if(ipKey['active'] == 1){
-                                        $("input[type=checkbox]#ip-active-switch").bootstrapSwitch('state', true, true);
-                                    }else{
-                                        $("input[type=checkbox]#ip-active-switch").bootstrapSwitch('state', false, true);
-                                    }
-
-
-                                    if(ipKey['frequency']  >= 3600){
-                                        $('#ipChooseTimeFormat1').prop('checked', 'checked');
-
-                                    }else{
-                                        $('#ipChooseTimeFormat2').prop('checked', 'checked');
-                                    }
-
-                                    if(ipKey['frequency']  >= 3600){
-                                        $('#ipChooseTimeFormat1').prop('checked', 'checked');
-                                        $('#ipRulesFrequency').val(ipKey['frequency'] / 3600);
-
-                                    }else{
-                                        $('#ipChooseTimeFormat2').prop('checked', 'checked');
-                                        $('#ipRulesFrequency').val(ipKey['frequency'] / 60);
-                                    }
-
-
-
-                                });
-
-
-                                if(obj['ipConditions'] != null){
-                                    if(Object.keys(obj['ipConditions']).length > 0){
-
-                                        var iConIp = 0;
-                                        $.each(obj['ipConditions'], function(z,ipConKey) {
-
-                                            var options = '';
-                                            if(Object.keys(obj['carriers']).length > 0){
-                                                $.each(obj['carriers'], function(y, courOption) {
-
-                                                    if(ipConKey['carrier'] == courOption['mobileCarrier']){
-                                                        var selected = 'selected';
-                                                    }else{
-                                                        var selected = '';
-                                                    }
-
-                                                    options += "'<option values=\"" + courOption['mobileCarrier'] + "\" " + selected + ">" +courOption['mobileCarrier'] + "</option>' +";
-                                                });
-                                            }
-                                            $('#appendRuleSetIp').append(
-                                                '<tr id="conditionsIp'+iConIp+'">' +
-                                                '<td style="vertical-align: middle; text-align: center">' +
-                                                '<select class="form-control" id="rulesVariablesIp'+iConIp+'">' +
-                                                options +
-                                                '</select>' +
-                                                '</td>' +
-                                                '<td style="vertical-align: middle;">' +
-                                                '<button class="btn btn-danger btn-xs" onClick="removeAppendConditionsIp(this)" data-targetid="' + iConIp + '"><i class="glyphicon glyphicon-remove"></i></button>' +
-                                                '</td>' +
-                                                '</tr>'
-                                            );
-
-                                            dataRulesIp.items.push({
-                                                rulesVariablesIp: 'rulesVariablesIp'+iConIp
-                                            });
-                                            iConIp++;
-
-
-
-                                        });
-                                        $('#ajaxAppenedReturnConditionsCountIp').val(iConIp);
-
-                                    }
-                                }
-
-
-
-                                if(obj['bidAdjustmentRules'] != null){
-                                    if(Object.keys(obj['bidAdjustmentRules']).length > 0){
-                                        $.each(obj['bidAdjustmentRules'], function(z, bidKey) {
-
-                                            if(bidKey['active'] == 1){
-                                                $("input[type=checkbox]#bid-active-switch").bootstrapSwitch('state', true, true);
-                                            }else{
-                                                $("input[type=checkbox]#bid-active-switch").bootstrapSwitch('state', false, true);
-                                            }
-                                            $('#reviewLast option[value="'+ bidKey['reviewLast'] + '"]').attr('selected', true)
-                                            $('#bidMinimumConversions').val(bidKey['conversions']);
-                                            $('#bidTimePicker').val(bidKey['dateTime']);
-                                            $('#bidDatePicker').val(bidKey['startFrom']);
-                                            $('#bidFrequency').val(bidKey['frequency'] / 3600);
-
-                                        });
-                                    }else{
-
-                                        $('#appendConditionDisplay').empty();
-                                        $("input[type=checkbox]#bid-active-switch").bootstrapSwitch('state', false, true);
-                                        $('#reviewLast option[value="24"]').attr('selected', true)
-                                        $('#bidMinimumConversions').val('');
-                                        $('#bidFrequency').val('');
-                                    }
-
-                                }
-
-                                if(obj['bidAdjustmentConditions'] != null){
-                                    if(Object.keys(obj['bidAdjustmentConditions']).length > 0){
-                                        var i = 0;
-                                        $.each(obj['bidAdjustmentConditions'], function(z, bidConKey) {
-
-                                            var horizontalConditionLessthan = '';
-                                            var horizontalConditionBetween = '';
-                                            var horizontalConditionGreaterthan = '';
-                                            var verticalConditionIncrease = '';
-                                            var verticalConditionDecrease = '';
-
-                                            var secondValueDisable  = 'disabled';
-                                            if(bidConKey['horizontalCondition'] == 'lessThan'){
-                                                horizontalConditionLessthan = 'label label-info';
-                                            }
-                                            if(bidConKey['horizontalCondition'] == 'between'){
-                                                horizontalConditionBetween = 'label label-info';
-                                                secondValueDisable = '';
-                                            }
-                                            if(bidConKey['horizontalCondition'] == 'greaterThan'){
-                                                horizontalConditionGreaterthan = 'label label-info';
-                                            }
-
-                                            if(bidConKey['verticalCondition'] == 'increase'){
-                                                verticalConditionIncrease = 'label label-info';
-                                            }
-                                            if(bidConKey['verticalCondition'] == 'decrease'){
-                                                verticalConditionDecrease = 'label label-info';
-                                            }
-
-                                            $('#appendConditionDisplay').append(
-                                                '<tr class="append" id="index'+i+'">' +
-                                                '<td style="width: 5%; vertical-align: middle;">' +
-                                                '<button class="btn btn-danger btn-xs removeCondition" data-index="' + i + '"><i class="glyphicon glyphicon-remove"></i></button>' +
-                                                '</td>' +
-                                                '<td style="width: 30%; vertical-align: middle; text-align: center">' +
-                                                '<div class="col-lg-4 '+horizontalConditionLessthan+'" id="bidLessThan'+i+'" data-divId="'+i+'" onClick="updateConditionSelect(this)">' +
-                                                '<span class="pointer"><i class="fa fa-chevron-left"></i></span>' +
-                                                '</div>' +
-                                                '<div class="col-lg-4 align-center '+horizontalConditionBetween+'" id="bidBetween'+i+'" data-divId="'+i+'" onClick="updateConditionSelect(this)">' +
-                                                '<span class="pointer"><i class="fa fa-exchange"></i></span>' +
-                                                '</div>' +
-                                                '<div class="col-lg-4 '+horizontalConditionGreaterthan+'" id="bidGreaterThan'+i+'" data-divId="'+i+'" onClick="updateConditionSelect(this)">' +
-                                                '<span class="pointer"><i class="fa fa-chevron-right"></i></span>' +
-                                                '</div>' +
-                                                '</td>' +
-                                                '<td style="width: 20%; vertical-align: middle;">' +
-                                                '<input type="text" class="form-control" placeholder="ROI" id="bidRoiFirstValue'+i+'" onkeypress="return isNumberKey(event)" value="' + bidConKey['value1'] + '">' +
-                                                '</td>' +
-                                                '<td style="width: 20%; vertical-align: middle;">' +
-                                                '<input type="text" class="form-control" placeholder="ROI" id="bidRoiSecondValue'+i+'" onkeypress="return isNumberKey(event)" value="' + bidConKey['value2'] + '" '+secondValueDisable+'>' +
-                                                '</td>' +
-                                                '<td style="width: 10%; vertical-align: middle; text-align: center">' +
-                                                '<div class="col-lg-12">' +
-                                                '<div class="col-lg-12 '+verticalConditionIncrease+'" id="bidIncrease'+i+'" data-divId="'+i+'" onClick="updateOptionSelect(this)">' +
-                                                '<span class="pointer"><i class="fa fa-chevron-up"></i></span>' +
-                                                '</div>' +
-                                                '<div class="col-lg-12 '+verticalConditionDecrease+'" id="bidDecrease'+i+'" data-divId="'+i+'" onClick="updateOptionSelect(this)">' +
-                                                '<span class="pointer"><i class="fa fa-chevron-down"></i></span>' +
-                                                '</div>' +
-                                                '</div>' +
-                                                '</td>' +
-                                                '<td style="width: 15%; vertical-align: middle;">' +
-                                                '<input type="text" placeholder="BID" class="form-control" id="bidRoiPercentValue'+i+'" onkeypress="return isNumberKey(event)" value="' + bidConKey['valuePercent'] + '">' +
-                                                '</td>' +
-                                                '</tr>'
-                                            );
-                                            data.items.push({
-                                                bidLessThan: 'bidLessThan' + i,
-                                                bidBetween: 'bidBetween' + i,
-                                                bidGreaterThan: 'bidGreaterThan' + i,
-                                                bidRoiFirstValue: 'bidRoiFirstValue' + i,
-                                                bidRoiSecondValue: 'bidRoiSecondValue' + i,
-                                                bidIncrease: 'bidIncrease' + i,
-                                                bidDecrease: 'bidDecrease' + i,
-                                                bidRoiPercentValue: 'bidRoiPercentValue' + i
-                                            });
-                                            i++;
-                                            $('.append').on('click', '.removeCondition', function(){
-                                                var index = $(this).data('index');
-                                                $(this).parent().fadeTo("fast",0.7, function(){
-                                                    $(this).parent().remove();
-                                                    delete data.items[index];
-                                                    // i--;
-                                                    // Animation complete.
-
-                                                });
-                                            });
-
-                                        });
-
-                                        $('#ajaxAppenedReturnCount').val(i);
-                                    }
-                                }
-
-
-
-                            });
-
-                            var table =  $('#datatable-responsive').DataTable();
-                            table.ajax.reload();
-                        }
-
-                    }else{
-                        console.log(val['details']['message']);
-
-                    }
-
-                });
-
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
             }
         }
 
-        XMLHttpRequestObject.send("param= "+ selCamp);
 
+
+        l.start();
+        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+    }
+
+    return false;
+}
+
+function saveData(data){
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/save-data");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                showNotification('success', 'Success', 'Data Successfully Saved');
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+    }
+
+    return false;
+}
+
+function deleteData(data){
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/delete-data");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                showNotification('success', 'Success', 'Data Successfully Deleted');
+                var oTable = $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
 
 
     }

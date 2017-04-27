@@ -13,46 +13,6 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="visits" type="boolean" column="visits" nullable="true"/>
-    <field name="visitscondition" type="string" column="visitsCondition" length="15" nullable="true">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="visitsvalue1" type="float" column="visitsValue1" precision="10" scale="0" nullable="true"/>
-    <field name="visitsvalue2" type="float" column="visitsValue2" precision="10" scale="0" nullable="true"/>
-    <field name="cost" type="boolean" column="cost" nullable="true"/>
-    <field name="costcondition" type="string" column="costCondition" length="15" nullable="true">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="costvalue1" type="float" column="costValue1" precision="10" scale="0" nullable="true"/>
-    <field name="costvalue2" type="float" column="costValue2" precision="10" scale="0" nullable="true"/>
-    <field name="conv" type="boolean" column="conv" nullable="true"/>
-    <field name="convcondition" type="string" column="convCondition" length="15" nullable="true">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="convvalue1" type="float" column="convValue1" precision="10" scale="0" nullable="true"/>
-    <field name="convvalue2" type="float" column="convValue2" precision="10" scale="0" nullable="true"/>
-    <field name="ctr" type="boolean" column="ctr" nullable="true"/>
-    <field name="ctrcondition" type="string" column="ctrCondition" length="15" nullable="true">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="ctrvalue1" type="float" column="ctrValue1" precision="10" scale="0" nullable="true"/>
-    <field name="ctrvalue2" type="float" column="ctrValue2" precision="10" scale="0" nullable="true"/>
-    <field name="roi" type="boolean" column="roi" nullable="true"/>
-    <field name="roicondition" type="string" column="roiCondition" length="15" nullable="true">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="roivalue1" type="float" column="roiValue1" precision="10" scale="0" nullable="true"/>
-    <field name="roivalue2" type="float" column="roiValue2" precision="10" scale="0" nullable="true"/>
     <field name="startfrom" type="date" column="startFrom" nullable="true"/>
     <field name="datetime" type="string" column="dateTime" length="20" nullable="true">
       <options>

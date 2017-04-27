@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\CampaignRules" table="campaign_rules">
+    <indexes>
+      <index name="cid" columns="cid"/>
+    </indexes>
+    <id name="campaignRulesId" type="integer" column="campaign_rules_id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="ruleType" type="string" column="rule_type" length="50" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="startFrom" type="date" column="start_from" nullable="false"/>
+    <field name="datetimeunix" type="integer" column="dateTimeUnix" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="frequency" type="integer" column="frequency" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="operator" type="string" column="operator" length="5" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="active" type="boolean" column="active" nullable="false"/>
+    <field name="dateUpdated" type="date" column="date_updated" nullable="false"/>
+    <many-to-one field="cid" target-entity="Campaign" fetch="LAZY">
+      <join-columns>
+        <join-column name="cid" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

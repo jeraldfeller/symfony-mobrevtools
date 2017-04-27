@@ -25,10 +25,6 @@
                 <a href="/">Home</a>
                 <i class="fa fa-angle-right"></i>
             </li>
-            <li>
-                <span>Reports</span>
-             <i class="fa fa-angle-right"></i>
-            </li>
              <li>
                 <span>Campaign</span>
              <i class="fa fa-angle-right"></i>
@@ -73,38 +69,15 @@
                      <div class="caption font-green-sharp">
                         <i class="fa fa-bullhorn font-green-sharp"></i>
                         <span class="caption-subject bold uppercase" id="campaignTitleName">Campaign Name</span>
-                            <input type="hidden" id="campaignGroupId">
-                            <input type="hidden" id="campaignId">
-                            <input type="hidden" id="voluumId">
+                            <input type="hidden" id="id">
+
                      </div>
                      <div class="actions">
-                        <a href="javascript:;" class="btn btn-circle btn-primary" id="importCampaignBtn">
-                            <i class="fa fa-cloud-download"></i> Import </a>
-                        <a href="javascript:;" class="btn btn-circle btn-danger spinnerBtn ladda-button" id="deleteCampaignBtn" data-style="expand-right" data-size="l" disabled>
+                        <a href="javascript:;" class="btn btn-circle btn-danger" data-toggle="modal" data-target="#delete-modal" data-style="expand-right" data-size="l" disabled>
                             <span class="ladda-label"><i class="fa fa-trash"></i> Delete </span></a>
                         <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;"> </a>
 
-                        <!-- Import Modal -->
-                            <div class="modal fade" id="import-modal" role="basic" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                           <h4>Importing Campaigns</h4>
-                                        </div>
-                                        <div class="modal-body" id="displayCampaignToImport">
-                                            <img src="{{ asset('assets/global/img/loading-spinner-grey.gif') }}" alt="" class="loading">
-                                            <span> &nbsp;&nbsp;Loading... </span>
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn dark btn-outline" data-dismiss="modal">Close</button>
-                                            <button type="button" id="importCampaignBtnSave"  class="btn blue ladda-button spinnerBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save</span></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
+                        <!-- Delete Modal -->
                          <div id="delete-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
                              <div class="modal-dialog modal-md">
                                  <div class="modal-content">
@@ -128,6 +101,30 @@
                              </div>
                          </div>
                         <!-- end modal -->
+                         <!-- Delete Modal -->
+                         <div id="deleteRuleModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+                             <div class="modal-dialog modal-sm">
+                                 <div class="modal-content">
+
+                                     <div class="modal-header">
+                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                         </button>
+                                         <h4 class="modal-title" id="myModalLabel"><i class="fa fa-warning"></i> Warning</h4>
+                                     </div>
+                                     <div class="modal-body">
+                                         <h4>Are you sure do want to delete rule?</h4>
+
+                                     </div>
+                                     <div class="modal-footer">
+                                            <input type="hidden" id="campaignRuleIdDelete">
+                                         <button type="button" id="deleteRuleBtnSubmit" class="btn btn-danger spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="lada-label">  Delete</span></button>
+
+                                     </div>
+
+                                 </div>
+                             </div>
+                         </div>
+                         <!-- end modal -->
                      </div>
                 </div>
 
@@ -143,19 +140,6 @@
                                             <option data-geo="{{ campaign.geo }}" value="{{ campaign.id }}">{{ campaign.campName }}</option>
                                         {% endfor  %}
                                     </select>
-                                </div>
-
-                                <div class="col-md-3 col-xs-12">
-                                <div class="input-group">
-                                        <select id="selectAddGroup" class="select2" tabindex="-1" name="campaign">
-                                            <option></option>
-                                            {% for group in groups %}
-                                                <option value="{{ group.id }}">{{ group.groupName }}</option>
-                                            {% endfor  %}
-                                        </select>
-                                        <span style="cursor:pointer;" class="add-on input-group-addon label-info" id="addGroupBtn"><i style="color: #fff;" class="glyphicon glyphicon-plus"></i></span>
-                                        <span style="cursor:pointer;" class="add-on input-group-addon label-warning" id="removeGroupBtn"><i style="color: #fff;" class="glyphicon glyphicon-remove"></i></span>
-                                </div>
                                 </div>
                                 <div class="col-md-3 col-xs-12">
                                     <div class="input-group">
@@ -178,422 +162,195 @@
 
                                 </div>
 
+                                <div class="col-md-2 col-xs-12">
+                                    <div class="md-checkbox-inline">
+                                        <div class="md-checkbox has-dark">
+                                            <input type="checkbox" id="checkboxShowCampaigns" value="1" class="md-check">
+                                            <label for="checkboxShowCampaigns">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Show All Campaigns </label>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-1 col-xs-12">
-                                    <button id="campaignGroupBtn" class="btn blue spinnerBtn ladda-button"  data-style="expand-right" data-size="l" disabled> <span class="ladda-label"><i class="fa fa-pencil"></i> Save </span></button>
+                                    <button id="addCampaignBtn" class="btn blue spinnerBtn ladda-button"  data-style="expand-right" data-size="l"> <span class="ladda-label"><i class="fa fa-save"></i> Save </span></button>
                                 </div>
                             </div>
                         </div>
-                        <br>
-                        <div class="row">
-                                <div id="rulesDivContainer">
-                                    <!-- BEGIN Portlet PORTLET-->
-                                    <!-- Bot Rules -->
-                                    {% if page == 'ExoClick' %}
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                    {% endif %}
-                                    <div class="col-lg-4">
-                                        <div class="portlet box blue">
-                                            <div class="portlet-title">
-                                                <div class="caption">
-                                                    Bot Rules
-                                                </div>
-                                                <div class="tools">
 
-                                                    <a href="" class="fullscreen"> </a>
-                                                </div>
-                                                <div class="actions">
-                                                    <div class="switch-wrapper pull-right">
-
-                                                        <input type="checkbox" class="make-switch" data-size="mini" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="ON" data-off-text="OFF" type="checkbox" value="1" name="bot-active-switch" id="bot-active-switch" disabled>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="portlet-body">
-
-                                                <div class="scroller" style="height:350px" data-rail-visible="1" data-rail-color="blue" data-handle-color="red">
-
-                                                        <table style="border-spacing: 10px; border-collapse: separate;">
-                                                            <tbody id="appendRuleSetBot"></tbody>
-
-                                                            <tr>
-
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="2"><button class="btn btn-info btn-xs" id="appendRuleSetBotBtn" disabled><i class="fa fa-plus"></i> Add Ruleset</button></td>
-                                                            </tr>
-
-
-
-
-                                                            </tbody>
-
-                                                        </table>
-
-                                                        <hr>
-
-                                                        <div class="form-group">
-
-                                                            <div class="col-md-7 col-sm-6 col-xs-12">
-                                                                <label style="font-weight: normal;" for="botRulesDatePicker">Start from:</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                                    <input type="text" value="{{ dateNow }}" class="form-control date-picker" placeholder="mm/dd/yyyy" id="botRulesDatePicker">
-                                                                </div><!-- input-group -->
-                                                            </div>
-
-                                                            <div class="col-md-5 col-sm-6 col-xs-12 pull-right">
-                                                                <label style="font-weight: normal;" for="botRulesDatePicker">&nbsp;</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                                                                    <input id="botRulesTimePicker" type="text" class="form-control timepicker timepicker-24" disabled/>
-                                                                </div><!-- input-group -->
-                                                            </div>
-
-                                                            <form>
-                                                                <div class="col-md-7 col-sm-6 col-xs-12">
-                                                                    <label style="font-weight: normal;" for="chooseTimeFormat1">Frequency:</label>
-                                                                    <br>
-                                                                    <div class="input-group col-lg-12">
-                                                                        Hours:
-                                                                        <input type="radio" name="chooseTimeFormat" id="chooseTimeFormat1" value="hour" disabled>
-                                                                        Minutes:
-                                                                        <input type="radio" name="chooseTimeFormat" id="chooseTimeFormat2" value="minutes" checked="checked" disabled>
-
-                                                                        <input type="text" class="form-control" id="botRulesFrequency" value="5" onkeypress="return isNumberKey(event)" disabled>
-
-                                                                    </div><!-- input-group -->
-                                                                </div>
-                                                            </form>
-                                                        </div>
-
-
-
-
-
-                                                        <div class="col-md-12">
-                                                            <hr>
-                                                            <input type="hidden" id="ajaxAppenedReturnRuleSetCountBot">
-                                                            <input type="hidden" id="ajaxAppenedReturnConditionstCountBot">
-                                                            <button class="btn btn-info btn-md pull-right spinnerBtn ladda-button" id="botRulesSubmitBtn" disabled data-style="expand-right" data-size="l"><i class="fa fa-pencil"></i> <span class="ladda-label">Save </span> </button>
-
-                                                        </div>
-
-
-                                            </div>
-                                        </div>
-
-                                    </div>
-                            </div><!-- end bot rules -->
-
-                                    <!-- Blacklist Rules -->
-                                    <div class="col-lg-4">
-                                        <div class="portlet box blue">
-                                            <div class="portlet-title">
-                                                <div class="caption">
-                                                    Blacklisting Rules
-                                                </div>
-                                                <div class="tools">
-
-                                                    <a href="" class="fullscreen"> </a>
-                                                </div>
-                                                <div class="actions">
-                                                    <div class="switch-wrapper pull-right">
-
-                                                        <input type="checkbox" class="make-switch" data-size="mini" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="ON" data-off-text="OFF" type="checkbox" value="1" name="bot-active-switch" id="blacklist-active-switch" disabled>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="portlet-body">
-
-                                                <div class="scroller" style="height:350px" data-rail-visible="1" data-rail-color="blue" data-handle-color="red">
-
-                                                        <table style="border-spacing: 10px; border-collapse: separate;">
-                                                            <tr>
-                                                                <td colspan="2" style="width: 10%; vertical-align: middle; text-align: left;">
-
-                                                                    <input type="radio" name="blacklistRadioOption" value="1" id="blacklistRadioOption1" checked disabled> Pause
-                                                                    <input type="radio"  name="blacklistRadioOption" value="1" id="blacklistRadioOption2" disabled> Unpause
-
-                                                                </td>
-                                                            </tr>
-                                                            <tbody id="appendRuleSetBlacklist"></tbody>
-
-                                                            <tr>
-
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="2"><button class="btn btn-info btn-xs" id="appendRuleSetBlacklistBtn" disabled><i class="fa fa-plus"></i> Add Ruleset</button></td>
-                                                            </tr>
-
-
-
-
-                                                            </tbody>
-
-                                                        </table>
-                                                        <hr>
-
-                                                        <div class="form-group">
-
-                                                            <div class="col-md-7 col-sm-6 col-xs-12">
-                                                                <label style="font-weight: normal;" for="blacklistDatePicker">Start from:</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                                    <input type="text" value="{{ dateNow }}" class="form-control date-picker" placeholder="mm/dd/yyyy" id="blacklistDatePicker" disabled>
-                                                                </div><!-- input-group -->
-                                                            </div>
-
-
-                                                            <div class="col-md-5 col-sm-6 col-xs-12">
-                                                                <label style="font-weight: normal;" for=blacklistDatePicker">&nbsp;</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                                                                    <input id="blacklistTimePicker" type="text" class="form-control timepicker timepicker-24" disabled/>
-                                                                </div><!-- input-group -->
-                                                            </div>
-
-                                                            <br>
-                                                            <div class="col-md-7 col-sm-6 col-xs-12">
-                                                                <label style="font-weight: normal;" for="blacklistChooseTimeFormat1">Frequency:</label>
-                                                                <br>
-                                                                <div class="input-group col-lg-12">
-                                                                    Hours:
-                                                                    <input type="radio" name="chooseTimeFormat" id="blacklistChooseTimeFormat1" value="hour" disabled>
-                                                                    Minutes:
-                                                                    <input type="radio" name="chooseTimeFormat" id="blacklistChooseTimeFormat2" value="minutes" checked disabled>
-
-                                                                    <input type="text" class="form-control" id="blacklistFrequency" value="5" onkeypress="return isNumberKey(event)" disabled>
-
-                                                                </div><!-- input-group -->
-                                                            </div>
-                                                        </div>
-
-
-                                                    <div class="col-md-12">
-                                                        <hr>
-                                                        <input type="hidden" id="ajaxAppenedReturnRuleSetCountBlacklist">
-                                                        <input type="hidden" id="ajaxAppenedReturnConditionstCountBlacklist">
-                                                        <button class="btn btn-info btn-md pull-right spinnerBtn ladda-button" id="blacklistSubmitBtn" data-style="expand-right" data-size="l" disabled><i class="fa fa-pencil"></i><span class="ladda-label"> Save </span> </button>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div><!-- end blacklist rules -->
-
-
-                                    {% if page == 'ExoClick' %}
-
-                                        <!-- Bid Rules -->
-                                        <div class="col-lg-4">
-                                            <div class="portlet box blue">
-                                                <div class="portlet-title">
-                                                    <div class="caption">
-                                                        Ip Blacklist
-                                                    </div>
-                                                    <div class="tools">
-
-                                                        <a href="" class="fullscreen"> </a>
-                                                    </div>
-                                                    <div class="actions">
-                                                        <div class="switch-wrapper pull-right">
-
-                                                            <input type="checkbox" class="make-switch" data-size="mini" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="ON" data-off-text="OFF" type="checkbox" value="1" name="bot-active-switch" id="ip-active-switch" disabled>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="portlet-body">
-
-                                                    <div class="scroller" style="height:350px" data-rail-visible="1" data-rail-color="blue" data-handle-color="red">
-
-                                                            <table style="border-spacing: 10px; border-collapse: separate; width:100%;">
-                                                                <tbody id="appendRuleSetIp"></tbody>
-
-                                                                <tr>
-                                                                    <td colspan="2" style="width:100%;"><button class="btn btn-info btn-xs" style="cursor: pointer;" onClick="appendConditionsIp(this)"  id="appendRuleSetIpBtn" disabled><i class="fa fa-plus"></i> Add Condition</button></td>
-                                                                </tr>
-
-                                                            </table>
-
-                                                            <hr>
-                                                            <div class="col-md-7 col-sm-6 col-xs-12">
-                                                                <label style="font-weight: normal;" for="ipChooseTimeFormat">Frequency:</label>
-                                                                <br>
-                                                                <div class="input-group col-lg-12">
-                                                                    Hours:
-                                                                    <input type="radio" name="chooseTimeFormat" id="ipChooseTimeFormat1" value="hour" disabled>
-                                                                    Minutes:
-                                                                    <input type="radio" name="chooseTimeFormat" id="ipChooseTimeFormat2" value="minutes" checked disabled>
-
-                                                                    <input type="text" class="form-control" id="ipRulesFrequency" value="5" onkeypress="return isNumberKey(event)" disabled>
-
-                                                                </div><!-- input-group -->
-                                                            </div>
-                                                        <div class="row">
-                                                        <div class="col-md-12">
-                                                            <hr>
-                                                            <input type="hidden" id="ajaxAppenedReturnConditionsCountIp">
-                                                            <button class="btn btn-info btn-md pull-right spinnerBtn ladda-button" id="ipRulesSubmitBtn" data-style="expand-right" data-size="l" disabled ><i class="fa fa-pencil"></i> <span class="ladda-label">Save </span> </button>
-
-                                                        </div>
-                                                        </div>
-
-
-
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div><!-- end bid adjustment rules -->
-
-                                    {% endif %}
-
-                                    <!-- Bid Rules -->
-                                    <div class="col-lg-4" style="display: none;">
-                                        <div class="portlet box blue">
-                                            <div class="portlet-title">
-                                                <div class="caption">
-                                                    Bid Adjustment Rules
-                                                </div>
-                                                <div class="tools">
-
-                                                    <a href="" class="fullscreen"> </a>
-                                                </div>
-                                                <div class="actions">
-                                                    <div class="switch-wrapper pull-right">
-
-                                                        <input type="checkbox" class="make-switch" data-size="mini" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="ON" data-off-text="OFF" type="checkbox" value="1" name="bot-active-switch" id="bid-active-switch" disabled>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="portlet-body">
-
-                                                <div class="scroller" style="height:350px" data-rail-visible="1" data-rail-color="blue" data-handle-color="red">
-
-                                                        <table style="border-spacing: 10px; border-collapse: separate;">
-                                                            <tbody>
-                                                            <tr>
-                                                                <td style="width: 10%; vertical-align: middle; text-align: left;">
-                                                                    Review last:
-                                                                </td>
-                                                                <td style="width: 30%; vertical-align: middle; text-align: left;">
-
-                                                                    <select id="reviewLast" class="form-control" disabled>
-                                                                        <option value="24">24 Hours</option>
-                                                                        <option value="48">48 Hours</option>
-                                                                        <option value="72">72 Hours</option>
-                                                                    </select>
-
-                                                                </td>
-                                                                <td style="width: 30%; vertical-align: middle; text-align: center;">
-                                                                    Conversions
-                                                                </td>
-                                                                <td colspan="2" style="width: 30%; vertical-align: middle; text-align: left;">
-
-                                                                    <input type="text" class="form-control" id="bidMinimumConversions" disabled>
-
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-
-                                                        <table style="border-spacing: 10px; border-collapse: separate;">
-                                                            <tbody id="appendConditionDisplay"></tbody>
-
-                                                            <tr>
-
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="2"><button class="btn btn-info btn-xs" id="appendConditionBtn" disabled><i class="fa fa-plus"></i> Add Condition</button></td>
-                                                            </tr>
-
-
-
-
-                                                            </tbody>
-
-                                                        </table>
-
-                                                        <hr>
-
-                                                        <div class="form-group">
-
-                                                            <div class="col-md-7 col-sm-6 col-xs-12">
-                                                                <label style="font-weight: normal;" for="blacklistDatePicker">Start from:</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                                    <input type="text" value="{{ dateNow }}" class="form-control date-picker" placeholder="mm/dd/yyyy" id="bidDatePicker" disabled>
-                                                                </div><!-- input-group -->
-                                                            </div>
-
-
-                                                            <div class="col-md-5 col-sm-6 col-xs-12">
-                                                                <label style="font-weight: normal;" for=blacklistDatePicker">&nbsp;</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                                                                    <input id="bidTimePicker" type="text" class="form-control timepicker timepicker-24" disabled/>
-                                                                </div><!-- input-group -->
-                                                            </div>
-
-                                                            <br>
-                                                            <div class="col-md-7 col-sm-6 col-xs-12">
-                                                                <label style="font-weight: normal;" for="blacklistChooseTimeFormat">Frequency:</label>
-                                                                <br>
-                                                                <div class="input-group col-lg-12">
-                                                                    Hours:
-                                                                    <input type="text" class="form-control" id="bidFrequency" value="5" onkeypress="return isNumberKey(event)" disabled>
-                                                                    <input type="hidden" id="ajaxAppenedReturnCount">
-
-                                                                </div><!-- input-group -->
-                                                            </div>
-                                                        </div>
-
-
-                                                    <div class="col-md-12">
-                                                        <hr>
-
-                                                        <button class="btn btn-info btn-md pull-right spinnerBtn ladda-button" id="bidSubmitBtn" disabled data-style="expand-right" data-size="l"><i class="fa fa-pencil"></i><span class="ladda-label"> Save </span> </button>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div><!-- end bid adjustment rules -->
-                             {% if page == 'ExoClick' %}
-                             </div></div>
-                             {% endif %}
-                                    <!-- END Portlet PORTLET-->
-                        </div>
-                            <!-- Placement Table -->
-                            <div class="col-lg-12">
-                                <table class="table table-striped table-bordered table-hover dt-responsive table-checkable order-column table-header-fixed" width="100%" id="datatable-responsive">
-                                    <thead class="bg-primary">
-                                    <tr>
-                                        <th>Placements </th>
-                                        <th>Yesterday</th>
-                                        <th>3 Day</th>
-                                        <th>7 Day</th>
-                                        <th>Conversions </th>
-                                        <th>Revenue </th>
-                                        <th>Cost </th>
-                                        <th>Profit </th>
-                                        <th>CPV </th>
-                                        <th>EPV </th>
-                                        <th>ROI </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-
-                                </table>
-                            </div>
-                    </div>
 
                 </div>
+                <div class="clearfix"></div>
+                <br>
+                <div class="portlet-title">
+                    <div class="caption font-green-sharp">
+                        <i class="fa fa-book font-green-sharp"></i>
+                        <span class="caption-subject bold uppercase" id="campaignTitleName">Rules</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-2 col-xs-12">
+                                <select id="selectPresetType" class="select2_single form-control" tabindex="-1">
+                                    <option value="presetRule" selected>Preset Rule</option>
+                                    <option value="customRule">Custom Rule</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2 col-xs-12">
+                                <select id="selectPresetRule" class="select2_single form-control" tabindex="-1">
+                                    <option></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="col-md-12">
+                            <div class="portlet box blue">
+                                <div class="portlet-title">
+                                    <div class="actions pull-left col-md-2 col-xs-12">
+
+                                            <select id="selectRuleType" class="select2_single form-control" tabindex="-1">
+                                                <option></option>
+                                                <option value="botRule">Bot Rule</option>
+                                                <option value="blacklistRule">Blacklist Rule</option>
+                                                <option value="whitelist">Whitelist</option>
+                                                <option value="autobid">Autobid</option>
+                                            </select>
+                                    </div>
+                                    <div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                                <input type="text" class="form-control date-picker" placeholder="Start From" id="startFrom">
+                                            </div><!-- input-group -->
+
+                                    </div>
+                                    <div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">
+
+                                            <input type="text" class="form-control" id="frequency" placeholder="Frequency" onkeypress="return isNumberKey(event)" value="5">
+
+                                    </div>
+                                    <div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">
+
+                                            <select id="selectFrequencyFormat" class="select2_single form-control" tabindex="-1">
+                                                <option value="minutes">Minutes</option>
+                                                <option value="hours">Hours</option>
+                                            </select>
+
+                                    </div>
+
+                                    <div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">
+
+                                        <select id="selectLogicalOperator" class="select2_single form-control" tabindex="-1">
+                                            <option></option>
+                                            <option value="and">And</option>
+                                            <option value="or">Or</option>
+                                        </select>
+
+                                    </div>
+
+                                    <div class="actions">
+                                        <button type="button" class="btn btn-circle green btn-sm ladda-button pull-right spinnerBtn" id="addRuleBtn" data-style="expand-right" data-size="s">
+                                                    <span class="ladda-label">
+                                                        <i class="fa fa-plus"></i> Add Rule</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="portlet-body" >
+                                    <div id="appendRuleSet">
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <a id="addCondition">[ add condition ]</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <br>
+                <div class="portlet-title">
+                    <div class="caption font-green-sharp">
+                        <i class="fa fa-rocket font-green-sharp"></i>
+                        <span class="caption-subject bold uppercase">Active Rules</span>
+                    </div>
+                </div>
+                <div class="portlet-body" id="appendAppendActiveRules">
+
+                </div>
+
+
+                <div class="clearfix"></div>
+                <br>
+                <div class="portlet-title">
+                    <div class="caption font-green-sharp">
+                        <i class="fa fa-table font-green-sharp"></i>
+                        <span class="caption-subject bold uppercase">Data Table</span>
+                    </div>
+                    <div class="col-md-2 col-xs-6">
+                        <select id="filterByType" class="select2_single form-control" tabindex="-1">
+                            <option></option>
+                            <option value="botRule">Bot Rule</option>
+                            <option value="blacklistRule">Blacklist Rule</option>
+                            <option value="whitelist">Whitelist</option>
+                            <option value="autobid">Autobid</option>
+                        </select>
+                    </div>
+
+
+
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <!-- Placement Table -->
+                        <div class="col-lg-12">
+                            <table class="table table-striped table-bordered table-hover dt-responsive table-checkable order-column table-header-fixed" width="100%" id="datatable-responsive">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                            <input type="checkbox" class="group-checkable" data-set="#datatable-responsive .checkboxes" />
+                                            <span></span>
+                                        </label>
+                                    </th>
+                                    <th>Type</th>
+                                    <th>Placements</th>
+                                    <th>Visits</th>
+                                    <th>Clicks</th>
+                                    <th>CTR</th>
+                                    <th>Conversions</th>
+                                    <th>Revenue</th>
+                                    <th>Cost</th>
+                                    <th>Profit</th>
+                                    <th>CPV</th>
+                                    <th>EPV</th>
+                                    <th>ROI</th>
+                                    <th>Status</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
+
+
         </div>
     </div>
 {% endblock %}
@@ -629,21 +386,47 @@
                     width: null
                 });
 
-                $("#selectAddGroup").select2({
-                    allowClear: true,
-                    placeholder: 'Select Group',
-                    width: null
-                });
-
                 $("#selectAddVertical").select2({
                     allowClear: true,
                     placeholder: 'Select Vertical',
                     width: null
                 });
 
+                $("#selectPresetType").select2({
+                    allowClear: true,
+                    placeholder: 'Select Preset Type',
+                    width: null
+                });
 
+                $("#selectPresetRule").select2({
+                    allowClear: true,
+                    placeholder: 'Choose Preset',
+                    width: null
+                });
 
+                $("#selectFrequencyFormat").select2({
+                    allowClear: true,
+                    placeholder: 'Select Frequency Format',
+                    width: null
+                });
 
+                $("#selectLogicalOperator").select2({
+                    allowClear: true,
+                    placeholder: 'Select Logical Operator',
+                    width: null
+                });
+
+                $("#selectRuleType").select2({
+                    allowClear: true,
+                    placeholder: 'Select Rule Type',
+                    width: null
+                });
+
+                $("#filterByType").select2({
+                    allowClear: true,
+                    placeholder: 'Select Rule Type',
+                    width: null
+                });
                 // @see https://select2.github.io/examples.html#data-ajax
                 function formatRepo(repo) {
                     if (repo.loading) return repo.text;
@@ -744,84 +527,196 @@
         }();
 
         if (App.isAngularJsApp() === false) {
-            jQuery(document).ready(function() {
+            $(document).ready(function() {
                 ComponentsSelect2.init();
 
-                // Import modal
+                /**
+                 * Data Table
+                 */
 
-                    $('#importCampaignBtn').click(function(){
-                        $('#import-modal').modal('show');
-                        $data = {
-                            trafficName: '{{ page }}',
-                            tid: {{ tid }}
-                        }
-                        apiGetCampaign($data);
-                    });
-
-                $('#importCampaignBtnSave').on('click', function(){
-                    $btnSpinner = $(this)[0];
-                    var data = {items:[]};
-                    var tid = {{ tid }};
-                    $i = 0;
-                    $x = 0;
-                    $('input:checkbox.camp-record').each(function () {
-
-
-                        if($(this).is(':checked') == true){
-                            var voluumId = (this.checked ? $(this).data('voluumid') : "");
-                            var campId = (this.checked ? $(this).data('campid') : "");
-                            var campName = (this.checked ? $(this).data('campname') : "");
-                            var geo = (this.checked ? $(this).data('geo') : "");
-                            if(typeof campId != 'undefined'){
-                                if(campId != 0){
-                                    data.items.push({tid: tid, vid: encodeURIComponent(voluumId), campId:  encodeURIComponent(campId), campName: campName, geo: geo});
-                                }
-
-                            }
-
-
-                            $x++;
-                        }
-
-                    });
-
-                    console.log(data.items);
-
-                    if($x > 0){
-                        apiAddCampaign($btnSpinner, {{ tid }} ,data);
-                    }else{
-                        showNotification('warning', 'Warning', 'Please select campaign to import');
+                var fixedHeaderOffset = 0;
+                if (App.getViewPort().width < App.getResponsiveBreakpoint('md')) {
+                    if ($('.page-header').hasClass('page-header-fixed-mobile')) {
+                        fixedHeaderOffset = $('.page-header').outerHeight(true);
                     }
+                } else if ($('.page-header').hasClass('navbar-fixed-top')) {
+                    fixedHeaderOffset = $('.page-header').outerHeight(true);
+                } else if ($('body').hasClass('page-header-fixed')) {
+                    fixedHeaderOffset = 64; // admin 5 fixed height
+                }
+                var table = $('#datatable-responsive');
+                var oTable = $('#datatable-responsive').DataTable({
+                    fixedHeader: {
+                        header: true,
+                        headerOffset: fixedHeaderOffset
+                    },
+                    "bProcessing": true,
+                    "bServerSide": true,
+                    "fnServerData": function (sSource, aoData, fnCallback) {
+                        /* Add some extra data to the sender */
+                        aoData.push({"name": "type", "value": $('#filterByType').val()});
+                        $.getJSON(sSource, aoData, function (json) {
+                            /* Do whatever additional processing you want on the callback, then tell DataTables */
+                            fnCallback(json)
+                        });
+                    },
+                    "sAjaxSource": "/ajax/get-placement-list/{{ tid }}",
+
+                    responsive: {
+                        details: {
+
+                        }
+                    },
+                    "iDisplayLength": 50,
+                    "lengthMenu": [
+                        [50, 200, 500, 1000, -1],
+                        [50, 200, 500, 1000, "All"] // change per page values here
+                    ],
+                    "columnDefs": [
+                        {  // set default column settings
+                            'orderable': false,
+                            'targets': [0]
+                        },
+                        {
+                            "searchable": false,
+                            "targets": [0]
+                        },
+                        {
+                            "className": "dt-right"
+                            //"targets": [2]
+                        }
+                    ],
+                    "order": [[3, "desc"]],
+                    select: {
+                        style: 'os',
+                        selector: 'td:first-child'
+                    },
+                    //dom: '<"wrapper"lBfrtip>',
+                    //dom: '<lB<frt>ip>',
+                    "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+                    buttons: [
+                        {
+                            className: 'btn blue btn-outline ',
+                            text: '<i class="fa fa-save"></i> Save Data',
+                            header: false,
+                            action: function ( e, dt, node, config ) {
+                                var data = {items:[]};
+                                $('input:checkbox.report-record').each(function () {
+
+
+                                    if($(this).is(':checked') == true){
+                                        var id = (this.checked ? $(this).data('id') : "");
+                                        data.items.push({id: id});
+                                    }
+
+
+                                });
+
+                                console.log(data);
+                                saveData(data);
+                            }
+                        },
+                        {
+                            className: 'btn red btn-outline',
+                            text: '<i class="fa fa-trash"></i> Delete Data',
+                            header: false,
+                            action: function ( e, dt, node, config ) {
+                                var data = {items:[]};
+                                $('input:checkbox.report-record').each(function () {
+
+
+                                    if($(this).is(':checked') == true){
+                                        var id = (this.checked ? $(this).data('id') : "");
+                                        data.items.push({id: id});
+                                    }
+
+
+                                });
+
+                                console.log(data);
+                                deleteData(data);
+                            }
+                        },
+                        {
+                            extend: 'copyHtml5',
+                            className: 'btn green btn-outline',
+                            text: '<i class="fa fa-copy"></i> Copy to Clipboard',
+                            header: false,
+                            exportOptions: {
+                                columns: [2]
+                            }
+                        },
+                    ]
 
 
                 });
 
-                // End import modal
-
-
-                // Add/Remove Group Buttons
-                $('#addGroupBtn').tooltip({title: "<div class='row'><div class='col-lg-12'>Group<br><input class='form-control' type='text' id='group-value'/><br><hr><a onClick='insertGroup(this)' id='save_group' class='btn btn-info btn-xs spinnerBtn ladda-button' data-style='expand-right' data-size='xs'><span class='ladda-label'>Add</span></a><br><br></div></div>", html: true, placement: "top", trigger: "click"});
-                $('#addGroupBtn').on('click', function(){
-                    $('#group-value').focus();});
-
-
-                $('#removeGroupBtn').tooltip({title: "<div style='width: 150px;' class='row'>" +
-                "<div class='col-lg-12'>Select group" +
-                "<br>" +
-                "<select id='selectRemoveGroup' class='form-control'>" +
-                "</select>" +
-                "<br><hr><a onClick='removeGroup(this)' id='remove_group' class='btn btn-info btn-xs spinnerBtn ladda-button' data-style='expand-right' data-size='xs'><span class='ladda-label'>Remove</span></a>" +
-                "<br><br></div></div>", html: true, placement: "top", trigger: "click"});
-
-                $('#removeGroupBtn').on('click', function(){
-                    getGroups();
+                table.find('.group-checkable').change(function () {
+                    var set = jQuery(this).attr("data-set");
+                    var checked = jQuery(this).is(":checked");
+                    jQuery(set).each(function () {
+                        if (checked) {
+                            $(this).prop("checked", true);
+                            $(this).parents('tr').addClass("active");
+                        } else {
+                            $(this).prop("checked", false);
+                            $(this).parents('tr').removeClass("active");
+                        }
+                    });
                 });
 
+                table.on('change', 'tbody tr .checkboxes', function () {
+                    $(this).parents('tr').toggleClass("active");
+                });
+
+
+                $('#datatable-responsive').checkboxes('range', true);
+
+                $('#filterBtn').click(function () {
+                    var l = Ladda.create($(this)[0]);
+                    l.start();
+
+                    oTable.ajax.reload(function () {
+                        l.stop();
+                    });
+                });
+
+                $('#filterByType').change(function(){
+                    oTable.ajax.reload();
+                });
+
+                setInterval(function(){
+                    oTable.ajax.reload();
+                }, 60000)
+
+                /**
+                 * Get Campaigns
+                 */
+                if($('#checkboxShowCampaigns').is(':checked') == true){
+                    $getCampaignData = {
+                        days: 30,
+                        trafficSourceName: '{{ trafficSourceName }}',
+                        trafficSourceId: '{{ trafficSourceId }}'
+
+                    }
+                }else{
+                    $getCampaignData = {
+                        days: 3,
+                        trafficSourceName: '{{ trafficSourceName }}',
+                        trafficSourceId: '{{ trafficSourceId }}'
+                    }
+                }
+
+                apiGetCampaign($getCampaignData);
+
+
+                /**
+                 * Add/Remove Vertical
+                 */
 
                 $('#addVerticalBtn').tooltip({title: "<div class='row'><div class='col-lg-12'>Vertical<br><input class='form-control' type='text' id='vertical-value'/><br><hr><a onClick='insertVertical(this)' id='save_vertical' class='btn btn-info btn-xs spinnerBtn ladda-button' data-style='expand-right' data-size='s' ><span class='ladda-label'>Add</span></a><br><br></div></div>", html: true, placement: "top", trigger: "click"});
                 $('#addVerticalBtn').on('click', function(){
-                    $('#vertical-value').focus();});
-
+                $('#vertical-value').focus();});
 
                 $('#removeVerticalBtn').tooltip({title: "<div style='width: 150px;' class='row'>" +
                 "<div class='col-lg-12'>Select vertical" +
@@ -835,872 +730,215 @@
                     getVerticals();
                 });
 
-                // On change Campaign find match
+
+                /**
+                 * Select Campaign On Change
+                 */
 
                 $('#selectCampaign').on('change', function(){
                     var geo = $('#selectCampaign option:selected').data('geo');
-                    var selCamp = $('#selectCampaign').val();
-                    var grpCamp = $('#selectAddGroup').val();
-                    var verticalCamp = $('#selectAddVertical').val();
+                    var selCamp = encodeURIComponent($('#selectCampaign').val());
                     var geoCamp = $('#campGeo').val
-
-
-
-
-
                     $('#campGeo').val(geo);
 
-                    console.log(geo);
+                    $('#appendAppendActiveRules').empty();
+                    getCampaignMatch(selCamp);
 
-                    getGroupCampaignMatch(selCamp);
 
 
-                    if(selCamp != '' && grpCamp != '' && geoCamp != ''){
-                        $('#campaignGroupBtn').attr('disabled', false);
+                    if(selCamp != '' && geoCamp != ''){
+                        $('#addCampaignBtn').attr('disabled', false);
                     }
-                });
-
-
-                $('#datatable-responsive').DataTable({
-                    fixedHeader: true,
-                    "bProcessing": true,
-                    "bServerSide": true,
-                    "bSort": false,
-                    "sAjaxSource": "/campaign/get-placement-report",
-                    "fnServerParams": function ( aoData ) {
-                        aoData.push( {
-                            "name": "vid", "value": $('#voluumId').val()
-                        } );
-                        aoData.push( {
-                            "name": "trafficName", "value": "{{ page }}"
-                        } );
-
-                    },
-                    responsive: true,
-                    "iDisplayLength": 20,
-                    "lengthMenu": [20, 25, 50, 75, 100],
-                    dom: 'lrtip'
-                    //dom: '<"wrapper"lBfrtip>',
-                    //dom: '<lB<frt>ip>',
-
 
                 });
 
-            });
-        }
+                /**
+                 * Show all campaigns on change
+                 */
+                $('#checkboxShowCampaigns').on('change', function(){
+                    if($('#checkboxShowCampaigns').is(':checked') == true){
+                        $getCampaignData = {
+                            days: 30,
+                            trafficSourceName: '{{ trafficSourceName }}',
+                            trafficSourceId: '{{ trafficSourceId }}'
 
-
-        $('#deleteCampaignBtn').click(function(){
-            $btnSpinner = "#deleteCampaignBtn-spinner";
-            $currentCampaign = $('#campaignTitleName').html();
-            $('#delete-modal').modal('show');
-            $('#campaignToDelete').html($currentCampaign);
-        });
-
-
-
-        $('#deleteCampaignBtnSave').on('click', function(){
-            $btnSpinner = $(this)[0];
-            $cid = $('#campaignId').val();
-            $traffic = {{ tid }};
-            deleteCampaignGroup($btnSpinner, $cid, $traffic);
-        });
-
-
-
-        $('#selectAddGroup').on('change', function(){
-
-
-            var selCamp = $('#selectCampaign').val();
-            var grpCamp = $('#selectAddGroup').val();
-            var geoCamp = $('#selectGeo').val();
-
-            if(selCamp == ''){selCamp = 0;}
-            if(grpCamp == ''){grpCamp = 0;}
-            if(geoCamp == ''){geoCamp = 'XX';}
-
-
-            if(selCamp != '' && grpCamp != '' && geoCamp != ''){
-                $('#campaignGroupBtn').attr('disabled', false);
-            }
-
-
-        });
-
-
-        $('#selectGeo').on('change', function(){
-            var selCamp = $('#selectCampaign').val();
-            var grpCamp = $('#selectAddGroup').val();
-            var geoCamp = $('#selectGeo').val();
-
-            if(selCamp == ''){selCamp = 0;}
-            if(grpCamp == ''){grpCamp = 0;}
-            if(geoCamp == ''){geoCamp = 'XX';}
-
-
-            if(selCamp != '' && grpCamp != '' && geoCamp != ''){
-                $('#campaignGroupBtn').attr('disabled', false);
-            }
-        });
-
-
-        $('#campaignGroupBtn').click(function(){
-
-            var selCamp = $('#selectCampaign').val();
-            var grpCamp = $('#selectAddGroup').val();
-            var verticalCamp = $('#selectAddVertical').val();
-            var geoCamp = $('#campGeo').val();
-
-
-            $btnSpinner = $(this)[0];
-
-
-            addCampaignGroup($btnSpinner, selCamp, grpCamp, verticalCamp, geoCamp);
-        });
-
-        // functions
-
-        /**
-         * Bot Rules
-         */
-
-        var iBot = 0;
-        var dataRulesBot = {items:{}};
-        var handlerBot = setInterval(function(){
-            var appendCount =  parseInt($('#ajaxAppenedReturnRuleSetCountBot').val());
-            if(!isNaN(appendCount)){
-                iBot = iBot + appendCount;
-                console.log(iBot);
-                clearInterval(handlerBot);
-            }
-        },200);
-
-        $('#appendRuleSetBotBtn').click(function(){
-            console.log(iBot);
-            $('#appendRuleSetBot').append(
-                    '<tr class="appendRuleSetBot" id="ruleSetBot'+iBot+'">' +
-                    '<td>' +
-                    '<table>' +
-
-                    '<tr>' +
-                    '<td><hr></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><button onClick="removeAppend(this)" class="btn btn-danger btn-xs removeConditionBot" data-index="' + iBot + '"><i class="glyphicon glyphicon-remove"></i> Remove Ruleset</button></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td>' +
-                    '<table style="border-spacing: 10px; border-collapse: separate;" id="appendConditionsBot'+iBot+'">' +
-
-                    '</table>' +
-                    '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td colspan="5"><a style="cursor: pointer;" onClick="appendConditions(this)" data-parent="ruleSetBot'+iBot+'" data-target="appendConditionsBot'+iBot+'" data-index="'+iBot+'">[add condition]</a></td>' +
-                    '</tr>' +
-                    '</table>' +
-                    '</td>' +
-                    '</tr>'
-            );
-            /*
-             dataRulesBot.items.push({
-             ruleSetBot: ruleSetBot
-             });
-             */
-            dataRulesBot.items['ruleSetBot'+iBot] = {conditions:[]};
-
-
-            iBot++;
-
-
-        });
-
-
-        function removeAppend(elem){
-            var index = elem.dataset.index;
-
-            $('#ruleSetBot'+index).fadeTo("fast",0.7, function(){
-                $('#ruleSetBot'+index).remove();
-                delete dataRulesBot.items['ruleSetBot'+index];
-                // Animation complete.
-            });
-
-
-        }
-        function removeAppendConditions(elem){
-            var index = elem.dataset.index;
-            var targetId = elem.dataset.targetid;
-            $('#conditionsBot'+index+'_'+targetId).fadeTo("fast",0.7, function(){
-                $('#conditionsBot'+index+'_'+targetId).remove();
-                var s = 0;
-                $.each(dataRulesBot.items['ruleSetBot'+index].conditions, function(x, val) {
-                    if(typeof x != 'undefined'){
-                        if(typeof val != 'undefined'){
-                            if(val['targetIndex'] == index+'_'+targetId){
-                                delete dataRulesBot.items['ruleSetBot'+index].conditions[s]
-                            }
                         }
-
-
-                    }
-                    s++;
-
-                });
-                // console.log(dataRulesBot.items['ruleSetBot'+index].conditions['targetIndex']);
-                //  delete dataRulesBot.items['ruleSetBot'+$index].conditions[targetId];
-                // Animation complete.
-
-            });
-
-
-        }
-        var iConBot = 0;
-        var handlerIConBot = setInterval(function(){
-            var conditionsCount =  parseInt($('#ajaxAppenedReturnConditionsCountBot').val());
-            if(!isNaN(conditionsCount)){
-                iConBot = iConBot + conditionsCount;
-                console.log(iConBot);
-                clearInterval(handlerIConBot);
-            }
-        },200);
-        function appendConditions(elem){
-            $parent = elem.dataset.parent;
-            $target = elem.dataset.target;
-            $index = elem.dataset.index;
-
-
-
-            $('#'+$target).append(
-                    '<tr id="conditionsBot'+$index+'_'+iConBot+'">' +
-                    '<td style="width: 25%; vertical-align: middle; text-align: center">' +
-                    '<select class="form-control" id="rulesVariablesBot'+$index+'_'+iConBot+'">' +
-                    '<option style="text-align: center;" value="visits">Visits</option>' +
-                    '<option value="cost">Cost</option>' +
-                    '<option value="conversions">Conv</option>' +
-                    '<option value="ctr">CTR</option>' +
-                    '<option value="roi">ROI</option>' +
-                    '</select>' +
-                    '</td>' +
-                    '<td style="width: 15%; vertical-align: middle; text-align: center">' +
-                    '<select class="form-control" id="rulesOperatorsBot'+$index+'_'+iConBot+'" data-id="'+$index+'_'+iConBot+'" data-type="Bot" onchange="checkOperator(this)">' +
-                    '<option value="lessthan"><</option>' +
-                    '<option value="between">=</option>' +
-                    '<option value="greaterthan">></option>' +
-                    '</select>' +
-                    '</td>' +
-                    '<td style="width: 25%; vertical-align: middle;">' +
-                    '<input type="text" class="form-control" id="rulesFirstValueBot'+$index+'_'+iConBot+'" onkeypress="return isNumberKey(event)">' +
-                    '</td>' +
-                    '<td style="width: 25%; vertical-align: middle;">' +
-                    '<input type="text" class="form-control" id="rulesSecondValueBot'+$index+'_'+iConBot+'" onkeypress="return isNumberKey(event)" disabled>' +
-                    '</td>' +
-                    '<td style="width: 10%; vertical-align: middle;">' +
-                    '<button class="btn btn-danger btn-xs" onClick="removeAppendConditions(this)" data-targetid="' + iConBot + '" data-index="'+$index+'"><i class="glyphicon glyphicon-remove"></i></button>' +
-                    '</td>' +
-                    '</tr>'
-            );
-
-            dataRulesBot.items['ruleSetBot'+$index].conditions.push({
-                targetIndex: $index+'_'+iConBot,
-                rulesVariablesBot: 'rulesVariablesBot'+$index+'_'+iConBot,
-                rulesOperatorsBot: 'rulesOperatorsBot'+$index+'_'+iConBot,
-                rulesFirstValueBot: 'rulesFirstValueBot'+$index+'_'+iConBot,
-                rulesSecondValueBot: 'rulesSecondValueBot'+$index+'_'+iConBot
-            });
-
-            iConBot++;
-
-
-        }
-
-
-
-        $('#botRulesSubmitBtn').click(function(){
-            $btnSpinner = $(this)[0];
-            var objectRulesBot = {options:[], items:{}};
-            $hours = $('#chooseTimeFormat1').is(':checked');
-            $minutes = $('#chooseTimeFormat2').is(':checked');
-            if($hours == true){
-                $frequency = $('#botRulesFrequency').val() * 3600;
-            }
-            if($minutes == true){
-                $frequency = $('#botRulesFrequency').val() * 60;
-            }
-
-            if($('#bot-active-switch').is(':checked') == true){
-                $isActive = 1;
-            }else {
-                $isActive = 0;
-            }
-
-            objectRulesBot.options.push({
-                cgid: parseInt($('#campaignGroupId').val()),
-                active: $isActive,
-                startDate: $('#botRulesDatePicker').val(),
-                startTime: $('#botRulesTimePicker').val(),
-                frequency: $frequency
-            })
-
-
-            $.each(dataRulesBot, function(i, val) {
-                if(val != 'undefined'){
-                    $.each(val, function(prop, cont) {
-                        objectRulesBot.items[prop] = {conditions:[]};
-                        $.each(cont.conditions, function(index, value) {
-                            if(typeof value != 'undefined'){
-                                objectRulesBot.items[prop].conditions.push({
-                                    variable: $('#' + value['rulesVariablesBot']).val(),
-                                    operator: $('#' + value['rulesOperatorsBot']).val(),
-                                    value1: $('#' + value['rulesFirstValueBot']).val(),
-                                    value2: $('#' + value['rulesSecondValueBot']).val()
-
-                                });
-                            }
-
-
-                        })
-                    });
-                }
-            });
-
-            console.log(objectRulesBot);
-
-
-            addBotRule($btnSpinner, objectRulesBot);
-            delete objectRulesBot.items;
-            console.log(objectRulesBot);
-
-
-
-
-        });
-
-
-        /**
-         * Blacklist Rules
-         */
-
-        var iBlacklist = 0;
-        var dataRulesBlacklist = {items:{}};
-        var handlerBlacklist = setInterval(function(){
-            var appendCountBlacklist =  parseInt($('#ajaxAppenedReturnRuleSetCountBlacklist').val());
-            if(!isNaN(appendCountBlacklist)){
-                iBlacklist = iBlacklist + appendCountBlacklist;
-                console.log(iBlacklist);
-                clearInterval(handlerBlacklist);
-            }
-        },200);
-
-        $('#appendRuleSetBlacklistBtn').click(function(){
-            console.log(iBlacklist);
-            $('#appendRuleSetBlacklist').append(
-                    '<tr class="appendRuleSetBlacklist" id="ruleSetBlacklist'+iBlacklist+'">' +
-                    '<td>' +
-                    '<table>' +
-
-                    '<tr>' +
-                    '<td><hr></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><button onClick="removeAppendBlacklist(this)" class="btn btn-danger btn-xs removeConditionBlacklist" data-index="' + iBlacklist + '"><i class="glyphicon glyphicon-remove"></i> Remove Ruleset</button></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td>' +
-                    '<table style="border-spacing: 10px; border-collapse: separate;" id="appendConditionsBlacklist'+iBlacklist+'">' +
-
-                    '</table>' +
-                    '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td colspan="5"><a style="cursor: pointer;" onClick="appendConditionsBlacklist(this)" data-parent="ruleSetBlacklist'+iBlacklist+'" data-target="appendConditionsBlacklist'+iBlacklist+'" data-index="'+iBlacklist+'">[add condition]</a></td>' +
-                    '</tr>' +
-                    '</table>' +
-                    '</td>' +
-                    '</tr>'
-            );
-            /*
-             dataRulesBot.items.push({
-             ruleSetBot: ruleSetBot
-             });
-             */
-            dataRulesBlacklist.items['ruleSetBlacklist'+iBlacklist] = {conditions:[]};
-
-
-            iBlacklist++;
-
-
-        });
-
-
-        function removeAppendBlacklist(elem){
-            var index = elem.dataset.index;
-
-            $('#ruleSetBlacklist'+index).fadeTo("fast",0.7, function(){
-                $('#ruleSetBlacklist'+index).remove();
-                delete dataRulesBlacklist.items['ruleSetBlacklist'+index];
-                // Animation complete.
-            });
-
-
-        }
-        function removeAppendConditionsBlacklist(elem){
-            var index = elem.dataset.index;
-            var targetId = elem.dataset.targetid;
-            $('#conditionsBlacklist'+index+'_'+targetId).fadeTo("fast",0.7, function(){
-                $('#conditionsBlacklist'+index+'_'+targetId).remove();
-                var s = 0;
-                $.each(dataRulesBlacklist.items['ruleSetBlacklist'+index].conditions, function(x, val) {
-                    if(typeof x != 'undefined'){
-                        if(typeof val != 'undefined'){
-                            if(val['targetIndex'] == index+'_'+targetId){
-                                delete dataRulesBlacklist.items['ruleSetBlacklist'+index].conditions[s]
-                            }
+                    }else{
+                        $getCampaignData = {
+                            days: 3,
+                            trafficSourceName: '{{ trafficSourceName }}',
+                            trafficSourceId: '{{ trafficSourceId }}'
                         }
-
-
                     }
-                    s++;
+
+                    apiGetCampaign($getCampaignData);
+                });
+
+
+                /**
+                 * Adding Campaign
+                 */
+
+                $('#addCampaignBtn').click(function(){
+                    $btn = $(this)[0];
+                    $campaignName = $('#selectCampaign option:selected').data('campname');
+                    $campaignId = $('#selectCampaign option:selected').data('campid');
+                    $voluumId = $('#selectCampaign option:selected').data('voluumid');
+                    $verticalId = $('#selectAddVertical').val();
+                    $geo = $('#selectCampaign option:selected').data('geo');
+                    $addCampaignData = {
+                        trafficSourceId: '{{ tid }}',
+                        campaignName: $campaignName,
+                        campaignId: encodeURIComponent($campaignId),
+                        voluumId: encodeURIComponent($voluumId),
+                        verticalId: $verticalId,
+                        geo: $geo
+                    }
+
+                    $selCamp = encodeURIComponent($('#selectCampaign').val());
+                    addCampaign($btn, $addCampaignData, $selCamp);
 
                 });
-                // console.log(dataRulesBot.items['ruleSetBot'+index].conditions['targetIndex']);
-                //  delete dataRulesBot.items['ruleSetBot'+$index].conditions[targetId];
-                // Animation complete.
 
-            });
+                /**
+                 * Adding Rule
+                 */
 
+                $i = 0;
+                $dataConditions = {
+                    items:[]
+                };
 
-        }
-        var iConBlacklist = 0;
-        var handlerIConBlacklist = setInterval(function(){
-            var conditionsCountBlacklist =  parseInt($('#ajaxAppenedReturnConditionsCountBlacklist').val());
-            if(!isNaN(conditionsCountBlacklist)){
-                iConBlacklist = iConBlacklist + conditionsCountBlacklist;
-                console.log(iConBlacklist);
-                clearInterval(handlerIConBlacklist);
-            }
-        },200);
-        function appendConditionsBlacklist(elem){
-            $parent = elem.dataset.parent;
-            $target = elem.dataset.target;
-            $index = elem.dataset.index;
+                $('#addCondition').click(function(){
 
+                    $('#appendRuleSet').append(
+                            '<div class="row" id="row-'+$i+'">' +
+                            '<br>' +
+                            '<div class="col-md-3">' +
+                                '<select id="metric-'+$i+'" class="select2_single form-control metric" tabindex="-1">' +
+                                '<option></option>' +
+                                '<option value="visits">Visits</option>' +
+                                '<option value="conversions">Conversion</option>' +
+                                '<option value="cost">Cost</option>' +
+                                '<option value="cpv">CPV</option>' +
+                                '<option value="ctr">CTR</option>' +
+                                '<option value="epv">EPV</option>' +
+                                '<option value="roi">ROI</option>' +
+                                '</select>' +
+                            '</div>' +
+                            '<div class="col-md-3">' +
+                                '<select data-index="' +$i+ '" onChange="enableInputValue(this)" id="option-'+$i+'" class="select2_single form-control option" tabindex="-1">' +
+                                '<option></option>' +
+                                '<option value="greaterThan">Greater Than</option>' +
+                                '<option value="lessThan">Less Than</option>' +
+                                '<option value="between">Between</option>' +
+                                '<option value="equalTo">Equal To</option>' +
+                                '</select>' +
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                                '<input type="text" class="form-control" id="value1-'+$i+'" placeholder="Enter Value" onkeypress="isNumberKey(event)">'+
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                                '<input type="text" class="form-control" id="value2-'+$i+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" disabled>'+
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                                '<button class="btn red btn-md" data-index="'+$i+'" onclick="removeAppend(this)"><i class="fa fa-times"></i> Remove</button">' +
+                            '</div>' +
+                            '</div>'
 
+                    );
 
-            $('#'+$target).append(
-                    '<tr id="conditionsBlacklist'+$index+'_'+iConBlacklist+'">' +
-                    '<td style="width: 25%; vertical-align: middle; text-align: center">' +
-                    '<select class="form-control" id="rulesVariablesBlacklist'+$index+'_'+iConBlacklist+'">' +
-                    '<option style="text-align: center;" value="visits">Visits</option>' +
-                    '<option value="cost">Cost</option>' +
-                    '<option value="conversions">Conv</option>' +
-                    '<option value="ctr">CTR</option>' +
-                    '<option value="roi">ROI</option>' +
-                    '</select>' +
-                    '</td>' +
-                    '<td style="width: 15%; vertical-align: middle; text-align: center">' +
-                    '<select class="form-control" id="rulesOperatorsBlacklist'+$index+'_'+iConBlacklist+'" data-id="'+$index+'_'+iConBlacklist+'" data-type="Blacklist" onchange="checkOperator(this)">' +
-                    '<option value="lessthan"><</option>' +
-                    '<option value="between">=</option>' +
-                    '<option value="greaterthan">></option>' +
-                    '</select>' +
-                    '</td>' +
-                    '<td style="width: 25%; vertical-align: middle;">' +
-                    '<input type="text" class="form-control" id="rulesFirstValueBlacklist'+$index+'_'+iConBlacklist+'" onkeypress="return isNumberKey(event)">' +
-                    '</td>' +
-                    '<td style="width: 25%; vertical-align: middle;">' +
-                    '<input type="text" class="form-control" id="rulesSecondValueBlacklist'+$index+'_'+iConBlacklist+'" onkeypress="return isNumberKey(event)" disabled>' +
-                    '</td>' +
-                    '<td style="width: 10%; vertical-align: middle;">' +
-                    '<button class="btn btn-danger btn-xs" onClick="removeAppendConditionsBlacklist(this)" data-targetid="' + iConBlacklist + '" data-index="'+$index+'"><i class="glyphicon glyphicon-remove"></i></button>' +
-                    '</td>' +
-                    '</tr>'
-            );
+                    $dataConditions.items.push({
+                        metric: 'metric-'+$i,
+                        option: 'option-'+$i,
+                        value1: 'value1-'+$i,
+                        value2: 'value2-'+$i
+                    });
 
-            dataRulesBlacklist.items['ruleSetBlacklist'+$index].conditions.push({
-                targetIndex: $index+'_'+iConBlacklist,
-                rulesVariablesBlacklist: 'rulesVariablesBlacklist'+$index+'_'+iConBlacklist,
-                rulesOperatorsBlacklist: 'rulesOperatorsBlacklist'+$index+'_'+iConBlacklist,
-                rulesFirstValueBlacklist: 'rulesFirstValueBlacklist'+$index+'_'+iConBlacklist,
-                rulesSecondValueBlacklist: 'rulesSecondValueBlacklist'+$index+'_'+iConBlacklist
-            });
-
-            iConBlacklist++;
+                    $i++;
 
 
-        }
+                    $(".metric").select2({
+                        allowClear: true,
+                        placeholder: 'Select Metric',
+                        width: null
+                    });
+
+                    $(".option").select2({
+                        allowClear: true,
+                        placeholder: 'Select Option',
+                        width: null
+                    });
 
 
 
-        $('#blacklistSubmitBtn').click(function(){
-            $btnSpinner = $(this)[0];
-            var objectRulesBlacklist = {options:[], items:{}};
-            $pause = $('#blacklistRadioOption1').is(':checked');
-            $resume = $('#blacklistRadioOption2').is(':checked');
-            $action = '';
-            if($pause == true){
-                $action = 'pause';
-            }
-            if($resume == true){
-                $action = 'resume';
-            }
-            $hours = $('#blacklistChooseTimeFormat1').is(':checked');
-            $minutes = $('#blacklistChooseTimeFormat2').is(':checked');
+                });
 
-            if($hours == true){
-                $frequency = $('#blacklistFrequency').val() * 3600;
-            }
-            if($minutes == true){
-                $frequency = $('#blacklistFrequency').val() * 60;
-            }
 
-            if($('#blacklist-active-switch').is(':checked') == true){
-                $isActive = 1;
-            }else {
-                $isActive = 0;
-            }
 
-            objectRulesBlacklist.options.push({
-                cgid: parseInt($('#campaignGroupId').val()),
-                active: $isActive,
-                action: $action,
-                startDate: $('#blacklistDatePicker').val(),
-                startTime: $('#blacklistTimePicker').val(),
-                frequency: $frequency
-            })
 
-            $.each(dataRulesBlacklist, function(i, val) {
-                if(typeof val != 'undefined'){
-                    $.each(val, function(prop, cont) {
-                        objectRulesBlacklist.items[prop] = {conditions:[]};
-                        $.each(cont.conditions, function(index, value) {
-                            if(typeof value != 'undefined'){
-                                objectRulesBlacklist.items[prop].conditions.push({
-                                    variable: $('#' + value['rulesVariablesBlacklist']).val(),
-                                    operator: $('#' + value['rulesOperatorsBlacklist']).val(),
-                                    value1: $('#' + value['rulesFirstValueBlacklist']).val(),
-                                    value2: $('#' + value['rulesSecondValueBlacklist']).val()
 
+
+
+
+                $('#addRuleBtn').click(function(){
+                    $btn = $(this)[0];
+                    if($('#selectFrequencyFormat').val() == 'hours'){
+                        $frequency = parseInt($('#frequency').val()) * 3600;
+                    }else{
+                        $frequency = parseInt($('#frequency').val()) * 60;
+                    }
+                     $data = {
+                         ruleType: $('#selectRuleType').val(),
+                         startFrom: $('#startFrom').val(),
+                         frequency: $frequency,
+                         logicalOperator: $('#selectLogicalOperator').val(),
+                         cid: $('#id').val(),
+                         conditions: []
+                     }
+                    $indexes = [];
+                    $.each($dataConditions.items, function(i, val) {
+                        if (typeof val != 'undefined') {
+                                $data.conditions.push({
+                                    metric: $('#' + val['metric']).val(),
+                                    option: $('#' + val['option']).val(),
+                                    value1: $('#' + val['value1']).val(),
+                                    value2: $('#' + val['value2']).val()
                                 });
-                            }
-
-
-                        })
+                            $indexes.push(i);
+                        }
                     });
-                }
+                    $selCamp = encodeURIComponent($('#selectCampaign').val());
+                    addRule($btn, $data, $selCamp, $indexes);
+
+
+
+
+                });
+
+
+
+                /**
+                 * Deleting Rule
+                 */
+                $('#deleteRuleBtnSubmit').on('click', function(){
+                    $btn = $(this)[0];
+                    $id = $('#campaignRuleIdDelete').val();
+                    $selCamp = encodeURIComponent($('#selectCampaign').val());
+
+                    deleteCampaignRule($btn, $id, $selCamp);
+                });
+
+
             });
-
-
-            addBlackListRule($btnSpinner, objectRulesBlacklist);
-            delete objectRulesBlacklist.items;
-            console.log(objectRulesBlacklist);
-
-
-
-
-        });
+        }
 
 
         /**
-         * Ip Blacklist
-         */
-        {% if page == 'ExoClick' %}
-            var iConIp = 0;
-            var dataRulesIp = {items:[]};
-            function removeAppendConditionsIp(elem){
-                var targetId = elem.dataset.targetid;
-                $('#conditionsIp'+targetId).fadeTo("fast",0.7, function(){
-                    $('#conditionsIp'+targetId).remove();
-                    delete dataRulesIp.items[targetId];
-                });
-                // console.log(dataRulesBot.items['ruleSetBot'+index].conditions['targetIndex']);
-
-                // Animation complete.
-            }
-            var handlerIConIp = setInterval(function(){
-                var conditionsCount =  parseInt($('#ajaxAppenedReturnConditionsCountIp').val());
-                if(!isNaN(conditionsCount)){
-                    iConIp = iConIp + conditionsCount;
-                    console.log(iConIp);
-                    clearInterval(handlerIConIp);
-                }
-            },200);
-
-            function appendConditionsIp(elem){
-                console.log(iConIp);
-                $parent = elem.dataset.parent;
-                $index = elem.dataset.index;
-
-
-
-                $('#appendRuleSetIp').append(
-                        '<tr id="conditionsIp'+iConIp+'">' +
-                        '<td style="vertical-align: middle; text-align: center">' +
-                        '<select class="form-control" id="rulesVariablesIp'+iConIp+'">' +
-                        {% for row in carriers %}
-                         '<option value=\"{{ row.mobileCarrier }}\">"{{ row.mobileCarrier }}"</option>' +
-                        {% endfor %}
-
-                '</select>' +
-                '</td>' +
-                '<td style="vertical-align: middle;">' +
-                '<button class="btn btn-danger btn-xs" onClick="removeAppendConditionsIp(this)" data-targetid="' + iConIp + '" data-index="'+$index+'"><i class="glyphicon glyphicon-remove"></i></button>' +
-                '</td>' +
-                '</tr>'
-            );
-
-                dataRulesIp.items.push({
-                    rulesVariablesIp: 'rulesVariablesIp'+iConIp
-                });
-
-                console.log(dataRulesIp.items);
-                iConIp++;
-
-            }
-
-
-
-            $('#ipRulesSubmitBtn').click(function(){
-                $btnSpinner = $(this)[0];
-                var objectRulesIp = {options:[], items:[]};
-                $hours = $('#ipChooseTimeFormat1').is(':checked');
-                $minutes = $('#ipChooseTimeFormat2').is(':checked');
-                if($hours == true){
-                    $frequency = $('#ipRulesFrequency').val() * 3600;
-                }
-                if($minutes == true){
-                    $frequency = $('#ipRulesFrequency').val() * 60;
-                }
-
-                if($('#ip-active-switch').is(':checked') == true){
-                    $isActive = 1;
-                }else {
-                    $isActive = 0;
-                }
-
-                objectRulesIp.options.push({
-                    cgid: parseInt($('#campaignGroupId').val()),
-                    active: $isActive,
-                    frequency: $frequency
-                })
-
-
-
-
-                $.each(dataRulesIp, function(i, val) {
-                    if(typeof val != 'undefined'){
-
-                        $.each(val, function(prop, cont) {
-                            if(typeof  prop != 'undefined'){
-                                if(typeof cont != 'undefined'){
-                                    objectRulesIp.items.push({ carrier: $('#'+cont['rulesVariablesIp']).val()});
-                                }
-                            }
-
-
-                        });
-                    }
-                });
-
-                console.log(objectRulesIp);
-
-                addIpRule($btnSpinner, objectRulesIp);
-                delete objectRulesIp.items;
-                console.log(objectRulesIp);
-
-
-
-
-            });
-
-            {% endif %}
-
-
-        /**
-         * Bid Adjustments
+         * Functions
          */
 
-
-        var i = 0;
-        var data = {items:[]};
-        var handler = setInterval(function(){
-            var appendCount =  parseInt($('#ajaxAppenedReturnCount').val());
-            if(!isNaN(appendCount)){
-                i = i + appendCount;
-                clearInterval(handler);
-            }
-        },200);
-
-        $('#appendConditionBtn').click(function(){
-
-            $('#appendConditionDisplay').append(
-                    '<tr class="append" >' +
-                    '<td style="width: 5%; vertical-align: middle;">' +
-                    '<button class="btn btn-danger btn-xs removeCondition" data-index="' + i + '"><i class="glyphicon glyphicon-remove"></i></button>' +
-                    '</td>' +
-                    '<td style="width: 30%; vertical-align: middle; text-align: center">' +
-                    '<div class="col-lg-4 label label-info" id="bidLessThan'+i+'" data-divId="'+i+'" onClick="updateConditionSelect(this)">' +
-                    '<span class="pointer"><i class="fa fa-chevron-left"></i></span>' +
-                    '</div>' +
-                    '<div class="col-lg-4 align-center" id="bidBetween'+i+'" data-divId="'+i+'" onClick="updateConditionSelect(this)">' +
-                    '<span class="pointer"><i class="fa fa-exchange"></i></span>' +
-                    '</div>' +
-                    '<div class="col-lg-4" id="bidGreaterThan'+i+'" data-divId="'+i+'" onClick="updateConditionSelect(this)">' +
-                    '<span class="pointer"><i class="fa fa-chevron-right"></i></span>' +
-                    '</div>' +
-                    '</td>' +
-                    '<td style="width: 20%; vertical-align: middle;">' +
-                    '<input type="text" class="form-control" placeholder="ROI" id="bidRoiFirstValue'+i+'" onkeypress="return isNumberKey(event)">' +
-                    '</td>' +
-                    '<td style="width: 20%; vertical-align: middle;">' +
-                    '<input type="text" class="form-control" placeholder="ROI" id="bidRoiSecondValue'+i+'" onkeypress="return isNumberKey(event)" disabled>' +
-                    '</td>' +
-                    '<td style="width: 10%; vertical-align: middle; text-align: center">' +
-                    '<div class="col-lg-12">' +
-                    '<div class="col-lg-12 label label-info" id="bidIncrease'+i+'" data-divId="'+i+'" onClick="updateOptionSelect(this)">' +
-                    '<span class="pointer"><i class="fa fa-chevron-up"></i></span>' +
-                    '</div>' +
-                    '<div class="col-lg-12" id="bidDecrease'+i+'" data-divId="'+i+'" onClick="updateOptionSelect(this)">' +
-                    '<span class="pointer"><i class="fa fa-chevron-down"></i></span>' +
-                    '</div>' +
-                    '</div>' +
-                    '</td>' +
-                    '<td style="width: 15%; vertical-align: middle;">' +
-                    '<input type="text" placeholder="BID" class="form-control" id="bidRoiPercentValue'+i+'" onkeypress="return isNumberKey(event)">' +
-                    '</td>' +
-                    '</tr>'
-            );
-            data.items.push({
-                bidLessThan: 'bidLessThan' + i,
-                bidBetween: 'bidBetween' + i,
-                bidGreaterThan: 'bidGreaterThan' + i,
-                bidRoiFirstValue: 'bidRoiFirstValue' + i,
-                bidRoiSecondValue: 'bidRoiSecondValue' + i,
-                bidIncrease: 'bidIncrease' + i,
-                bidDecrease: 'bidDecrease' + i,
-                bidRoiPercentValue: 'bidRoiPercentValue' + i
-            });
-            i++;
-
-            $('.append').on('click', '.removeCondition', function(){
-                var index = $(this).data('index');
-                $(this).parent().fadeTo("fast",0.7, function(){
-                    $(this).parent().remove();
-                    delete data.items[index];
-                    // Animation complete.
-                    console.log(index);
-                    console.log(data.items);
-                });
-            });
-
-        });
-
-
-
-
-
-
-
-        function updateConditionSelect(elem){
-            var id = elem.getAttribute('data-divId');
-            if(elem.id == 'bidLessThan'+id){
-                $('#bidLessThan'+id).addClass('label label-info');
-                $('#bidBetween'+id).removeClass('label label-info');
-                $('#bidGreaterThan'+id).removeClass('label label-info');
-                $('#bidRoiSecondValue'+id).attr('disabled', true);
-                $('#bidRoiSecondValue'+id).val('');
-            }else if(elem.id == 'bidBetween'+id){
-                $('#bidLessThan'+id).removeClass('label label-info');
-                $('#bidBetween'+id).addClass('label label-info');
-                $('#bidGreaterThan'+id).removeClass('label label-info');
-                $('#bidRoiSecondValue'+id).attr('disabled', false);
-            }else if(elem.id == 'bidGreaterThan'+id){
-                $('#bidLessThan'+id).removeClass('label label-info');
-                $('#bidBetween'+id).removeClass('label label-info');
-                $('#bidGreaterThan'+id).addClass('label label-info');
-                $('#bidRoiSecondValue'+id).attr('disabled', true);
-                $('#bidRoiSecondValue'+id).val('');
-            }
-
-        }
-
-        function updateOptionSelect(elem){
-            var id = elem.getAttribute('data-divId');
-            if(elem.id == 'bidIncrease'+id){
-                $('#bidIncrease'+id).addClass('label label-info');
-                $('#bidDecrease'+id).removeClass('label label-info');
-            }else if(elem.id == 'bidDecrease'+id){
-                $('#bidIncrease'+id).removeClass('label label-info');
-                $('#bidDecrease'+id).addClass('label label-info');
-            }
-        }
-
-
-        $('#bidSubmitBtn').click(function(){
-            var btn = $(this)[0];
-            var object = {options:[], items:[]};
-            object.options.push({
-                cgid: $('#campaignGroupId').val(),
-                active: $('#bid-active-switch').is(':checked'),
-                reviewLast: $('#reviewLast').val(),
-                bidMinimumConversions: $('#bidMinimumConversions').val(),
-                startDate: $('#bidDatePicker').val(),
-                startTime: $('#bidTimePicker').val(),
-                frequency: $('#bidFrequency').val() * 3600
-            })
-
-            $.each(data.items, function(i, val) {
-                if(typeof val != 'undefined'){
-                    object.items.push({
-                        bidLessThan: $('#'+val['bidLessThan']).hasClass('label label-info'),
-                        bidBetween: $('#'+val['bidBetween']).hasClass('label label-info'),
-                        bidGreaterThan: $('#'+val['bidGreaterThan']).hasClass('label label-info'),
-                        bidRoiFirstValue: $('#'+val['bidRoiFirstValue']).val(),
-                        bidRoiSecondValue: $('#'+val['bidRoiSecondValue']).val(),
-                        bidIncrease: $('#'+val['bidIncrease']).hasClass('label label-info'),
-                        bidDecrease: $('#'+val['bidDecrease']).hasClass('label label-info'),
-                        bidRoiPercentValue: $('#'+val['bidRoiPercentValue']).val()
-                    });
-                }
-            });
-
-            console.log(object);
-
-
-
-            addBidAdjustmentRule(btn, object);
-
-            delete object.items;
-
-            //console.log(object);
-
-        });
-
-
-
-
-        function checkOperator(elem){
-            var indexId = elem.getAttribute('data-id');
-            var type = elem.getAttribute('data-type');
-            var condition = elem.value;
-
-            if(condition == 'between'){
-                $('#rulesSecondValue'+type + indexId).attr('disabled', false);
-            }else{
-                $('#rulesSecondValue'+type + indexId).attr('disabled', true);
-            }
-        }
-
-
-        function insertGroup(elem){
-            var val = document.getElementById('group-value').value;
-            addGroup(elem, val);
-        }
-
-        function removeGroup(elem){
-            var val = document.getElementById('selectRemoveGroup').value;
-            deleteGroup(elem, val);
-
-        }
+        // insert vertical
 
         function insertVertical(elem){
             var val = document.getElementById('vertical-value').value;
@@ -1708,81 +946,195 @@
 
         }
 
+        //remove vertical
+
         function removeVertical(elem){
             var val = document.getElementById('selectRemoveVertical').value;
             deleteVertical(elem, val);
 
         }
-        function resetBlacklistSettings(){
-            $('#blacklistCheckBoxVisits').prop("checked", false);
-            $('#blacklistCheckBoxCost').prop("checked", false);
-            $('#blacklistCheckBoxConv').prop("checked", false);
-            $('#blacklistCheckBoxCTR').prop("checked", false);
-            $('#blacklistCheckBoxROI').prop("checked", false);
+
+        // enable/disable input value
+        function enableInputValue(elem){
+            var index = elem.getAttribute('data-index');
+            var option = elem.value;
+
+            if(option == 'between'){
+                $('#value2-'+index).attr('disabled', false);
+            }else{
+                $('#value2-'+index).attr('disabled', true);
+            }
 
 
-            $('#blacklistVisitsLessThan').addClass('label label-info');
-            $('#blacklistVisitsBetween').removeClass('label label-info');
-            $('#blacklistVisitsGreaterThan').removeClass('label label-info');
+        }
+
+        // remove append
+
+        function removeAppend(elem){
+            var index = elem.getAttribute('data-index');
+            $('#row-'+index).remove();
+            delete $dataConditions.items[index];
+        }
+
+        function removeActiveAppend(elem){
+            var index = elem.getAttribute('data-index');
+            var indexRow = elem.getAttribute('data-index-row');
+            var key = elem.getAttribute('data-key');
+            $('#row-'+indexRow).remove();
+
+            delete $dataConditionsActive[index].items[key];
+        }
+
+        // enable edit rule
+
+        function editRule(elem){
+            var index = elem.getAttribute('data-index');
+            var action = elem.getAttribute('data-action');
+            if(action == 'edit'){
+                $('.disableTrigger-'+index).attr('disabled', false);
+                $('#buttonsContainer-'+index).css('display', 'none');
+                $('#addConditionActiveContainer-'+index).css('display', 'inline');
+            }else{
+                var selCamp = encodeURIComponent($('#selectCampaign').val());
+                $('#appendAppendActiveRules').empty();
+                getCampaignMatch(selCamp);
+            }
+
+        }
+
+        function disableAllInputs(index){
+
+            $('.disableTrigger-'+index).attr('disabled', true);
+            $('#buttonsContainer-'+index).css('display', 'inline');
+            $('#addConditionActiveContainer-'+index).css('display', 'none');
+
+        }
+
+        function appendConditionActive(elem){
+
+            var index = elem.getAttribute('data-index');
+            var lastCount =  $dataConditionsActive[index].items.length;
+            $('#appendRuleSetActive-'+index).append(
+                    '<div class="row" id="row-'+index+'-'+lastCount+'">' +
+                    '<br>' +
+                    '<div class="col-md-3">' +
+                    '<select id="metric-'+index+'-'+lastCount+'" class="select2_single form-control metric" tabindex="-1">' +
+                    '<option></option>' +
+                    '<option value="visits">Visits</option>' +
+                    '<option value="conversions">Conversion</option>' +
+                    '<option value="cost">Cost</option>' +
+                    '<option value="cpv">CPV</option>' +
+                    '<option value="ctr">CTR</option>' +
+                    '<option value="epv">EPV</option>' +
+                    '<option value="roi">ROI</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '<div class="col-md-3">' +
+                    '<select id="option-'+index+'-'+lastCount+'" data-index="'+index+'-'+lastCount+'" onChange="enableInputValue(this)" class="select2_single form-control option" tabindex="-1">' +
+                    '<option></option>' +
+                    '<option value="greaterThan">Greater Than</option>' +
+                    '<option value="lessThan">Less Than</option>' +
+                    '<option value="between">Between</option>' +
+                    '<option value="equalTo">Equal To</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                    '<input type="text" class="form-control" id="value1-'+index+'-'+lastCount+'" placeholder="Enter Value" onkeypress="isNumberKey(event)">'+
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                    '<input type="text" class="form-control" id="value2-'+index+'-'+lastCount+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" disabled>'+
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                    '<button class="btn red btn-md" data-index-row="'+index+'-'+lastCount+'" data-index="'+index+'" data-key="'+lastCount+'"  onclick="removeActiveAppend(this)"><i class="fa fa-times"></i> Remove</button">' +
+                    '</div>' +
+                    '</div>'
+
+            );
+
+            $dataConditionsActive[index].items.push({
+                metric: 'metric-'+index+'-'+lastCount,
+                option: 'option-'+index+'-'+lastCount,
+                value1: 'value1-'+index+'-'+lastCount,
+                value2: 'value2-'+index+'-'+lastCount
+            });
+
+            $(".metric").select2({
+                allowClear: true,
+                placeholder: 'Select Metric',
+                width: null
+            });
+
+            $(".option").select2({
+                allowClear: true,
+                placeholder: 'Select Option',
+                width: null
+            });
 
 
-            $('#blacklistVisits1').val('');
-            $('#blacklistVisits2').val('');
-            $('#blacklistCost1').val('');
-            $('#blacklistCost2').val('');
-            $('#blacklistConv1').val('');
-            $('#blacklistConv2').val('');
-            $('#blacklistCTR1').val('');
-            $('#blacklistCTR2').val('');
-            $('#blacklistROI1').val('');
-            $('#blacklistROI2').val('');
 
-            $('#blacklistCostLessThan').addClass('label label-info');
-            $('#blacklistCostBetween').removeClass('label label-info');
-            $('#blacklistCostGreaterThan').removeClass('label label-info');
+        }
 
+        function saveRule(elem){
+            $btn = $(elem)[0];
+            var index = elem.getAttribute('data-index');
+            if($('#activeFrequencyFormat-'+index).val() == 'hours'){
+                $frequency = parseInt($('#activeFrequency-'+index).val()) * 3600;
+            }else{
+                $frequency = parseInt($('#activeFrequency-'+index).val()) * 60;
+            }
+            $dataActive = {
+                campaignRulesId: $('#campaignRulesId-'+index).val(),
+                ruleType: $('#activeRuleType-'+index).val(),
+                startFrom: $('#activeStartFrom-'+index).val(),
+                frequency: $frequency,
+                logicalOperator: $('#activeLogicalOperator-'+index).val(),
+                cid: $('#id').val(),
+                conditions: []
+            }
 
-            $('#blacklistConvLessThan').addClass('label label-info');
-            $('#blacklistConvBetween').removeClass('label label-info');
-            $('#blacklistConvGreaterThan').removeClass('label label-info');
-
-
-            $('#blacklistCTRLessThan').addClass('label label-info');
-            $('#blacklistCTRBetween').removeClass('label label-info');
-            $('#blacklistCTRGreaterThan').removeClass('label label-info');
-
-            $('#blacklistROILessThan').addClass('label label-info');
-            $('#blacklistROIBetween').removeClass('label label-info');
-            $('#blacklistROIGreaterThan').removeClass('label label-info');
-
-
-            $('#blacklistFrequency').attr('disabled', true);
-            $('#blacklistTimePicker').attr('disabled', true);
-            $('#blacklistTimePicker').val('00:00');
-            $('#blacklistChooseTimeFormat1').attr('disabled', true);
-            $('#blacklistChooseTimeFormat2').attr('disabled', true);
+                $.each($dataConditionsActive[index].items, function(i, val) {
+                    if (typeof i != 'undefined') {
+                        if (typeof val != 'undefined') {
+                            $dataActive.conditions.push({
+                                metric: $('#' + val['metric']).val(),
+                                option: $('#' + val['option']).val(),
+                                value1: $('#' + val['value1']).val(),
+                                value2: $('#' + val['value2']).val()
+                            });
+                        }
+                    }
+                });
 
 
-            $('#blacklistVisits2').attr('disabled', true);
-
-            $('#blacklistCost2').attr('disabled', true);
-
-            $('#blacklistConv2').attr('disabled', true);
-
-            $('#blacklistCTR2').attr('disabled', true);
-
-            $('#blacklistROI2').attr('disabled', true);
+            var selCamp = encodeURIComponent($('#selectCampaign').val());
+            updateRule($btn, $dataActive, selCamp);
         }
 
 
-        {% if page == 'Zeropark' %}
-            function setDataAttribute(elem) {
-                var i = elem.dataset.selectid;
-                var campid = elem.value;
-                var checkBoxId = document.getElementById('checkBoxId_' + i);
-                checkBoxId.dataset.campid = campid;
+        function changeRuleStatus(elem){
+            $btn = $(elem)[0];
+            var id = elem.getAttribute('data-id');
+            var index = elem.getAttribute('data-index');
+            var action = elem.getAttribute('data-action');
+            if (action == 'pause'){
+                $active = 0;
+            }else{
+                $active = 1;
             }
-        {% endif %}
+            $data = {
+                campaignRulesId: id,
+                active: $active
+            }
+            var selCamp = encodeURIComponent($('#selectCampaign').val());
+            updateChangeRuleStatus($btn, $data, selCamp);
+
+        }
+
+        function pushDataDelete(elem){
+            var id = elem.getAttribute('data-id');
+            $('#campaignRuleIdDelete').val(id);
+        }
+
 
     </script>
 

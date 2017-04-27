@@ -747,4 +747,33 @@ class LogsTbl
     {
         return $this->id;
     }
+    /**
+     * @var integer
+     */
+    private $serverTimestamp;
+
+
+    /**
+     * Set serverTimestamp
+     *
+     * @param integer $serverTimestamp
+     *
+     * @return LogsTbl
+     */
+    public function setServerTimestamp($serverTimestamp)
+    {
+        $this->serverTimestamp = $serverTimestamp;
+
+        return $this;
+    }
+
+    /**
+     * Get serverTimestamp
+     *
+     * @return integer
+     */
+    public function getServerTimestamp()
+    {
+        return $this->serverTimestamp;
+    }
 }

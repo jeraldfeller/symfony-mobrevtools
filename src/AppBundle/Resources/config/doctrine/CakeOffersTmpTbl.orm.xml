@@ -64,7 +64,7 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="offerUrl" type="string" column="offer_url" length="255" nullable="true">
+    <field name="offerUrl" type="text" column="offer_url" nullable="true">
       <options>
         <option name="fixed"/>
       </options>

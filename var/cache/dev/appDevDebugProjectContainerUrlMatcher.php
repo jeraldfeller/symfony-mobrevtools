@@ -159,89 +159,118 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/c')) {
-            if (0 === strpos($pathinfo, '/campaign')) {
-                // campaign
-                if (0 === strpos($pathinfo, '/campaign/bot-settings') && preg_match('#^/campaign/bot\\-settings/(?P<tid>[^/]++)/(?P<page>[^/]++)$#s', $pathinfo, $matches)) {
-                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'campaign')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::indexAction',));
+        if (0 === strpos($pathinfo, '/campaign')) {
+            // campaignB
+            if (0 === strpos($pathinfo, '/campaign/bot-settings') && preg_match('#^/campaign/bot\\-settings/(?P<tid>[^/]++)/(?P<page>[^/]++)$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'campaignB')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::indexBAction',));
+            }
+
+            // campaign
+            if (preg_match('#^/campaign/(?P<tid>[^/]++)/(?P<page>[^/]++)$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'campaign')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::indexAction',));
+            }
+
+            if (0 === strpos($pathinfo, '/campaign/get-')) {
+                // getCampaigns
+                if (0 === strpos($pathinfo, '/campaign/get-campaigns') && preg_match('#^/campaign/get\\-campaigns/(?P<tid>[^/]++)$#s', $pathinfo, $matches)) {
+                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'getCampaigns')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignsForSelect',));
                 }
 
-                if (0 === strpos($pathinfo, '/campaign/get-')) {
-                    // getCampaigns
-                    if (0 === strpos($pathinfo, '/campaign/get-campaigns') && preg_match('#^/campaign/get\\-campaigns/(?P<tid>[^/]++)$#s', $pathinfo, $matches)) {
-                        return $this->mergeDefaults(array_replace($matches, array('_route' => 'getCampaigns')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignsForSelect',));
-                    }
-
-                    // campaignDetailsAll
-                    if ($pathinfo === '/campaign/get-details/all') {
-                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignDetailsAllAction',  '_route' => 'campaignDetailsAll',);
-                    }
-
-                    // campaignGetApiCampaigns
-                    if ($pathinfo === '/campaign/get-api-campaigns') {
-                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getApiCampaignAction',  '_route' => 'campaignGetApiCampaigns',);
-                    }
-
+                // campaignDetailsAll
+                if ($pathinfo === '/campaign/get-details/all') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignDetailsAllAction',  '_route' => 'campaignDetailsAll',);
                 }
 
-                // importCampaigns
-                if ($pathinfo === '/campaign/import-campaigns') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::importCampaignAction',  '_route' => 'importCampaigns',);
+                // getCampaignMatch
+                if ($pathinfo === '/campaign/get-campaign-match') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getGroupCampaignMatch',  '_route' => 'getCampaignMatch',);
                 }
 
-                // getGroup
-                if ($pathinfo === '/campaign/get-groups') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getGroup',  '_route' => 'getGroup',);
+                // campaignGetApiCampaigns
+                if ($pathinfo === '/campaign/get-api-campaigns') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getApiCampaignAction',  '_route' => 'campaignGetApiCampaigns',);
                 }
 
-                // addVertical
-                if ($pathinfo === '/campaign/add-vertical') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addVertical',  '_route' => 'addVertical',);
+            }
+
+            if (0 === strpos($pathinfo, '/campaign/add-')) {
+                // addCampaign
+                if ($pathinfo === '/campaign/add-campaign') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addCampaignAction',  '_route' => 'addCampaign',);
                 }
 
-                // getVeritical
-                if ($pathinfo === '/campaign/get-verticals') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getVertical',  '_route' => 'getVeritical',);
+                // addRule
+                if ($pathinfo === '/campaign/add-rule') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addRuleAction',  '_route' => 'addRule',);
                 }
 
-                // deleteVertical
-                if ($pathinfo === '/campaign/delete-vertical') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteVertical',  '_route' => 'deleteVertical',);
+            }
+
+            if (0 === strpos($pathinfo, '/campaign/update-')) {
+                // editRule
+                if ($pathinfo === '/campaign/update-rule') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::editRuleAction',  '_route' => 'editRule',);
                 }
 
+                // updateChangeRuleStatus
+                if ($pathinfo === '/campaign/update-change-rule-status') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::updatChangeRuleStatusAction',  '_route' => 'updateChangeRuleStatus',);
+                }
+
+            }
+
+            // deleteCampaignRule
+            if ($pathinfo === '/campaign/delete-campaign-rule') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteCampaignRuleAction',  '_route' => 'deleteCampaignRule',);
+            }
+
+            // saveData
+            if ($pathinfo === '/campaign/save-data') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::saveDataAction',  '_route' => 'saveData',);
+            }
+
+            // deleteData
+            if ($pathinfo === '/campaign/delete-data') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteDataAction',  '_route' => 'deleteData',);
+            }
+
+            // addVertical
+            if ($pathinfo === '/campaign/add-vertical') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addVertical',  '_route' => 'addVertical',);
+            }
+
+            // getVeritical
+            if ($pathinfo === '/campaign/get-verticals') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getVertical',  '_route' => 'getVeritical',);
+            }
+
+            // deleteVertical
+            if ($pathinfo === '/campaign/delete-vertical') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteVertical',  '_route' => 'deleteVertical',);
+            }
+
+            if (0 === strpos($pathinfo, '/campaign/add-')) {
                 // addCampaignGroup
                 if ($pathinfo === '/campaign/add-campaign-group') {
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addCampaignGroup',  '_route' => 'addCampaignGroup',);
                 }
 
-                // getGroupCampaignMatch
-                if ($pathinfo === '/campaign/get-group-campaign-match') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getGroupCampaignMatch',  '_route' => 'getGroupCampaignMatch',);
+                // addBidAdjustmentRule
+                if ($pathinfo === '/campaign/add-bid-adjustment-rule') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addBidAdjustmentRule',  '_route' => 'addBidAdjustmentRule',);
                 }
 
-                if (0 === strpos($pathinfo, '/campaign/add-b')) {
-                    // addBotRule
-                    if ($pathinfo === '/campaign/add-bot-rule') {
-                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addBotRule',  '_route' => 'addBotRule',);
-                    }
+            }
 
-                    // addBlacklistRule
-                    if ($pathinfo === '/campaign/add-blacklist-rule') {
-                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addBlacklistRule',  '_route' => 'addBlacklistRule',);
-                    }
+        }
 
-                    // addBidAdjustmentRule
-                    if ($pathinfo === '/campaign/add-bid-adjustment-rule') {
-                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addBidAdjustmentRule',  '_route' => 'addBidAdjustmentRule',);
-                    }
+        // app_campaign_ajaxgetreportsbot
+        if (0 === strpos($pathinfo, '/ajax/get-placement-list') && preg_match('#^/ajax/get\\-placement\\-list(?:/(?P<trafficSourceId>[^/]++))?$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'app_campaign_ajaxgetreportsbot')), array (  'trafficSourceId' => NULL,  '_controller' => 'AppBundle\\Controller\\CampaignController::ajaxGetReportsBot',));
+        }
 
-                }
-
-                // getPlacementReport
-                if ($pathinfo === '/campaign/get-placement-report') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getPlacementReport',  '_route' => 'getPlacementReport',);
-                }
-
+        if (0 === strpos($pathinfo, '/c')) {
+            if (0 === strpos($pathinfo, '/campaign')) {
                 // deleteCampaignGroup
                 if ($pathinfo === '/campaign/delete-campaign-group') {
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteCampaignGroup',  '_route' => 'deleteCampaignGroup',);
