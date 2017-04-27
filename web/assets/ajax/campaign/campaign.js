@@ -775,6 +775,8 @@ function saveData(data){
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
 
                 showNotification('success', 'Success', 'Data Successfully Saved');
+                var oTable = $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){

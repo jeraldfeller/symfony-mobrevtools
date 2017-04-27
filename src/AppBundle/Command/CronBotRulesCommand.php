@@ -662,7 +662,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
                             $query = array('hash' => implode(',', $zeroParkToResumeTargets));
                             $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/target/sresume/?' . http_build_query($query);
-                            $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                            $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
 
                             switch($key['trafficName']){
                                 case 'Zeropark':

@@ -596,6 +596,14 @@
                     "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
                     buttons: [
                         {
+                            className: 'btn dark btn-outline',
+                            text: '<i class="fa fa-refresh"></i> Refresh Table',
+                            header: false,
+                            action: function ( e, dt, node, config ) {
+                                oTable.ajax.reload();
+                            }
+                        },
+                        {
                             className: 'btn blue btn-outline ',
                             text: '<i class="fa fa-save"></i> Save Data',
                             header: false,
@@ -685,9 +693,6 @@
                     oTable.ajax.reload();
                 });
 
-                setInterval(function(){
-                    oTable.ajax.reload();
-                }, 60000)
 
                 /**
                  * Get Campaigns
