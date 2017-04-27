@@ -69,7 +69,7 @@
                      <div class="caption font-green-sharp">
                         <i class="fa fa-bullhorn font-green-sharp"></i>
                         <span class="caption-subject bold uppercase" id="campaignTitleName">Campaign Name</span>
-                            <input type="hidden" id="id">
+                            <input type="hidden" id="id" value="0">
 
                      </div>
                      <div class="actions">
@@ -226,6 +226,13 @@
                                                 <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                                 <input type="text" class="form-control date-picker" placeholder="Start From" id="startFrom">
                                             </div><!-- input-group -->
+
+                                    </div>
+                                    <div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                                            <input type="text" class="form-control timepicker timepicker-24" placeholder="Time" id="startTime">
+                                        </div><!-- input-group -->
 
                                     </div>
                                     <div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">
@@ -555,6 +562,7 @@
                     "fnServerData": function (sSource, aoData, fnCallback) {
                         /* Add some extra data to the sender */
                         aoData.push({"name": "type", "value": $('#filterByType').val()});
+                        aoData.push({"name": "id", "value": $('#id').val()});
                         $.getJSON(sSource, aoData, function (json) {
                             /* Do whatever additional processing you want on the callback, then tell DataTables */
                             fnCallback(json)
@@ -896,6 +904,7 @@
                      $data = {
                          ruleType: $('#selectRuleType').val(),
                          startFrom: $('#startFrom').val(),
+                         startTime: $('#startTime').val(),
                          frequency: $frequency,
                          logicalOperator: $('#selectLogicalOperator').val(),
                          cid: $('#id').val(),
@@ -1091,6 +1100,7 @@
                 campaignRulesId: $('#campaignRulesId-'+index).val(),
                 ruleType: $('#activeRuleType-'+index).val(),
                 startFrom: $('#activeStartFrom-'+index).val(),
+                startTime: $('#activeStartTime-'+index).val(),
                 frequency: $frequency,
                 logicalOperator: $('#activeLogicalOperator-'+index).val(),
                 cid: $('#id').val(),

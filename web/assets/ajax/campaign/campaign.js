@@ -621,6 +621,12 @@ function getCampaignMatch(voluumId)
                             '<input type="text" class="form-control date-picker disableTrigger-'+index+'" placeholder="Start From" id="activeStartFrom-'+index+'" value="'+ info['startFrom'] +'" disabled>' +
                             '</div>' +
                             '</div>' +
+                            '<div class="actions pull-left col-md-1 col-xs-12 " style="margin-left: 10px;">' +
+                            '<div class="input-group">' +
+                            '<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>' +
+                            '<input type="text" class="form-control timepicker timepicker-24 disableTrigger-'+index+'" placeholder="Start From" id="activeStartTime-'+index+'" value="'+ info['startTime'] +'" disabled>' +
+                            '</div>' +
+                            '</div>' +
                             '<div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">' +
                             '<input type="text" class="form-control disableTrigger-'+index+'" id="activeFrequency-'+index+'" placeholder="Frequency" value="'+ $frequency +'" onkeypress="return isNumberKey(event)" disabled>' +
                             '</div>' +
@@ -669,10 +675,17 @@ function getCampaignMatch(voluumId)
 
                         );
 
-                            $('#startFrom-'+index+'-'+$z+'').datepicker({
+                            $('#activeStartFrom-'+index).datepicker({
                                 rtl: App.isRTL(),
                                 orientation: "left",
                                 autoclose: true
+                            });
+
+                            $('#activeStartTime-'+index).timepicker({
+                                autoclose: true,
+                                minuteStep: 5,
+                                showSeconds: false,
+                                showMeridian: false
                             });
 
 
@@ -702,6 +715,9 @@ function getCampaignMatch(voluumId)
                     });
 
                 });
+
+                var oTable = $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
             }
         }
 

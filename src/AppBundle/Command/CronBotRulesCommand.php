@@ -103,7 +103,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
             if ($dateTimeNow >= $timeStart) {
                 if (in_array($dateTimeNow, $commonService->hoursInterval($date, $to, $freq, $format))) {
-                    $tz = 'America/Chicago';
+                    $tz = 'America/New_York';
                     $sort = 'visits';
                     $direction = 'desc';
                     $limit = 1000;
@@ -147,6 +147,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                             foreach ($returnedData['rows'] as $item) {
                                 if ($key['trafficName'] == 'Zeropark') {
                                     if($item['status'] == 'ACTIVE'){
+
+
+
                                         $ruleSetCount = 1;
                                         if (count($ruleConditions) > 0) {
                                             $match = array();
@@ -155,6 +158,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             $conditionCount = 0;
                                             $matchCount = 0;
                                             foreach ($ruleConditions as $conditions ) {
+
                                                     $variable = $conditions['rule_variable'];
                                                     $condition = $conditions['rule_condition'];
                                                     $value1 = $conditions['value1'];
@@ -194,6 +198,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             }
                                             if($key['operator'] == 'and'){
                                                 if ($conditionCount == $matchCount) {
+                                                    $output->writeln([
+                                                        $item[$customVariableKey] . ' = Visits: ' . $item['visits'] . ' Conv: ' . $item['conversions'] . ' CTR: ' . $item['ctr']
+                                                    ]);
                                                     $targets[] = $item[$customVariableKey];
                                                     $this->insertBotReport($key['campaignRulesId'],
                                                         $key['tid'],
@@ -306,6 +313,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
                                                             if(!isset($response['error'])){
                                                                 $this->updateBotReport(
+                                                                    $key['id'],
                                                                     $item[$customVariableKey],
                                                                     $item['visits'],
                                                                     $item['clicks'],
@@ -329,6 +337,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     if ($unpauseMatchCount > 0) {
                                                         $targets[] = $item[$customVariableKey];
                                                         $this->updateBotReport(
+                                                            $key['id'],
                                                             $item[$customVariableKey],
                                                             $item['visits'],
                                                             $item['clicks'],
@@ -506,6 +515,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                         $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
                                                         if(!isset($response['error'])){
                                                             $this->updateBotReport(
+                                                                $key['id'],
                                                                 $item[$customVariableKey],
                                                                 $item['visits'],
                                                                 $item['clicks'],
@@ -530,6 +540,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     $targets[] = $item[$customVariableKey];
                                                     $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
                                                     $this->updateBotReport(
+                                                        $key['id'],
                                                         $item[$customVariableKey],
                                                         $item['visits'],
                                                         $item['clicks'],
@@ -659,11 +670,13 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                              * Zeropark resume targets
                              */
 
+                            /*
 
                             $query = array('hash' => implode(',', $zeroParkToResumeTargets));
                             $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/target/sresume/?' . http_build_query($query);
                             $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
 
+                            */
                             switch($key['trafficName']){
                                 case 'Zeropark':
                                     if(count($targets) > 0){
@@ -882,7 +895,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
     public function updateBotReport($cid, $placement, $visits, $clicks, $ctr, $conversions, $revenue, $cost, $profit, $cpv, $epv, $roi, $dateExecuted){
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $botReportEntity = $em->getRepository('AppBundle:ReportsBlacklist')->findOneBy(array('cid' => $cid, 'placement' => $placement));
+        $botReportEntity = $em->getRepository('AppBundle:ReportsBlacklist')->findOneBy(array('id' => $cid, 'placement' => $placement));
         if($botReportEntity) {
             $botReportEntity->setVisits($visits);
             $botReportEntity->setClicks($clicks);

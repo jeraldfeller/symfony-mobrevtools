@@ -515,4 +515,33 @@ class CampaignRulesPlacementList
     {
         return $this->cid;
     }
+    /**
+     * @var integer
+     */
+    private $campaignRulesId;
+
+
+    /**
+     * Set campaignRulesId
+     *
+     * @param integer $campaignRulesId
+     *
+     * @return CampaignRulesPlacementList
+     */
+    public function setCampaignRulesId($campaignRulesId)
+    {
+        $this->campaignRulesId = $campaignRulesId;
+
+        return $this;
+    }
+
+    /**
+     * Get campaignRulesId
+     *
+     * @return integer
+     */
+    public function getCampaignRulesId()
+    {
+        return $this->campaignRulesId;
+    }
 }

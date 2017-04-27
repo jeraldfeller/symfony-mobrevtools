@@ -380,6 +380,7 @@ class CampaignController extends Controller
                 'campaignRulesId' => $result[$i]->getCampaignRulesId(),
                 'cid' => $result[$i]->getCid()->getId(),
                 'startFrom' => $dateFromFormat,
+                'startTime' => $result[$i]->getDateTime(),
                 'dateUpdated' => $dateUpdatedFormat,
                 'frequency' => $result[$i]->getFrequency(),
                 'ruleType' => $result[$i]->getRuleType(),
@@ -994,6 +995,7 @@ class CampaignController extends Controller
         $campaignRuleEntity->setCid($campaignEntity);
         $campaignRuleEntity->setRuleType($data['ruleType']);
         $campaignRuleEntity->setStartFrom(new \DateTime(date('Y-m-d', strtotime($data['startFrom']))));
+        $campaignRuleEntity->setDateTime($data['startTime']);
         $campaignRuleEntity->setDatetimeunix($dateTimeUnix);
         $campaignRuleEntity->setFrequency($data['frequency']);
         $campaignRuleEntity->setOperator($data['logicalOperator']);
@@ -1026,6 +1028,7 @@ class CampaignController extends Controller
         $campaignRulesEntity = $em->getRepository('AppBundle:CampaignRules')->find($data['campaignRulesId']);
         $campaignRulesEntity->setRuleType($data['ruleType']);
         $campaignRulesEntity->setStartFrom(new \DateTime(date('Y-m-d', strtotime($data['startFrom']))));
+        $campaignRulesEntity->setDateTime($data['startTime']);
         $campaignRulesEntity->setDatetimeunix($dateTimeUnix);
         $campaignRulesEntity->setFrequency($data['frequency']);
         $campaignRulesEntity->setOperator($data['logicalOperator']);
@@ -1516,6 +1519,11 @@ class CampaignController extends Controller
                 }
             }
 
+            if(isset($input['id'])){
+
+                $id = $input['id'];
+            }
+
         }
 
 
@@ -1529,9 +1537,9 @@ class CampaignController extends Controller
         }
 
         if (!empty($aFilteringRules)) {
-            $sWhere = " WHERE p.tid = '" . $trafficSourceId . "' AND ".implode(" AND ", $aFilteringRules) ;
+            $sWhere = " WHERE p.tid = '" . $trafficSourceId . "' AND p.cid = $id AND ".implode(" AND ", $aFilteringRules) ;
         } else {
-            $sWhere = "WHERE p.tid = '" . $trafficSourceId . "'";
+            $sWhere = "WHERE p.tid = '" . $trafficSourceId . "' AND p.cid = $id";
         }
 
 

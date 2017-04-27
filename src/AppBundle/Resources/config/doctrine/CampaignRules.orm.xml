@@ -13,6 +13,11 @@
       </options>
     </field>
     <field name="startFrom" type="date" column="start_from" nullable="false"/>
+    <field name="dateTime" type="string" column="date_time" length="10" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
     <field name="datetimeunix" type="integer" column="dateTimeUnix" nullable="false">
       <options>
         <option name="unsigned"/>
