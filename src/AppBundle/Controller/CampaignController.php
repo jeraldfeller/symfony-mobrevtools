@@ -17,26 +17,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use AppBundle\Entity\Campaign;
-use AppBundle\Entity\Campaigngroups;
 use AppBundle\Entity\TrafficSource;
 use AppBundle\Entity\Verticals;
 use AppBundle\Entity\Groups;
 
-use AppBundle\Entity\BotRules;
-use AppBundle\Entity\BotRuleSet;
-use AppBundle\Entity\BotConditions;
-use AppBundle\Entity\BlacklistRules;
-use AppBundle\Entity\BlacklistRuleSet;
-use AppBundle\Entity\BlacklistConditions;
-use AppBundle\Entity\BidAdjustmentRules;
-use AppBundle\Entity\BidAdjustmentConditions;
-use AppBundle\Entity\IpRules;
-use AppBundle\Entity\IpCon;
-
 use AppBundle\Entity\CampaignRules;
 use AppBundle\Entity\CampaignRulesConditions;
 use AppBundle\Entity\ListReports;
-
+use AppBundle\Entity\CampaignRulePresets;
+use AppBundle\Entity\CampaignRulePresetsConditions;
 
 
 
@@ -105,6 +94,7 @@ class CampaignController extends Controller
             $trafficSource = $this->getTrafficSourceByName($page);
             $campaigns = $this->getCampaigns($tid);
             $verticals = $this->getVerticals();
+            $rulePresets = $this->getRulePresets();
             $carriers = array();
             $dateNow = date('m/d/Y');
             if ($page == 'ExoClick') {
@@ -117,6 +107,7 @@ class CampaignController extends Controller
                     'trafficSourceName' => $trafficSource[0]->getTrafficName(),
                     'campaigns' => $campaigns,
                     'verticals' => $verticals,
+                    'presets' => $rulePresets,
                     'carriers' => $carriers,
                     'dateNow' => $dateNow
                 )
@@ -181,20 +172,17 @@ class CampaignController extends Controller
 
     }
 
-    public function getGroups()
-    {
-
+    public function getRulePresets(){
         $em = $this->getDoctrine()->getEntityManager();
         $sql = $em->createQuery("
             SELECT p
-                FROM AppBundle:Groups p
-                ORDER BY p.groupName ASC
+                FROM AppBundle:CampaignRulePresets p
+                ORDER BY p.presetName ASC
         ");
 
         $result = $sql->getResult();
 
         return $result;
-
     }
 
     public function getVerticals()
@@ -982,6 +970,72 @@ class CampaignController extends Controller
     }
 
 
+    /**
+     * @Route("/campaign/add-preset-rule", name="addPresetRule")
+     */
+    public function addPresetRuleAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $presetRuleEntity = new CampaignRulePresets();
+        $presetRuleEntity->setPresetName($data['presetName']);
+        $em->persist($presetRuleEntity);
+        $em->flush();
+        for($x = 0; $x < count($data['conditions']); $x++){
+            $campaignConditionEntity = new CampaignRulePresetsConditions();
+            $campaignConditionEntity->setCampaignPresets($presetRuleEntity);
+            $campaignConditionEntity->setRuleVariable($data['conditions'][$x]['metric']);
+            $campaignConditionEntity->setRuleCondition(strtolower($data['conditions'][$x]['option']));
+            $campaignConditionEntity->setValue1($data['conditions'][$x]['value1']);
+            $campaignConditionEntity->setValue2($data['conditions'][$x]['value2']);
+            $em->persist($campaignConditionEntity);
+            $em->flush();
+        }
+        $em->clear();
+        return new Response(json_encode($data));
+    }
+
+
+    /**
+     * @Route("/campaign/edit-preset-rule", name="editPresetRule")
+     */
+    public function editPresetRuleAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $campaignRulePresetEntity = $em->getRepository('AppBundle:CampaignRulePresets')->find($data['id']);
+        $campaignRulePresetEntity->setPresetName($data['presetName']);
+        $em->flush();
+        $campaignCondition = $em->getRepository('AppBundle:CampaignRulePresetsConditions')->findBy(array('campaignPresets' => $campaignRulePresetEntity));
+        for($x = 0; $x < count($campaignCondition); $x++){
+            $em->remove($campaignCondition[$x]);
+        }
+        $em->flush();
+
+        for($x = 0; $x < count($data['conditions']); $x++){
+            $campaignConditionEntity = new CampaignRulePresetsConditions();
+            $campaignConditionEntity->setCampaignPresets($campaignRulePresetEntity);
+            $campaignConditionEntity->setRuleVariable($data['conditions'][$x]['metric']);
+            $campaignConditionEntity->setRuleCondition(strtolower($data['conditions'][$x]['option']));
+            $campaignConditionEntity->setValue1($data['conditions'][$x]['value1']);
+            $campaignConditionEntity->setValue2($data['conditions'][$x]['value2']);
+            $em->persist($campaignConditionEntity);
+            $em->flush();
+        }
+        $em->clear();
+        return new Response(json_encode($data));
+    }
+
+    /**
+     * @Route("/campaign/delete-preset-rule", name="deletePresetRule")
+     */
+    public function deletePresetRuleAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $campaignRulePresetEntity = $em->getRepository('AppBundle:CampaignRulePresets')->find($data['id']);
+        $em->remove($campaignRulePresetEntity);
+        $em->flush();
+        $em->clear();
+        return new Response(json_encode($data));
+    }
 
     /**
      * @Route("/campaign/add-rule", name="addRule")
@@ -1614,6 +1668,199 @@ class CampaignController extends Controller
         }
         return new Response( json_encode( $output ) );
     }
+
+
+
+    /**
+     * @Route("/ajax/get-rule-presets")
+     */
+    public function ajaxGetRulePresets(){
+
+        $em = $this->getDoctrine()->getManager();
+        $aColumns = array( 't.id', 't.presetName' );
+
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'id';
+
+        // DB table to use
+        $sTable = 'AppBundle:CampaignRulePresets';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                }
+            }
+
+
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }
+
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules);
+        } else {
+            $sWhere = "";
+        }
+
+
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
+
+
+
+        $sQuery = $em->createQuery("
+        SELECT $aQueryColumns
+        FROM ".$sTable." t ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+        $rResult = $sQuery->getResult();
+
+
+        $sQuery = $em->createQuery("
+        SELECT t
+        FROM ".$sTable." t ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($paginator);
+
+        $sQuery = $em->createQuery("
+        SELECT t
+        FROM ".$sTable." t ".$sWhere.$sOrder."");
+
+        $iTotal = count($paginator = new Paginator($sQuery));
+
+        /**
+         * Output
+         */
+
+
+        $output = array(
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
+        );
+
+
+        foreach($rResult as $column){
+            $row = array();
+            $row[] = $column['presetName'];
+            $row[] = '<div class="btn-group">
+                                        <button type="button" class="btn blue btn-xs"> Action</button>
+                                        <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#" data-toggle="modal" data-target="#editModal"  data-action="edit" data-id="' . $column['id'] . '" data-name="' . $column['presetName'] . '" data-conditions="' . htmlentities($this->getRulePresetConditionByRuleId($column['id'])) .'" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
+                                            </li>
+                                            <li><a href="#" data-toggle="modal" data-target="#deleteModal" data-action="delete" data-id="' . $column['id'] . '" data-name="' . $column['presetName'] . '" onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
+                                            </li>
+                                        </ul>
+                       </div>';
+            $output['aaData'][] = $row;
+        }
+        return new Response( json_encode( $output ) );
+
+
+    }
+
+
+    /**
+     * @Route("/campaign/get-campaign-rule-presets")
+     */
+
+    public function getCampaignRulePresets(){
+        $data = $_POST['param'];
+        return new Response($this->getRulePresetConditionByRuleId($data));
+    }
+
+    public function getRulePresetConditionByRuleId($id){
+
+        $em = $this->getDoctrine()->getManager();
+        $ruleEntity = $em->getRepository('AppBundle:CampaignRulePresets')->find($id);
+        $conditionsEntity = $em->getRepository('AppBundle:CampaignRulePresetsConditions')->findBy(array('campaignPresets' => $ruleEntity));
+
+        $data = array();
+        for($x = 0; $x < count($conditionsEntity); $x++){
+            $data[] = array(
+                'campaignPresetsId' => $conditionsEntity[$x]->getCampaignPresets()->getId(),
+                'ruleVariable' => $conditionsEntity[$x]->getRuleVariable(),
+                'ruleCondition' => $conditionsEntity[$x]->getRuleCondition(),
+                'value1' => $conditionsEntity[$x]->getValue1(),
+                'value2' => $conditionsEntity[$x]->getValue2()
+            );
+        }
+
+
+        return json_encode($data);
+    }
+
+
 
     /**
      * @Route("/campaign/delete-campaign-group", name="deleteCampaignGroup")

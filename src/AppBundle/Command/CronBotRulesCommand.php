@@ -106,7 +106,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $tz = 'America/New_York';
                     $sort = 'visits';
                     $direction = 'desc';
-                    $limit = 50000;
+                    $limit = 10000;
                     $output->writeln([
                         $key['ruleType'], $key['trafficName'], $key['campName']
                     ]);
@@ -194,9 +194,6 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             }
                                             if($key['operator'] == 'and'){
                                                 if ($conditionCount == $matchCount) {
-                                                    $output->writeln([
-                                                        $item[$customVariableKey] . ' = Visits: ' . $item['visits'] . ' Conv: ' . $item['conversions'] . ' CTR: ' . $item['ctr']
-                                                    ]);
                                                     $targets[] = $item[$customVariableKey];
                                                     $this->insertBotReport($key['campaignRulesId'],
                                                         $key['tid'],
@@ -486,7 +483,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                         $tomatchUnpause[] = $variable;
                                                     }
                                                 } else if ($condition == 'equalto'){
-                                                    if ($item[$variable] >= $value1) {
+                                                    if ($item[$variable] == $value1) {
                                                         $tomatchUnpause[] = $variable;
                                                     }
                                                 }
@@ -585,7 +582,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     $tomatch[] = $variable;
                                                 }
                                             } else if ($condition == 'equalto'){
-                                                if ($item[$variable] >= $value1) {
+                                                if ($item[$variable] == $value1) {
                                                     $tomatch[] = $variable;
                                                 }
                                             }
@@ -606,6 +603,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                         }
                                         if($key['operator'] == 'and'){
                                             if ($conditionCount == $matchCount) {
+                                                $output->writeln([
+                                                    $item[$customVariableKey] . ' = Visits: ' . $item['visits'] . ' Conv: ' . $item['conversions'] . ' CTR: ' . $item['ctr']
+                                                ]);
                                                 $targets[] = $item[$customVariableKey];
                                                 $this->insertBotReport($key['campaignRulesId'],
                                                     $key['tid'],
@@ -677,7 +677,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                 case 'Zeropark':
                                     if(count($targets) > 0){
                                         $targetsToPause = array_unique($targets);
-                                        
+
                                         if(count($targetsToPause) > 100){
 
                                             $chunks = array_chunk($targetsToPause, 100, true);

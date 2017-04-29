@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\CampaignRulePresetsConditions" table="campaign_rule_presets_conditions">
+    <indexes>
+      <index name="campaign_presets_id" columns="campaign_presets_id"/>
+    </indexes>
+    <id name="campaignPresetConditionsId" type="integer" column="campaign_preset_conditions_id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="ruleVariable" type="string" column="rule_variable" length="20" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="ruleCondition" type="string" column="rule_condition" length="20" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="value1" type="float" column="value1" precision="10" scale="0" nullable="false"/>
+    <field name="value2" type="float" column="value2" precision="10" scale="0" nullable="false"/>
+    <many-to-one field="campaignPresets" target-entity="CampaignRulePresets" fetch="LAZY">
+      <join-columns>
+        <join-column name="campaign_presets_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

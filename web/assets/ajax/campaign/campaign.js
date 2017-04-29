@@ -835,13 +835,12 @@ function deleteData(data){
     return false;
 }
 
-function addBotRule(btn, data)
-{
+function addPresetRule(btn, data, indexes){
     var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "/campaign/add-bot-rule");
+        XMLHttpRequestObject.open("POST", "/campaign/add-preset-rule");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -851,97 +850,34 @@ function addBotRule(btn, data)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
-
-
-                $.each(response, function(i, val) {
-                    $.each(val, function(x, obj) {
-
-                        if(obj['error'] != 1){
-                            console.log(obj);
-                            console.log(obj['message']);
-                            showNotification('success', 'Success', 'Bot Rules Successfully Added');
-
-                        }else{
-                            console.log(obj['message']);
-
-                            showNotification('error', '', '');
-                        }
-                    });
-                });
-
-
-
                 l.stop();
 
+                $('#addModal').modal('hide');
+                $('#presetName').val('');
+                $('#appendRuleSet').empty();
+                showNotification('success', 'Success', 'Preset Successfully Added');
+                for($a = 0; $a < indexes.length; $a++){
+                    $('#row-'+indexes[$a]).remove();
+                    delete $dataConditions.items[indexes[$a]];
+                }
+
+                var oTable = $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
-               showNotification('error', '', '');
-            }
-        }
-
-
-
-        l.start();
-        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
-
-
-    }
-
-    return false;
-}
-
-/*
- * Blacklist Rules
- */
-
-
-function addBlackListRule(btn, data)
-{
-    var l = Ladda.create(btn);
-    if(XMLHttpRequestObject)
-    {
-
-        XMLHttpRequestObject.open("POST", "/campaign/add-blacklist-rule");
-
-
-        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-
-        XMLHttpRequestObject.onreadystatechange = function()
-        {
-            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
-            {
-                var response = $.parseJSON(XMLHttpRequestObject.responseText);
-
-
-                $.each(response, function(i, val) {
-                    $.each(val, function(x, obj) {
-
-                        if(obj['error'] != 1){
-                            console.log(obj['message']);
-                            showNotification('success', 'Success', obj['message']);
-                        }else{
-                            console.log(obj['message']);
-                            showNotification('error', '', '');
-                        }
-                    });
-                });
-
-
-
-                l.stop();
-
-            }
-
-            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
-
                 showNotification('error', '', '');
+                l.stop();
             }
         }
 
 
+
         l.start();
-        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+        var dataArray = JSON.stringify(data);
+        XMLHttpRequestObject.send("param=" + dataArray);
 
 
 
@@ -950,13 +886,13 @@ function addBlackListRule(btn, data)
     return false;
 }
 
-function addBidAdjustmentRule(btn, data)
-{
+
+function editPresetRule(btn, data, indexes){
     var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "/campaign/add-bid-adjustment-rule");
+        XMLHttpRequestObject.open("POST", "/campaign/edit-preset-rule");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -966,34 +902,34 @@ function addBidAdjustmentRule(btn, data)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
-
-
-                $.each(response, function(i, val) {
-                    $.each(val, function(x, obj) {
-
-                        if(obj['error'] != 1){
-                            console.log(obj['message']);
-                            showNotification('success', 'Success', obj['message']);
-                        }else{
-                            console.log(obj['message']);
-                            showNotification('error', '', '');
-                        }
-                    });
-                });
-
-
-
                 l.stop();
 
+                $('#editModal').modal('hide');
+                $('#editPresetName').val('');
+                $('#editAppendRuleSet').empty();
+                showNotification('success', 'Success', 'Preset Successfully Updated');
+                for($a = 0; $a < indexes.length; $a++){
+                    $('#e-row-'+indexes[$a]).remove();
+                    delete $editDataConditions.items[indexes[$a]];
+                }
+
+                var oTable = $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
-               showNotification('error', '', '');
+                showNotification('error', '', '');
+                l.stop();
             }
         }
 
+
+
         l.start();
-        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+        var dataArray = JSON.stringify(data);
+        XMLHttpRequestObject.send("param=" + dataArray);
 
 
 
@@ -1003,13 +939,12 @@ function addBidAdjustmentRule(btn, data)
 }
 
 
-function addIpRule(btn, data)
-{
+function deletePresetRule(btn, data){
     var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "/campaign/add-ip-rule");
+        XMLHttpRequestObject.open("POST", "/campaign/delete-preset-rule");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -1019,43 +954,175 @@ function addIpRule(btn, data)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
-
-
-                $.each(response, function(i, val) {
-                    $.each(val, function(x, obj) {
-
-                        if(obj['error'] != 1){
-                            console.log(obj);
-                            console.log(obj['message']);
-                            showNotification('success', 'Success', obj['message'])
-
-                        }else{
-                            console.log(obj['message']);
-
-                            showNotification('error', '', '')
-                        }
-                    });
-                });
-
-
-
                 l.stop();
 
+                $('#deleteModal').modal('hide');
+                showNotification('success', 'Success', 'Preset Successfully Deleted');
+                var oTable = $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
-                showNotification('error', '', '')
+                showNotification('error', '', '');
+                l.stop();
             }
         }
 
 
 
         l.start();
-        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+        var dataArray = JSON.stringify(data);
+        XMLHttpRequestObject.send("param=" + dataArray);
+
 
 
     }
 
     return false;
 }
+
+
+function getPresetRuleConditions(id)
+{
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/get-campaign-rule-presets");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                $('#appendAppendActiveRules').empty();
+
+                $conditions = '';
+
+                for($z = 0; $z < response.length; $z++){
+
+
+                    $selectedVisits = '';
+                    $selectedConversions = '';
+                    $selectedCost = '';
+                    $selectedCPV = '';
+                    $selectedCTR = '';
+                    $selectedEPV = '';
+                    $selectedROI = '';
+
+                    $selectedGreater = '';
+                    $selectedLess = '';
+                    $selectedBetween = '';
+                    $selectedEqual = '';
+
+                    if(response[$z]['ruleVariable'] == 'visits'){
+                        $selectedVisits = 'selected';
+                    }
+                    else if(response[$z]['ruleVariable'] == 'conversions'){
+                        $selectedConversions = 'selected';
+                    }
+                    else if(response[$z]['ruleVariable'] == 'cost'){
+                        $selectedCost = 'selected';
+                    }
+                    else if(response[$z]['ruleVariable'] == 'cpv'){
+                        $selectedCPV = 'selected';
+                    }
+                    else if(response[$z]['ruleVariable'] == 'ctr'){
+                        $selectedCTR = 'selected';
+                    }
+                    else if(response[$z]['ruleVariable'] == 'epv'){
+                        $selectedEPV = 'selected';
+                    }else{
+                        $selectedROI = 'selected';
+                    }
+
+                    if(response[$z]['ruleCondition'] == 'greaterthan'){
+                        $selectedGreater = 'selected';
+                    }
+                    else if(response[$z]['ruleCondition'] == 'lessthan'){
+                        $selectedLess = 'selected';
+                    }
+                    else if(response[$z]['ruleCondition'] == 'between'){
+                        $selectedBetween = 'selected';
+                    }else if(response[$z]['ruleCondition'] == 'equalto'){
+                        $selectedEqual = 'selected';
+                    }
+
+
+
+
+                    $conditions += '<div class="row presetRow" data-index="'+$z+'" id="row-'+$z+'">' +
+                    '<br>' +
+                    '<div class="col-md-3">' +
+                    '<select id="metric-'+$z+'" class="select2_single form-control metric tabindex="-1" >' +
+                    '<option></option>' +
+                    '<option value="visits" '+ $selectedVisits +'>Visits</option>' +
+                    '<option value="conversions" '+ $selectedConversions +'>Conversion</option>' +
+                    '<option value="cost" '+ $selectedCost +'>Cost</option>' +
+                    '<option value="cpv" '+ $selectedCPV +'>CPV</option>' +
+                    '<option value="ctr" '+ $selectedCTR +'>CTR</option>' +
+                    '<option value="epv" '+ $selectedEPV +'>EPV</option>' +
+                    '<option value="roi" '+ $selectedROI +'>ROI</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '<div class="col-md-3">' +
+                    '<select data-index="'+$z+'" onChange="enableInputValue(this)" id="option-'+$z+'" class="select2_single form-control option tabindex="-1">' +
+                    '<option></option>' +
+                    '<option value="greaterThan" '+ $selectedGreater +'>Greater Than</option>' +
+                    '<option value="lessThan" '+ $selectedLess +'>Less Than</option>' +
+                    '<option value="between" '+ $selectedBetween +'>Between</option>' +
+                    '<option value="equalTo" '+ $selectedEqual +'>Equal To</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                    '<input type="text" class="form-control" id="value1-'+$z+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" value="'+response[$z]['value1']+'">'+
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                    '<input type="text" class="form-control" id="value2-'+$z+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" value="'+response[$z]['value2']+'" disabled>'+
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                    '<button onclick="removeAppend(this)" class="btn red btn-md" data-index-row="'+$z+'" data-index="'+$z+'" data-key="'+$z+'"><i class="fa fa-times"></i> Remove</button">' +
+                    '</div>' +
+                    '</div>'
+
+                    $dataConditions.items.push({
+                        metric: 'metric-'+$z,
+                        option: 'option-'+$z,
+                        value1: 'value1-'+$z,
+                        value2: 'value2-'+$z
+                    });
+
+
+
+
+
+                }
+
+
+                $('#appendRuleSet').append(
+                    $conditions
+                );
+
+                $('#hasConditions').val(1);
+
+
+
+
+            }
+        }
+
+        XMLHttpRequestObject.send("param= "+ id);
+
+
+
+    }
+
+    return false;
+}
+
+
 

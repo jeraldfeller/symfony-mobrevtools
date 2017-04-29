@@ -7,7 +7,12 @@
     <link href="{{ asset('assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/global/plugins/clockface/css/clockface.css') }}" rel="stylesheet" type="text/css" />
-
+    <style>
+        .align-left{
+            text-align: left !important;
+            padding-left: 10px !important;
+        }
+    </style>
 {% endblock %}
 {% block nav %}
     {{ render(controller(
@@ -66,114 +71,155 @@
         <div class="col-lg-12">
             <div class="portlet light">
                 <div class="portlet-title">
-                    <div class="caption font-green-sharp">
-                        <i class="fa fa-book font-green-sharp"></i>
-                        <span class="caption-subject bold uppercase" id="campaignTitleName">Rules</span>
-                    </div>
+                    <button class="btn blue" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus"></i> Add Preset</button>
                 </div>
-                <div class="portlet-body">
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="col-md-2 col-xs-12">
-                                <select id="selectPresetType" class="select2_single form-control" tabindex="-1">
-                                    <option value="presetRule" selected>Preset Rule</option>
-                                    <option value="customRule">Custom Rule</option>
-                                </select>
+
+
+                <div id="addModal" class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel2">Add Preset</h4>
                             </div>
 
-                            <div class="col-md-2 col-xs-12">
-                                <select id="selectPresetRule" class="select2_single form-control" tabindex="-1">
-                                    <option></option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <br>
-                        <div class="col-md-12">
-                            <div class="portlet box blue">
-                                <div class="portlet-title">
-                                    <div class="actions pull-left col-md-2 col-xs-12">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
 
-                                        <select id="selectRuleType" class="select2_single form-control" tabindex="-1">
-                                            <option></option>
-                                            <option value="botRule">Bot Rule</option>
-                                            <option value="blacklistRule">Blacklist Rule</option>
-                                            <option value="whitelist">Whitelist</option>
-                                            <option value="autobid">Autobid</option>
-                                        </select>
-                                    </div>
-                                    <div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                            <input type="text" class="form-control date-picker" placeholder="Start From" id="startFrom">
-                                        </div><!-- input-group -->
+                                        <div class="form-group">
+                                            <div class="col-md-4 col-xs-12">
+                                                <h4>Preset Name</h4>
+                                                <input type="text" class="form-control" id="presetName">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <h4>Conditions</h4>
+                                                <div id="appendRuleSet">
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <a id="addCondition">[ add condition ]</a>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                    </div>
-                                    <div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                                            <input type="text" class="form-control timepicker timepicker-24" placeholder="Time" id="startTime">
-                                        </div><!-- input-group -->
-
-                                    </div>
-                                    <div class="actions pull-left col-md-1 col-xs-12" style="margin-left: 10px;">
-
-                                        <input type="text" class="form-control" id="frequency" placeholder="Frequency" onkeypress="return isNumberKey(event)" value="5">
-
-                                    </div>
-                                    <div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">
-
-                                        <select id="selectFrequencyFormat" class="select2_single form-control" tabindex="-1">
-                                            <option value="minutes">Minutes</option>
-                                            <option value="hours">Hours</option>
-                                        </select>
-
-                                    </div>
-
-                                    <div class="actions pull-left col-md-2 col-xs-12" style="margin-left: 10px;">
-
-                                        <select id="selectLogicalOperator" class="select2_single form-control" tabindex="-1">
-                                            <option></option>
-                                            <option value="and">And</option>
-                                            <option value="or">Or</option>
-                                        </select>
-
-                                    </div>
-
-                                    <div class="actions">
-                                        <button type="button" class="btn btn-circle green btn-sm ladda-button pull-right spinnerBtn" id="addRuleBtn" data-style="expand-right" data-size="s">
-                                                    <span class="ladda-label">
-                                                        <i class="fa fa-plus"></i> Add Rule</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="portlet-body" >
-                                    <div id="appendRuleSet">
-                                    </div>
-                                    <div class="clearfix"></div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <a id="addCondition">[ add condition ]</a>
                                         </div>
                                     </div>
-
                                 </div>
-
                             </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" id="addPresetBtn" class="btn btn-primary spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Save </span></button>
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
 
 
-                <div class="clearfix"></div>
-                <br>
-                <div class="portlet-title">
-                    <div class="caption font-green-sharp">
-                        <i class="fa fa-table font-green-sharp"></i>
-                        <span class="caption-subject bold uppercase">Data Table</span>
+                <div id="editModal" class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel2">Edit Preset</h4>
+                                <input type="hidden" id="lastCount">
+                                <input type="hidden" id="editPresetId">
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+
+                                        <div class="form-group">
+                                            <div class="col-md-4 col-xs-12">
+                                                <h4>Preset Name</h4>
+                                                <input type="text" class="form-control" id="editPresetName">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <h4>Conditions</h4>
+                                                <div id="editAppendRuleSet">
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <a id="editAddCondition">[ add condition ]</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" id="editPresetBtn" class="btn btn-primary spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Save </span></button>
+                            </div>
+
+
+                        </div>
                     </div>
                 </div>
+
+
+                <div class="modal fade" id="editModal" role="basic" aria-hidden="true">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4>Edit <span id="editLanderNameDisplay"></span></h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row" id="displayEditLander">
+
+                                </div>
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn dark btn-outline" data-dismiss="modal">Close</button>
+                                <button type="button" id="updateLander"  class="btn blue ladda-button spinnerBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span>
+                                </button>
+                                <h2 class="modal-title" id="modalDeleteTitle"><i class="fa fa-warning"></i> Warning</h2>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <p>Are you sure do you want to delete <b><span id="deletePresetName"></span>?</b></p>
+                                        <input type="hidden" id="deletePresetId" class="form-control col-lg-12 col-md-12 col-sm-12">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" id="deletePresetBtn" class="btn btn-primary spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Delete </span></button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
                 <div class="portlet-body">
                     <div class="row">
                         <!-- Placement Table -->
@@ -181,25 +227,8 @@
                             <table class="table table-striped table-bordered table-hover dt-responsive table-checkable order-column table-header-fixed" width="100%" id="datatable-responsive">
                                 <thead>
                                 <tr>
-                                    <th>
-                                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                            <input type="checkbox" class="group-checkable" data-set="#datatable-responsive .checkboxes" />
-                                            <span></span>
-                                        </label>
-                                    </th>
-                                    <th>Type</th>
-                                    <th>Placements</th>
-                                    <th>Visits</th>
-                                    <th>Clicks</th>
-                                    <th>CTR</th>
-                                    <th>Conversions</th>
-                                    <th>Revenue</th>
-                                    <th>Cost</th>
-                                    <th>Profit</th>
-                                    <th>CPV</th>
-                                    <th>EPV</th>
-                                    <th>ROI</th>
-                                    <th>Status</th>
+                                    <th>Preset Name</th>
+                                    <th>Action</th>
 
                                 </tr>
                                 </thead>
@@ -416,258 +445,25 @@
                     },
                     "bProcessing": true,
                     "bServerSide": true,
-                    "fnServerData": function (sSource, aoData, fnCallback) {
-                        /* Add some extra data to the sender */
-                        aoData.push({"name": "type", "value": $('#filterByType').val()});
-                        aoData.push({"name": "id", "value": $('#id').val()});
-                        $.getJSON(sSource, aoData, function (json) {
-                            /* Do whatever additional processing you want on the callback, then tell DataTables */
-                            fnCallback(json)
-                        });
-                    },
-                    "sAjaxSource": "/ajax/get-placement-list/{{ tid }}",
-
+                    "sAjaxSource": "/ajax/get-rule-presets",
                     responsive: {
                         details: {
 
                         }
                     },
-                    "iDisplayLength": 50,
+                    "iDisplayLength": 20,
                     "lengthMenu": [
-                        [50, 200, 500, 1000, -1],
-                        [50, 200, 500, 1000, "All"] // change per page values here
+                        [20, 500, 1000, -1],
+                        [20, 500, 1000, "All"] // change per page values here
                     ],
+                    "order": [[ 0, "asc" ]],
                     "columnDefs": [
-                        {  // set default column settings
-                            'orderable': false,
-                            'targets': [0]
-                        },
-                        {
-                            "searchable": false,
-                            "targets": [0]
-                        },
-                        {
-                            "className": "dt-right"
-                            //"targets": [2]
-                        }
-                    ],
-                    "order": [[3, "desc"]],
-                    select: {
-                        style: 'os',
-                        selector: 'td:first-child'
-                    },
-                    //dom: '<"wrapper"lBfrtip>',
-                    //dom: '<lB<frt>ip>',
-                    "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
-                    buttons: [
-                        {
-                            className: 'btn dark btn-outline',
-                            text: '<i class="fa fa-refresh"></i> Refresh Table',
-                            header: false,
-                            action: function ( e, dt, node, config ) {
-                                oTable.ajax.reload();
-                            }
-                        },
-                        {
-                            className: 'btn blue btn-outline ',
-                            text: '<i class="fa fa-save"></i> Save Data',
-                            header: false,
-                            action: function ( e, dt, node, config ) {
-                                var data = {items:[]};
-                                $('input:checkbox.report-record').each(function () {
-
-
-                                    if($(this).is(':checked') == true){
-                                        var id = (this.checked ? $(this).data('id') : "");
-                                        data.items.push({id: id});
-                                    }
-
-
-                                });
-
-                                console.log(data);
-                                saveData(data);
-                            }
-                        },
-                        {
-                            className: 'btn red btn-outline',
-                            text: '<i class="fa fa-trash"></i> Delete Data',
-                            header: false,
-                            action: function ( e, dt, node, config ) {
-                                var data = {items:[]};
-                                $('input:checkbox.report-record').each(function () {
-
-
-                                    if($(this).is(':checked') == true){
-                                        var id = (this.checked ? $(this).data('id') : "");
-                                        data.items.push({id: id});
-                                    }
-
-
-                                });
-
-                                console.log(data);
-                                deleteData(data);
-                            }
-                        },
-                        {
-                            extend: 'copyHtml5',
-                            className: 'btn green btn-outline',
-                            text: '<i class="fa fa-copy"></i> Copy to Clipboard',
-                            header: false,
-                            exportOptions: {
-                                columns: [2]
-                            }
-                        },
+                        {"width": "85%", "targets": 0},
+                        {className: "align-left", "targets": 0}
                     ]
-
-
-                });
-
-                table.find('.group-checkable').change(function () {
-                    var set = jQuery(this).attr("data-set");
-                    var checked = jQuery(this).is(":checked");
-                    jQuery(set).each(function () {
-                        if (checked) {
-                            $(this).prop("checked", true);
-                            $(this).parents('tr').addClass("active");
-                        } else {
-                            $(this).prop("checked", false);
-                            $(this).parents('tr').removeClass("active");
-                        }
-                    });
-                });
-
-                table.on('change', 'tbody tr .checkboxes', function () {
-                    $(this).parents('tr').toggleClass("active");
                 });
 
 
-                $('#datatable-responsive').checkboxes('range', true);
-
-                $('#filterBtn').click(function () {
-                    var l = Ladda.create($(this)[0]);
-                    l.start();
-
-                    oTable.ajax.reload(function () {
-                        l.stop();
-                    });
-                });
-
-                $('#filterByType').change(function(){
-                    oTable.ajax.reload();
-                });
-
-
-                /**
-                 * Get Campaigns
-                 */
-                if($('#checkboxShowCampaigns').is(':checked') == true){
-                    $getCampaignData = {
-                        days: 30,
-                        trafficSourceName: '{{ trafficSourceName }}',
-                        trafficSourceId: '{{ trafficSourceId }}'
-
-                    }
-                }else{
-                    $getCampaignData = {
-                        days: 3,
-                        trafficSourceName: '{{ trafficSourceName }}',
-                        trafficSourceId: '{{ trafficSourceId }}'
-                    }
-                }
-
-                apiGetCampaign($getCampaignData);
-
-
-                /**
-                 * Add/Remove Vertical
-                 */
-
-                $('#addVerticalBtn').tooltip({title: "<div class='row'><div class='col-lg-12'>Vertical<br><input class='form-control' type='text' id='vertical-value'/><br><hr><a onClick='insertVertical(this)' id='save_vertical' class='btn btn-info btn-xs spinnerBtn ladda-button' data-style='expand-right' data-size='s' ><span class='ladda-label'>Add</span></a><br><br></div></div>", html: true, placement: "top", trigger: "click"});
-                $('#addVerticalBtn').on('click', function(){
-                    $('#vertical-value').focus();});
-
-                $('#removeVerticalBtn').tooltip({title: "<div style='width: 150px;' class='row'>" +
-                "<div class='col-lg-12'>Select vertical" +
-                "<br>" +
-                "<select id='selectRemoveVertical' class='form-control'>" +
-                "</select>" +
-                "<br><hr><a onClick='removeVertical(this)' id='remove_vertical' class='btn btn-info btn-xs spinnerBtn ladda-button' data-style='expand-right' data-size='s'  data-style='expand-right' data-size='s'>Remove</a>" +
-                "<br><br></div></div>", html: true, placement: "top", trigger: "click"});
-
-                $('#removeVerticalBtn').on('click', function(){
-                    getVerticals();
-                });
-
-
-                /**
-                 * Select Campaign On Change
-                 */
-
-                $('#selectCampaign').on('change', function(){
-                    var geo = $('#selectCampaign option:selected').data('geo');
-                    var selCamp = encodeURIComponent($('#selectCampaign').val());
-                    var geoCamp = $('#campGeo').val
-                    $('#campGeo').val(geo);
-
-                    getCampaignMatch(selCamp);
-
-
-
-                    if(selCamp != '' && geoCamp != ''){
-                        $('#addCampaignBtn').attr('disabled', false);
-                    }
-
-                });
-
-                /**
-                 * Show all campaigns on change
-                 */
-                $('#checkboxShowCampaigns').on('change', function(){
-                    if($('#checkboxShowCampaigns').is(':checked') == true){
-                        $getCampaignData = {
-                            days: 30,
-                            trafficSourceName: '{{ trafficSourceName }}',
-                            trafficSourceId: '{{ trafficSourceId }}'
-
-                        }
-                    }else{
-                        $getCampaignData = {
-                            days: 3,
-                            trafficSourceName: '{{ trafficSourceName }}',
-                            trafficSourceId: '{{ trafficSourceId }}'
-                        }
-                    }
-
-                    apiGetCampaign($getCampaignData);
-                });
-
-
-                /**
-                 * Adding Campaign
-                 */
-
-                $('#addCampaignBtn').click(function(){
-                    $btn = $(this)[0];
-                    $campaignName = $('#selectCampaign option:selected').data('campname');
-                    $campaignId = $('#selectCampaign option:selected').data('campid');
-                    $voluumId = $('#selectCampaign option:selected').data('voluumid');
-                    $verticalId = $('#selectAddVertical').val();
-                    $geo = $('#selectCampaign option:selected').data('geo');
-                    $addCampaignData = {
-                        trafficSourceId: '{{ tid }}',
-                        campaignName: $campaignName,
-                        campaignId: encodeURIComponent($campaignId),
-                        voluumId: encodeURIComponent($voluumId),
-                        verticalId: $verticalId,
-                        geo: $geo
-                    }
-
-                    $selCamp = encodeURIComponent($('#selectCampaign').val());
-                    addCampaign($btn, $addCampaignData, $selCamp);
-
-                });
 
                 /**
                  * Adding Rule
@@ -744,28 +540,116 @@
                 });
 
 
+                $e = $('#lastCount').val();
+                $editDataConditions = {
+                    items:[]
+                };
+
+                $('#editAddCondition').click(function(){
+
+                    $('#editAppendRuleSet').append(
+                            '<div class="row" id="e-row-'+$e+'">' +
+                            '<br>' +
+                            '<div class="col-md-3">' +
+                            '<select id="e-metric-'+$e+'" class="select2_single form-control metric" tabindex="-1">' +
+                            '<option></option>' +
+                            '<option value="visits">Visits</option>' +
+                            '<option value="conversions">Conversion</option>' +
+                            '<option value="cost">Cost</option>' +
+                            '<option value="cpv">CPV</option>' +
+                            '<option value="ctr">CTR</option>' +
+                            '<option value="epv">EPV</option>' +
+                            '<option value="roi">ROI</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="col-md-3">' +
+                            '<select data-index="' +$i+ '" onChange="enableEditInputValue(this)" id="e-option-'+$e+'" class="select2_single form-control option" tabindex="-1">' +
+                            '<option></option>' +
+                            '<option value="greaterThan">Greater Than</option>' +
+                            '<option value="lessThan">Less Than</option>' +
+                            '<option value="between">Between</option>' +
+                            '<option value="equalTo">Equal To</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<input type="text" class="form-control" id="e-value1-'+$e+'" placeholder="Enter Value" onkeypress="isNumberKey(event)">'+
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<input type="text" class="form-control" id="e-value2-'+$e+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" disabled>'+
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<button class="btn red btn-md" data-index="'+$e+'" onclick="removeEditAppend(this)"><i class="fa fa-times"></i> Remove</button">' +
+                            '</div>' +
+                            '</div>'
+
+                    );
+
+                    $editDataConditions.items.push({
+                        metric: 'e-metric-'+$e,
+                        option: 'e-option-'+$e,
+                        value1: 'e-value1-'+$e,
+                        value2: 'e-value2-'+$e
+                    });
+
+                    $e++;
+
+
+                    $(".metric").select2({
+                        allowClear: true,
+                        placeholder: 'Select Metric',
+                        width: null
+                    });
+
+                    $(".option").select2({
+                        allowClear: true,
+                        placeholder: 'Select Option',
+                        width: null
+                    });
 
 
 
+                });
 
-
-
-                $('#addRuleBtn').click(function(){
+                $('#editPresetBtn').click(function(){
                     $btn = $(this)[0];
-                    if($('#selectFrequencyFormat').val() == 'hours'){
-                        $frequency = parseInt($('#frequency').val()) * 3600;
-                    }else{
-                        $frequency = parseInt($('#frequency').val()) * 60;
-                    }
-                    $data = {
-                        ruleType: $('#selectRuleType').val(),
-                        startFrom: $('#startFrom').val(),
-                        startTime: $('#startTime').val(),
-                        frequency: $frequency,
-                        logicalOperator: $('#selectLogicalOperator').val(),
-                        cid: $('#id').val(),
+                    $editData = {
+                        id: $('#editPresetId').val(),
+                        presetName: $('#editPresetName').val(),
                         conditions: []
-                    }
+                    };
+                    $indexes = [];
+                    $.each($editDataConditions.items, function(i, val) {
+                        if (typeof val != 'undefined') {
+                            $editData.conditions.push({
+                                metric: $('#' + val['metric']).val(),
+                                option: $('#' + val['option']).val(),
+                                value1: $('#' + val['value1']).val(),
+                                value2: $('#' + val['value2']).val()
+                            });
+                            $indexes.push(i);
+                        }
+                    });
+
+                    editPresetRule($btn, $editData, $indexes);
+                });
+
+                $('#deletePresetBtn').click(function(){
+                    $btn = $(this)[0];
+                    $deleteData = {
+                        id: $('#deletePresetId').val()
+                    };
+
+
+                    deletePresetRule($btn, $deleteData);
+                });
+
+
+                $('#addPresetBtn').click(function(){
+                    $btn = $(this)[0];
+                    $data = {
+                        presetName: $('#presetName').val(),
+                        conditions: []
+                    };
                     $indexes = [];
                     $.each($dataConditions.items, function(i, val) {
                         if (typeof val != 'undefined') {
@@ -778,28 +662,8 @@
                             $indexes.push(i);
                         }
                     });
-                    $selCamp = encodeURIComponent($('#selectCampaign').val());
-                    addRule($btn, $data, $selCamp, $indexes);
-
-
-
-
+                    addPresetRule($btn, $data, $indexes);
                 });
-
-
-
-                /**
-                 * Deleting Rule
-                 */
-                $('#deleteRuleBtnSubmit').on('click', function(){
-                    $btn = $(this)[0];
-                    $id = $('#campaignRuleIdDelete').val();
-                    $selCamp = encodeURIComponent($('#selectCampaign').val());
-
-                    deleteCampaignRule($btn, $id, $selCamp);
-                });
-
-
             });
         }
 
@@ -838,12 +702,32 @@
 
         }
 
+        // enable/disable input value
+        function enableEditInputValue(elem){
+            var index = elem.getAttribute('data-index');
+            var option = elem.value;
+
+            if(option == 'between'){
+                $('#e-value2-'+index).attr('disabled', false);
+            }else{
+                $('#e-value2-'+index).attr('disabled', true);
+            }
+
+
+        }
+
         // remove append
 
         function removeAppend(elem){
             var index = elem.getAttribute('data-index');
             $('#row-'+index).remove();
             delete $dataConditions.items[index];
+        }
+
+        function removeEditAppend(elem){
+            var index = elem.getAttribute('data-index');
+            $('#e-row-'+index).remove();
+            delete $editDataConditions.items[index];
         }
 
         function removeActiveAppend(elem){
@@ -1003,6 +887,139 @@
         function pushDataDelete(elem){
             var id = elem.getAttribute('data-id');
             $('#campaignRuleIdDelete').val(id);
+        }
+
+
+        function pushData(elem){
+
+            $editDataConditions = {items:[]};
+            var id = elem.getAttribute('data-id');
+            var action = elem.getAttribute('data-action');
+            var name = elem.getAttribute('data-name');
+            var conditions = $.parseJSON(elem.getAttribute('data-conditions'));
+
+            if(action = 'delete'){
+                $('#deletePresetId').val(id);
+                $('#deletePresetName').html(name);
+            }
+            else{
+                $('#editAppendRuleSet').empty();
+                $('#editPresetName').val(name);
+                $('#editPresetId').val(id);
+                $('#lastCount').val(conditions.length);
+                for($e = 0; $e < conditions.length; $e++){
+
+                    $selectedVisits = '';
+                    $selectedConversions = '';
+                    $selectedCost = '';
+                    $selectedCPV = '';
+                    $selectedCTR = '';
+                    $selectedEPV = '';
+                    $selectedROI = '';
+
+                    $selectedGreater = '';
+                    $selectedLess = '';
+                    $selectedBetween = '';
+                    $selectedEqual = '';
+
+                    if(conditions[$e]['ruleVariable'] == 'visits'){
+                        $selectedVisits = 'selected';
+                    }
+                    else if(conditions[$e]['ruleVariable'] == 'conversions'){
+                        $selectedConversions = 'selected';
+                    }
+                    else if(conditions[$e]['ruleVariable'] == 'cost'){
+                        $selectedCost = 'selected';
+                    }
+                    else if(conditions[$e]['ruleVariable'] == 'cpv'){
+                        $selectedCPV = 'selected';
+                    }
+                    else if(conditions[$e]['ruleVariable'] == 'ctr'){
+                        $selectedCTR = 'selected';
+                    }
+                    else if(conditions[$e]['ruleVariable'] == 'epv'){
+                        $selectedEPV = 'selected';
+                    }else{
+                        $selectedROI = 'selected';
+                    }
+
+                    if(conditions[$e]['ruleCondition'] == 'greaterthan'){
+                        $selectedGreater = 'selected';
+                    }
+                    else if(conditions[$e]['ruleCondition'] == 'lessthan'){
+                        $selectedLess = 'selected';
+                    }
+                    else if(conditions[$e]['ruleCondition'] == 'between'){
+                        $selectedBetween = 'selected';
+                    }else if(conditions[$e]['ruleCondition'] == 'equalto'){
+                        $selectedEqual = 'selected';
+                    }
+
+
+                    $('#editAppendRuleSet').append(
+                            '<div class="row" id="e-row-'+$e+'">' +
+                            '<br>' +
+                            '<div class="col-md-3">' +
+                            '<select id="e-metric-'+$e+'" class="select2_single form-control metric" tabindex="-1">' +
+                            '<option></option>' +
+                            '<option value="visits" '+ $selectedVisits +'>Visits</option>' +
+                            '<option value="conversions" '+ $selectedConversions +'>Conversion</option>' +
+                            '<option value="cost" '+ $selectedCost +'>Cost</option>' +
+                            '<option value="cpv" '+ $selectedCPV +'>CPV</option>' +
+                            '<option value="ctr" '+ $selectedCTR +'>CTR</option>' +
+                            '<option value="epv" '+ $selectedEPV +'>EPV</option>' +
+                            '<option value="roi" '+ $selectedROI +'>ROI</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="col-md-3">' +
+                            '<select data-index="' +$e+ '" onChange="enableEditInputValue(this)" id="e-option-'+$e+'" class="select2_single form-control option" tabindex="-1">' +
+                            '<option></option>' +
+                            '<option value="greaterThan" '+ $selectedGreater +'>Greater Than</option>' +
+                            '<option value="lessThan" '+ $selectedLess +'>Less Than</option>' +
+                            '<option value="between" '+ $selectedBetween +'>Between</option>' +
+                            '<option value="equalTo" '+ $selectedEqual +'>Equal To</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<input type="text" class="form-control" id="e-value1-'+$e+'" placeholder="Enter Value" value="' + conditions[$e]['value1'] + '" onkeypress="isNumberKey(event)">'+
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<input type="text" class="form-control" id="e-value2-'+$e+'" placeholder="Enter Value" value="' + conditions[$e]['value2'] + '" onkeypress="isNumberKey(event)" disabled>'+
+                            '</div>' +
+                            '<div class="col-md-2">' +
+                            '<button class="btn red btn-md" data-index="'+$e+'" onclick="removeEditAppend(this)"><i class="fa fa-times"></i> Remove</button">' +
+                            '</div>' +
+                            '</div>'
+
+                    );
+
+                    $editDataConditions.items.push({
+                        metric: 'e-metric-'+$e,
+                        option: 'e-option-'+$e,
+                        value1: 'e-value1-'+$e,
+                        value2: 'e-value2-'+$e
+                    });
+
+                    $i++;
+
+
+                    $(".metric").select2({
+                        allowClear: true,
+                        placeholder: 'Select Metric',
+                        width: null
+                    });
+
+                    $(".option").select2({
+                        allowClear: true,
+                        placeholder: 'Select Option',
+                        width: null
+                    });
+
+                    console.log($editDataConditions);
+
+                }
+
+            }
         }
 
 

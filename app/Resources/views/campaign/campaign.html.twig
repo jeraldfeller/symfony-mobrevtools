@@ -195,16 +195,20 @@
                         <div class="form-group">
                             <div class="col-md-2 col-xs-12">
                                 <select id="selectPresetType" class="select2_single form-control" tabindex="-1">
-                                    <option value="presetRule" selected>Preset Rule</option>
-                                    <option value="customRule">Custom Rule</option>
+                                    <option value="preset" selected>Preset Rule</option>
+                                    <option value="custom">Custom Rule</option>
                                 </select>
                             </div>
 
                             <div class="col-md-2 col-xs-12">
                                 <select id="selectPresetRule" class="select2_single form-control" tabindex="-1">
                                     <option></option>
+                                    {% for preset in presets %}
+                                        <option value="{{ preset.id }}">{{ preset.presetName }}</option>
+                                    {% endfor  %}
                                 </select>
                             </div>
+                            <input type="hidden" id="hasConditions">
                         </div>
                         <div class="clearfix"></div>
                         <br>
@@ -273,7 +277,7 @@
                                     <br>
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <a id="addCondition">[ add condition ]</a>
+                                            <a id="addCondition" style="display: none;">[ add condition ]</a>
                                         </div>
                                     </div>
 
@@ -688,19 +692,35 @@
 
                 $('#datatable-responsive').checkboxes('range', true);
 
-                $('#filterBtn').click(function () {
-                    var l = Ladda.create($(this)[0]);
-                    l.start();
 
-                    oTable.ajax.reload(function () {
-                        l.stop();
-                    });
+                $('#selectPresetType').change(function(){
+                    if($(this).val() == 'preset'){
+                        $('#addCondition').css('display', 'none');
+                    }else{
+                        $('#addCondition').css('display', 'inline');
+                        if($('#hasConditions').val() == 1){
+                            $('.presetRow').each(function(i, obj) {
+                                $ind = $(this).data('index')
+                                delete $dataConditions.items[$ind];
+                                $(this).remove();
+                            });
+                        }
+                        $('#selectPresetRule').val('').trigger('change')
+                    }
                 });
 
-                $('#filterByType').change(function(){
-                    oTable.ajax.reload();
+                $('#selectPresetRule').change(function(){
+                    if($('#selectPresetType').val() == 'preset'){
+                        if($('#hasConditions').val() == 1){
+                            $('.presetRow').each(function(i, obj) {
+                                $ind = $(this).data('index')
+                                delete $dataConditions.items[$ind];
+                                $(this).remove();
+                            });
+                        }
+                        getPresetRuleConditions($('#selectPresetRule').val());
+                    }
                 });
-
 
                 /**
                  * Get Campaigns
@@ -921,6 +941,7 @@
                             $indexes.push(i);
                         }
                     });
+
                     $selCamp = encodeURIComponent($('#selectCampaign').val());
                     addRule($btn, $data, $selCamp, $indexes);
 

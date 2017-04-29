@@ -199,11 +199,26 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addCampaignAction',  '_route' => 'addCampaign',);
                 }
 
-                // addRule
-                if ($pathinfo === '/campaign/add-rule') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addRuleAction',  '_route' => 'addRule',);
+                // addPresetRule
+                if ($pathinfo === '/campaign/add-preset-rule') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addPresetRuleAction',  '_route' => 'addPresetRule',);
                 }
 
+            }
+
+            // editPresetRule
+            if ($pathinfo === '/campaign/edit-preset-rule') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::editPresetRuleAction',  '_route' => 'editPresetRule',);
+            }
+
+            // deletePresetRule
+            if ($pathinfo === '/campaign/delete-preset-rule') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deletePresetRuleAction',  '_route' => 'deletePresetRule',);
+            }
+
+            // addRule
+            if ($pathinfo === '/campaign/add-rule') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addRuleAction',  '_route' => 'addRule',);
             }
 
             if (0 === strpos($pathinfo, '/campaign/update-')) {
@@ -264,13 +279,26 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        // app_campaign_ajaxgetreportsbot
-        if (0 === strpos($pathinfo, '/ajax/get-placement-list') && preg_match('#^/ajax/get\\-placement\\-list(?:/(?P<trafficSourceId>[^/]++))?$#s', $pathinfo, $matches)) {
-            return $this->mergeDefaults(array_replace($matches, array('_route' => 'app_campaign_ajaxgetreportsbot')), array (  'trafficSourceId' => NULL,  '_controller' => 'AppBundle\\Controller\\CampaignController::ajaxGetReportsBot',));
+        if (0 === strpos($pathinfo, '/ajax/get-')) {
+            // app_campaign_ajaxgetreportsbot
+            if (0 === strpos($pathinfo, '/ajax/get-placement-list') && preg_match('#^/ajax/get\\-placement\\-list(?:/(?P<trafficSourceId>[^/]++))?$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'app_campaign_ajaxgetreportsbot')), array (  'trafficSourceId' => NULL,  '_controller' => 'AppBundle\\Controller\\CampaignController::ajaxGetReportsBot',));
+            }
+
+            // app_campaign_ajaxgetrulepresets
+            if ($pathinfo === '/ajax/get-rule-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::ajaxGetRulePresets',  '_route' => 'app_campaign_ajaxgetrulepresets',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/c')) {
             if (0 === strpos($pathinfo, '/campaign')) {
+                // app_campaign_getcampaignrulepresets
+                if ($pathinfo === '/campaign/get-campaign-rule-presets') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignRulePresets',  '_route' => 'app_campaign_getcampaignrulepresets',);
+                }
+
                 // deleteCampaignGroup
                 if ($pathinfo === '/campaign/delete-campaign-group') {
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteCampaignGroup',  '_route' => 'deleteCampaignGroup',);
@@ -778,9 +806,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        // getApiAccessByTraffic
-        if ($pathinfo === '/settings/get-api-access-by-traffic/{$traffic}') {
-            return array (  'traffic' => NULL,  '_controller' => 'AppBundle\\Controller\\SettingsController::getApiAccessByTrafficAction',  '_route' => 'getApiAccessByTraffic',);
+        if (0 === strpos($pathinfo, '/settings')) {
+            // getApiAccessByTraffic
+            if ($pathinfo === '/settings/get-api-access-by-traffic/{$traffic}') {
+                return array (  'traffic' => NULL,  '_controller' => 'AppBundle\\Controller\\SettingsController::getApiAccessByTrafficAction',  '_route' => 'getApiAccessByTraffic',);
+            }
+
+            // app_settings_presetsrules
+            if ($pathinfo === '/settings/presets-rules') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::presetsRulesAction',  '_route' => 'app_settings_presetsrules',);
+            }
+
         }
 
         // app_settings_showpresetssettings

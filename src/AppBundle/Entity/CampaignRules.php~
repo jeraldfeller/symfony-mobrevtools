@@ -254,4 +254,33 @@ class CampaignRules
     {
         return $this->datetimeunix;
     }
+    /**
+     * @var string
+     */
+    private $dateTime;
+
+
+    /**
+     * Set dateTime
+     *
+     * @param string $dateTime
+     *
+     * @return CampaignRules
+     */
+    public function setDateTime($dateTime)
+    {
+        $this->dateTime = $dateTime;
+
+        return $this;
+    }
+
+    /**
+     * Get dateTime
+     *
+     * @return string
+     */
+    public function getDateTime()
+    {
+        return $this->dateTime;
+    }
 }

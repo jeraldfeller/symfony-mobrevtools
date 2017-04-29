@@ -89,6 +89,8 @@ class SettingsController extends Controller {
     }
 
 
+
+
     /**
      * @Route("/ajax/get-traffic-source")
      */
@@ -460,6 +462,23 @@ class SettingsController extends Controller {
             'trafficSource' => $api[0]->getTrafficSource(),
             'username' => $api[0]->getUsername(),
             'password' => $api[0]->getPassword());
+
+    }
+
+
+    /**
+     * @Route("/settings/presets-rules")
+     */
+    public function presetsRulesAction(){
+
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            return $this->render(
+                'settings/presets-rules.html.twig', array('page' => 'Presets Rules')
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
 
     }
 
