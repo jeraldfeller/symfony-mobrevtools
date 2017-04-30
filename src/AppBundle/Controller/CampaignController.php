@@ -703,9 +703,7 @@ class CampaignController extends Controller
 
             $dateFrom = date('d/m/Y', strtotime('-'.$data['days'].' days'));
             $dateTo = date('d/m/Y');
-            foreach($campaigns as $x){
-                $campaignExists[] = $x['campId'];
-            }
+
 
             $query = array('interval' => 'CUSTOM',
                 'startDate' => $dateFrom,
@@ -721,20 +719,7 @@ class CampaignController extends Controller
                 'method' => 0,
                 'token' => $zeroParkToken))->getContent(), true);
 
-        }else if($trafficSourceName == 'ExoClick'){
-            $campaignExistsExoClick = array();
-            $url = 'https://api.exoclick.com/v1/campaigns';
-            $params = array();
-            $apiResponse = json_decode($this->forward('AppBundle:ExoClickApi:exoClickGetCampaigns', array(
-                'token' => $exoClickToken))->getContent(), true);
-            foreach($campaigns as $x){
-                $campaignExists[] = $x['vid'];
-                $campaignExistsExoClick[] = $x['campId'];
-            }
-
-
         }
-
 
 
         $output = '';
@@ -754,90 +739,6 @@ class CampaignController extends Controller
 
                 }
             }
-
-        }else if($trafficSourceName == 'ExoClick'){
-            $exoClick = $this->getTrafficSourceByName('ExoClick');
-            $from = date('Y-m-d', strtotime('-' . $data['days']. ' days'));
-            $to = date('Y-m-d', strtotime('+1 days'));
-            $tz = 'America/Chicago';
-            $sort = 'visit';
-            $direction = 'desc';
-            $limit = 1000;
-
-            $query = array('from' => $from,
-                'to' => $to,
-                'tz' => $tz,
-                'sort' => $sort,
-                'direction' => $direction,
-                'columns' => 'campaignName',
-                'columns' => 'campaignId',
-                'columns' => 'status',
-                'columns' => 'cpv',
-                'columns' => 'ctr',
-                'columns' => 'cr',
-                'columns' => 'cv',
-                'columns' => 'roi',
-                'columns' => 'epv',
-                'columns' => 'epc',
-                'columns' => 'ap',
-                'columns' => 'errors',
-                'groupBy' => 'campaign',
-                'offset' => 0,
-                'limit' => $limit,
-                'include' => 'traffic',
-                'filter1' => 'traffic-source',
-                'filter1Value' => $exoClick[0]->getTrafficSourceId()
-            );
-            $url = 'https://portal.voluum.com/report?';
-
-
-
-            $voluumCampaignToMatchGetCampid = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-                'query' => $query,
-                'method' => 'GET',
-                'sessionId' => $voluumSessionId))->getContent(), true);
-            $noExists = 1;
-
-            if(!isset($voluumCampaignToMatchGetCampid['error'])){
-                $i = 0;
-                foreach($voluumCampaignToMatchGetCampid['rows'] as $voluumRow){
-                    if($voluumRow['visits'] > 0){
-                        if(!in_array($voluumRow['campaignId'], $campaignExists )){
-                            $geo = (isset($voluumRow['geo']) ? $voluumRow['geo'] : 'N/A');
-                            if($geo == 'N/A'){
-                                $geoCode = json_decode($this->forward('AppBundle:Common:getGeoCodeByCountry', array('country' => $voluumRow['campaignCountry']))->getContent(), true);
-                                if($geoCode == false){
-                                    $geoCode = 'N/A';
-                                }
-                            }else{
-                                $geoCode = $geo;
-                            }
-
-
-                            foreach($apiResponse as $row){
-                                if($row['status'] != -1){
-                                    if(!in_array($row['id'], $campaignExistsExoClick )){
-                                        if($voluumRow['campaignNamePostfix'] == $row['name']){
-                                            $output .= '<option value="' . $voluumRow['campaignId'] . '" data-campid="' . $row['id'] . '" data-voluumid="' . $voluumRow['campaignId'] . '" data-campname="' .  $voluumRow['campaignName'] . '" data-geo="' . $geoCode . '">' . $voluumRow['campaignName'] . '</option>';
-                                        }
-
-                                    }
-                                }
-
-
-                            }
-                            $disable = '';
-                            $noExists = 0;
-                            $i++;
-                        }else{
-                            $noExists = 1;
-
-                        }
-                    }
-
-                }
-            }
-
 
         }else{
 
@@ -923,6 +824,30 @@ class CampaignController extends Controller
 
         return new Response($output);
 
+
+    }
+
+    /**
+     * @Route("/campaign/get-api-exoclick-campaigns", name="campaignGetApiExoclickCampaigns")
+     */
+    public function getApiExoClickCampaigns(){
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $exoClickToken = $apiCredentials[0]['exoclick'];
+
+        $url = 'https://api.exoclick.com/v1/campaigns';
+        $params = array();
+        $apiResponse = json_decode($this->forward('AppBundle:ExoClickApi:exoClickGetCampaigns', array('token' => $exoClickToken))->getContent(), true);
+        $output = '';
+        foreach($apiResponse as $row){
+            if($row['status'] != -1){
+                $output .= '<option value="' . $row['id'] . '" data-campid="' . $row['id'] . '">' . $row['name'] . '</option>';
+            }
+
+
+        }
+
+
+        return new Response($output);
 
     }
 

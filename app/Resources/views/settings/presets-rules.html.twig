@@ -898,7 +898,7 @@
             var name = elem.getAttribute('data-name');
             var conditions = $.parseJSON(elem.getAttribute('data-conditions'));
 
-            if(action = 'delete'){
+            if(action == 'delete'){
                 $('#deletePresetId').val(id);
                 $('#deletePresetName').html(name);
             }

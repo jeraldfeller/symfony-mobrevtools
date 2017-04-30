@@ -132,8 +132,12 @@
 
                         <div class="row">
                             <div class="form-group">
-                                <div class="col-md-3 col-xs-12">
-
+                                {% if trafficSourceName == 'ExoClick' %}
+                                    {% set divClass = 'col-md-2' %}
+                                    {% else %}
+                                        {% set divClass = 'col-md-3' %}
+                                {% endif %}
+                                <div class="{{ divClass }} col-xs-12">
                                     <select id="selectCampaign" class="select2_single form-control" tabindex="-1" name="campaign">
                                         <option></option>
                                         {% for campaign in campaigns %}
@@ -141,6 +145,14 @@
                                         {% endfor  %}
                                     </select>
                                 </div>
+                                {% if trafficSourceName == 'ExoClick' %}
+                                <div class="{{ divClass }} col-xs-12">
+
+                                    <select id="selectExoClickCampaign" class="select2_single form-control" tabindex="-1" name="campaign">
+                                        <option value="1">-- none --</option>
+                                    </select>
+                                </div>
+                                {% endif %}
                                 <div class="col-md-3 col-xs-12">
                                     <div class="input-group">
                                         <select id="selectAddVertical" class="select2" tabindex="-1">
@@ -392,6 +404,12 @@
                 $.fn.select2.defaults.set("theme", "bootstrap");
 
                 $("#selectCampaign").select2({
+                    allowClear: true,
+                    placeholder: 'Select Campaign',
+                    width: null
+                });
+
+                $("#selectExoClickCampaign").select2({
                     allowClear: true,
                     placeholder: 'Select Campaign',
                     width: null
@@ -740,7 +758,7 @@
                     }
                 }
 
-                apiGetCampaign($getCampaignData);
+                apiGetCampaign($getCampaignData, '{{ trafficSourceName }}');
 
 
                 /**
@@ -803,7 +821,7 @@
                         }
                     }
 
-                    apiGetCampaign($getCampaignData);
+                    apiGetCampaign($getCampaignData, '{{ trafficSourceName }}');
                 });
 
 
@@ -813,8 +831,14 @@
 
                 $('#addCampaignBtn').click(function(){
                     $btn = $(this)[0];
+                    {% if trafficSourceName == 'ExoClick' %}
+                        $campaignId = $('#selectExoClickCAmpaign').val();
+                        {% else %}
+                        $campaignId = $('#selectCampaign option:selected').data('campid');
+                    {% endif %}
+
                     $campaignName = $('#selectCampaign option:selected').data('campname');
-                    $campaignId = $('#selectCampaign option:selected').data('campid');
+
                     $voluumId = $('#selectCampaign option:selected').data('voluumid');
                     $verticalId = $('#selectAddVertical').val();
                     $geo = $('#selectCampaign option:selected').data('geo');

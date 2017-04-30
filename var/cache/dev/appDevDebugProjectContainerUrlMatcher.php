@@ -186,9 +186,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getGroupCampaignMatch',  '_route' => 'getCampaignMatch',);
                 }
 
-                // campaignGetApiCampaigns
-                if ($pathinfo === '/campaign/get-api-campaigns') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getApiCampaignAction',  '_route' => 'campaignGetApiCampaigns',);
+                if (0 === strpos($pathinfo, '/campaign/get-api-')) {
+                    // campaignGetApiCampaigns
+                    if ($pathinfo === '/campaign/get-api-campaigns') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getApiCampaignAction',  '_route' => 'campaignGetApiCampaigns',);
+                    }
+
+                    // campaignGetApiExoclickCampaigns
+                    if ($pathinfo === '/campaign/get-api-exoclick-campaigns') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getApiExoClickCampaigns',  '_route' => 'campaignGetApiExoclickCampaigns',);
+                    }
+
                 }
 
             }

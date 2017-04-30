@@ -9,7 +9,7 @@ else if (window.ActiveXObject)
     XMLHttpRequestObject = new ActiveXObject("Microsoft.XMLHTTP");
 }
 
-function apiGetCampaign(data)
+function apiGetCampaign(data, traffic)
 {
     if(XMLHttpRequestObject)
     {
@@ -25,6 +25,10 @@ function apiGetCampaign(data)
             {
                 var response = XMLHttpRequestObject.responseText;
                 $('#selectCampaign').html(response);
+
+                if(traffic == 'ExoClick'){
+                    apiGetExoclickCampaign()
+                }
             }
         }
 
@@ -33,6 +37,36 @@ function apiGetCampaign(data)
 
 
         XMLHttpRequestObject.send("data="+ JSON.stringify(data));
+
+    }
+
+    return false;
+}
+
+function apiGetExoclickCampaign()
+{
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/get-api-exoclick-campaigns");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = XMLHttpRequestObject.responseText;
+                $('#selectExoclickCampaign').html(response);
+            }
+        }
+
+
+        //   $cellValue =  $('#modalCampaignTable tr td:first').text();
+
+
+        XMLHttpRequestObject.send("data=s");
 
     }
 
@@ -421,6 +455,10 @@ function getCampaignMatch(voluumId)
                     console.log(obj['info'][0]['verId'])
                     $('#id').val(obj['info'][0]['id']);
                     $('#selectAddVertical').val(obj['info'][0]['verId']).trigger("change");
+
+                    if(obj['info'][0]['trafficName'] == 'ExoClick'){
+                        $('#selectExoClickCampaign').val(obj['info'][0]['campId']).trigger("change");
+                    }
                     $.each(obj['rulesConditions'], function(index, info){
 
 
