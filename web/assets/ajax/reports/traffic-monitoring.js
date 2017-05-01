@@ -123,13 +123,12 @@ function updateTrafficMonitoringSettings(data, btn)
     return false;
 }
 
-function updateTrafficMonitoringNotificationSettings(data, btn)
+function updateTrafficMonitoringNotificationSettings(data)
 {
-    var l = Ladda.create(btn);
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "update-traffic-monitoring-notification-settings");
+        XMLHttpRequestObject.open("POST", "/monitoring/update-traffic-monitoring-notification-settings");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -140,11 +139,11 @@ function updateTrafficMonitoringNotificationSettings(data, btn)
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
                 console.log(response);
-                l.stop();
+
                 showNotification('success', 'Success', 'Settings successfully updated')
             }else if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500 || XMLHttpRequestObject.status == 504){
                 showNotification('error', '', '');
-                l.stop();
+
 
             }
 
@@ -152,10 +151,6 @@ function updateTrafficMonitoringNotificationSettings(data, btn)
 
 
         //   $cellValue =  $('#modalCampaignTable tr td:first').text();
-
-
-
-        l.start();
         XMLHttpRequestObject.send("param="+ JSON.stringify(data));
 
     }

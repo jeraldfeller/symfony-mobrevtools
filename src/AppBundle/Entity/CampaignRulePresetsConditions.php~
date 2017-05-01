@@ -167,4 +167,33 @@ class CampaignRulePresetsConditions
     {
         return $this->campaignPresetConditionsId;
     }
+    /**
+     * @var \AppBundle\Entity\CampaignRulePresets
+     */
+    private $campaignPresets;
+
+
+    /**
+     * Set campaignPresets
+     *
+     * @param \AppBundle\Entity\CampaignRulePresets $campaignPresets
+     *
+     * @return CampaignRulePresetsConditions
+     */
+    public function setCampaignPresets(\AppBundle\Entity\CampaignRulePresets $campaignPresets = null)
+    {
+        $this->campaignPresets = $campaignPresets;
+
+        return $this;
+    }
+
+    /**
+     * Get campaignPresets
+     *
+     * @return \AppBundle\Entity\CampaignRulePresets
+     */
+    public function getCampaignPresets()
+    {
+        return $this->campaignPresets;
+    }
 }

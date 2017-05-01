@@ -109,6 +109,15 @@
                                 </select>
                             </div>
 
+                             <div class="col-md-2 col-xs-12">
+                                <select id="selectFilterIsp" class="form-control select2">
+                                    <option></option>
+                                    {% for item in filters.isps %}
+    <option value="{{ item.isp }}">{{ item.isp }}</option>
+{% endfor %}
+                                </select>
+                            </div>
+
                              <div class="col-md-2">
                                 <button class="btn blue spinnerBtn ladda-button" id="filterBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-search"></i> Filter</span></button>
                             </div>
@@ -133,6 +142,7 @@
                                             <th>Campaign</th>
                                             <th>Geo </th>
                                             <th>Mobile Carrier </th>
+                                            <th>ISP </th>
                                             <th>IP </th>
                                             <th>IP </th>
                                         </tr>
@@ -345,6 +355,9 @@
                     aoData.push( {
                         "name": "mobileCarrier", "value": $('#selectFilterCarrier').val()
                     } );
+                    aoData.push( {
+                        "name": "isp", "value": $('#selectFilterIsp').val()
+                    } );
                     $.getJSON(sSource, aoData, function (json) {
                         /* Do whatever additional processing you want on the callback, then tell DataTables */
                         fnCallback(json)
@@ -384,7 +397,7 @@
                         title: 'Whitelist Ip',
                         text: '<i class="fa fa-file-excel-o"></i> Export Whitelist',
                         exportOptions: {
-                            columns: [1, 2, 3, 5]
+                            columns: [1, 2, 3, 4, 5, 6]
 
                         }
                     },
@@ -394,7 +407,7 @@
                         title: 'Blacklist Ip',
                         text: '<i class="fa fa-file-excel-o"></i> Export Blacklist',
                         exportOptions: {
-                            columns: [1, 2, 3, 6]
+                            columns: [1, 2, 3, 4, 5, 7]
                         }
                     },
                     {
@@ -403,7 +416,7 @@
                         text: '<i class="fa fa-copy"></i> Copy to Clipboard Whitelist',
                         header: false,
                         exportOptions: {
-                            columns: [5]
+                            columns: [6]
                         }
                     },
                     {
@@ -412,7 +425,7 @@
                         text: '<i class="fa fa-copy"></i> Copy to Clipboard Blacklist',
                         header: false,
                         exportOptions: {
-                            columns: [6]
+                            columns: [7]
                         }
 
 

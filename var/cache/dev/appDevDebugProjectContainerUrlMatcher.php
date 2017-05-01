@@ -499,14 +499,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        // app_domaintracker_showdomainreport
-        if ($pathinfo === '/monitoring/domain') {
-            return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::showDomainReportAction',  '_route' => 'app_domaintracker_showdomainreport',);
-        }
+        if (0 === strpos($pathinfo, '/monitoring')) {
+            // app_domaintracker_showdomainreport
+            if ($pathinfo === '/monitoring/domain') {
+                return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::showDomainReportAction',  '_route' => 'app_domaintracker_showdomainreport',);
+            }
 
-        // app_domaintracker_updatedomaincheck
-        if ($pathinfo === '/reports/update-domain-check') {
-            return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::updateDomainCheckAction',  '_route' => 'app_domaintracker_updatedomaincheck',);
+            // app_domaintracker_updatedomaincheck
+            if ($pathinfo === '/monitoring/update-domain-check') {
+                return array (  '_controller' => 'AppBundle\\Controller\\DomainTrackerController::updateDomainCheckAction',  '_route' => 'app_domaintracker_updatedomaincheck',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/a')) {
@@ -893,9 +896,9 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
         }
 
-        // app_trafficmonitoring_showipreport
+        // app_trafficmonitoring_showtrafficreport
         if ($pathinfo === '/monitoring/traffic') {
-            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::showIpReportAction',  '_route' => 'app_trafficmonitoring_showipreport',);
+            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::showTrafficReportAction',  '_route' => 'app_trafficmonitoring_showtrafficreport',);
         }
 
         // app_trafficmonitoring_gettrafficmonitoringreportsfilters
@@ -918,14 +921,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficSettingsVisits',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficsettingsvisits',);
         }
 
-        // app_trafficmonitoring_updatecampaigntrafficglobalsettings
-        if ($pathinfo === '/monitoring/update-traffic-monitoring-global-settings') {
-            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficGlobalSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficglobalsettings',);
-        }
+        if (0 === strpos($pathinfo, '/monitoring/update-traffic-monitoring-')) {
+            // app_trafficmonitoring_updatecampaigntrafficglobalsettings
+            if ($pathinfo === '/monitoring/update-traffic-monitoring-global-settings') {
+                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficGlobalSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficglobalsettings',);
+            }
 
-        // app_trafficmonitoring_updatecampaigntrafficnotificationsettings
-        if ($pathinfo === '/reports/update-traffic-monitoring-notification-settings') {
-            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettings',);
+            // app_trafficmonitoring_updatecampaigntrafficnotificationsettings
+            if ($pathinfo === '/monitoring/update-traffic-monitoring-notification-settings') {
+                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettings',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/user')) {

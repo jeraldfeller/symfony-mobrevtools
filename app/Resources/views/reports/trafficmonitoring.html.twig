@@ -180,14 +180,10 @@
                                             <th>Current Time Visits</th>
                                             <th>Visits Percentage</th>
                                             <th>Status</th>
-                                            <th>Disable <br> Notification</th>
+                                            <th>Notification</th>
                                         </tr>
                                         </thead>
-                                         <tfoot>
-                                        <tr>
-                                            <th colspan="12"><button class="btn blue spinnerBtn ladda-button pull-right" id="saveNotificationSettingsBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save </span></button></th>
-                                        </tr>
-                                        </tfoot>
+
                                         <tbody>
 
                                         </tbody>
@@ -384,6 +380,25 @@
                 },
                 "bProcessing": true,
                 "bServerSide": true,
+                "fnDrawCallback": function( oSettings ) {
+                    $("input[type=checkbox].switch_btn").bootstrapSwitch();
+
+                    $('input[name="switch"]').on('switchChange.bootstrapSwitch', function(event, state) {
+                        $id = $(this).data('id');
+
+                        if($(this).is(':checked') == true){
+                            $isActive = 1;
+                        }else {
+                            $isActive = 0;
+                        }
+
+                        $data = {
+                            id: $id,
+                            isChecked: $isActive
+                        }
+                        updateTrafficMonitoringNotificationSettings($data);
+                    });
+                },
                 "fnServerParams": function ( aoData ) {
                     aoData.push( {
                         "name": "traffic", "value": $('#selectFilterTrafficSource').val()
@@ -427,8 +442,12 @@
                 "dom": "<'row' <'col-md-12'>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>"
             });
 
-
-            $('#globalSwitch').bootstrapSwitch('state', true, {{ globalSettings }});
+            {% if globalSettings == 0 %}
+                $switchState = false;
+                {% else %}
+                $switchState = true;
+            {% endif %}
+            $('#globalSwitch').bootstrapSwitch('state', $switchState, true);
 
             $('#globalSwitch').on('switchChange.bootstrapSwitch', function(){
                 if($('#globalSwitch').is(':checked') == true){

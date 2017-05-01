@@ -24,12 +24,12 @@ class TrafficMonitoringController extends Controller{
     /**
      * @Route("monitoring/traffic")
      */
-    public function showIpReportAction(){
+    public function showTrafficReportAction(){
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
 
-            $globalSettings = $this->getGlobalSettings();
+            $globalSettings = ($this->getGlobalSettings() ? $this->getGlobalSettings() : 0);
             $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
                 'column' => 'trafficSourceName'))->getContent(), true);
             $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
@@ -83,7 +83,7 @@ class TrafficMonitoringController extends Controller{
     }
 
     /**
-     * @Route("ajax/get-reports-traffic-monitoring")
+     * @Route("/ajax/get-reports-traffic-monitoring")
      */
 
     public function ajaxGetReportsTrafficMonitoring(){
@@ -245,7 +245,7 @@ class TrafficMonitoringController extends Controller{
 
 
         foreach($rResult as $column){
-            if($column['isDisabledNotification'] == true){
+            if($column['isDisabledNotification'] == false){
                 $isChecked = 'checked';
             }else{
                 $isChecked = '';
@@ -264,10 +264,7 @@ class TrafficMonitoringController extends Controller{
             $row[] = $column['visitDifferencePercentage'] . '%';
             $row[] = $column['status'];
             $row[] = '<td>
-                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline text-center">
-                           <input type="checkbox" class="checkboxes notificationCampaignRecord" value="1" name="table_records" data-id="' . $column['id'] . '" ' . $isChecked . ' />
-                             <span></span>
-                        </label>
+                        <input class="switch_btn" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="YES" data-off-text="NO" type="checkbox" value="1" name="switch"  data-id="' .  $column['id'] . '" ' . $isChecked . '>
                       </td>';
             $output['aaData'][] = $row;
         }
@@ -326,7 +323,7 @@ class TrafficMonitoringController extends Controller{
             foreach ($activeCampaigns['rows'] as $row) {
                 if($row['visits'] > 1){
                     $isExist =  $this->getCampaignTrafficSettingsByCampid($row['campaignId']);
-                    if(count($isExist) == 1){
+                    if($isExist){
                         $this->updateCampaignTrafficSettingsByCampid($row['campaignId'], $row['campaignName']);
                     }else{
 
@@ -468,18 +465,21 @@ class TrafficMonitoringController extends Controller{
     }
 
     /**
-     * @Route("reports/update-traffic-monitoring-notification-settings"), name="updateTrafficMonitoringNotificationSettings")
+     * @Route("/monitoring/update-traffic-monitoring-notification-settings"), name="updateTrafficMonitoringNotificationSettings")
      */
     public function updateCampaignTrafficNotificationSettings(){
         $data = json_decode($_POST['param'], true);
-        foreach($data as $row){
+
+        if($data['isChecked'] == 1){
+            $isChecked = 0;
+        }else{
+            $isChecked = 1;
+        }
             $em = $this->getDoctrine()->getManager();
-            $traffic = $em->getRepository('AppBundle:ReportsTrafficMonitoring')->find($row['id']);
-            $traffic->setIsDisabledNotification($row['isChecked']);
+            $traffic = $em->getRepository('AppBundle:ReportsTrafficMonitoring')->find($data['id']);
+            $traffic->setIsDisabledNotification($isChecked);
             $em->flush();
             $em->clear();
-        }
-
         return new Response(
             json_encode(true)
         );

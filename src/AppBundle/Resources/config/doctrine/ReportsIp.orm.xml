@@ -24,6 +24,11 @@
         <option name="fixed"/>
       </options>
     </field>
+    <field name="isp" type="string" column="isp" length="100" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
     <field name="ip" type="string" column="ip" length="20" nullable="false">
       <options>
         <option name="fixed"/>

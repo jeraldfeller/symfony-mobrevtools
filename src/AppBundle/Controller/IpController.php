@@ -34,10 +34,14 @@ class IpController extends Controller{
             $carriers = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
                 'column' => 'mobileCarrier'))->getContent(), true);
 
+            $isp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                'column' => 'isp'))->getContent(), true);
+
             $filters = array('trafficSource' => $trafficSources,
                 'campaigns' => $campaigns,
                 'geos' => $geos,
-                'carriers' => $carriers
+                'carriers' => $carriers,
+                'isps' => $isp
             );
             return $this->render(
                 'reports/ip.html.twig', array('page' => 'IP Data', 'filters' => $filters)
@@ -55,7 +59,7 @@ class IpController extends Controller{
 
     public function ajaxGetReportsIp(){
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 'p.id', 'p.trafficName', 'p.campaignName', 'p.geo', 'p.mobileCarrier', 'p.ip');
+        $aColumns = array( 'p.id', 'p.trafficName', 'p.campaignName', 'p.geo', 'p.mobileCarrier', 'p.isp', 'p.ip');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'p.id';
@@ -122,7 +126,7 @@ class IpController extends Controller{
         }else{
             // custom filter
 
-            if(isset($input['traffic']) || isset($input['geo']) || isset($input['mobileCarrier']))            {
+            if(isset($input['traffic']) || isset($input['geo']) || isset($input['mobileCarrier']) || isset($input['isp']))            {
                 $aFilteringRules = array();
                 if($input['traffic'] != '' || $input['traffic'] != null){
 
@@ -135,6 +139,10 @@ class IpController extends Controller{
 
                 if($input['mobileCarrier'] != '' || $input['mobileCarrier'] != null){
                     $aFilteringRules[] = "p.mobileCarrier LIKE '%". $input['mobileCarrier'] ."%'";
+                }
+
+                if($input['isp'] != '' || $input['isp'] != null){
+                    $aFilteringRules[] = "p.isp LIKE '%". $input['isp'] ."%'";
                 }
 
                 if($input['campaign'] != '' || $input['campaign'] != null){
@@ -218,6 +226,7 @@ class IpController extends Controller{
             $row[] = $column['campaignName'];
             $row[] = $column['geo'];
             $row[] = $column['mobileCarrier'];
+            $row[] = $column['isp'];
             $row[] = $column['ip'];
             $row[] = '-'.$column['ip'];
             $output['aaData'][] = $row;

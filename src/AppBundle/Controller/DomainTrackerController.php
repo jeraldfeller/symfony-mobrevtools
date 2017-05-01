@@ -39,7 +39,7 @@ class DomainTrackerController extends Controller{
     }
 
     /**
-     * @Route("reports/update-domain-check")
+     * @Route("monitoring/update-domain-check")
      */
     public function updateDomainCheckAction(){
         $data = json_decode($_POST['param'], true);
@@ -215,7 +215,6 @@ class DomainTrackerController extends Controller{
                 $isChecked = '';
             }
 
-            $row[] = '<input class="switch_btn" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="YES" data-off-text="NO" type="checkbox" value="1" name="switch"  data-id="' .  $did . '" ' . $isChecked . '>';
             $row[] = '<input class="switch_btn" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="YES" data-off-text="NO" type="checkbox" value="1" name="switch"  data-id="' .  $did . '" ' . $isChecked . '>';
             $output['aaData'][] = $row;
         }
