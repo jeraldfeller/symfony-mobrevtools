@@ -58,7 +58,7 @@ function apiGetExoclickCampaign()
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response = XMLHttpRequestObject.responseText;
-                $('#selectExoclickCampaign').html(response);
+                $('#selectExoClickCampaign').html(response);
             }
         }
 

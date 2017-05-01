@@ -838,6 +838,7 @@ class CampaignController extends Controller
         $params = array();
         $apiResponse = json_decode($this->forward('AppBundle:ExoClickApi:exoClickGetCampaigns', array('token' => $exoClickToken))->getContent(), true);
         $output = '';
+        $output .= '<option value="1">-- none --</option>';
         foreach($apiResponse as $row){
             if($row['status'] != -1){
                 $output .= '<option value="' . $row['id'] . '" data-campid="' . $row['id'] . '">' . $row['name'] . '</option>';

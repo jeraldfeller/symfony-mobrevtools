@@ -73,8 +73,7 @@
 
                      </div>
                      <div class="actions">
-                        <a href="javascript:;" class="btn btn-circle btn-danger" data-toggle="modal" data-target="#delete-modal" data-style="expand-right" data-size="l" disabled>
-                            <span class="ladda-label"><i class="fa fa-trash"></i> Delete </span></a>
+
                         <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;"> </a>
 
                         <!-- Delete Modal -->
@@ -832,7 +831,7 @@
                 $('#addCampaignBtn').click(function(){
                     $btn = $(this)[0];
                     {% if trafficSourceName == 'ExoClick' %}
-                        $campaignId = $('#selectExoClickCAmpaign').val();
+                        $campaignId = $('#selectExoClickCampaign').val();
                         {% else %}
                         $campaignId = $('#selectCampaign option:selected').data('campid');
                     {% endif %}
