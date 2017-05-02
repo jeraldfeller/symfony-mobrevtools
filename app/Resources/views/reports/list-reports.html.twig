@@ -1,0 +1,463 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/clockface/css/clockface.css') }}" rel="stylesheet" type="text/css" />
+
+{% endblock %}
+{% block nav %}
+    {{ render(controller(
+    'AppBundle:Navmenu:getNavmenu'
+    )) }}
+{% endblock %}
+{% block body %}
+    <h1 class="page-title"> {{ page }}
+
+    </h1>
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li>
+                <i class="icon-home"></i>
+                <a href="/">Home</a>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>Reports</span>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>{{ page }}</span>
+            </li>
+
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li>
+                        <a href="#">
+                            <i class="icon-bell"></i> Action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-shield"></i> Another action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-user"></i> Something else here</a>
+                    </li>
+                    <li class="divider"> </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-bag"></i> Separated link</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE HEADER-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="portlet light">
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <select id="filterByType" class="select2_single form-control" tabindex="-1">
+                                <option></option>
+                                <option value="botRule">Bot Rule</option>
+                                <option value="blacklistRule">Blacklist Rule</option>
+                                <option value="whitelist">Whitelist</option>
+                                <option value="autobid">Autobid</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select id="selectTrafficSource" class="select2_single form-control" tabindex="-1" name="trafficSource">
+                                <option></option>
+                                {% for item in trafficSources %}
+                                    <option value="{{ item.id }}">{{ item.trafficName }}</option>
+                                {% endfor  %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select id="selectCampaign" class="select2_single form-control" tabindex="-1" name="campaign">
+                                <option></option>
+                                {% for item in campaigns %}
+                                    <option value="{{ item.id }}">{{ item.campName }}</option>
+                                {% endfor  %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="portlet light">
+
+                <div class="portlet-title">
+                    <div class="caption font-green-sharp">
+                        <i class="fa fa-table font-green-sharp"></i>
+                        <span class="caption-subject bold uppercase">Data Table</span>
+                    </div>
+
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <!-- Placement Table -->
+                        <div class="col-lg-12">
+                            <table class="table table-striped table-bordered table-hover dt-responsive table-checkable order-column table-header-fixed" width="100%" id="datatable-responsive">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                            <input type="checkbox" class="group-checkable" data-set="#datatable-responsive .checkboxes" />
+                                            <span></span>
+                                        </label>
+                                    </th>
+                                    <th>Type</th>
+                                    <th>Traffic Source</th>
+                                    <th>Campaign</th>
+                                    <th>Placements</th>
+                                    <th>Visits</th>
+                                    <th>Clicks</th>
+                                    <th>CTR</th>
+                                    <th>Conv</th>
+                                    <th>Revenue</th>
+                                    <th>Cost</th>
+                                    <th>Profit</th>
+                                    <th>CPV</th>
+                                    <th>EPV</th>
+                                    <th>ROI</th>
+                                    <th>Date Executed</th>
+                                    <th>Status</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('assets/global/plugins/autosize/autosize.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/select2/js/select2.full.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/moment.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/clockface/js/clockface.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/pages/scripts/components-date-time-pickers.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/pages/scripts/components-bootstrap-switch.min.js') }}" type="text/javascript"></script>
+    <script>
+        Ladda.bind( '.spinnerBtn' );
+    </script>
+    <script type="text/javascript">
+
+        var ComponentsSelect2 = function() {
+
+            var handleDemo = function() {
+
+                // Set the "bootstrap" theme as the default theme for all Select2
+                // widgets.
+                //
+                // @see https://github.com/select2/select2/issues/2927
+                $.fn.select2.defaults.set("theme", "bootstrap");
+
+                $("#selectCampaign").select2({
+                    allowClear: true,
+                    placeholder: 'Select Campaign',
+                    width: null
+                });
+
+                $("#filterByType").select2({
+                    allowClear: true,
+                    placeholder: 'Select Rule Type',
+                    width: null
+                });
+
+                $("#selectTrafficSource").select2({
+                    allowClear: true,
+                    placeholder: 'Select Traffic Source',
+                    width: null
+                });
+
+                // @see https://select2.github.io/examples.html#data-ajax
+                function formatRepo(repo) {
+                    if (repo.loading) return repo.text;
+
+                    var markup = "<div class='select2-result-repository clearfix'>" +
+                            "<div class='select2-result-repository__avatar'><img src='" + repo.owner.avatar_url + "' /></div>" +
+                            "<div class='select2-result-repository__meta'>" +
+                            "<div class='select2-result-repository__title'>" + repo.full_name + "</div>";
+
+                    if (repo.description) {
+                        markup += "<div class='select2-result-repository__description'>" + repo.description + "</div>";
+                    }
+
+                    markup += "<div class='select2-result-repository__statistics'>" +
+                    "<div class='select2-result-repository__forks'><span class='glyphicon glyphicon-flash'></span> " + repo.forks_count + " Forks</div>" +
+                    "<div class='select2-result-repository__stargazers'><span class='glyphicon glyphicon-star'></span> " + repo.stargazers_count + " Stars</div>" +
+                    "<div class='select2-result-repository__watchers'><span class='glyphicon glyphicon-eye-open'></span> " + repo.watchers_count + " Watchers</div>" +
+                    "</div>" +
+                    "</div></div>";
+
+                    return markup;
+                }
+
+                function formatRepoSelection(repo) {
+                    return repo.full_name || repo.text;
+                }
+
+                $(".js-data-example-ajax").select2({
+                    width: "off",
+                    ajax: {
+                        url: "https://api.github.com/search/repositories",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                q: params.term, // search term
+                                page: params.page
+                            };
+                        },
+                        processResults: function(data, page) {
+                            // parse the results into the format expected by Select2.
+                            // since we are using custom formatting functions we do not need to
+                            // alter the remote JSON data
+                            return {
+                                results: data.items
+                            };
+                        },
+                        cache: true
+                    },
+                    escapeMarkup: function(markup) {
+                        return markup;
+                    }, // let our custom formatter work
+                    minimumInputLength: 1,
+                    templateResult: formatRepo,
+                    templateSelection: formatRepoSelection
+                });
+
+                $("button[data-select2-open]").click(function() {
+                    $("#" + $(this).data("select2-open")).select2("open");
+                });
+
+                $(":checkbox").on("click", function() {
+                    $(this).parent().nextAll("select").prop("disabled", !this.checked);
+                });
+
+                // copy Bootstrap validation states to Select2 dropdown
+                //
+                // add .has-waring, .has-error, .has-succes to the Select2 dropdown
+                // (was #select2-drop in Select2 v3.x, in Select2 v4 can be selected via
+                // body > .select2-container) if _any_ of the opened Select2's parents
+                // has one of these forementioned classes (YUCK! ;-))
+                $(".select2, .select2-multiple, .select2-allow-clear, .js-data-example-ajax").on("select2:open", function() {
+                    if ($(this).parents("[class*='has-']").length) {
+                        var classNames = $(this).parents("[class*='has-']")[0].className.split(/\s+/);
+
+                        for (var i = 0; i < classNames.length; ++i) {
+                            if (classNames[i].match("has-")) {
+                                $("body > .select2-container").addClass(classNames[i]);
+                            }
+                        }
+                    }
+                });
+
+                $(".js-btn-set-scaling-classes").on("click", function() {
+                    $("#select2-multiple-input-sm, #select2-single-input-sm").next(".select2-container--bootstrap").addClass("input-sm");
+                    $("#select2-multiple-input-lg, #select2-single-input-lg").next(".select2-container--bootstrap").addClass("input-lg");
+                    $(this).removeClass("btn-primary btn-outline").prop("disabled", true);
+                });
+            }
+
+            return {
+                //main function to initiate the module
+                init: function() {
+                    handleDemo();
+                }
+            };
+
+        }();
+
+        if (App.isAngularJsApp() === false) {
+            $(document).ready(function() {
+                ComponentsSelect2.init();
+
+                /**
+                 * Data Table
+                 */
+
+                var fixedHeaderOffset = 0;
+                if (App.getViewPort().width < App.getResponsiveBreakpoint('md')) {
+                    if ($('.page-header').hasClass('page-header-fixed-mobile')) {
+                        fixedHeaderOffset = $('.page-header').outerHeight(true);
+                    }
+                } else if ($('.page-header').hasClass('navbar-fixed-top')) {
+                    fixedHeaderOffset = $('.page-header').outerHeight(true);
+                } else if ($('body').hasClass('page-header-fixed')) {
+                    fixedHeaderOffset = 64; // admin 5 fixed height
+                }
+                var table = $('#datatable-responsive');
+                var oTable = $('#datatable-responsive').DataTable({
+                    fixedHeader: {
+                        header: true,
+                        headerOffset: fixedHeaderOffset
+                    },
+                    "bProcessing": true,
+                    "bServerSide": true,
+                    "fnServerData": function (sSource, aoData, fnCallback) {
+                        /* Add some extra data to the sender */
+                        aoData.push({"name": "type", "value": $('#filterByType').val()});
+                        aoData.push({"name": "trafficSource", "value": $('#selectTrafficSource').val()});
+                        aoData.push({"name": "campaign", "value": $('#selectCampaign').val()});
+                        $.getJSON(sSource, aoData, function (json) {
+                            /* Do whatever additional processing you want on the callback, then tell DataTables */
+                            fnCallback(json)
+                        });
+                    },
+                    "sAjaxSource": "/ajax/list-reports",
+
+                    responsive: {
+                        details: {}
+                    },
+                    "iDisplayLength": 50,
+                    "lengthMenu": [
+                        [50, 200, 500, 1000, -1],
+                        [50, 200, 500, 1000, "All"] // change per page values here
+                    ],
+                    "columnDefs": [
+                        {  // set default column settings
+                            'orderable': false,
+                            'targets': [0]
+                        },
+                        {
+                            "searchable": false,
+                            "targets": [0]
+                        },
+                        {
+                            "className": "dt-right"
+                            //"targets": [2]
+                        },
+                        {"width": "15%", "targets": 4},
+                    ],
+                    "order": [[5, "desc"]],
+                    select: {
+                        style: 'os',
+                        selector: 'td:first-child'
+                    },
+                    //dom: '<"wrapper"lBfrtip>',
+                    //dom: '<lB<frt>ip>',
+                    "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+                    buttons: [
+                        {
+                            extend: 'csv',
+                            className: 'btn purple btn-outline ',
+                            text: '<i class="fa fa-file-excel-o"></i> CSV',
+                            title: 'Placement List',
+                            exportOptions: {
+                                columns: [1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+                            }
+                        },
+                        {
+                            className: 'btn red btn-outline',
+                            text: '<i class="fa fa-trash"></i> Delete Data',
+                            header: false,
+                            action: function (e, dt, node, config) {
+                                var data = {items: []};
+                                $('input:checkbox.report-record').each(function () {
+
+
+                                    if ($(this).is(':checked') == true) {
+                                        var id = (this.checked ? $(this).data('id') : "");
+                                        data.items.push({id: id});
+                                    }
+
+
+                                });
+
+                                console.log(data);
+                                deleteData(data);
+                            }
+                        },
+                        {
+                            extend: 'copyHtml5',
+                            className: 'btn green btn-outline',
+                            text: '<i class="fa fa-copy"></i> Copy to Clipboard',
+                            header: false,
+                            exportOptions: {
+                                columns: [4]
+                            }
+                        },
+                        {
+                            extend: 'colvis',
+                            className: 'btn dark btn-outline ',
+                            text: '<i class="fa fa-eye"></i> Visible Columns'
+                        }
+                    ]
+
+
+                });
+
+                table.find('.group-checkable').change(function () {
+                    var set = jQuery(this).attr("data-set");
+                    var checked = jQuery(this).is(":checked");
+                    jQuery(set).each(function () {
+                        if (checked) {
+                            $(this).prop("checked", true);
+                            $(this).parents('tr').addClass("active");
+                        } else {
+                            $(this).prop("checked", false);
+                            $(this).parents('tr').removeClass("active");
+                        }
+                    });
+                });
+
+                table.on('change', 'tbody tr .checkboxes', function () {
+                    $(this).parents('tr').toggleClass("active");
+                });
+
+
+                $('#datatable-responsive').checkboxes('range', true);
+
+
+                $('#filterByType').change(function(){
+                    oTable.ajax.reload();
+                });
+                $('#selectTrafficSource').change(function(){
+                    oTable.ajax.reload();
+                });
+                $('#selectCampaign').change(function(){
+                    oTable.ajax.reload();
+                });
+
+
+
+            });
+        }
+    </script>
+
+
+    <!-- AJAX CALLS -->
+    <script src="{{ asset('assets/ajax/campaign/campaign.js') }}" type="text/javascript"></script>
+    <!-- END AJAX CALLS -->
+{% endblock %}

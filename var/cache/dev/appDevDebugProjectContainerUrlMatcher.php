@@ -619,6 +619,16 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\LandersController::clearTmpFilesAction',  '_route' => 'clearTmpFiles',);
         }
 
+        // listReports
+        if ($pathinfo === '/reports/data-reports') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::indexAction',  '_route' => 'listReports',);
+        }
+
+        // app_listreports_ajaxgetlistreports
+        if ($pathinfo === '/ajax/list-reports') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::ajaxGetListReports',  '_route' => 'app_listreports_ajaxgetlistreports',);
+        }
+
         // app_logtracker_showlogtrackerreport
         if ($pathinfo === '/monitoring/data-log') {
             return array (  '_controller' => 'AppBundle\\Controller\\LogTrackerController::showLogTrackerReportAction',  '_route' => 'app_logtracker_showlogtrackerreport',);

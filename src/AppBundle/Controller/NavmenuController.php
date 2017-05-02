@@ -133,18 +133,8 @@ class NavmenuController extends Controller{
                                             </a>
                                             <ul class="sub-menu">
                                                 <li class="nav-item">
-                                                    <a href="/reports/bot" class="nav-link ">
-                                                        <span class="title">Bot Lists</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/reports/blacklist" class="nav-link ">
-                                                        <span class="title">Blacklists</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/reports/whitelist" class="nav-link ">
-                                                        <span class="title">Whitelists</span>
+                                                    <a href="/reports/data-reports" class="nav-link ">
+                                                        <span class="title">Data Reports</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
