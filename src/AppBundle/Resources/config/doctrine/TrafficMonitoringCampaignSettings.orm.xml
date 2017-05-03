@@ -19,5 +19,6 @@
         <option name="unsigned"/>
       </options>
     </field>
+    <field name="active" type="boolean" column="active" nullable="false"/>
   </entity>
 </doctrine-mapping>

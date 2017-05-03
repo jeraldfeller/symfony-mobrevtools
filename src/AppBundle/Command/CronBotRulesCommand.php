@@ -27,6 +27,8 @@ use AppBundle\Entity\BannedPlacement;
 use AppBundle\Entity\CampaignRules;
 use AppBundle\Entity\CampaignRulesConditions;
 
+use AppBundle\Entity\SafeListPlacements;
+
 class CronBotRulesCommand extends ContainerAwareCommand{
 
     protected function configure()
@@ -64,6 +66,12 @@ class CronBotRulesCommand extends ContainerAwareCommand{
         $timeStamp = time();
 
         foreach($campaignGroups as $key) {
+
+            if($key['safeListActive'] == true){
+                $safeList = $this->getSafeListPlacement($key['id']);
+            }else{
+                $safeList = array();
+            }
 
             $em = $this->getContainer()->get('doctrine')->getManager();
             $trafficSourceEntity = $em->getRepository('AppBundle:TrafficSource')
@@ -145,7 +153,8 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                         if (!isset($returnedData['error'])) {
                             $targets = array();
                             foreach ($returnedData['rows'] as $item) {
-                                if ($key['trafficName'] == 'Zeropark') {
+                                if(!in_array($item[$customVariableKey], $safeList)){
+                                    if ($key['trafficName'] == 'Zeropark') {
                                         $ruleSetCount = 1;
                                         if (count($ruleConditions) > 0) {
                                             $match = array();
@@ -155,41 +164,41 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             $matchCount = 0;
                                             foreach ($ruleConditions as $conditions ) {
 
-                                                    $variable = $conditions['rule_variable'];
-                                                    $condition = $conditions['rule_condition'];
-                                                    $value1 = $conditions['value1'];
-                                                    $value2 = $conditions['value2'];
+                                                $variable = $conditions['rule_variable'];
+                                                $condition = $conditions['rule_condition'];
+                                                $value1 = $conditions['value1'];
+                                                $value2 = $conditions['value2'];
 
-                                                    $match[] = $variable;
-                                                    if ($condition == 'lessthan') {
+                                                $match[] = $variable;
+                                                if ($condition == 'lessthan') {
 
-                                                        if ($item[$variable] <= $value1) {
-                                                            $tomatch[] = $variable;
+                                                    if ($item[$variable] <= $value1) {
+                                                        $tomatch[] = $variable;
 
-                                                        }
-                                                    } else if ($condition == 'greaterthan') {
-
-                                                        if ($item[$variable] >= $value1) {
-                                                            $tomatch[] = $variable;
-                                                        }
-                                                    } else if ($condition == 'equalto'){
-                                                        if ($item[$variable] == $value1) {
-                                                            $tomatch[] = $variable;
-                                                        }
                                                     }
-                                                    else {
+                                                } else if ($condition == 'greaterthan') {
 
-                                                        if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                            $tomatch[] = $variable;
-                                                        }
+                                                    if ($item[$variable] >= $value1) {
+                                                        $tomatch[] = $variable;
                                                     }
-
-                                                    $result = array_diff($match, $tomatch);
-                                                    if (count($result) == 0) {
-                                                        $matchCount = $matchCount + 1;
+                                                } else if ($condition == 'equalto'){
+                                                    if ($item[$variable] == $value1) {
+                                                        $tomatch[] = $variable;
                                                     }
+                                                }
+                                                else {
 
-                                                    $conditionCount++;
+                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                        $tomatch[] = $variable;
+                                                    }
+                                                }
+
+                                                $result = array_diff($match, $tomatch);
+                                                if (count($result) == 0) {
+                                                    $matchCount = $matchCount + 1;
+                                                }
+
+                                                $conditionCount++;
 
                                             }
                                             if($key['operator'] == 'and'){
@@ -218,7 +227,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
                                                 unset($match);
                                                 unset($tomatch);
-                                                $ruleSetCount++;
+                                                //   $ruleSetCount++;
                                             }else{
                                                 if ($matchCount > 0) {
                                                     $targets[] = $item[$customVariableKey];
@@ -347,7 +356,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
                                                     unset($match);
                                                     unset($tomatch);
-                                                    $ruleSetCount++;
+                                                    // $ruleSetCount++;
                                                 }
 
                                             }
@@ -355,185 +364,59 @@ class CronBotRulesCommand extends ContainerAwareCommand{
 
 
 
-                                }else if($key['trafficName'] == 'ExoClick'){
-                                    $ruleSetCount = 1;
-                                    if (count($ruleConditions) > 0) {
-                                        $match = array();
-                                        $tomatch = array();
-                                        $pauseMatchCount = 0;
-                                        $conditionCount = 0;
-                                        $matchCount = 0;
-                                        foreach ($ruleConditions as $conditions ) {
-                                            $variable = $conditions['rule_variable'];
-                                            $condition = $conditions['rule_condition'];
-                                            $value1 = $conditions['value1'];
-                                            $value2 = $conditions['value2'];
-
-                                            $match[] = $variable;
-                                            if ($condition == 'lessthan') {
-
-                                                if ($item[$variable] <= $value1) {
-                                                    $tomatch[] = $variable;
-
-                                                }
-                                            } else if ($condition == 'greaterthan') {
-
-                                                if ($item[$variable] >= $value1) {
-                                                    $tomatch[] = $variable;
-                                                }
-                                            } else if ($condition == 'equalto'){
-                                                if ($item[$variable] == $value1) {
-                                                    $tomatch[] = $variable;
-                                                }
-                                            }
-                                            else {
-
-                                                if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                    $tomatch[] = $variable;
-                                                }
-                                            }
-
-                                            $result = array_diff($match, $tomatch);
-                                            if (count($result) == 0) {
-                                                $matchCount = $matchCount + 1;
-                                            }
-
-                                            $conditionCount++;
-
-                                        }
-                                        if($key['operator'] == 'and'){
-                                            if ($conditionCount == $matchCount) {
-                                                $targets[] = $item[$customVariableKey];
-                                                $this->insertBotReport($key['campaignRulesId'],
-                                                    $key['tid'],
-                                                    $key['id'],
-                                                    $key['ruleType'],
-                                                    $item[$customVariableKey],
-                                                    $item['visits'],
-                                                    $item['clicks'],
-                                                    $item['ctr'],
-                                                    $item['conversions'],
-                                                    $item['revenue'],
-                                                    $item['cost'],
-                                                    $item['profit'],
-                                                    $item['cpv'],
-                                                    $item['epv'],
-                                                    $item['roi'],
-                                                    $timeStamp
-                                                );
-
-
-                                            }
-
-                                            unset($match);
-                                            unset($tomatch);
-                                            $ruleSetCount++;
-                                        }else{
-                                            if ($matchCount > 0) {
-                                                $targets[] = $item[$customVariableKey];
-                                                $this->insertBotReport($key['campaignRulesId'],
-                                                    $key['tid'],
-                                                    $key['id'],
-                                                    $key['ruleType'],
-                                                    $item[$customVariableKey],
-                                                    $item['visits'],
-                                                    $item['clicks'],
-                                                    $item['ctr'],
-                                                    $item['conversions'],
-                                                    $item['revenue'],
-                                                    $item['cost'],
-                                                    $item['profit'],
-                                                    $item['cpv'],
-                                                    $item['epv'],
-                                                    $item['roi'],
-                                                    $timeStamp
-                                                );
-                                            }
-
-                                            unset($match);
-                                            unset($tomatch);
-                                            $ruleSetCount++;
-                                        }
-                                    }
-
-                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                        $isResumed = 0;
+                                    }else if($key['trafficName'] == 'ExoClick'){
+                                        $ruleSetCount = 1;
                                         if (count($ruleConditions) > 0) {
-                                            $matchUnpause = array();
-                                            $tomatchUnpause = array();
-                                            $unpauseMatchCount = 0;
-                                            $unpauseConditionCount = 0;
-                                            $unpauseMatchCount = 0;
+                                            $match = array();
+                                            $tomatch = array();
+                                            $pauseMatchCount = 0;
+                                            $conditionCount = 0;
+                                            $matchCount = 0;
                                             foreach ($ruleConditions as $conditions ) {
                                                 $variable = $conditions['rule_variable'];
                                                 $condition = $conditions['rule_condition'];
                                                 $value1 = $conditions['value1'];
                                                 $value2 = $conditions['value2'];
 
-                                                $matchUnpause[] = $variable;
+                                                $match[] = $variable;
                                                 if ($condition == 'lessthan') {
 
                                                     if ($item[$variable] <= $value1) {
-                                                        $tomatchUnpause[] = $variable;
+                                                        $tomatch[] = $variable;
 
                                                     }
                                                 } else if ($condition == 'greaterthan') {
 
                                                     if ($item[$variable] >= $value1) {
-                                                        $tomatchUnpause[] = $variable;
+                                                        $tomatch[] = $variable;
                                                     }
                                                 } else if ($condition == 'equalto'){
                                                     if ($item[$variable] == $value1) {
-                                                        $tomatchUnpause[] = $variable;
+                                                        $tomatch[] = $variable;
                                                     }
                                                 }
                                                 else {
 
                                                     if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                        $tomatchUnpause[] = $variable;
+                                                        $tomatch[] = $variable;
                                                     }
                                                 }
 
-                                                $result = array_diff($matchUnpause, $tomatchUnpause);
+                                                $result = array_diff($match, $tomatch);
                                                 if (count($result) == 0) {
-                                                    $unpauseMatchCount = $unpauseMatchCount + 1;
+                                                    $matchCount = $matchCount + 1;
                                                 }
 
-                                                $unpauseConditionCount++;
+                                                $conditionCount++;
 
                                             }
                                             if($key['operator'] == 'and'){
-                                                if ($unpauseMatchCount == $unpauseConditionCount) {
-                                                    if ($isResumed == 0) {
-                                                        $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
-                                                        if(!isset($response['error'])){
-                                                            $this->updateBotReport(
-                                                                $key['id'],
-                                                                $item[$customVariableKey],
-                                                                $item['visits'],
-                                                                $item['clicks'],
-                                                                $item['ctr'],
-                                                                $item['conversions'],
-                                                                $item['revenue'],
-                                                                $item['cost'],
-                                                                $item['profit'],
-                                                                $item['cpv'],
-                                                                $item['epv'],
-                                                                $item['roi'],
-                                                                $timeStamp);
-                                                        }
-                                                        $isResumed = 1;
-                                                    }
-                                                }
-
-                                                unset($matchUnpause);
-                                                unset($tomatchUnpause);
-                                            }else{
-                                                if ($unpauseMatchCount > 0) {
+                                                if ($conditionCount == $matchCount) {
                                                     $targets[] = $item[$customVariableKey];
-                                                    $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
-                                                    $this->updateBotReport(
+                                                    $this->insertBotReport($key['campaignRulesId'],
+                                                        $key['tid'],
                                                         $key['id'],
+                                                        $key['ruleType'],
                                                         $item[$customVariableKey],
                                                         $item['visits'],
                                                         $item['clicks'],
@@ -545,121 +428,249 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                         $item['cpv'],
                                                         $item['epv'],
                                                         $item['roi'],
-                                                        $timeStamp);
+                                                        $timeStamp
+                                                    );
+
+
                                                 }
 
                                                 unset($match);
                                                 unset($tomatch);
-                                                $ruleSetCount++;
-                                            }
+                                                //    $ruleSetCount++;
+                                            }else{
+                                                if ($matchCount > 0) {
+                                                    $targets[] = $item[$customVariableKey];
+                                                    $this->insertBotReport($key['campaignRulesId'],
+                                                        $key['tid'],
+                                                        $key['id'],
+                                                        $key['ruleType'],
+                                                        $item[$customVariableKey],
+                                                        $item['visits'],
+                                                        $item['clicks'],
+                                                        $item['ctr'],
+                                                        $item['conversions'],
+                                                        $item['revenue'],
+                                                        $item['cost'],
+                                                        $item['profit'],
+                                                        $item['cpv'],
+                                                        $item['epv'],
+                                                        $item['roi'],
+                                                        $timeStamp
+                                                    );
+                                                }
 
+                                                unset($match);
+                                                unset($tomatch);
+                                                //$ruleSetCount++;
+                                            }
                                         }
-                                    }
 
-                                }else{
-                                    if (count($ruleConditions) > 0) {
-                                        $match = array();
-                                        $tomatch = array();
-                                        $pauseMatchCount = 0;
-                                        $conditionCount = 0;
-                                        $matchCount = 0;
-                                        foreach ($ruleConditions as $conditions ) {
-                                            $variable = $conditions['rule_variable'];
-                                            $condition = $conditions['rule_condition'];
-                                            $value1 = $conditions['value1'];
-                                            $value2 = $conditions['value2'];
+                                        if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                            $isResumed = 0;
+                                            if (count($ruleConditions) > 0) {
+                                                $matchUnpause = array();
+                                                $tomatchUnpause = array();
+                                                $unpauseMatchCount = 0;
+                                                $unpauseConditionCount = 0;
+                                                $unpauseMatchCount = 0;
+                                                foreach ($ruleConditions as $conditions ) {
+                                                    $variable = $conditions['rule_variable'];
+                                                    $condition = $conditions['rule_condition'];
+                                                    $value1 = $conditions['value1'];
+                                                    $value2 = $conditions['value2'];
 
-                                            $match[] = $variable;
-                                            if ($condition == 'lessthan') {
+                                                    $matchUnpause[] = $variable;
+                                                    if ($condition == 'lessthan') {
 
-                                                if ($item[$variable] <= $value1) {
-                                                    $tomatch[] = $variable;
+                                                        if ($item[$variable] <= $value1) {
+                                                            $tomatchUnpause[] = $variable;
+
+                                                        }
+                                                    } else if ($condition == 'greaterthan') {
+
+                                                        if ($item[$variable] >= $value1) {
+                                                            $tomatchUnpause[] = $variable;
+                                                        }
+                                                    } else if ($condition == 'equalto'){
+                                                        if ($item[$variable] == $value1) {
+                                                            $tomatchUnpause[] = $variable;
+                                                        }
+                                                    }
+                                                    else {
+
+                                                        if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                            $tomatchUnpause[] = $variable;
+                                                        }
+                                                    }
+
+                                                    $result = array_diff($matchUnpause, $tomatchUnpause);
+                                                    if (count($result) == 0) {
+                                                        $unpauseMatchCount = $unpauseMatchCount + 1;
+                                                    }
+
+                                                    $unpauseConditionCount++;
 
                                                 }
-                                            } else if ($condition == 'greaterthan') {
+                                                if($key['operator'] == 'and'){
+                                                    if ($unpauseMatchCount == $unpauseConditionCount) {
+                                                        if ($isResumed == 0) {
+                                                            $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
+                                                            if(!isset($response['error'])){
+                                                                $this->updateBotReport(
+                                                                    $key['id'],
+                                                                    $item[$customVariableKey],
+                                                                    $item['visits'],
+                                                                    $item['clicks'],
+                                                                    $item['ctr'],
+                                                                    $item['conversions'],
+                                                                    $item['revenue'],
+                                                                    $item['cost'],
+                                                                    $item['profit'],
+                                                                    $item['cpv'],
+                                                                    $item['epv'],
+                                                                    $item['roi'],
+                                                                    $timeStamp);
+                                                            }
+                                                            $isResumed = 1;
+                                                        }
+                                                    }
 
-                                                if ($item[$variable] >= $value1) {
-                                                    $tomatch[] = $variable;
+                                                    unset($matchUnpause);
+                                                    unset($tomatchUnpause);
+                                                }else{
+                                                    if ($unpauseMatchCount > 0) {
+                                                        $targets[] = $item[$customVariableKey];
+                                                        $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
+                                                        $this->updateBotReport(
+                                                            $key['id'],
+                                                            $item[$customVariableKey],
+                                                            $item['visits'],
+                                                            $item['clicks'],
+                                                            $item['ctr'],
+                                                            $item['conversions'],
+                                                            $item['revenue'],
+                                                            $item['cost'],
+                                                            $item['profit'],
+                                                            $item['cpv'],
+                                                            $item['epv'],
+                                                            $item['roi'],
+                                                            $timeStamp);
+                                                    }
+
+                                                    unset($match);
+                                                    unset($tomatch);
+                                                    //  $ruleSetCount++;
                                                 }
-                                            } else if ($condition == 'equalto'){
-                                                if ($item[$variable] == $value1) {
-                                                    $tomatch[] = $variable;
-                                                }
+
                                             }
-                                            else {
-
-                                                if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                    $tomatch[] = $variable;
-                                                }
-                                            }
-
-                                            $result = array_diff($match, $tomatch);
-                                            if (count($result) == 0) {
-                                                $matchCount = $matchCount + 1;
-                                            }
-
-                                            $conditionCount++;
-
                                         }
-                                        if($key['operator'] == 'and'){
-                                            if ($conditionCount == $matchCount) {
-                                                $output->writeln([
-                                                    $item[$customVariableKey] . ' = Visits: ' . $item['visits'] . ' Conv: ' . $item['conversions'] . ' CTR: ' . $item['ctr']
-                                                ]);
-                                                $targets[] = $item[$customVariableKey];
-                                                $this->insertBotReport($key['campaignRulesId'],
-                                                    $key['tid'],
-                                                    $key['id'],
-                                                    $key['ruleType'],
-                                                    $item[$customVariableKey],
-                                                    $item['visits'],
-                                                    $item['clicks'],
-                                                    $item['ctr'],
-                                                    $item['conversions'],
-                                                    $item['revenue'],
-                                                    $item['cost'],
-                                                    $item['profit'],
-                                                    $item['cpv'],
-                                                    $item['epv'],
-                                                    $item['roi'],
-                                                    $timeStamp
-                                                );
 
+                                    }else{
+                                        if (count($ruleConditions) > 0) {
+                                            $match = array();
+                                            $tomatch = array();
+                                            $pauseMatchCount = 0;
+                                            $conditionCount = 0;
+                                            $matchCount = 0;
+                                            foreach ($ruleConditions as $conditions ) {
+                                                $variable = $conditions['rule_variable'];
+                                                $condition = $conditions['rule_condition'];
+                                                $value1 = $conditions['value1'];
+                                                $value2 = $conditions['value2'];
+
+                                                $match[] = $variable;
+                                                if ($condition == 'lessthan') {
+
+                                                    if ($item[$variable] <= $value1) {
+                                                        $tomatch[] = $variable;
+
+                                                    }
+                                                } else if ($condition == 'greaterthan') {
+
+                                                    if ($item[$variable] >= $value1) {
+                                                        $tomatch[] = $variable;
+                                                    }
+                                                } else if ($condition == 'equalto'){
+                                                    if ($item[$variable] == $value1) {
+                                                        $tomatch[] = $variable;
+                                                    }
+                                                }
+                                                else {
+
+                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                        $tomatch[] = $variable;
+                                                    }
+                                                }
+
+                                                $result = array_diff($match, $tomatch);
+                                                if (count($result) == 0) {
+                                                    $matchCount = $matchCount + 1;
+                                                }
+
+                                                $conditionCount++;
 
                                             }
+                                            if($key['operator'] == 'and'){
+                                                if ($conditionCount == $matchCount) {
+                                                    $output->writeln([
+                                                        $item[$customVariableKey] . ' = Visits: ' . $item['visits'] . ' Conv: ' . $item['conversions'] . ' CTR: ' . $item['ctr']
+                                                    ]);
+                                                    $targets[] = $item[$customVariableKey];
+                                                    $this->insertBotReport($key['campaignRulesId'],
+                                                        $key['tid'],
+                                                        $key['id'],
+                                                        $key['ruleType'],
+                                                        $item[$customVariableKey],
+                                                        $item['visits'],
+                                                        $item['clicks'],
+                                                        $item['ctr'],
+                                                        $item['conversions'],
+                                                        $item['revenue'],
+                                                        $item['cost'],
+                                                        $item['profit'],
+                                                        $item['cpv'],
+                                                        $item['epv'],
+                                                        $item['roi'],
+                                                        $timeStamp
+                                                    );
 
-                                            unset($match);
-                                            unset($tomatch);
-                                            $ruleSetCount++;
-                                        }else{
-                                            if ($matchCount > 0) {
-                                                $targets[] = $item[$customVariableKey];
-                                                $this->insertBotReport($key['campaignRulesId'],
-                                                    $key['tid'],
-                                                    $key['id'],
-                                                    $key['ruleType'],
-                                                    $item[$customVariableKey],
-                                                    $item['visits'],
-                                                    $item['clicks'],
-                                                    $item['ctr'],
-                                                    $item['conversions'],
-                                                    $item['revenue'],
-                                                    $item['cost'],
-                                                    $item['profit'],
-                                                    $item['cpv'],
-                                                    $item['epv'],
-                                                    $item['roi'],
-                                                    $timeStamp
-                                                );
+
+                                                }
+
+                                                unset($match);
+                                                unset($tomatch);
+                                                // $ruleSetCount++;
+                                            }else{
+                                                if ($matchCount > 0) {
+                                                    $targets[] = $item[$customVariableKey];
+                                                    $this->insertBotReport($key['campaignRulesId'],
+                                                        $key['tid'],
+                                                        $key['id'],
+                                                        $key['ruleType'],
+                                                        $item[$customVariableKey],
+                                                        $item['visits'],
+                                                        $item['clicks'],
+                                                        $item['ctr'],
+                                                        $item['conversions'],
+                                                        $item['revenue'],
+                                                        $item['cost'],
+                                                        $item['profit'],
+                                                        $item['cpv'],
+                                                        $item['epv'],
+                                                        $item['roi'],
+                                                        $timeStamp
+                                                    );
+                                                }
+
+                                                unset($match);
+                                                unset($tomatch);
+                                                // $ruleSetCount++;
                                             }
-
-                                            unset($match);
-                                            unset($tomatch);
-                                            $ruleSetCount++;
                                         }
                                     }
                                 }
-                            }
+                                }
+
 
 
                             /**
@@ -781,6 +792,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                        ca.vid,
                        ca.campName,
                        ca.geo,
+                       ca.safeListActive,
                        t.trafficName,
                        v.verticalName,
                        cr.campaignRulesId,
@@ -918,6 +930,19 @@ class CronBotRulesCommand extends ContainerAwareCommand{
         $botReportEntity->setRoi($roi);
         $em->persist($botReportEntity);
         $em->flush();
+    }
+
+    public function getSafeListPlacement($cid){
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $safeList = $em->getRepository('AppBundle:SafeListPlacements')->findBy(array('cid' => $cid));
+        $data = array();
+        for($x = 0; $x < count($safeList); $x++){
+            $data[] = $safeList[$x]->getPlacement();
+        }
+
+
+        return $data;
+
     }
 
 }

@@ -262,6 +262,19 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addVertical',  '_route' => 'addVertical',);
             }
 
+            if (0 === strpos($pathinfo, '/campaign/update-safe-list')) {
+                // updateSafeList
+                if ($pathinfo === '/campaign/update-safe-list') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::updateSafeList',  '_route' => 'updateSafeList',);
+                }
+
+                // updateSafeListActive
+                if ($pathinfo === '/campaign/update-safe-list-active') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::updateSafeListActive',  '_route' => 'updateSafeListActive',);
+                }
+
+            }
+
             // getVeritical
             if ($pathinfo === '/campaign/get-verticals') {
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getVertical',  '_route' => 'getVeritical',);

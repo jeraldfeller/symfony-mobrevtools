@@ -7,12 +7,12 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="campId" type="string" column="camp_id" length="100" nullable="false">
+    <field name="campId" type="text" column="camp_id" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
     </field>
-    <field name="vid" type="string" column="vid" length="60" nullable="false">
+    <field name="vid" type="text" column="vid" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
@@ -32,6 +32,7 @@
         <option name="fixed"/>
       </options>
     </field>
+    <field name="safeListActive" type="boolean" column="safe_list_active" nullable="false"/>
     <many-to-one field="tid" target-entity="TrafficSource" fetch="LAZY">
       <join-columns>
         <join-column name="tid" referenced-column-name="id"/>

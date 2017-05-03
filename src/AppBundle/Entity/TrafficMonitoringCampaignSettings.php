@@ -109,4 +109,33 @@ class TrafficMonitoringCampaignSettings
     {
         return $this->id;
     }
+    /**
+     * @var boolean
+     */
+    private $active;
+
+
+    /**
+     * Set active
+     *
+     * @param boolean $active
+     *
+     * @return TrafficMonitoringCampaignSettings
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
 }

@@ -167,4 +167,33 @@ class ReportsIp
     {
         return $this->Id;
     }
+    /**
+     * @var string
+     */
+    private $isp;
+
+
+    /**
+     * Set isp
+     *
+     * @param string $isp
+     *
+     * @return ReportsIp
+     */
+    public function setIsp($isp)
+    {
+        $this->isp = $isp;
+
+        return $this;
+    }
+
+    /**
+     * Get isp
+     *
+     * @return string
+     */
+    public function getIsp()
+    {
+        return $this->isp;
+    }
 }

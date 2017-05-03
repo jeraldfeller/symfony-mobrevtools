@@ -455,11 +455,19 @@ function getCampaignMatch(voluumId)
                     console.log(obj['info'][0]['verId'])
                     $('#id').val(obj['info'][0]['id']);
                     $('#selectAddVertical').val(obj['info'][0]['verId']).trigger("change");
+                    $('#safeListSwitch').bootstrapSwitch('state', obj['info'][0]['safeListActive'], true);
+                    $safeLists = '';
+                    for($s = 0; $s < obj['safeList'].length; $s++){
+                        $safeLists += obj['safeList'][$s]+"\n";
+                    }
 
+                    $('#safeListPlacements').text($safeLists);
                     if(obj['info'][0]['trafficName'] == 'ExoClick'){
                         $('#selectExoClickCampaign').val(obj['info'][0]['campId']).trigger("change");
                     }
                     $.each(obj['rulesConditions'], function(index, info){
+
+
 
 
                         $botRuleSelected = '';
@@ -1154,6 +1162,86 @@ function getPresetRuleConditions(id)
         }
 
         XMLHttpRequestObject.send("param= "+ id);
+
+
+
+    }
+
+    return false;
+}
+
+
+function updateSafeList(btn, data){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/update-safe-list");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+                l.stop();
+                showNotification('success', 'Success', 'Lists Successfully Updated');
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+                l.stop();
+            }
+        }
+
+
+
+        l.start();
+
+
+        var dataArray = JSON.stringify(data);
+        XMLHttpRequestObject.send("param=" + dataArray);
+
+
+
+    }
+
+    return false;
+}
+
+function updateSafeListActive(data){
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/update-safe-list-active");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+
+
+
+
+        var dataArray = JSON.stringify(data);
+        XMLHttpRequestObject.send("param=" + dataArray);
 
 
 

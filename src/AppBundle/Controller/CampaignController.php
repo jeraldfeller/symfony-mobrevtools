@@ -27,6 +27,9 @@ use AppBundle\Entity\ListReports;
 use AppBundle\Entity\CampaignRulePresets;
 use AppBundle\Entity\CampaignRulePresetsConditions;
 
+use AppBundle\Entity\SafeListPlacements;
+
+
 
 
 
@@ -320,6 +323,7 @@ class CampaignController extends Controller
                        ca.campId,
                        ca.vid,
                        ca.campName,
+                       ca.safeListActive,
                        v.verticalName,
                        v.id as verId,
                        t.trafficName
@@ -334,11 +338,23 @@ class CampaignController extends Controller
         $return = array($id =>
             array('info' => $result,
                 'rulesConditions' => $rules,
+                'safeList' => $this->getSafeList($id),
                 'carriers' => $this->getCarriersDistinct($result[0]['trafficName'])
             )
         );
 
         return $return;
+    }
+
+    public function getSafeList($id){
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRePository('AppBundle:SafeListPlacements')->findBy(array('cid' => $id));
+        $data = array();
+        for($x = 0; $x < count($entity); $x++){
+            $data[] = $entity[$x]->getPlacement();
+        }
+
+        return $data;
     }
 
 
@@ -1139,7 +1155,6 @@ class CampaignController extends Controller
         return new Response(json_encode(true));
     }
 
-
     /**
      * @Route("/campaign/add-vertical", name="addVertical")
      */
@@ -1172,9 +1187,59 @@ class CampaignController extends Controller
         return new Response (
             $this->makeResponse($error,$message, $data)
         );
+    }
 
+    /**
+     * @Route("/campaign/update-safe-list", name="updateSafeList")
+     */
+    public function updateSafeList(){
+        $data = json_decode($_POST['param'], true);
+        $chunkSize = 100;
+        $x = 1;
+        $this->forward('AppBundle:Deletes:deleteIndividualColumn', array('appBundle' => 'AppBundle:SafeListPlacements',
+            'column' => 'cid',
+            'value' => $data['cid']))->getContent();
+
+        $em = $this->getDoctrine()->getManager();
+        $campaignEntity = $em->getRepository('AppBundle:Campaign')->find($data['cid']);
+
+        foreach($data['items'] as $row){
+            if($row['placement'] != ''){
+                $entity = new SafeListPlacements();
+                $entity->setCid($campaignEntity);
+                $entity->setPlacement($row['placement']);
+                $em->persist($entity);
+
+                if(( $x % $chunkSize ) == 0){
+                    $em->flush();
+                }
+                $x++;
+            }
+        }
+
+        $em->flush();
+        $em->clear();
+
+
+        return new Response(json_encode($data['items']));
 
     }
+
+
+    /**
+     * @Route("/campaign/update-safe-list-active", name="updateSafeListActive")
+     */
+    public function updateSafeListActive(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('AppBundle:Campaign')->find($data['cid']);
+        $entity->setSafeListActive($data['isActive']);
+        $em->flush();
+
+        return new Response(json_encode(true));
+
+    }
+
 
     /**
      * @Route("/campaign/get-verticals", name="getVeritical")
@@ -1499,11 +1564,12 @@ class CampaignController extends Controller
                 }
             }
 
-            if(isset($input['id'])){
 
-                $id = $input['id'];
-            }
+        }
 
+        if(isset($input['id'])){
+
+            $id = $input['id'];
         }
 
 

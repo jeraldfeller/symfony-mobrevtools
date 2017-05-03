@@ -330,7 +330,8 @@ class TrafficMonitoringController extends Controller{
                         $values[] = array(
                             'campaignName' => $row['campaignName'],
                             'campaignId' => $row['campaignId'],
-                            'count' => $defaultCount
+                            'count' => $defaultCount,
+                            'active' => 0
                         );
                     }
                 }else{
@@ -416,6 +417,7 @@ class TrafficMonitoringController extends Controller{
             $traffic->setCampaignName($row['campaignName']);
             $traffic->setCampaignId($row['campaignId']);
             $traffic->setVisitCount($row['count']);
+            $traffic->setActive($row['active']);
             $em->persist($traffic);
 
             if(($i % $batch) == 0){

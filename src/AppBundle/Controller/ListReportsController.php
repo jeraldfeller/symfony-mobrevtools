@@ -205,7 +205,8 @@ class ListReportsController extends Controller {
             $sQuery = $em->createQuery("
             SELECT $aQueryColumns
             FROM AppBundle:ListReports p, AppBundle:Campaign ca, AppBundle:TrafficSource t, AppBundle:Verticals v ".$sWhere.$sOrder."")
-
+                ->setFirstResult($firstResult)
+                ->setMaxResults($maxResults)
                 ;
                 $rResult = $sQuery->getResult();
 
@@ -213,7 +214,8 @@ class ListReportsController extends Controller {
                 $sQuery = $em->createQuery("
             SELECT p
             FROM ".$sTable." p ".$cWhere. $whereExists ."")
-
+                    ->setFirstResult($firstResult)
+                    ->setMaxResults($maxResults)
                 ;
         }
 
