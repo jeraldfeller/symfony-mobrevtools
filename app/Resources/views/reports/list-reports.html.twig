@@ -92,6 +92,22 @@
                                 {% endfor  %}
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <select id="selectGeo" class="select2_single form-control" tabindex="-1" name="campaign">
+                                <option></option>
+                                {% for item in geos %}
+                                    <option value="{{ item.geo }}">{{ item.geo }}</option>
+                                {% endfor  %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select id="selectVertical" class="select2_single form-control" tabindex="-1" name="campaign">
+                                <option></option>
+                                {% for item in verticals %}
+                                    <option value="{{ item.id }}">{{ item.verticalName }}</option>
+                                {% endfor  %}
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -125,6 +141,8 @@
                                     <th>Type</th>
                                     <th>Traffic Source</th>
                                     <th>Campaign</th>
+                                    <th>Geo</th>
+                                    <th>Vertical</th>
                                     <th>Placements</th>
                                     <th>Visits</th>
                                     <th>Clicks</th>
@@ -199,7 +217,16 @@
                     placeholder: 'Select Traffic Source',
                     width: null
                 });
-
+                $("#selectGeo").select2({
+                    allowClear: true,
+                    placeholder: 'Select Geo',
+                    width: null
+                });
+                $("#selectVertical").select2({
+                    allowClear: true,
+                    placeholder: 'Select Vertical',
+                    width: null
+                });
                 // @see https://select2.github.io/examples.html#data-ajax
                 function formatRepo(repo) {
                     if (repo.loading) return repo.text;
@@ -330,6 +357,8 @@
                         aoData.push({"name": "type", "value": $('#filterByType').val()});
                         aoData.push({"name": "trafficSource", "value": $('#selectTrafficSource').val()});
                         aoData.push({"name": "campaign", "value": $('#selectCampaign').val()});
+                        aoData.push({"name": "geo", "value": $('#selectGeo').val()});
+                        aoData.push({"name": "vertical", "value": $('#selectVertical').val()});
                         $.getJSON(sSource, aoData, function (json) {
                             /* Do whatever additional processing you want on the callback, then tell DataTables */
                             fnCallback(json)
@@ -447,6 +476,13 @@
                     oTable.ajax.reload();
                 });
                 $('#selectCampaign').change(function(){
+                    oTable.ajax.reload();
+                });
+
+                $('#selectGeo').change(function(){
+                    oTable.ajax.reload();
+                });
+                $('#selectVertical').change(function(){
                     oTable.ajax.reload();
                 });
 

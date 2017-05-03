@@ -28,10 +28,8 @@ class ListReportsController extends Controller {
         if($isLoggedIn){
             $page = 'Data Reports';
             $trafficSources = $this->getTrafficSources();
-            $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ListReports',
-                'column' => 'geo'))->getContent(), true);
-            $verticals = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ListReports',
-                'column' => 'vertical'))->getContent(), true);
+            $geos = $this->getGeos();
+            $verticals = $this->getVerticals();
             $campaigns = $this->getCampaigns();
             return $this->render(
                 'reports/list-reports.html.twig', array('page' => $page,
@@ -52,7 +50,7 @@ class ListReportsController extends Controller {
 
     public function ajaxGetListReports(){
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 'p.listReportsId', 'p.tid', 'p.cid', 'p.type', 't.trafficName', 'ca.campName', 'p.placement', 'p.visits', 'p.clicks' , 'p.ctr', 'p.conversions', 'p.revenue', 'p.cost', 'p.profit', 'p.cpv', 'p.epv', 'p.roi', 'p.dateExecuted', 'p.status' );
+        $aColumns = array( 'p.listReportsId', 'p.tid', 'p.cid', 'p.type', 't.trafficName', 'ca.campName', 'ca.geo', 'v.verticalName', 'p.placement', 'p.visits', 'p.clicks' , 'p.ctr', 'p.conversions', 'p.revenue', 'p.cost', 'p.profit', 'p.cpv', 'p.epv', 'p.roi', 'p.dateExecuted', 'p.status' );
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'p.listReportsId';
@@ -71,6 +69,8 @@ class ListReportsController extends Controller {
         if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
             $firstResult = intval( $input['iDisplayStart'] );
             $maxResults = intval( $input['iDisplayLength'] );
+        }else{
+
         }
 
 
@@ -104,6 +104,7 @@ class ListReportsController extends Controller {
          */
         $iColumnCount = count($aColumns);
         $aFilteringRules = array();
+        $subFilteringRules = array();
         if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
             $aFilteringRules = array();
             for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
@@ -120,7 +121,7 @@ class ListReportsController extends Controller {
             // custom filter
 
 
-            if(isset($input['type']) || isset($input['trafficSource']) || isset($input['campaign'])){
+            if(isset($input['type']) || isset($input['trafficSource']) || isset($input['campaign']) || isset($input['geo']) || isset($input['vertical'])){
 
                 if($input['type'] != '' || $input['type'] != null){
 
@@ -136,9 +137,17 @@ class ListReportsController extends Controller {
 
                     $aFilteringRules[] = "p.cid = '". $input['campaign'] ."'";
                 }
+                if($input['geo'] != '' || $input['geo'] != null){
+
+                    $subGeoFilteringRules = "ca.geo = '". $input['geo'] ."'";
+                    $subFilteringRules[] = " EXISTS (SELECT ca.geo FROM AppBundle:Campaign ca WHERE p.cid = ca.id  AND  " . $subGeoFilteringRules . ")";
+                }
+                if($input['vertical'] != '' || $input['vertical'] != null){
+
+                    $subVerticalFilteringRules = "caf.verId = '". $input['vertical'] ."'";
+                    $subFilteringRules[] = " EXISTS (SELECT caf.verId FROM AppBundle:Campaign caf WHERE p.cid = caf.id  AND  " . $subVerticalFilteringRules . ")";
+                }
             }
-
-
 
         }
 
@@ -153,11 +162,22 @@ class ListReportsController extends Controller {
         }
 
         if (!empty($aFilteringRules)) {
-            $sWhere = " WHERE p.tid = t.id AND ca.id = p.cid AND ".implode(" AND ", $aFilteringRules);
+            $sWhere = " WHERE p.tid = t.id AND ca.id = p.cid AND ca.verId = v.id AND ".implode(" AND ", $aFilteringRules);
             $cWhere = " WHERE ".implode(" AND ", $aFilteringRules);
         } else {
-            $sWhere = "WHERE p.tid = t.id AND ca.id = p.cid";
+            $sWhere = "WHERE p.tid = t.id AND ca.id = p.cid AND ca.verId = v.id";
             $cWhere = "";
+        }
+
+        if (!empty($subFilteringRules)) {
+            if (!empty($aFilteringRules)) {
+                $whereExists = "AND " .implode(" AND ", $subFilteringRules);
+            }else{
+                $whereExists = " WHERE ".implode(" AND ", $subFilteringRules);
+            }
+
+        } else {
+            $whereExists = "";
         }
 
 
@@ -168,29 +188,42 @@ class ListReportsController extends Controller {
         $aQueryColumns = implode(', ', $aColumns);
 
 
+        if($input['iDisplayLength'] == '-1'){
+            $sQuery = $em->createQuery("
+            SELECT $aQueryColumns
+            FROM AppBundle:ListReports p, AppBundle:Campaign ca, AppBundle:TrafficSource t, AppBundle:Verticals v ".$sWhere.$sOrder."")
 
-        $sQuery = $em->createQuery("
-        SELECT $aQueryColumns
-        FROM AppBundle:ListReports p, AppBundle:Campaign ca, AppBundle:TrafficSource t ".$sWhere.$sOrder."")
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResults)
-        ;
-        $rResult = $sQuery->getResult();
+                ;
+                $rResult = $sQuery->getResult();
 
 
-        $sQuery = $em->createQuery("
-        SELECT p
-        FROM ".$sTable." p ".$cWhere."")
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResults)
-        ;
+                $sQuery = $em->createQuery("
+            SELECT p
+            FROM ".$sTable." p ".$cWhere. $whereExists ."")
+                ;
+        }else{
+            $sQuery = $em->createQuery("
+            SELECT $aQueryColumns
+            FROM AppBundle:ListReports p, AppBundle:Campaign ca, AppBundle:TrafficSource t, AppBundle:Verticals v ".$sWhere.$sOrder."")
+
+                ;
+                $rResult = $sQuery->getResult();
+
+
+                $sQuery = $em->createQuery("
+            SELECT p
+            FROM ".$sTable." p ".$cWhere. $whereExists ."")
+
+                ;
+        }
+
 
         $paginator = new Paginator($sQuery);
         $iFilteredTotal = count($paginator);
 
         $sQuery = $em->createQuery("
         SELECT p
-        FROM ".$sTable." p ".$cWhere."");
+        FROM ".$sTable." p ".$cWhere. $whereExists."");
 
         $iTotal = count($paginator = new Paginator($sQuery));
 
@@ -218,6 +251,8 @@ class ListReportsController extends Controller {
             $row[] = strtoupper($column['type']);
             $row[] = $column['trafficName'];
             $row[] = $column['campName'];
+            $row[] = $column['geo'];
+            $row[] = $column['verticalName'];
             $row[] = $column['placement'];
             $row[] = $column['visits'];
             $row[] = $column['clicks'];
@@ -272,6 +307,48 @@ class ListReportsController extends Controller {
             'campName' => $campaignEntity->getCampName()
         );
         return $result;
+    }
+
+
+    public function getVerticals()
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $sql = $em->createQuery("
+            SELECT DISTINCT l.cid, p.id, p.verticalName
+                FROM AppBundle:Verticals p, AppBundle:ListReports l, AppBundle:Campaign ca
+                WHERE l.cid = ca.id AND ca.verId = p.id
+        ");
+        $result = $sql->getResult();
+
+
+        $data = array();
+        foreach($result as $row){
+            $data[] = array(
+                'id' => $row['id'],
+                'verticalName' => $row['verticalName']
+            );
+        }
+        return $data;
+    }
+
+    public function getGeos()
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $sql = $em->createQuery("
+            SELECT DISTINCT ca.geo
+                FROM AppBundle:ListReports l, AppBundle:Campaign ca
+                WHERE l.cid = ca.id
+        ");
+        $result = $sql->getResult();
+
+
+        $data = array();
+        foreach($result as $row){
+            $data[] = array(
+                'geo' => $row['geo']
+            );
+        }
+        return $data;
     }
 
 

@@ -1530,22 +1530,38 @@ class CampaignController extends Controller
         $aQueryColumns = implode(', ', $aColumns);
 
 
+        if($input['iDisplayLength'] == '-1'){
 
-        $sQuery = $em->createQuery("
-        SELECT $aQueryColumns
-        FROM ".$sTable." p ".$sWhere.$sOrder."")
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResults)
-        ;
-        $rResult = $sQuery->getResult();
+            $sQuery = $em->createQuery("
+            SELECT $aQueryColumns
+            FROM ".$sTable." p ".$sWhere.$sOrder."")
+
+            ;
+            $rResult = $sQuery->getResult();
 
 
-        $sQuery = $em->createQuery("
-        SELECT p
-        FROM ".$sTable." p ".$sWhere.$sOrder."")
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResults)
-        ;
+            $sQuery = $em->createQuery("
+            SELECT p
+            FROM ".$sTable." p ".$sWhere.$sOrder."")
+
+            ;
+        }else{
+            $sQuery = $em->createQuery("
+            SELECT $aQueryColumns
+            FROM ".$sTable." p ".$sWhere.$sOrder."")
+                    ->setFirstResult($firstResult)
+                    ->setMaxResults($maxResults)
+                ;
+                $rResult = $sQuery->getResult();
+
+
+                $sQuery = $em->createQuery("
+            SELECT p
+            FROM ".$sTable." p ".$sWhere.$sOrder."")
+                ->setFirstResult($firstResult)
+                ->setMaxResults($maxResults)
+            ;
+        }
 
         $paginator = new Paginator($sQuery);
         $iFilteredTotal = count($paginator);

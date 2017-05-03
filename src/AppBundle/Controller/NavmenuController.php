@@ -110,12 +110,16 @@ class NavmenuController extends Controller{
                                                         <li class="nav-item">
                                                             <a href="/tools/landers" class="nav-link ">
                                                                 <span class="title">Landers</span>
+                                                                <span class="selected"></span>
+                                                                <span class="arrow open"></span>
                                                             </a>
-                                                        </li>
-                                                        <li class="nav-item">
-                                                            <a href="/tools/lander-presets" class="nav-link ">
-                                                                <span class="title">Lander Presets</span>
-                                                            </a>
+                                                            <ul class="sub-menu">
+                                                                        <li class="nav-item">
+                                                                            <a href="/tools/lander-presets" class="nav-link ">
+                                                                                <span class="title">Lander Presets</span>
+                                                                            </a>
+                                                                        </li>
+                                                            </ul>
                                                         </li>
                                                         <li class="nav-item">
                                                             <a href="/tools/ip-compiler" class="nav-link ">
