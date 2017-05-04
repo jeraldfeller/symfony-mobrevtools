@@ -607,7 +607,7 @@ function getCampaignMatch(voluumId)
                             '</select>' +
                             '</div>' +
                             '<div class="col-md-3">' +
-                            '<select data-index="'+index+'-'+$z+'" onChange="enableInputValue(this)" id="option-'+index+'-'+$z+'" class="select2_single form-control option disableTrigger-'+index+'" tabindex="-1" disabled>' +
+                            '<select data-index="'+index+'-'+$z+'" onChange="enableInputValue(this)" id="option-'+index+'-'+$z+'" class="select2_single form-control option disableTrigger-'+index+' optionTrigger" tabindex="-1" disabled>' +
                             '<option></option>' +
                             '<option value="greaterThan" '+ $selectedGreater +'>Greater Than</option>' +
                             '<option value="lessThan" '+ $selectedLess +'>Less Than</option>' +

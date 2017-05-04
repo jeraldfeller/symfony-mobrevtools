@@ -1139,6 +1139,15 @@
             var action = elem.getAttribute('data-action');
             if(action == 'edit'){
                 $('.disableTrigger-'+index).attr('disabled', false);
+
+
+                $(".optionTrigger").each(function() {
+                    $idIndex = $(this).data('index')
+                    if($(this).val() != 'between'){
+                        $('#value2-'+$idIndex).attr('disabled', true);
+                    }
+                });
+
                 $('#buttonsContainer-'+index).css('display', 'none');
                 $('#addConditionActiveContainer-'+index).css('display', 'inline');
             }else{

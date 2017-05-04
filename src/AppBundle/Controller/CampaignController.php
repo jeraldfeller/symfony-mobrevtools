@@ -1142,14 +1142,19 @@ class CampaignController extends Controller
     public function deleteDataAction(){
         $data = json_decode($_POST['param'], true);
         $em = $this->getDoctrine()->getManager();
+        $batch = 100;
+        $i = 1;
         foreach($data['items'] as $row){
             $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
             if($listData){
                 $em->remove($listData);
-                $em->flush($listData);
+                if(($i % $batch) == 0){
+                    $em->flush();
+                    $em->clear();
+                }
             }
         }
-
+        $em->flush();
         $em->clear();
 
         return new Response(json_encode(true));

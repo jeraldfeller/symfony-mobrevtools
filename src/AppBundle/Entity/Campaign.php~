@@ -196,4 +196,33 @@ class Campaign
     {
         return $this->verId;
     }
+    /**
+     * @var boolean
+     */
+    private $safeListActive;
+
+
+    /**
+     * Set safeListActive
+     *
+     * @param boolean $safeListActive
+     *
+     * @return Campaign
+     */
+    public function setSafeListActive($safeListActive)
+    {
+        $this->safeListActive = $safeListActive;
+
+        return $this;
+    }
+
+    /**
+     * Get safeListActive
+     *
+     * @return boolean
+     */
+    public function getSafeListActive()
+    {
+        return $this->safeListActive;
+    }
 }

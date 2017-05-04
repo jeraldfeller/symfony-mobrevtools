@@ -114,7 +114,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $tz = 'America/New_York';
                     $sort = 'visits';
                     $direction = 'desc';
-                    $limit = 10000;
+                    $limit = 100000;
                     $output->writeln([
                         $key['ruleType'], $key['trafficName'], $key['campName']
                     ]);
@@ -912,7 +912,6 @@ class CronBotRulesCommand extends ContainerAwareCommand{
             $botReportEntity->setRoi($roi);
             $botReportEntity->setDateExecuted($dateExecuted);
             $botReportEntity->setStatus('RESUMED');
-            $em->persist($botReportEntity);
             $em->flush();
         }
     }
