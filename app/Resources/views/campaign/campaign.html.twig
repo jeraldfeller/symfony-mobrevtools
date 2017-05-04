@@ -239,13 +239,14 @@
                         <div class="form-group">
                             <div class="col-md-2 col-xs-12">
                                 <select id="selectPresetType" class="select2_single form-control" tabindex="-1">
-                                    <option value="preset" selected>Preset Rule</option>
+                                    <option></option>
+                                    <option value="preset">Preset Rule</option>
                                     <option value="custom">Custom Rule</option>
                                 </select>
                             </div>
 
                             <div class="col-md-2 col-xs-12">
-                                <select id="selectPresetRule" class="select2_single form-control" tabindex="-1">
+                                <select id="selectPresetRule" class="select2_single form-control" tabindex="-1" disabled>
                                     <option></option>
                                     {% for preset in presets %}
                                         <option value="{{ preset.id }}">{{ preset.presetName }}</option>
@@ -746,6 +747,7 @@
                 $('#selectPresetType').change(function(){
                     if($(this).val() == 'preset'){
                         $('#addCondition').css('display', 'none');
+                        $('#selectPresetRule').attr('disabled', false);
                     }else{
                         $('#addCondition').css('display', 'inline');
                         if($('#hasConditions').val() == 1){
@@ -755,6 +757,7 @@
                                 $(this).remove();
                             });
                         }
+                        $('#selectPresetRule').attr('disabled', true);
                         $('#selectPresetRule').val('').trigger('change')
                     }
                 });
