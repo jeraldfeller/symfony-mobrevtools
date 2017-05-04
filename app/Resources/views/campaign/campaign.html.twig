@@ -309,7 +309,7 @@
                                     </div>
 
                                     <div class="actions">
-                                        <button type="button" class="btn btn-circle green btn-sm ladda-button pull-right spinnerBtn" id="addRuleBtn" data-style="expand-right" data-size="s">
+                                        <button type="button" class="btn btn-circle green btn-sm ladda-button pull-right spinnerBtn" id="addRuleBtn" data-style="expand-right" data-size="s" disabled>
                                                     <span class="ladda-label">
                                                         <i class="fa fa-plus"></i> Add Rule</span>
                                         </button>
@@ -748,7 +748,13 @@
                     if($(this).val() == 'preset'){
                         $('#addCondition').css('display', 'none');
                         $('#selectPresetRule').attr('disabled', false);
+                        if($('#selectPresetRule').val() == ''){
+                            $('#addRuleBtn').attr('disabled', true);
+                        }else{
+                            $('#addRuleBtn').attr('disabled', false);
+                        }
                     }else{
+
                         $('#addCondition').css('display', 'inline');
                         if($('#hasConditions').val() == 1){
                             $('.presetRow').each(function(i, obj) {
@@ -759,6 +765,15 @@
                         }
                         $('#selectPresetRule').attr('disabled', true);
                         $('#selectPresetRule').val('').trigger('change')
+                        $('#addRuleBtn').attr('disabled', false);
+                    }
+                });
+
+                $('#selectPresetRule').change(function(){
+                    if($(this).val() == ''){
+                        $('#addRuleBtn').attr('disabled', true);
+                    }else{
+                        $('#addRuleBtn').attr('disabled', false);
                     }
                 });
 
