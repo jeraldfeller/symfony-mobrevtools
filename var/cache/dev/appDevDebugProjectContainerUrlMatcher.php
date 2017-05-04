@@ -950,9 +950,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficGlobalSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficglobalsettings',);
             }
 
-            // app_trafficmonitoring_updatecampaigntrafficnotificationsettings
-            if ($pathinfo === '/monitoring/update-traffic-monitoring-notification-settings') {
-                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettings',);
+            if (0 === strpos($pathinfo, '/monitoring/update-traffic-monitoring-notification-settings')) {
+                // app_trafficmonitoring_updatecampaigntrafficnotificationsettings
+                if ($pathinfo === '/monitoring/update-traffic-monitoring-notification-settings') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettings',);
+                }
+
+                // app_trafficmonitoring_updatecampaigntrafficnotificationsettingscampaignlevel
+                if ($pathinfo === '/monitoring/update-traffic-monitoring-notification-settings-campaign-level') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettingsCampaignLevel',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettingscampaignlevel',);
+                }
+
             }
 
         }

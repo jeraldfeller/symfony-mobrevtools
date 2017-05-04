@@ -387,7 +387,8 @@ class TrafficMonitoringController extends Controller{
             $data[] =array('id' => $traffic[$x]->getId(),
                 'campaignName' => $traffic[$x]->getCampaignName(),
                 'campaignId' => $traffic[$x]->getCampaignId(),
-                'visitCount' => $traffic[$x]->getVisitCount()
+                'visitCount' => $traffic[$x]->getVisitCount(),
+                'active' => $traffic[$x]->getActive()
             );
         }
         return $data;
@@ -486,5 +487,22 @@ class TrafficMonitoringController extends Controller{
             json_encode(true)
         );
     }
+
+    /**
+     * @Route("/monitoring/update-traffic-monitoring-notification-settings-campaign-level"), name="updateTrafficMonitoringNotificationSettingsCampaignLevel")
+     */
+    public function updateCampaignTrafficNotificationSettingsCampaignLevel(){
+        $data = json_decode($_POST['param'], true);
+
+        $em = $this->getDoctrine()->getManager();
+        $traffic = $em->getRepository('AppBundle:TrafficMonitoringCampaignSettings')->find($data['id']);
+        $traffic->setActive($data['isChecked']);
+        $em->flush();
+        $em->clear();
+        return new Response(
+            json_encode(true)
+        );
+    }
+
 
 }

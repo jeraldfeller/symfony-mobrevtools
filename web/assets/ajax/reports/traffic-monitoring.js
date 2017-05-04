@@ -30,14 +30,37 @@ function getWithTrafficCampaigns(bol, include)
 
                 $response =  response;
                 $.each($response, function(i, val) {
+                    if(val.active == 1){
+                        $checked = 'checked';
+                    }else{
+                        $checked = '';
+                    }
                     $('#displayTrafficMonitoringSettingsContainer').append(
                         '<tr>' +
                         '<td>' + val.campaignName + '</td>' +
                         '<td> <input type="number" class="form-control camp-record" value="' + val.visitCount + '" data-campid="' + val.campaignId + '"> </td>' +
+                        '<td> <input type="checkbox" class="switch_btn" data-id="'+val.id+'" data-size="mini" data-on-color="success" data-size="mini" data-off-color="danger" data-on-text="ON" data-off-text="OFF" type="checkbox" value="1" name="campaignLevelSwitch" ' + $checked +'>' +
                         '</tr>'
                     );
                 });
 
+
+                $("input[type=checkbox].switch_btn").bootstrapSwitch();
+                $('input[name="campaignLevelSwitch"]').on('switchChange.bootstrapSwitch', function(event, state) {
+                    $id = $(this).data('id');
+
+                    if($(this).is(':checked') == true){
+                        $isActive = 1;
+                    }else {
+                        $isActive = 0;
+                    }
+
+                    $data = {
+                        id: $id,
+                        isChecked: $isActive
+                    }
+                    updateTrafficMonitoringNotificationSettingsCampaignLevel($data);
+                });
 
             }
 
@@ -85,6 +108,7 @@ function updateTrafficMonitoringGlobalSettings(isActive)
 
     return false;
 }
+
 
 function updateTrafficMonitoringSettings(data, btn)
 {
@@ -158,6 +182,41 @@ function updateTrafficMonitoringNotificationSettings(data)
     return false;
 }
 
+
+function updateTrafficMonitoringNotificationSettingsCampaignLevel(data)
+{
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/monitoring/update-traffic-monitoring-notification-settings-campaign-level");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+
+               // showNotification('success', 'Success', 'Settings successfully updated')
+            }else if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500 || XMLHttpRequestObject.status == 504){
+                showNotification('error', '', '');
+
+
+            }
+
+        }
+
+
+        //   $cellValue =  $('#modalCampaignTable tr td:first').text();
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+    }
+
+    return false;
+}
 
 function getTrafficSourceTrafficMonitoringFilter()
 {
