@@ -898,6 +898,7 @@ class CampaignController extends Controller
             $campaignEntity->setCampName($data['campaignName']);
             $campaignEntity->setVerId($data['verticalId']);
             $campaignEntity->setGeo($data['geo']);
+            $campaignEntity->setSafeListActive(0);
             $em->persist($campaignEntity);
             $em->flush();
             $em->clear();
