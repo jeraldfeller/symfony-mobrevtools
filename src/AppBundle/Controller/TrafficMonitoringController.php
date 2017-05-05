@@ -434,7 +434,7 @@ class TrafficMonitoringController extends Controller{
     }
 
     /**
-     * @Route("reports/update-traffic-monitoring-settings"), name="updateTrafficMonitoringSettings")
+     * @Route("monitoring/update-traffic-monitoring-settings"), name="updateTrafficMonitoringSettings")
      */
     public function updateCampaignTrafficSettingsVisits(){
         $data = json_decode($_POST['param'], true);

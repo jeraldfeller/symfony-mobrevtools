@@ -790,6 +790,11 @@
                     }
                 });
 
+
+                $('#filterByType').change(function(){
+                   oTable.ajax.reload();
+                });
+
                 /**
                  * Get Campaigns
                  */
