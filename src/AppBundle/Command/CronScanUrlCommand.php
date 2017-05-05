@@ -102,10 +102,13 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
             }
             foreach($landers['rows'] as $lander){
 
-                if($lander['visits'] >= 100){
-                    $url =  parse_url($lander['landerUrl']);
-                    if(isset($url['host'])){
-                        $urlData[] = $url['host'];
+                if($lander['landerUrl'] != ''){
+                    if($lander['visits'] >= 100){
+                        $urlData[] = strtok($lander['landerUrl'], '?');
+                        $url =  parse_url($lander['landerUrl']);
+                        if(isset($url['host'])){
+                            $urlData[] = $url['host'];
+                        }
                     }
                 }
             }
@@ -119,9 +122,6 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
                     }
                 }
             }
-            var_dump($toScanUrl);
-
-
 
             if(count($toScanUrl) > 0 ){
                 for($i = 0; $i < count($toScanUrl); $i++){
@@ -233,7 +233,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
 
     public function updateScannedUrls($url, $scanRequestId){
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $entity = $em->getRepository('AppBundle:ScannedUrls')->findBy(array('url' => $url));
+        $entity = $em->getRepository('AppBundle:ScannedUrls')->findOneBy(array('url' => $url));
         $entity->setIsScanned(1);
         $entity->setScanRequestId($scanRequestId);
         $em->flush();
@@ -251,6 +251,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
         curl_setopt($ch, CURLOPT_VERBOSE, 1); // remove this if your not debugging
         curl_setopt($ch, CURLOPT_RETURNTRANSFER ,True);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $result=curl_exec ($ch);
         $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

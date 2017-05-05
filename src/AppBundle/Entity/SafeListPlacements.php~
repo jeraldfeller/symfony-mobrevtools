@@ -81,4 +81,3 @@ class SafeListPlacements
         return $this->cid;
     }
 }
-

@@ -56,7 +56,7 @@
         <option name="unsigned"/>
       </options>
     </field>
-    <field name="status" type="string" column="status" length="10" nullable="false">
+    <field name="status" type="string" column="status" length="20" nullable="false">
       <options>
         <option name="fixed"/>
       </options>

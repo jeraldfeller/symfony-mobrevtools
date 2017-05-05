@@ -32,7 +32,7 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="safeListActive" type="boolean" column="safe_list_active" nullable="false"/>
+    <field name="safeListActive" type="boolean" column="safe_list_active" nullable="true"/>
     <many-to-one field="tid" target-entity="TrafficSource" fetch="LAZY">
       <join-columns>
         <join-column name="tid" referenced-column-name="id"/>

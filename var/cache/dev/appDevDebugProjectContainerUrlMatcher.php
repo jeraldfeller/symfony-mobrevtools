@@ -934,31 +934,34 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::ajaxGetReportsTrafficMonitoring',  '_route' => 'app_trafficmonitoring_ajaxgetreportstrafficmonitoring',);
         }
 
-        // app_trafficmonitoring_getcampaigntrafficsettings
-        if ($pathinfo === '/monitoring/get-campaign-traffic-settings') {
-            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::getCampaignTrafficSettingsAction',  '_route' => 'app_trafficmonitoring_getcampaigntrafficsettings',);
-        }
-
-        // app_trafficmonitoring_updatecampaigntrafficsettingsvisits
-        if ($pathinfo === '/reports/update-traffic-monitoring-settings') {
-            return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficSettingsVisits',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficsettingsvisits',);
-        }
-
-        if (0 === strpos($pathinfo, '/monitoring/update-traffic-monitoring-')) {
-            // app_trafficmonitoring_updatecampaigntrafficglobalsettings
-            if ($pathinfo === '/monitoring/update-traffic-monitoring-global-settings') {
-                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficGlobalSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficglobalsettings',);
+        if (0 === strpos($pathinfo, '/monitoring')) {
+            // app_trafficmonitoring_getcampaigntrafficsettings
+            if ($pathinfo === '/monitoring/get-campaign-traffic-settings') {
+                return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::getCampaignTrafficSettingsAction',  '_route' => 'app_trafficmonitoring_getcampaigntrafficsettings',);
             }
 
-            if (0 === strpos($pathinfo, '/monitoring/update-traffic-monitoring-notification-settings')) {
-                // app_trafficmonitoring_updatecampaigntrafficnotificationsettings
-                if ($pathinfo === '/monitoring/update-traffic-monitoring-notification-settings') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettings',);
+            if (0 === strpos($pathinfo, '/monitoring/update-traffic-monitoring-')) {
+                // app_trafficmonitoring_updatecampaigntrafficsettingsvisits
+                if ($pathinfo === '/monitoring/update-traffic-monitoring-settings') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficSettingsVisits',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficsettingsvisits',);
                 }
 
-                // app_trafficmonitoring_updatecampaigntrafficnotificationsettingscampaignlevel
-                if ($pathinfo === '/monitoring/update-traffic-monitoring-notification-settings-campaign-level') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettingsCampaignLevel',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettingscampaignlevel',);
+                // app_trafficmonitoring_updatecampaigntrafficglobalsettings
+                if ($pathinfo === '/monitoring/update-traffic-monitoring-global-settings') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficGlobalSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficglobalsettings',);
+                }
+
+                if (0 === strpos($pathinfo, '/monitoring/update-traffic-monitoring-notification-settings')) {
+                    // app_trafficmonitoring_updatecampaigntrafficnotificationsettings
+                    if ($pathinfo === '/monitoring/update-traffic-monitoring-notification-settings') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettings',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettings',);
+                    }
+
+                    // app_trafficmonitoring_updatecampaigntrafficnotificationsettingscampaignlevel
+                    if ($pathinfo === '/monitoring/update-traffic-monitoring-notification-settings-campaign-level') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\TrafficMonitoringController::updateCampaignTrafficNotificationSettingsCampaignLevel',  '_route' => 'app_trafficmonitoring_updatecampaigntrafficnotificationsettingscampaignlevel',);
+                    }
+
                 }
 
             }
