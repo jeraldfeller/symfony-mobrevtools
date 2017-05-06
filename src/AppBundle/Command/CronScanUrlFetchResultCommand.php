@@ -51,7 +51,7 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
         $currentHour = date('H');
 
 
-        //if($currentHour == 8 || $currentHour == 16 || $currentHour == 00){
+        if($currentHour == 8 || $currentHour == 16 || $currentHour == 00){
             $scannedUrlObj = $this->getUrlsByColumn('isScanned', 1);
             $domainResults = array();
 
@@ -166,8 +166,8 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
 
 
             $subject = 'Domain Reports ' . date('Y-m-d H:i:s');
-          //  $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
-          //  $systemService->sendEmail('jeraldfeller@gmail.com', 'jeraldfeller@gmail.com', $subject, $message);
+            $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
+            $systemService->sendEmail('jeraldfeller@gmail.com', 'jeraldfeller@gmail.com', $subject, $message);
 
         //}
 
@@ -222,7 +222,6 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
         curl_setopt($ch, CURLOPT_USERAGENT, "gzip, My php curl client");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER ,True);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $result=curl_exec ($ch);
         $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
