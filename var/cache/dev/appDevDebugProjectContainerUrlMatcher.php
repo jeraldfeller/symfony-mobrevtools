@@ -914,9 +914,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\SettingsController::ajaxGetNetwork',  '_route' => 'app_settings_ajaxgetnetwork',);
         }
 
-        // registerToken
-        if ($pathinfo === '/system/register-token/{$VOLUUMSESSIONID}/{$EXOSESSIONTOKEN}') {
-            return array (  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
+        if (0 === strpos($pathinfo, '/system')) {
+            // registerToken
+            if ($pathinfo === '/system/register-token/{$VOLUUMSESSIONID}/{$EXOSESSIONTOKEN}') {
+                return array (  'VOLUUMSESSIONID' => NULL,  'EXOSESSIONTOKEN' => NULL,  '_controller' => 'AppBundle\\Controller\\SystemController::registerTokenAction',  '_route' => 'registerToken',);
+            }
+
+            // sendMessage
+            if ($pathinfo === '/system/send-email/{$from}/{$to}/{$subject}/{$message}') {
+                return array (  '_controller' => 'AppBundle\\Controller\\SystemController::sendEmail',  '_route' => 'sendMessage',);
+            }
+
         }
 
         // app_trafficmonitoring_showtrafficreport

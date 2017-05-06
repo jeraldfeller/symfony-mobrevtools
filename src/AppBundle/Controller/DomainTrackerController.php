@@ -66,7 +66,7 @@ class DomainTrackerController extends Controller{
 
     public function ajaxGetReportsDomain(){
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 'p.scanId','p.url', 'p.flagType', 'p.toCheck');
+        $aColumns = array( 'p.scanId','p.url', 'p.flagType', 'p.toCheck', 'p.campaigns');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'p.scanId';
@@ -207,8 +207,11 @@ class DomainTrackerController extends Controller{
         foreach($rResult as $column){
             $row = array();
             $did = $column['scanId'];
+            $campaigns = explode(', ', $column['campaigns']);
+            $campaigns = implode('<br>', $campaigns);
             $row[] = $column['url'];
             $row[] = $column['flagType'];
+            $row[] =  $campaigns;
             if($column['toCheck'] == 1){
                 $isChecked = 'checked';
             }else{

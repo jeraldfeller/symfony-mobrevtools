@@ -103,7 +103,9 @@
                                         <tr>
                                             <th>Domain </th>
                                             <th>Status </th>
+                                            <th>Campaigns</th>
                                             <th>Allow Check</th>
+
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -194,6 +196,12 @@
                 "lengthMenu": [
                     [20, 500, 1000, -1],
                     [20, 500, 1000, "All"] // change per page values here
+                ],
+                "columnDefs": [
+                    {"width": "40%", "targets": 0},
+                    {"width": "10%", "targets": 1},
+                    {"width": "40%", "targets": 2},
+                    {"width": "10%", "targets": 3}
                 ],
                 "order": [[ 0, "asc" ]],
                 select: {

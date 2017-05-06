@@ -49,7 +49,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
         $currentHour = date('H');
 
 
-        //if($currentHour == 7 || $currentHour == 11 || $currentHour == 23){
+        if($currentHour == 7 || $currentHour == 11 || $currentHour == 23){
             //$landersClass->clearScannedUrl();
 
             $tz = 'America/Chicago';
@@ -90,31 +90,35 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
             $urlData = array();
             $toScanUrl = array();
             $scannedUrl = array();
-
+            $landerIds = array();
             foreach($scannedUrlObj as $scanObj){
                 $scannedUrl[] = $scanObj['url'];
             }
             foreach($domains['internalDomains'] as $internal){
                 $urlData[] = $internal['address'];
+                $landerIds[] = array('url' => $internal['address'], 'id' => '');
             }
             foreach($domains['customDomains'] as $custom){
                 $urlData[] = $custom['address'];
+                $landerIds[] = array('url' => $custom['address'], 'id' => '');
             }
             foreach($landers['rows'] as $lander){
 
                 if($lander['landerUrl'] != ''){
                     if($lander['visits'] >= 100){
+
                         $urlData[] = strtok($lander['landerUrl'], '?');
+                        $landerIds[] = array('url' => strtok($lander['landerUrl'], '?'), 'id' => $lander['landerId']);
                         $url =  parse_url($lander['landerUrl']);
                         if(isset($url['host'])){
                             $urlData[] = $url['host'];
+                            $landerIds[] = array('url' => $url['host'], 'id' => $lander['landerId']);
                         }
                     }
                 }
             }
 
             $uniqueUrl = array_unique($urlData);
-            var_dump($uniqueUrl);
             for($i = 0; $i < count($uniqueUrl); $i++){
                 if(isset($uniqueUrl[$i])){
                     if(!in_array($uniqueUrl[$i], $scannedUrl)){
@@ -128,8 +132,16 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
                     //$sendRequestResponse = $apiClass->sendUrlToScan($toScanUrl[$i]);
                     $isUrlExists = $this->checkUrlExist($toScanUrl[$i]);
                     if(count($isUrlExists) == 0){
+
+                        foreach($landerIds as $lanId){
+                            if($lanId['url'] == $toScanUrl[$i]){
+                                $landerId = $lanId['id'];
+                                break;
+                            }
+                        }
+
                         $data[] = array(
-                            'landerId' => $lander['landerId'],
+                            'landerId' => $landerId,
                             'url' => $toScanUrl[$i],
                             'toCheck' => 1
                         );
@@ -165,7 +177,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
             }
 
 
-       // }
+       }
 
     }
 
@@ -251,7 +263,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
         curl_setopt($ch, CURLOPT_VERBOSE, 1); // remove this if your not debugging
         curl_setopt($ch, CURLOPT_RETURNTRANSFER ,True);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
 
         $result=curl_exec ($ch);
         $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

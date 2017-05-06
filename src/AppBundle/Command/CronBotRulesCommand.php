@@ -155,6 +155,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $url = 'https://panel-api.voluum.com/report?';
                     $returnedData = json_decode($voluumService->getVoluumReportsAction($url, $query, 'GET', $voluumSessionId)->getContent(), true);
                     $zeroParkToResumeTargets = array();
+
                     if ($key['active'] == 1) {
                         if (!isset($returnedData['error'])) {
                             $targets = array();
@@ -688,13 +689,17 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                              */
 
 
-
+                            /*
                             if(count($zeroParkToResumeTargets) > 0 ){
                                 $query = array('hash' => implode(',', $zeroParkToResumeTargets));
                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/target/sresume/?' . http_build_query($query);
-                                $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                $return = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                $output->writeln([
+                                    json_encode($return)
+                                ]);
 
                             }
+                            */
                             switch($key['trafficName']){
                                 case 'Zeropark':
                                     if(count($targets) > 0){
@@ -712,7 +717,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 $query = array('hash' => implode(',', $targetArray)
                                                 );
                                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
-                                                $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                                $response = $zeroparkService->zeroparkRequestAction($url, $query, 1, $zeroparkSessionId);
                                                 $output->writeln([
                                                     json_encode($response)
                                                 ]);
@@ -723,7 +728,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             $query = array('hash' => implode(',', $targetsToPause)
                                             );
                                             $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
-                                            $response = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                            $response = json_decode($zeroparkService->zeroparkRequestAction($url, $query, 1, $zeroparkSessionId), true);
                                             $output->writeln([
                                             json_encode($response)
                                             ]);

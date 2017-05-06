@@ -29,5 +29,10 @@
     </field>
     <field name="dateUpdated" type="datetime" column="date_updated" nullable="true"/>
     <field name="toCheck" type="boolean" column="to_check" nullable="true"/>
+    <field name="campaigns" type="text" column="campaigns" nullable="true">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
   </entity>
 </doctrine-mapping>
