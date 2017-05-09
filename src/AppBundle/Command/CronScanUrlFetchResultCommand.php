@@ -127,11 +127,11 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
 
 
                 if($detected == true){
-                    $domainResults[] = array('domain' => $row['url'], 'result' => $result);
+                    $domainResults[] = array('domain' => $row['url'], 'result' => $result, 'campaigns' => $landersCampaignString);
                     $this->updateScannedUrl($row['scanId'], 0, $result, $landersCampaignString);
                 }else{
                     $this->updateScannedUrl($row['scanId'], 1, 'Clean Site', $landersCampaignString);
-                    $domainResults[] = array('domain' => $row['url'], 'result' => 'Clean Site');
+                    $domainResults[] = array('domain' => $row['url'], 'result' => 'Clean Site', 'campaigns' => $landersCampaignString);
 
                     $i++;
                 }
@@ -156,7 +156,7 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
                 $message .= '<tr>';
                 $message .= '<td>' . $domain['domain'] . '</td>';
                 $message .= '<td>' . strtoupper($domain['result']) . '</td>';
-                $message .= '<td>' . $landersCampaignString . '</td>';
+                $message .= '<td>' . $domain['campaigns'] . '</td>';
                 $message .= '</tr>';
             }
             $message .= '    </table>';
@@ -169,7 +169,7 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
             $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
             $systemService->sendEmail('jeraldfeller@gmail.com', 'jeraldfeller@gmail.com', $subject, $message);
 
-        //}
+        }
 
 
     }

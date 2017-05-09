@@ -105,7 +105,16 @@ class NavmenuController extends Controller{
                                                         <li class="nav-item">
                                                             <a href="/tools/offers" class="nav-link ">
                                                                 <span class="title">Offers</span>
+                                                                <span class="selected"></span>
+                                                                <span class="arrow open"></span>
                                                             </a>
+                                                            <ul class="sub-menu">
+                                                                        <li class="nav-item">
+                                                                            <a href="/tools/offer-url-presets" class="nav-link ">
+                                                                                <span class="title">Offer Presets</span>
+                                                                            </a>
+                                                                        </li>
+                                                            </ul>
                                                         </li>
                                                         <li class="nav-item">
                                                             <a href="/tools/landers" class="nav-link ">

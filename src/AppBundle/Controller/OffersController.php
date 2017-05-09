@@ -19,6 +19,7 @@ use AppBundle\Entity\OfferGroups;
 use AppBundle\Entity\CakeOffersTmpTbl;
 use AppBundle\Entity\OfferGroupsOffers;
 use AppBundle\Entity\OfferPresets;
+use AppBundle\Entity\OfferUrlPresets;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -30,56 +31,17 @@ class OffersController extends Controller{
     public function showOffersPageAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
-            $voluumSessionId = $apiCredentials[0]['voluum'];
-            $from = date('Y-m-d', strtotime('-30 days')) . 'T00:00:00Z';
-
-            $to = date('Y-m-d').'T00:00:00Z';
-            $tz = 'America/Chicago';
-            $sort = 'conversions';
-            $direction = 'desc';
-            $limit = '5000';
-
-            $query = array('from' => $from,
-                'to' => $to,
-                'tz' => $tz,
-                'sort' => $sort,
-                'direction' => $direction,
-                'columns' => 'offerName',
-                'columns' => 'offerId',
-                'columns' => 'offerUrl',
-                'columns' => 'offerCountry',
-                'columns' => 'payout',
-                'columns' => 'visits',
-                'columns' => 'clicks',
-                'columns' => 'conversions',
-                'columns' => 'revenue',
-                'columns' => 'cost',
-                'columns' => 'profit',
-                'columns' => 'cpv',
-                'columns' => 'ctr',
-                'columns' => 'cr',
-                'columns' => 'cv',
-                'columns' => 'roi',
-                'columns' => 'epv',
-                'columns' => 'epc',
-                'columns' => 'ap',
-                'columns' => 'affiliateNetworkName',
-                'columns' => 'errors',
-                'groupBy' => 'offer',
-                'offset' => 0,
-                'limit' => $limit,
-                'include' => 'traffic',
-            );
-
-            $url = 'https://portal.voluum.com/report?';
-            $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-                'query' => $query,
-                'method' => 'GET',
-                'sessionId' => $voluumSessionId))->getContent(), true);
+            $this->getOffersToFileAction();
+            $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
+            $networks = json_decode($this->forward('AppBundle:VoluumApi:voluumGetAffiliateNetworks', array())->getContent(), true);
+            $presets = json_decode($this->getOfferUrlPresetsAction()->getContent(), true);
 
             return $this->render(
-                'offers/offers.html.twig', array('apiResponse' => $apiResponse['rows'])
+                'offers/offers.html.twig', array(
+                    'countries' => $countries,
+                    'networks' => $networks,
+                    'presets' => $presets
+                )
             );
         }else{
             return $this->redirect('/user/login');
@@ -97,12 +59,6 @@ class OffersController extends Controller{
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
-        $url = 'https://core.voluum.com/affiliate-networks';
-
-        $response = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
-            'query' => $query,
-            'method' => 'GET',
-            'sessionId' => $voluumSessionId))->getContent(), true);
 
         $success = array();
         $failed = array();
@@ -117,13 +73,6 @@ class OffersController extends Controller{
             $offerCountry = trim($row['offerCountry']);
             $affiliateNetwork = trim($row['affiliateNetwork']);
             $payout = trim((isset($row['payout']) ? $row['payout'] : ''));
-            foreach($response as $responseRow){
-                if($responseRow['name'] == $affiliateNetwork){
-                    $affiliateNetworkId = $responseRow['id'];
-                }
-            }
-
-            if(isset($affiliateNetworkId)){
                 if($payout == '' || $payout == null){
                     if($offerCountry == '' || $offerCountry == null){
                         $query = array('namePostfix' => $offerName,
@@ -170,9 +119,7 @@ class OffersController extends Controller{
                 }else{
                     $failed = $offerName;
                 }
-            }else{
-                $failed[] = $offerName . ' - ' . $affiliateNetwork . ' Not found';
-            }
+
 
         }
 
@@ -181,6 +128,84 @@ class OffersController extends Controller{
         $data = array('success' => $success, 'failed' => $failed, 'apiResponse' => $apiResponse);
         $return = $this->makeResponse($error,$message, $data);
 
+        return new Response($return);
+    }
+
+    /**
+     * @Route("/tools/update-offer")
+     */
+    public function updateOffersAction(){
+
+        $data = json_decode($_POST['param'], true);
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $query = array();
+
+        $success = array();
+        $failed = array();
+        $apiResponse = array();
+
+            $offerName = trim($data['offerName']);
+            $offerURL = trim($data['offerURL']);
+            $offerCountry = trim($data['offerCountry']);
+            $affiliateNetwork = trim($data['affiliateNetwork']);
+            $payout = trim((isset($data['payout']) ? $data['payout'] : ''));
+            if($payout == '' || $payout == null){
+                if($offerCountry == '' || $offerCountry == null){
+                    $query = array('namePostfix' => $offerName,
+                        'url' =>  $offerURL,
+                        'affiliateNetwork' => array('id' => $affiliateNetwork),
+                        'payout' => array('type' => 'AUTO')
+                    );
+                }else{
+                    $query = array('namePostfix' => $offerName,
+                        'url' =>  $offerURL,
+                        'country' => array('code' => $offerCountry),
+                        'affiliateNetwork' => array('id' => $affiliateNetwork),
+                        'payout' => array('type' => 'AUTO')
+                    );
+                }
+
+            }else{
+                if($offerCountry == '' || $offerCountry == null){
+                    $query = array('namePostfix' => $offerName,
+                        'url' =>  $offerURL,
+                        'affiliateNetwork' => array('id' => $affiliateNetwork),
+                        'overridePayout' => true,
+                        'payout' => array('type' => 'MANUAL', 'value' => $payout)
+                    );
+                }else{
+                    $query = array('namePostfix' => $offerName,
+                        'url' =>  $offerURL,
+                        'country' => array('code' => $offerCountry),
+                        'affiliateNetwork' => array('id' => $affiliateNetwork),
+                        'overridePayout' => true,
+                        'payout' => array('type' => 'MANUAL', 'value' => $payout)
+                    );
+                }
+
+            }
+
+
+            $url = 'https://panel-api.voluum.com/offer/' . $data['offerId'];
+            $apiResponse[] = json_decode($this->forward('AppBundle:VoluumApi:voluumPutOffer', array('url' => $url,
+                'query' => $query,
+                'method' => 'POST',
+                'sessionId' => $voluumSessionId))->getContent(), true);
+            //var_dump($apiResponse);
+            if(!isset($apiResponse['error'])){
+                $success[] = $offerName;
+            }else{
+                $failed = $offerName;
+            }
+
+
+        $message = 'Offers Successfully Updated';
+        $error = FALSE;
+        $data = array('success' => $success, 'failed' => $failed, 'apiResponse' => $apiResponse);
+        $return = $this->makeResponse($error,$message, $data);
+
+        $this->getOffersToFileAction();
         return new Response($return);
     }
 
@@ -1918,6 +1943,429 @@ class OffersController extends Controller{
 
         }
         return new Response( json_encode( $output ) );
+    }
+
+
+
+
+    /**
+     * @Route("/tools/offer-url-presets")
+     */
+    public function showPresetsSettings(){
+        return $this->render(
+            'settings/offer-url-presets.html.twig', array('page' => 'Offer Url Presets')
+        );
+    }
+
+
+    /**
+     * @Route("/ajax/get-offer-url-presets")
+     */
+    public function ajaxGetPresets(){
+
+        $em = $this->getDoctrine()->getManager();
+        $aColumns = array( 't.presetId', 't.presetName', 't.parameters' );
+
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'id';
+
+        // DB table to use
+        $sTable = 'AppBundle:OfferUrlPresets';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                }
+            }
+
+
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }
+
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules);
+        } else {
+            $sWhere = "";
+        }
+
+
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
+
+
+
+        $sQuery = $em->createQuery("
+        SELECT $aQueryColumns
+        FROM ".$sTable." t ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+        $rResult = $sQuery->getResult();
+
+
+        $sQuery = $em->createQuery("
+        SELECT t
+        FROM ".$sTable." t ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($paginator);
+
+        $sQuery = $em->createQuery("
+        SELECT t
+        FROM ".$sTable." t ".$sWhere.$sOrder."");
+
+        $iTotal = count($paginator = new Paginator($sQuery));
+
+        /**
+         * Output
+         */
+
+
+        $output = array(
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
+        );
+
+
+        foreach($rResult as $column){
+            $row = array();
+            $row[] = $column['presetName'];
+            $row[] = $column['parameters'];
+            $row[] = '<div class="btn-group">
+                                        <button type="button" class="btn blue btn-xs"> Action</button>
+                                        <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#" data-toggle="modal" data-target="#modalEditPreset"  data-action="edit" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
+                                            </li>
+                                            <li><a href="#" data-toggle="modal" data-target="#modalDeletePreset" data-action="delete" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
+                                            </li>
+                                        </ul>
+                       </div>';
+            $output['aaData'][] = $row;
+        }
+        return new Response( json_encode( $output ) );
+
+
+    }
+
+
+    /**
+     * @Route("/tools/settings/add-offer-url-presets", name="addOfferUrlPresetsActions")
+     */
+    public function addPresetsAction(){
+        $data = json_decode($_POST['param'], true);
+        $isPresetExists = $this->getDoctrine()
+            ->getRepository('AppBundle:OfferUrlPresets')
+            ->findOneBy(array('presetName' => $data['presetName']));
+        if(!$isPresetExists){
+            $doctrine = new OfferUrlPresets();
+            $doctrine->setPresetName($data['presetName']);
+            $doctrine->setParameters($data['parameters']);
+            $em = $this->getDoctrine()->getManager();
+
+            // tells Doctrine you want to (eventually) save the Users (no quesries yet)
+            $em->persist($doctrine);
+
+            // actually executes the queries (i.e. the INSERT query)
+            $em->flush();
+            $return = true;
+        }else{
+            $return = false;
+        }
+
+
+        return new Response(
+            json_encode($return)
+        );
+
+    }
+
+    /**
+     * @Route("tools/settings/get-offer-url-presets", name="getOfferUrlPresets")
+     */
+    public function getOfferUrlPresetsAction(){
+        $presets = $this->getDoctrine()
+            ->getRepository('AppBundle:OfferUrlPresets')
+            ->findBy(array(), array('presetName' => 'asc'));
+
+        $data = array();
+        for($i = 0; $i < count($presets); $i++){
+            $data[] = array(
+                'presetId' => $presets[$i]->getPresetId(),
+                'presetName' => $presets[$i]->getPresetName(),
+                'presets' => $presets[$i]->getParameters()
+            );
+        }
+
+
+        return new Response(
+            json_encode($data)
+        );
+
+    }
+
+    /**
+     * @Route("tools/settings/edit-offer-url-presets", name="updateOfferUrlPresets")
+     */
+    public function presetEditAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $doctrine = $em->getRepository('AppBundle:OfferUrlPresets')->findOneByPresetId($data['presetId']);
+        $doctrine->setPresetName($data['presetName']);
+        $doctrine->setParameters($data['parameters']);
+        $em->flush();
+
+        return new Response(
+            json_encode(true)
+        );
+
+
+    }
+
+
+    /**
+     * @Route("tools/settings/delete-offer-url-presets", name="deleteOfferUrlPresets")
+     */
+    public function presetDeleteAction(){
+        $data = $_POST['param'];
+        $em = $this->getDoctrine()->getManager();
+        $doctrine = $em->getRepository('AppBundle:OfferUrlPresets')->find($data);
+        $em->remove($doctrine);
+        $em->flush();
+
+        return new Response(
+            json_encode(true)
+        );
+
+
+    }
+
+
+    public function getOffersToFileAction(){
+
+
+        $this->clearTmpFilesAction();
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $from = date('Y-m-d', strtotime('-30 days')) . 'T00:00:00Z';
+
+        $to = date('Y-m-d').'T00:00:00Z';
+        $tz = 'America/Chicago';
+        $sort = 'conversions';
+        $direction = 'desc';
+        $limit = '5000';
+
+        $query = array('from' => $from,
+            'to' => $to,
+            'tz' => $tz,
+            'sort' => $sort,
+            'direction' => $direction,
+            'columns' => 'offerName',
+            'columns' => 'offerId',
+            'columns' => 'offerUrl',
+            'columns' => 'offerCountry',
+            'columns' => 'payout',
+            'columns' => 'visits',
+            'columns' => 'clicks',
+            'columns' => 'conversions',
+            'columns' => 'revenue',
+            'columns' => 'cost',
+            'columns' => 'profit',
+            'columns' => 'cpv',
+            'columns' => 'ctr',
+            'columns' => 'cr',
+            'columns' => 'cv',
+            'columns' => 'roi',
+            'columns' => 'epv',
+            'columns' => 'epc',
+            'columns' => 'ap',
+            'columns' => 'affiliateNetworkName',
+            'columns' => 'errors',
+            'groupBy' => 'offer',
+            'offset' => 0,
+            'limit' => $limit,
+            'include' => 'traffic',
+        );
+
+        $url = 'https://portal.voluum.com/report?';
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+        foreach($apiResponse['rows'] as $row){
+            if($row['offerCountry'] == null){
+                $country = 'Global';
+            }else{
+                $country = $row['offerCountry'];
+            }
+
+            if($row['affiliateNetworkName'] == null){
+                $affiliateNetwork = "";
+            }else{
+                $affiliateNetwork = $row['affiliateNetworkName'];
+            }
+
+            $data['data'][] = array(
+                $row['offerName'],
+                $row['offerUrl'],
+                $country,
+                "$".number_format($row['payout'], 2),
+                $affiliateNetwork,
+                '<div class="btn-group">
+                                        <button type="button" class="btn blue btn-xs"> Action</button>
+                                        <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#"
+                                                data-action="edit"
+                                                data-id="' . $row['offerId'] . '"
+                                                onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
+                                            </li>
+                                            <li><a href="#" data-toggle="modal" data-target="#modalDeleteGroup" data-action="delete"
+                                                data-action="delete"
+                                                data-id="' . $row['offerId'] . '"
+                                                onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
+                                            </li>
+                                        </ul>
+                       </div>'
+            );
+
+        }
+
+        file_put_contents("data_table_tmp_files/offers/offers.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+
+
+    }
+
+
+    public function clearTmpFilesAction(){
+
+
+        $dir = 'data_table_tmp_files/offers';
+        foreach(glob("{$dir}/*") as $file)
+        {
+            unlink($file);
+        }
+
+        return new Response(json_encode(true));
+
+    }
+
+
+    /**
+     * @Route("/tools/get-edit-offer")
+     */
+    public function editOfferAction(){
+
+        $data = $_POST['param'];
+        $presets = json_decode($this->getOfferUrlPresetsAction()->getContent(), true);
+        $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
+        $networks = json_decode($this->forward('AppBundle:VoluumApi:voluumGetAffiliateNetworks', array())->getContent(), true);
+        $offer = json_decode($this->forward('AppBundle:VoluumApi:voluumGetOffer', array('offerId' => $data))->getContent(), true);
+        $fullUrl = explode('?', $offer['url']);
+
+            $url = $fullUrl[0];
+            if(isset($fullUrl[1])){
+                $presetsParameter = explode('&', $fullUrl[1]);
+                $presetArray = array();
+                for($x = 0; $x < count($presetsParameter); $x++){
+                    $trimPreset = substr($presetsParameter[$x], 0, strpos($presetsParameter[$x], "="));
+                    $presetArray[] = $trimPreset . '={' . $trimPreset . '}';
+                }
+
+                $preset = implode('&', $presetArray);
+            }else{
+                $url = $offer['url'];
+                $preset = '';
+            }
+
+
+
+
+
+        $return = array(
+            'countries' => $countries,
+            'presets' => $presets,
+            'offer' => $offer,
+            'url' => $url,
+            'preset' => '?'.$preset,
+            'networks' => $networks
+        );
+        return new Response(json_encode($return));
     }
 
 

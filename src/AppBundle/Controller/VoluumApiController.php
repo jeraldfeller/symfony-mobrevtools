@@ -127,6 +127,34 @@ class VoluumApiController extends Controller{
 
 
     /**
+     * @Route("/api/voluum/get-affiliate-networks", name="voluumGetAffiliateNetworks")
+     */
+    public function voluumGetAffiliateNetworksAction($sessionId = null){
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $query = array();
+        $url = 'https://panel-api.voluum.com/affiliate-network';
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+
+        return new Response($resp);
+
+    }
+
+
+    /**
      * @Route("/api/voluum/get-lander/{$landerId}", name="voluumGetLander")
      */
     public function voluumGetLanderAction($landerId = null){
@@ -178,6 +206,60 @@ class VoluumApiController extends Controller{
         return new Response($resp);
 
     }
+
+    /**
+     * @Route("/api/voluum/get-offer/{$offerId}", name="voluumGetLander")
+     */
+    public function voluumGetOfferAction($offerId = null){
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $query = array();
+        $url = 'https://panel-api.voluum.com/offer/' . trim($offerId);
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+
+        return new Response($resp);
+
+    }
+
+    /**
+     * @Route("/api/voluum/put-offer/{$url}/{$query}/{$sessionId}", name="voluumPutOffer")
+     */
+    public function voluumPutOfferAction($url = null, $query = null, $sessionId = null){
+        $json = json_encode($query);
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            //CURLOPT_PUT => 1,
+            CURLOPT_CUSTOMREQUEST=> 'PUT',
+            CURLOPT_POSTFIELDS => $json,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $sessionId . '', 'Content-Type: application/json')
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+
+        return new Response($resp);
+
+    }
+
 
     /**
      * @Route("/tools/cost-update")

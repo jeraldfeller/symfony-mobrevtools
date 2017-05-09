@@ -41,12 +41,13 @@ function addLanders(btn, data)
                     $.each(val, function(x, obj) {
                         if(obj['error'] != 1){
                             console.log(obj['message']);
-                            showNotification('success', 'Success', obj['message'])
+                            showNotification('success', 'Success', obj['message']);
                             delete data
                             var data = {items:[]};
                         }else{
                             console.log(obj['message']);
-                            showNotification('error', '', '');delete data.items;
+                            showNotification('error', '', '');
+                            delete data.items;
                             l.stop();
                             delete data
                             var data = {items:[]};

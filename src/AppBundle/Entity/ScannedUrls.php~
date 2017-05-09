@@ -284,4 +284,33 @@ class ScannedUrls
     {
         return $this->scanId;
     }
+    /**
+     * @var string
+     */
+    private $campaigns;
+
+
+    /**
+     * Set campaigns
+     *
+     * @param string $campaigns
+     *
+     * @return ScannedUrls
+     */
+    public function setCampaigns($campaigns)
+    {
+        $this->campaigns = $campaigns;
+
+        return $this;
+    }
+
+    /**
+     * Get campaigns
+     *
+     * @return string
+     */
+    public function getCampaigns()
+    {
+        return $this->campaigns;
+    }
 }

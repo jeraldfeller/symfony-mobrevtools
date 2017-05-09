@@ -681,6 +681,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addOffersAction',  '_route' => 'app_offers_addoffers',);
             }
 
+            // app_offers_updateoffers
+            if ($pathinfo === '/tools/update-offer') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::updateOffersAction',  '_route' => 'app_offers_updateoffers',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/offer')) {
@@ -794,6 +799,47 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         // app_offers_getpresets
         if ($pathinfo === '/ajax/offer/presets') {
             return array (  '_controller' => 'AppBundle\\Controller\\OffersController::getPresetsAction',  '_route' => 'app_offers_getpresets',);
+        }
+
+        // app_offers_showpresetssettings
+        if ($pathinfo === '/tools/offer-url-presets') {
+            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showPresetsSettings',  '_route' => 'app_offers_showpresetssettings',);
+        }
+
+        // app_offers_ajaxgetpresets
+        if ($pathinfo === '/ajax/get-offer-url-presets') {
+            return array (  '_controller' => 'AppBundle\\Controller\\OffersController::ajaxGetPresets',  '_route' => 'app_offers_ajaxgetpresets',);
+        }
+
+        if (0 === strpos($pathinfo, '/tools')) {
+            if (0 === strpos($pathinfo, '/tools/settings')) {
+                // addOfferUrlPresetsActions
+                if ($pathinfo === '/tools/settings/add-offer-url-presets') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::addPresetsAction',  '_route' => 'addOfferUrlPresetsActions',);
+                }
+
+                // getOfferUrlPresets
+                if ($pathinfo === '/tools/settings/get-offer-url-presets') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::getOfferUrlPresetsAction',  '_route' => 'getOfferUrlPresets',);
+                }
+
+                // updateOfferUrlPresets
+                if ($pathinfo === '/tools/settings/edit-offer-url-presets') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::presetEditAction',  '_route' => 'updateOfferUrlPresets',);
+                }
+
+                // deleteOfferUrlPresets
+                if ($pathinfo === '/tools/settings/delete-offer-url-presets') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::presetDeleteAction',  '_route' => 'deleteOfferUrlPresets',);
+                }
+
+            }
+
+            // app_offers_editoffer
+            if ($pathinfo === '/tools/get-edit-offer') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::editOfferAction',  '_route' => 'app_offers_editoffer',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/global-settings')) {
@@ -1129,9 +1175,9 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetCountriesAction',  '_route' => 'voluumGetCountries',);
                     }
 
-                    // voluumGetLander
-                    if ($pathinfo === '/api/voluum/get-lander/{$landerId}') {
-                        return array (  'landerId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetLanderAction',  '_route' => 'voluumGetLander',);
+                    // voluumGetAffiliateNetworks
+                    if ($pathinfo === '/api/voluum/get-affiliate-networks') {
+                        return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetAffiliateNetworksAction',  '_route' => 'voluumGetAffiliateNetworks',);
                     }
 
                 }
@@ -1139,6 +1185,16 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 // voluumPutLander
                 if ($pathinfo === '/api/voluum/put-lander/{$url}/{$query}/{$sessionId}') {
                     return array (  'url' => NULL,  'query' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumPutLanderAction',  '_route' => 'voluumPutLander',);
+                }
+
+                // voluumGetLander
+                if ($pathinfo === '/api/voluum/get-offer/{$offerId}') {
+                    return array (  'offerId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetOfferAction',  '_route' => 'voluumGetLander',);
+                }
+
+                // voluumPutOffer
+                if ($pathinfo === '/api/voluum/put-offer/{$url}/{$query}/{$sessionId}') {
+                    return array (  'url' => NULL,  'query' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumPutOfferAction',  '_route' => 'voluumPutOffer',);
                 }
 
             }
