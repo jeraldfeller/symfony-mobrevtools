@@ -27,7 +27,7 @@ class PlanningController extends Controller{
     public function showCreateCampaignPageAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-        $data['data'][] = array();
+        $data = array('data' => array());
         file_put_contents("data_table_tmp_files/planning/campaigns.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
 
         $trafficSource = json_decode($this->forward('AppBundle:VoluumApi:voluumGetTrafficSource', array())->getContent(), true);
@@ -141,30 +141,36 @@ class PlanningController extends Controller{
 
 
                 $url = 'https://panel-api.voluum.com/campaign';
-                $apiResponse[] = json_decode($this->forward('AppBundle:VoluumApi:postVoluum', array('url' => $url,
+                $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:postVoluum', array('url' => $url,
                     'query' => $query,
                     'method' => 'POST',
                     'sessionId' => $voluumSessionId))->getContent(), true);
-
                 if(!isset($apiResponse['error'])){
-                    $success[] = $name;
+                    $success[] = $name . ' ' . $counter;
+                    $message = 'Campaigns Successfully Created';
+                    $error = FALSE;
+
+                    $campaigUrlParse = parse_url($apiResponse['url']);
+                    $tableData[] = array(
+                        'name' => $name . ' ' . $counter,
+                        'domain' => $campaigUrlParse['scheme'].'://'.$domain.$campaigUrlParse['path'].$campaigUrlParse['query'],
+                        'costModel' => $costModel,
+                        'country' => $tableGeo,
+                        'source' => $tableSource,
+                        'flow' => $tableFlow,
+                    );
+
                 }else{
                     $failed = $name;
+                    $message = 'Campaign name must be unique';
+                    $error = TRUE;
                 }
 
 
-                $campaigUrlParse = parse_url($apiResponse[0]['url']);
 
 
-                $tableData[] = array(
-                    'name' => $name . ' ' . $counter,
-                    'domain' => $campaigUrlParse['scheme'].'://'.$domain.$campaigUrlParse['path'].$campaigUrlParse['query'],
-                    'costModel' => $costModel,
-                    'country' => $tableGeo,
-                    'source' => $tableSource,
-                    'flow' => $tableFlow,
-                );
 
+                $apiResponseArray[] = $apiResponse;
 
             }
 
@@ -184,9 +190,8 @@ class PlanningController extends Controller{
 
         file_put_contents("data_table_tmp_files/planning/campaigns.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
 
-        $message = 'Campaigns Successfully Added';
-        $error = FALSE;
-        $data = array('success' => $success, 'failed' => $failed, 'apiResponse' => array());
+
+        $data = array('success' => $success, 'failed' => $failed, 'apiResponse' => $apiResponseArray);
         $return = $this->makeResponse($error,$message, $data);
 
         return new Response($return);

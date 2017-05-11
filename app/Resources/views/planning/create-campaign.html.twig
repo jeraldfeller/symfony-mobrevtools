@@ -12,6 +12,9 @@
         .bootstrap-tagsinput{
             display: block !important;
         }
+        .add-margin{
+            margin-bottom: 20px !important;
+        }
     </style>
 {% endblock %}
 {% block nav %}
@@ -78,7 +81,7 @@
 
                              <div class="col-md-4 pull-left" >
                                 <button class="btn blue" id="addCampaignBtn"><i class="fa fa-plus"></i> Add Campaign</button>
-                                <button style="display:none;" id="saveCampaigns" class="btn blue spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Save </span></button>
+                                <button style="display:none;" id="saveCampaigns" class="btn blue spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-check"></i> Create </span></button>
 
                             </div>
 
@@ -278,18 +281,23 @@
                     '<option value="CPM">CPM</option>' +
                     '<option value="AUTO">AUTO</option>' +
                     '</select>' +
-                    '</div><br><br><br>' +
-                    '<div class="col-md-4 col-sm-6">' +
+                    '</div>' +
+                            '<div class="col-md-12 add-margin"></div>' +
+                    '<div class="col-md-3 col-sm-6">' +
                     '<input type="text" placeholder="tags" class="form-control tags" id="campaign_tags_'+i+'" data-role="tagsinput">' +
                     '</div>' +
                     '<div class="col-md-3 col-sm-6">' +
                     '<select class="form-control selectFlows" id="campaign_flow_'+i+'">' +
                     {% for flow in flows %}
-                    '<option value="{{ flow.id }}">{{ flow.name }}</option>' +
+                        {% if flow.id == '8fd6d13f-7905-4081-b01d-cfb9b9b7e8d5' %}
+                        '<option value="{{ flow.id }}" selected>{{ flow.name }}</option>' +
+                        {% else %}
+                        '<option value="{{ flow.id }}">{{ flow.name }}</option>' +
+                        {% endif %}
                     {% endfor %}
                     '</select>' +
                     '</div>' +
-                    '<div class="col-md-2 col-sm-6">' +
+                    '<div class="col-md-3 col-sm-6">' +
                     '<select class="form-control selectDomains" id="campaign_domain_'+i+'">' +
                     {% for domain in domains %}
                     '<option value="{{ domain.address }}">{{ domain.address }}</option>' +
@@ -300,9 +308,11 @@
                     '<input type="text" placeholder="count" class="form-control" onkeypress="return isNumberKey(event)" id="campaign_count_'+i+'">' +
                     '</div>' +
                     '<div class="col-md-1 pull-right">' +
-                    '<button class="btn red" onclick="removeAppend(this)" data-index="'+i+'"><i class="fa fa-times"></i></button>' +
+                    '<button class="btn red" onclick="removeAppend(this)" data-index="'+i+'"><i class="fa fa-times"></i> Remove</button>' +
                     '</div>' +
+                    '<div class="col-md-12"><hr></div>' +
                     '</div>'
+
             );
 
             data.items.push({

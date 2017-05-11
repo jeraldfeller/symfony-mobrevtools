@@ -45,7 +45,7 @@ function addCampaigns(btn, data)
 
                         }else{
                             console.log(obj['message']);
-                            showNotification('error', '', '');
+                            showNotification('warning', 'Warning', obj['message']);
                             l.stop();
                         }
                     });
