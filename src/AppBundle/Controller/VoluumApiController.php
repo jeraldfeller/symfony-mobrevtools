@@ -113,9 +113,7 @@ class VoluumApiController extends Controller{
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
-            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . '')
         ));
         // Send the request & save response to $resp
         $resp = curl_exec($curl);
@@ -171,9 +169,7 @@ class VoluumApiController extends Controller{
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
-            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . '')
         ));
         // Send the request & save response to $resp
         $resp = curl_exec($curl);
@@ -201,9 +197,7 @@ class VoluumApiController extends Controller{
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
-            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . '')
         ));
         // Send the request & save response to $resp
         $resp = curl_exec($curl);
@@ -233,9 +227,8 @@ class VoluumApiController extends Controller{
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
-            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . '')
+
         ));
         // Send the request & save response to $resp
         $resp = curl_exec($curl);
