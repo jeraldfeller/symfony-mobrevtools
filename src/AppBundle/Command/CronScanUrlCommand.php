@@ -48,8 +48,6 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
         $to = $ymd.'T'.$hmi;
         $currentHour = date('H');
 
-
-        if($currentHour == 7 || $currentHour == 11 || $currentHour == 23){
             //$landersClass->clearScannedUrl();
 
             $tz = 'America/Chicago';
@@ -177,7 +175,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
             }
 
 
-       }
+
 
     }
 

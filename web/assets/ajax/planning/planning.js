@@ -30,10 +30,10 @@ function addCampaigns(btn, data)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response =  $.parseJSON(XMLHttpRequestObject.responseText);
-
+                l.stop();
 
                 console.log(response);
-                l.stop();
+
                 $('#appendCampaigns').empty();
 
 
@@ -52,7 +52,7 @@ function addCampaigns(btn, data)
                 });
 
 
-                delete data
+                delete data;
                 delete $campaignData;
                 $campaignData = [];
                 var data = {items:[]};

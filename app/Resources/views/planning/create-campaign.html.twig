@@ -9,6 +9,9 @@
             text-align: left !important;
             padding-left: 10px !important;
         }
+        .bootstrap-tagsinput{
+            display: block !important;
+        }
     </style>
 {% endblock %}
 {% block nav %}
@@ -249,17 +252,17 @@
         $('#addCampaignBtn').click(function(){
             $('#appendCampaigns').append(
                     '<div id="appendDivHolder_'+i+'" style="padding-bottom: 50px;">' +
-                    '<div class="col-md-2 col-sm-6">' +
+                    '<div class="col-md-3 col-sm-6">' +
                     '<input type="text" placeholder="Campaign Name" class="form-control" id="campaign_name_'+i+'">' +
                     '</div>' +
-                    '<div class="col-md-1 col-sm-6">' +
-                    '<select class="form-control selectTrafficSource" id="campaign_source_'+i+'">' +
+                    '<div class="col-md-3 col-sm-6">' +
+                    '<select data-index="'+i+'" onchange="updateCostModel(this)" class="form-control selectTrafficSource" id="campaign_source_'+i+'">' +
                     {% for source in trafficSources %}
                     '<option value="{{ source.id }}">{{ source.name }}</option>' +
                     {% endfor %}
                     '</select>' +
                     '</div>' +
-                    '<div class="col-md-1 col-sm-6">' +
+                    '<div class="col-md-3 col-sm-6">' +
                     '<select class="form-control selectGeo" id="campaign_geo_'+i+'">' +
                     '<option value="Global">Global</option>' +
                     {% for country in countries %}
@@ -267,7 +270,7 @@
                     {% endfor %}
                     '</select>' +
                     '</div>' +
-                    '<div class="col-md-1 col-sm-6">' +
+                    '<div class="col-md-3 col-sm-6">' +
                     '<select class="form-control selectCostModel" id="campaign_model_'+i+'">' +
                     '<option value="NOT_TRACKED">Do Not Track</option>' +
                     '<option value="CPC">CPC</option>' +
@@ -275,28 +278,28 @@
                     '<option value="CPM">CPM</option>' +
                     '<option value="AUTO">AUTO</option>' +
                     '</select>' +
-                    '</div>' +
-                    '<div class="col-md-2 col-sm-6">' +
+                    '</div><br><br><br>' +
+                    '<div class="col-md-4 col-sm-6">' +
                     '<input type="text" placeholder="tags" class="form-control tags" id="campaign_tags_'+i+'" data-role="tagsinput">' +
                     '</div>' +
-                    '<div class="col-md-2 col-sm-6">' +
+                    '<div class="col-md-3 col-sm-6">' +
                     '<select class="form-control selectFlows" id="campaign_flow_'+i+'">' +
                     {% for flow in flows %}
                     '<option value="{{ flow.id }}">{{ flow.name }}</option>' +
                     {% endfor %}
                     '</select>' +
                     '</div>' +
-                    '<div class="col-md-1 col-sm-6">' +
+                    '<div class="col-md-2 col-sm-6">' +
                     '<select class="form-control selectDomains" id="campaign_domain_'+i+'">' +
                     {% for domain in domains %}
                     '<option value="{{ domain.address }}">{{ domain.address }}</option>' +
                     {% endfor %}
                     '</select>' +
                     '</div>' +
-                    '<div class="col-md-1 col-sm-6">' +
+                    '<div class="col-md-2 col-sm-6">' +
                     '<input type="text" placeholder="count" class="form-control" onkeypress="return isNumberKey(event)" id="campaign_count_'+i+'">' +
                     '</div>' +
-                    '<div class="col-md-1">' +
+                    '<div class="col-md-1 pull-right">' +
                     '<button class="btn red" onclick="removeAppend(this)" data-index="'+i+'"><i class="fa fa-times"></i></button>' +
                     '</div>' +
                     '</div>'
@@ -409,15 +412,19 @@
         });
 
         $('#saveCampaigns').on('click', function(){
-            console.log(data);
+
             $btn = $(this)[0];
             $campaignData = [];
 
+            console.log(data);
             $.each(data, function(i, elem) {
                 if(typeof elem != 'undefined'){
                     $.each(elem, function(obj, value) {
                         if(typeof obj != 'undefined'){
-                            if(typeof value != 'undefined'){
+
+                            console.log(value);
+                            console.log(value['name']);
+                            if(typeof $('#' + value['name']).val() != 'undefined'){
                                 $campaignData.push({
                                             name: $('#' + value['name']).val(),
                                             source:  $('#' + value['source']).val(),
@@ -440,7 +447,14 @@
         });
 
 
-
+        function updateCostModel(elem){
+            var index = elem.getAttribute('data-index');
+            console.log(index);
+            console.log(elem.value)
+            if(elem.value == '6530e6cb-9550-402c-be06-78c1bb388346'){
+                $('#campaign_model_'+index).val('AUTO').trigger('change');
+            }
+        }
 
         function removeAppend(elem){
             var index = elem.dataset.index;

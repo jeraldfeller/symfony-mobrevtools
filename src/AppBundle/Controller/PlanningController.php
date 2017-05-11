@@ -27,7 +27,10 @@ class PlanningController extends Controller{
     public function showCreateCampaignPageAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $trafficSource = json_decode($this->forward('AppBundle:VoluumApi:voluumGetTrafficSource', array())->getContent(), true);
+        $data['data'][] = array();
+        file_put_contents("data_table_tmp_files/planning/campaigns.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+
+        $trafficSource = json_decode($this->forward('AppBundle:VoluumApi:voluumGetTrafficSource', array())->getContent(), true);
             $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
             $flow = json_decode($this->forward('AppBundle:VoluumApi:voluumGetFlow', array())->getContent(), true);
             $domain = json_decode($this->forward('AppBundle:VoluumApi:voluumGetDomain', array())->getContent(), true);
@@ -136,6 +139,7 @@ class PlanningController extends Controller{
                 }
 
 
+
                 $url = 'https://panel-api.voluum.com/campaign';
                 $apiResponse[] = json_decode($this->forward('AppBundle:VoluumApi:postVoluum', array('url' => $url,
                     'query' => $query,
@@ -151,6 +155,7 @@ class PlanningController extends Controller{
 
                 $campaigUrlParse = parse_url($apiResponse[0]['url']);
 
+
                 $tableData[] = array(
                     'name' => $name . ' ' . $counter,
                     'domain' => $campaigUrlParse['scheme'].'://'.$domain.$campaigUrlParse['path'].$campaigUrlParse['query'],
@@ -165,6 +170,7 @@ class PlanningController extends Controller{
 
         }
 
+
         foreach($tableData as $row){
             $data['data'][] = array(
                 $row['name'],
@@ -177,9 +183,10 @@ class PlanningController extends Controller{
 
 
         file_put_contents("data_table_tmp_files/planning/campaigns.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+
         $message = 'Campaigns Successfully Added';
         $error = FALSE;
-        $data = array('success' => $success, 'failed' => $failed, 'apiResponse' => $apiResponse);
+        $data = array('success' => $success, 'failed' => $failed, 'apiResponse' => array());
         $return = $this->makeResponse($error,$message, $data);
 
         return new Response($return);
