@@ -197,6 +197,21 @@ class NavmenuController extends Controller{
                                                 </li>
                                             </ul>
                                         </li>',
+                    'planning' => '<li class="nav-item isActiveIdentifier">
+                                            <a href="javascript:;" class="nav-link nav-toggle">
+                                                <i class="fa fa-pencil-square-o"></i>
+                                                <span class="title">Planning</span>
+                                                <span class="selected"></span>
+                                                <span class="arrow open"></span>
+                                            </a>
+                                            <ul class="sub-menu">
+                                                <li class="nav-item">
+                                                    <a href="/planning/create-campaign" class="nav-link ">
+                                                        <span class="title">Create Campaign</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>',
                     'global-settings' => '<li class="nav-item isActiveIdentifier">
                                             <a href="javascript:;" class="nav-link nav-toggle">
                                                 <i class="fa fa-gears"></i>

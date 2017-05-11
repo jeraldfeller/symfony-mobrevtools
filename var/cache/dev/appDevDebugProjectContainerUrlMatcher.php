@@ -842,6 +842,19 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
+        if (0 === strpos($pathinfo, '/planning')) {
+            // app_planning_showcreatecampaignpage
+            if ($pathinfo === '/planning/create-campaign') {
+                return array (  '_controller' => 'AppBundle\\Controller\\PlanningController::showCreateCampaignPageAction',  '_route' => 'app_planning_showcreatecampaignpage',);
+            }
+
+            // app_planning_addcampaigns
+            if ($pathinfo === '/planning/add-campaigns') {
+                return array (  '_controller' => 'AppBundle\\Controller\\PlanningController::addCampaignsAction',  '_route' => 'app_planning_addcampaigns',);
+            }
+
+        }
+
         if (0 === strpos($pathinfo, '/global-settings')) {
             // app_settings_showapiaccesscredentials
             if ($pathinfo === '/global-settings/api-access') {
@@ -1178,6 +1191,21 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     // voluumGetAffiliateNetworks
                     if ($pathinfo === '/api/voluum/get-affiliate-networks') {
                         return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetAffiliateNetworksAction',  '_route' => 'voluumGetAffiliateNetworks',);
+                    }
+
+                    // voluumGetTrafficSource
+                    if ($pathinfo === '/api/voluum/get-traffic-source') {
+                        return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetTrafficSourceAction',  '_route' => 'voluumGetTrafficSource',);
+                    }
+
+                    // voluumGetFlow
+                    if ($pathinfo === '/api/voluum/get-flow') {
+                        return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetFlowAction',  '_route' => 'voluumGetFlow',);
+                    }
+
+                    // voluumGetDomain
+                    if ($pathinfo === '/api/voluum/get-domain') {
+                        return array (  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::voluumGetDomainAction',  '_route' => 'voluumGetDomain',);
                     }
 
                 }

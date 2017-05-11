@@ -49,7 +49,7 @@ function addOffers(btn, data)
                         }
                     });
                 });
-
+                $campaignData
                 delete data
                 var data = {items:[]};
             }
