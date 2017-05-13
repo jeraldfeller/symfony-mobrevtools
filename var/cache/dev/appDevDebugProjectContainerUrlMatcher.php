@@ -766,9 +766,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         if (0 === strpos($pathinfo, '/offer')) {
-            // deleteOfferGroupsOffers
-            if ($pathinfo === '/offers/group-delete') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteOffersAction',  '_route' => 'deleteOfferGroupsOffers',);
+            if (0 === strpos($pathinfo, '/offers/group-')) {
+                // showHideOfferGroupsOffers
+                if ($pathinfo === '/offers/group-show-hide-offers') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showHideOffersAction',  '_route' => 'showHideOfferGroupsOffers',);
+                }
+
+                // deleteOfferGroupsOffers
+                if ($pathinfo === '/offers/group-delete') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::deleteOffersAction',  '_route' => 'deleteOfferGroupsOffers',);
+                }
+
             }
 
             // offerPresetSearch

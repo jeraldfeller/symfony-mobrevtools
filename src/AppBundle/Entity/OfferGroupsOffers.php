@@ -457,4 +457,33 @@ class OfferGroupsOffers
     {
         return $this->offerUrl;
     }
+    /**
+     * @var boolean
+     */
+    private $hidden;
+
+
+    /**
+     * Set hidden
+     *
+     * @param boolean $hidden
+     *
+     * @return OfferGroupsOffers
+     */
+    public function setHidden($hidden)
+    {
+        $this->hidden = $hidden;
+
+        return $this;
+    }
+
+    /**
+     * Get hidden
+     *
+     * @return boolean
+     */
+    public function getHidden()
+    {
+        return $this->hidden;
+    }
 }

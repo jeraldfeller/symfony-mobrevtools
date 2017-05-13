@@ -35,7 +35,7 @@ function addOffers(btn, data)
                 console.log(response);
                 l.stop();
                 $('#appendOffers').empty();
-
+                $('#add-modal-offer-groups').modal('hide');
                 $.each(response, function(i, val) {
                     $.each(val, function(x, obj) {
                         if(obj['error'] != 1){
@@ -49,8 +49,8 @@ function addOffers(btn, data)
                         }
                     });
                 });
-                $campaignData
-                delete data
+
+                delete data;
                 var data = {items:[]};
             }
 
@@ -59,7 +59,6 @@ function addOffers(btn, data)
                 l.stop();
             }
         }
-
 
         l.start();
         XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
@@ -276,11 +275,14 @@ function searchOffer(btn, data){
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
 
+                console.log(response);
+                /*
                 showNotification(response['type'], response['title'], response['message']);
                 if(response['type'] == 'success'){
                     var oTable =  $('#datatable-responsive').DataTable();
                     oTable.ajax.reload();
                 }
+                */
                 l.stop();
             }
 
@@ -335,6 +337,47 @@ function addOfferToGroup(btn, data){
 
     }
 }
+
+
+function showHideOffers(btn, data)
+{
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/offers/group-show-hide-offers");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+                var oTable =  $('#datatable-responsive').DataTable();
+                oTable.ajax.reload(function () {
+                    l.stop();
+                    showNotification('success', 'Success', 'Records Successfully Updated')
+                });
+            }
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '');
+                l.stop();
+            }
+        }
+
+
+        l.start();
+        var dataArray = JSON.stringify(data);
+        XMLHttpRequestObject.send("param=" + dataArray);
+
+    }
+
+    return false;
+}
+
 
 
 function deleteOffers(btn, data)

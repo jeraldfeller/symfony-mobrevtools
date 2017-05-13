@@ -283,7 +283,7 @@
                     '<div id="appendDivHolder_'+i+'" style="padding-bottom: 50px;">' +
                     '<div class="col-md-2 col-sm-6">' +
                     '<select class="form-control selectGeo" id="offer_geo_'+i+'">' +
-                    '<option value="">Global</option>' +
+                    '<option value="Global">Global</option>' +
                     {% for country in countries %}
                     '<option value="{{ country.code }}">{{ country.name }}</option>' +
                     {% endfor %}
@@ -422,16 +422,24 @@
             $.each(data, function(i, elem) {
                 if(typeof elem != 'undefined'){
                     $.each(elem, function(obj, value) {
-                        if(typeof value != 'undefined'){
-                            $offerData.push({
-                                        offerCountry: $('#' + value['geo']).val(),
-                                        offerName: $('#' + value['name']).val(),
-                                        offerURL: $('#' + value['url']).val() +encodeURIComponent( $('#' + value['preset']).val()),
-                                        affiliateNetwork: $('#' + value['network']).val(),
-                                        payout: $('#' + value['payout']).val()
+                        if(typeof obj != 'undefined'){
+                            if(typeof value != 'undefined'){
+                                if(typeof value['geo'] != 'undefined'){
+                                    if(typeof $('#' + value['geo']).val() != 'undefined'){
+                                        $offerData.push({
+                                                    offerCountry: $('#' + value['geo']).val(),
+                                                    offerName: $('#' + value['name']).val(),
+                                                    offerURL: $('#' + value['url']).val() +encodeURIComponent( $('#' + value['preset']).val()),
+                                                    affiliateNetwork: $('#' + value['network']).val(),
+                                                    payout: $('#' + value['payout']).val()
+                                                }
+                                        )
                                     }
-                            )
+                                }
+
+                            }
                         }
+
                     });
                 }
             });

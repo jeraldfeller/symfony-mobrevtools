@@ -228,6 +228,15 @@
                     l.stop();
                 });
             })
+
+            $('#refreshTable').click(function(){
+                var l = Ladda.create($(this)[0]);
+                l.start();
+                oTable.ajax.reload(function () {
+                    l.stop();
+                });
+            })
+
             setInterval(function(){
                 oTable.ajax.reload();
             }, 300000);

@@ -65,7 +65,6 @@ class OffersController extends Controller{
         $apiResponse = array();
 
 
-
         foreach($data as $row){
 
             $offerName = trim($row['offerName']);
@@ -73,7 +72,7 @@ class OffersController extends Controller{
             $offerCountry = trim($row['offerCountry']);
             $affiliateNetwork = trim($row['affiliateNetwork']);
             $payout = trim((isset($row['payout']) ? $row['payout'] : ''));
-                if($payout == '' || $payout == null){
+                if($payout == 'Global' || $payout == null){
                     if($offerCountry == '' || $offerCountry == null){
                         $query = array('namePostfix' => $offerName,
                             'url' =>  $offerURL,
@@ -1466,6 +1465,8 @@ class OffersController extends Controller{
             $group = $this->getDoctrine()->getRepository('AppBundle:OfferGroups')->findOneBy(array('offerGroupId' => $id));
             return $this->render(
                 'offers/offer-groups-offer.html.twig', array('page' => 'Offer Groups',
+                    'networks' => json_decode($this->forward('AppBundle:VoluumApi:voluumGetAffiliateNetworks', array())->getContent(), true),
+                    'presets' => json_decode($this->getOfferUrlPresetsAction()->getContent(), true),
                     'group' => array('groupId' => $group->getOfferGroupId(), 'groupName' => $group->getOfferGroupName())
                     )
             );
@@ -1547,6 +1548,15 @@ class OffersController extends Controller{
             if (!empty($aFilteringRules)) {
                 $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
             }
+        }else{
+            if(isset($input['hidden'])){
+
+                $aFilteringRules[] = "og.hidden = " . $input['hidden'];
+
+                if (!empty($aFilteringRules)) {
+                    $aFilteringRules = array('('.implode(" AND ", $aFilteringRules).')');
+                }
+            }
         }
 
 
@@ -1623,7 +1633,13 @@ class OffersController extends Controller{
             $row = array();
             $row[] = '<td>
                         <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['ogoid'] . '" data-offer-contract-id="' . $column['offerContractId'] . '" data-affiliate-network-id="' . $column['affiliateNetworkId'] . '"/>
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records"
+                                data-id="' . $column['ogoid'] . '"
+                                data-offer-name="' . $column['offerId'] . ' - '  . $column['offerName'] . '"
+                                data-offer-url="'. str_replace('&s1=', '', $column['offerUrl']) . '"
+                                data-network-name="' . strtolower($column['networkName']) . '"
+                                data-offer-contract-id="' . $column['offerContractId'] . '"
+                                data-affiliate-network-id="' . $column['affiliateNetworkId'] . '"/>
                              <span></span>
                         </label>
                       </td>';
@@ -1642,6 +1658,25 @@ class OffersController extends Controller{
 
         }
         return new Response( json_encode( $output ) );
+    }
+
+
+    /**
+     * @Route("/offers/group-show-hide-offers", name="showHideOfferGroupsOffers")
+     */
+    public function showHideOffersAction(){
+        $data = json_decode($_POST['param'], true);
+        foreach($data['items'] as $row){
+            $em = $this->getDoctrine()->getManager();
+            $offer = $this->getDoctrine()
+                ->getRepository('AppBundle:OfferGroupsOffers')
+                ->find($row['id']);
+            $offer->setHidden($data['hidden']);
+            $em->flush();
+        }
+        return new Response(
+            json_encode(true)
+        );
     }
 
 
