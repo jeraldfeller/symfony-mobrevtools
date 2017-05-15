@@ -276,13 +276,13 @@ function searchOffer(btn, data){
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
 
                 console.log(response);
-                /*
+
                 showNotification(response['type'], response['title'], response['message']);
                 if(response['type'] == 'success'){
                     var oTable =  $('#datatable-responsive').DataTable();
                     oTable.ajax.reload();
                 }
-                */
+
                 l.stop();
             }
 

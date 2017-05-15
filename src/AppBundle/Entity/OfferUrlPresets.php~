@@ -81,4 +81,3 @@ class OfferUrlPresets
         return $this->presetId;
     }
 }
-

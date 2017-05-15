@@ -77,7 +77,7 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="hidden" type="boolean" column="hidden" nullable="false"/>
+    <field name="hidden" type="boolean" column="hidden" nullable="true"/>
     <many-to-one field="offerGroup" target-entity="OfferGroups" fetch="LAZY">
       <join-columns>
         <join-column name="offer_group_id" referenced-column-name="offer_group_id"/>

@@ -847,7 +847,6 @@ class OffersController extends Controller{
                 'network' => $network->getApiUrl()
             ))->getContent(), true);
 
-
             $batch = 100;
             $x = 1;
             $em = $this->getDoctrine()->getManager();
@@ -864,7 +863,7 @@ class OffersController extends Controller{
                     $offerUrl = null;
                 }
                 if($includeInactive == false) {
-                    if ($row['offer_status']['status_name'] != 'Active') {
+                    if ($row['offer_status']['status_name'] != 'Inactive') {
                         if($data['offerKeyword'] != ''){
                             $keys = explode(',', $data['offerKeyword']);
 
@@ -1126,6 +1125,8 @@ class OffersController extends Controller{
 
         $em->flush();
         $em->clear();
+
+
 
         $return = json_encode(array('type' => 'success', 'title' => 'Success', 'message' => 'Offers Successfully Imported'));
         return new Response($return);
@@ -1389,22 +1390,36 @@ class OffersController extends Controller{
         $aQueryColumns = implode(', ', $aColumns);
 
 
-
-        $sQuery = $em->createQuery("
-        SELECT $aQueryColumns
-        FROM $sTable t $sWhere GROUP BY t.offerId $sOrder")
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResults)
-        ;
-        $rResult = $sQuery->getResult();
+        if($input['iDisplayLength'] == '-1'){
+            $sQuery = $em->createQuery("
+            SELECT $aQueryColumns
+            FROM $sTable t $sWhere GROUP BY t.offerId $sOrder")
+            ;
+            $rResult = $sQuery->getResult();
 
 
-        $sQuery = $em->createQuery("
-        SELECT t
-        FROM $sTable t $sWhere GROUP BY t.offerId $sOrder")
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResults)
-        ;
+            $sQuery = $em->createQuery("
+            SELECT t
+            FROM $sTable t $sWhere GROUP BY t.offerId $sOrder")
+            ;
+
+        }else{
+            $sQuery = $em->createQuery("
+            SELECT $aQueryColumns
+            FROM $sTable t $sWhere GROUP BY t.offerId $sOrder")
+                    ->setFirstResult($firstResult)
+                    ->setMaxResults($maxResults)
+                ;
+            $rResult = $sQuery->getResult();
+
+
+            $sQuery = $em->createQuery("
+            SELECT t
+            FROM $sTable t $sWhere GROUP BY t.offerId $sOrder")
+                    ->setFirstResult($firstResult)
+                    ->setMaxResults($maxResults)
+                ;
+        }
 
         $paginator = new Paginator($sQuery);
         $iFilteredTotal = count($paginator);

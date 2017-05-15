@@ -152,7 +152,7 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
                 // getCampaignAffiliate
                 if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$campaignId}') {
-                    return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  'campaignId' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getCampaignAffiliateAction',  '_route' => 'getCampaignAffiliate',);
+                    return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  'campaignId' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getCreativeTypesAction',  '_route' => 'getCampaignAffiliate',);
                 }
 
             }
