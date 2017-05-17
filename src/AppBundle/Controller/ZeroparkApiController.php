@@ -66,6 +66,8 @@ class ZeroparkApiController extends Controller {
             CURLOPT_URL => $url,
             CURLOPT_POST => $method,
             CURLOPT_HTTPHEADER => array('api-token: ' . $token),
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0
         ));
         // Send the request & save response to $resp
         $resp = curl_exec($curl);

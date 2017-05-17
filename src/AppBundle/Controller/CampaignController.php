@@ -1145,7 +1145,7 @@ class CampaignController extends Controller
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $zeroParkToken = $apiCredentials[0]['zeropark'];
-        $exoClickToken = $apiCredentials[0]['exoclicks'];
+        $exoClickToken = $apiCredentials[0]['exoclick'];
         $data = json_decode($_POST['param'], true);
         $em = $this->getDoctrine()->getManager();
         $targets = array();

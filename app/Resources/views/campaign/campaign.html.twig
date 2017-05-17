@@ -70,7 +70,7 @@
                         <i class="fa fa-bullhorn font-green-sharp"></i>
                         <span class="caption-subject bold uppercase" id="campaignTitleName">Campaign Name</span>
                             <input type="hidden" id="id" value="0">
-
+                         <input type="hidden" id="campaignId" value="0">
                      </div>
                      <div class="actions">
                         <button class="btn blue" data-toggle="modal" data-target="#safeListModal"><i class="fa fa-shield"></i> Safe List</button>
@@ -713,7 +713,7 @@
                             text: '<i class="fa fa-refresh"></i> Resume',
                             header: false,
                             action: function ( e, dt, node, config ) {
-                                var data = {source: '{{ trafficSourceName }}', cid: $('#id').val(), items:[]};
+                                var data = {source: '{{ trafficSourceName }}', cid: $('#campaignId').val(), items:[]};
                                 $('input:checkbox.report-record').each(function () {
                                     if($(this).is(':checked') == true){
                                         var id = (this.checked ? $(this).data('id') : "");

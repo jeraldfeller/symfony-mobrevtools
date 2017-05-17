@@ -454,6 +454,7 @@ function getCampaignMatch(voluumId)
                 $.each(response['data']['details']['elements'], function(campaign, obj){
                     console.log(obj['info'][0]['verId'])
                     $('#id').val(obj['info'][0]['id']);
+                    $('#campaignId').val(obj['info'][0]['campId']);
                     $('#selectAddVertical').val(obj['info'][0]['verId']).trigger("change");
                     $('#safeListSwitch').bootstrapSwitch('state', obj['info'][0]['safeListActive'], true);
                     $safeLists = '';
