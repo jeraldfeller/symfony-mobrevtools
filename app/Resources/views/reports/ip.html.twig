@@ -138,6 +138,12 @@
                                         <thead>
                                         <tr>
                                             <th>Id </th>
+                                            <th>
+                                                <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                    <input type="checkbox" class="group-checkable" data-set="#datatable-responsive .checkboxes" />
+                                                    <span></span>
+                                                </label>
+                                            </th>
                                             <th>Traffic Source </th>
                                             <th>Campaign</th>
                                             <th>Geo </th>
@@ -378,10 +384,25 @@
                 "order": [[ 0, "desc" ]],
                 "columnDefs": [
                     {
-                        "targets": [ 0, 7 ],
+                        "targets": [ 0, 8 ],
                         "visible": false,
                         "searchable": false
-                    }
+                    },
+                    {  // set default column settings
+                        'orderable': false,
+                        'targets': [0, 1]
+                    },
+                    {
+                        "searchable": false,
+                        "targets": [0, 1]
+                    },
+                    {"width": "5%", "targets": 1},
+                    {"width": "15%", "targets": 2},
+                    {"width": "10%", "targets": 3},
+                    {"width": "5%", "targets": 4},
+                    {"width": "20%", "targets": 5},
+                    {"width": "35%", "targets": 6},
+                    {"width": "10%", "targets": 7}
                 ],
                 select: {
                     style: 'os',
@@ -391,6 +412,27 @@
                 //dom: '<lB<frt>ip>',
                 "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
                 buttons: [
+                    {
+                        className: 'btn green btn-outline ',
+                        text: '<i class="fa fa-save"></i> Save Data',
+                        header: false,
+                        action: function ( e, dt, node, config ) {
+                            var data = {items:[]};
+                            $('input:checkbox.report-record').each(function () {
+
+
+                                if($(this).is(':checked') == true){
+                                    var id = (this.checked ? $(this).data('id') : "");
+                                    data.items.push({id: id});
+                                }
+
+
+                            });
+
+                            console.log(data);
+                            saveData(data);
+                        }
+                    },
                     {
                         extend: 'csvHtml5',
                         className: 'btn blue btn-outline',
@@ -435,6 +477,27 @@
 
             });
 
+            table.find('.group-checkable').change(function () {
+                var set = jQuery(this).attr("data-set");
+                var checked = jQuery(this).is(":checked");
+                jQuery(set).each(function () {
+                    if (checked) {
+                        $(this).prop("checked", true);
+                        $(this).parents('tr').addClass("active");
+                    } else {
+                        $(this).prop("checked", false);
+                        $(this).parents('tr').removeClass("active");
+                    }
+                });
+            });
+
+            table.on('change', 'tbody tr .checkboxes', function () {
+                $(this).parents('tr').toggleClass("active");
+            });
+
+
+            $('#datatable-responsive').checkboxes('range', true);
+
 
             $('#filterBtn').click(function(){
                 var l = Ladda.create($(this)[0]);
@@ -452,6 +515,6 @@
     </script>
 
     <!-- AJAX CALLS -->
-
+    <script src="{{ asset('assets/ajax/reports/ip.js') }}" type="text/javascript"></script>
     <!-- END AJAX CALLS -->
 {% endblock %}

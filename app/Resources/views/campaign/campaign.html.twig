@@ -709,6 +709,27 @@
                             }
                         },
                         {
+                            className: 'btn green btn-outline ',
+                            text: '<i class="fa fa-refresh"></i> Resume',
+                            header: false,
+                            action: function ( e, dt, node, config ) {
+                                var data = {source: {{ trafficSourceName }}, cid: $('#id').val(), items:[]};
+                                $('input:checkbox.report-record').each(function () {
+                                    if($(this).is(':checked') == true){
+                                        var id = (this.checked ? $(this).data('id') : "");
+                                        var placement = (this.checked ? $(this).data('placement') : "");
+                                        data.items.push({
+                                            id: id,
+                                            placement: placement
+                                        });
+                                    }
+                                });
+
+                                console.log(data);
+                                resumePlacements(data);
+                            }
+                        },
+                        {
                             extend: 'copyHtml5',
                             className: 'btn green btn-outline',
                             text: '<i class="fa fa-copy"></i> Copy to Clipboard',

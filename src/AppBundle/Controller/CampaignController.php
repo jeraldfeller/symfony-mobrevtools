@@ -1137,6 +1137,52 @@ class CampaignController extends Controller
     }
 
 
+
+    /**
+     * @Route("/campaign/resume-placements", name="resume-placements")
+     */
+    public function resumePlacementsAction(){
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $zeroParkToken = $apiCredentials[0]['zeropark'];
+        $exoClickToken = $apiCredentials[0]['exoclicks'];
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $targets = array();
+        foreach($data['items'] as $row){
+            $targets[] = $row['placement'];
+
+            $botReportEntity = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findOneBy(array('cid' => $data['cid'], 'placement' => $row['placement']));
+            if($botReportEntity){
+                $botReportEntity->setStatus('RESUMED');
+                $em->flush();
+
+            }
+
+        }
+
+        if(count($targets) > 0 ){
+            if($data['source'] == 'Zeropark'){
+                $query = array('hash' => implode(',', $targets));
+                $url = 'https://panel.zeropark.com/api/campaign/' . $data['cid'] . '/targets/resume/?' . http_build_query($query);
+                $return = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkRequest', array('url' => $url,
+                    'query' => $query,
+                    'method' => 'POST',
+                    'token' => $zeroParkToken))->getContent(), true);
+            }
+
+        }
+
+
+
+
+
+        return new Response(json_encode($return));
+    }
+
+
+
+
     /**
      * @Route("/campaign/delete-data", name="deleteData")
      */
@@ -1661,7 +1707,7 @@ class CampaignController extends Controller
             $row = array();
             $row[] = '<td>
                         <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['campaignRulesPlacementId'] . '" />
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['campaignRulesPlacementId'] . '" data-placement="' . $column['placement'] . '" />
                              <span></span>
                         </label>
                       </td>';

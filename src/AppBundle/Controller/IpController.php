@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 use AppBundle\Entity\ReportsIp;
+use AppBundle\Entity\ReportsIpSaved;
 
 class IpController extends Controller{
 
@@ -52,6 +53,46 @@ class IpController extends Controller{
 
 
     }
+
+
+
+    /**
+     * @Route("/reports/ip/save-data", name="saveData")
+     */
+    public function saveDataAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        foreach($data['items'] as $row){
+            $listData = $em->getRepository('AppBundle:ReportsIp')->find($row['id']);
+            $listExists = $em->getRepository('AppBundle:ReportsIpSaved')->findOneBy(array('id' => $listData));
+            if($listExists){
+                $listExists->setTrafficName($listData->getTrafficName());
+                $listExists->setCampaignName($listData->getCampaignName());
+                $listExists->setGeo($listData->getGeo());
+                $listExists->setMobileCarrier($listData->getMobileCarrier());
+                $listExists->setIsp($listData->getIsp());
+                $listExists->setIp($listData->getIp());
+                $em->flush();
+            }else{
+                $listEntity = new ReportsIpSaved();
+                $listEntity->setTrafficName($listData->getTrafficName());
+                $listEntity->setCampaignName($listData->getCampaignName());
+                $listEntity->setGeo($listData->getGeo());
+                $listEntity->setMobileCarrier($listData->getMobileCarrier());
+                $listEntity->setIsp($listData->getIsp());
+                $listEntity->setIp($listData->getIp());
+                $em->persist($listEntity);
+            }
+
+        }
+
+        $em->flush();
+        $em->clear();
+
+        return new Response(json_encode(true));
+    }
+
+
 
     /**
      * @Route("ajax/get-reports-ip")
@@ -222,6 +263,12 @@ class IpController extends Controller{
         foreach($rResult as $column){
             $row = array();
             $row[] = $column['id'];
+            $row[] = '<td>
+                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['id'] . '" />
+                             <span></span>
+                        </label>
+                      </td>';
             $row[] = $column['trafficName'];
             $row[] = $column['campaignName'];
             $row[] = $column['geo'];

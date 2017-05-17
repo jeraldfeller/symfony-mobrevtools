@@ -708,12 +708,14 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                         if(count($targetsToPause) > 100){
 
                                             $chunks = array_chunk($targetsToPause, 100, true);
+                                            var_dump($chunks);
                                             foreach($chunks as $chunk){
                                                 $targetArray = array();
                                                 foreach($chunk as $target){
                                                     $targetArray[] = $target;
                                                 }
 
+                                                /*
                                                 $query = array('hash' => implode(',', $targetArray)
                                                 );
                                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
@@ -721,6 +723,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 $output->writeln([
                                                     json_encode($response)
                                                 ]);
+                                                */
 
                                             }
 

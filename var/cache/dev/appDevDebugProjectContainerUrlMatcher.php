@@ -152,7 +152,7 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
                 // getCampaignAffiliate
                 if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}/{$campaignId}') {
-                    return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  'campaignId' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getCreativeTypesAction',  '_route' => 'getCampaignAffiliate',);
+                    return array (  'affiliateId' => NULL,  'apiKey' => NULL,  'network' => NULL,  'campaignId' => NULL,  '_controller' => 'AppBundle\\Controller\\CakeApiController::getCampaignAffiliateAction',  '_route' => 'getCampaignAffiliate',);
                 }
 
             }
@@ -247,9 +247,9 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteCampaignRuleAction',  '_route' => 'deleteCampaignRule',);
             }
 
-            // saveData
-            if ($pathinfo === '/campaign/save-data') {
-                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::saveDataAction',  '_route' => 'saveData',);
+            // resume-placements
+            if ($pathinfo === '/campaign/resume-placements') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::resumePlacementsAction',  '_route' => 'resume-placements',);
             }
 
             // deleteData
@@ -589,9 +589,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\HtmlDataController::ajaxGetHtmlData',  '_route' => 'app_htmldata_ajaxgethtmldata',);
         }
 
-        // app_ip_showipreport
-        if ($pathinfo === '/reports/ip') {
-            return array (  '_controller' => 'AppBundle\\Controller\\IpController::showIpReportAction',  '_route' => 'app_ip_showipreport',);
+        if (0 === strpos($pathinfo, '/reports/ip')) {
+            // app_ip_showipreport
+            if ($pathinfo === '/reports/ip') {
+                return array (  '_controller' => 'AppBundle\\Controller\\IpController::showIpReportAction',  '_route' => 'app_ip_showipreport',);
+            }
+
+            // saveData
+            if ($pathinfo === '/reports/ip/save-data') {
+                return array (  '_controller' => 'AppBundle\\Controller\\IpController::saveDataAction',  '_route' => 'saveData',);
+            }
+
         }
 
         // app_ip_ajaxgetreportsip
