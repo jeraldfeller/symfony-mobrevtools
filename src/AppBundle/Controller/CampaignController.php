@@ -1163,19 +1163,36 @@ class CampaignController extends Controller
 
         if(count($targets) > 0 ){
             if($data['source'] == 'Zeropark'){
-                $query = array('hash' => implode(',', $targets));
-                $url = 'https://panel.zeropark.com/api/campaign/' . $data['cid'] . '/targets/resume/?' . http_build_query($query);
-                $return = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkRequest', array('url' => $url,
-                    'query' => $query,
-                    'method' => 'POST',
-                    'token' => $zeroParkToken))->getContent(), true);
+                if(count($targets) > 50) {
+                    $chunks = array_chunk($targets, 50, true);
+
+                    foreach ($chunks as $chunk) {
+                        $targetArray = array();
+                        foreach ($chunk as $target) {
+                            $targetArray[] = $target;
+                        }
+
+
+                        $query = array('hash' => implode(',', $targetArray));
+                        $url = 'https://panel.zeropark.com/api/campaign/' . $data['cid'] . '/targets/resume/?' . http_build_query($query);
+                        $return = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkRequest', array('url' => $url,
+                            'query' => $query,
+                            'method' => 'POST',
+                            'token' => $zeroParkToken))->getContent(), true);
+
+                    }
+                }else{
+                    $query = array('hash' => implode(',', $targets));
+                    $url = 'https://panel.zeropark.com/api/campaign/' . $data['cid'] . '/targets/resume/?' . http_build_query($query);
+                    $return = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkRequest', array('url' => $url,
+                        'query' => $query,
+                        'method' => 'POST',
+                        'token' => $zeroParkToken))->getContent(), true);
+                }
+
             }
 
         }
-
-
-
-
 
         return new Response(json_encode($return));
     }

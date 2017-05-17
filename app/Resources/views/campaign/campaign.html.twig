@@ -713,7 +713,7 @@
                             text: '<i class="fa fa-refresh"></i> Resume',
                             header: false,
                             action: function ( e, dt, node, config ) {
-                                var data = {source: {{ trafficSourceName }}, cid: $('#id').val(), items:[]};
+                                var data = {source: '{{ trafficSourceName }}', cid: $('#id').val(), items:[]};
                                 $('input:checkbox.report-record').each(function () {
                                     if($(this).is(':checked') == true){
                                         var id = (this.checked ? $(this).data('id') : "");

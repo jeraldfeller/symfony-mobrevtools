@@ -120,7 +120,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $tz = 'America/New_York';
                     $sort = 'visits';
                     $direction = 'desc';
-                    $limit = 10000;
+                    $limit = 100000;
                     $output->writeln([
                         $key['ruleType'], $key['trafficName'], $key['campName']
                     ]);
@@ -210,7 +210,10 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             }
                                             if($key['operator'] == 'and'){
                                                 if ($conditionCount == $matchCount) {
-                                                    $targets[] = $item[$customVariableKey];
+                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                        $targets[] = $item[$customVariableKey];
+                                                    }
+
                                                     $this->insertBotReport($key['campaignRulesId'],
                                                         $key['tid'],
                                                         $key['id'],
@@ -238,7 +241,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 //   $ruleSetCount++;
                                             }else{
                                                 if ($matchCount > 0) {
-                                                    $targets[] = $item[$customVariableKey];
+                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                        $targets[] = $item[$customVariableKey];
+                                                    }
                                                     $this->insertBotReport($key['campaignRulesId'],
                                                         $key['tid'],
                                                         $key['id'],
@@ -421,7 +426,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             }
                                             if($key['operator'] == 'and'){
                                                 if ($conditionCount == $matchCount) {
-                                                    $targets[] = $item[$customVariableKey];
+                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                        $targets[] = $item[$customVariableKey];
+                                                    }
                                                     $this->insertBotReport($key['campaignRulesId'],
                                                         $key['tid'],
                                                         $key['id'],
@@ -449,7 +456,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 //    $ruleSetCount++;
                                             }else{
                                                 if ($matchCount > 0) {
-                                                    $targets[] = $item[$customVariableKey];
+                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                        $targets[] = $item[$customVariableKey];
+                                                    }
                                                     $this->insertBotReport($key['campaignRulesId'],
                                                         $key['tid'],
                                                         $key['id'],
@@ -550,7 +559,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                     unset($tomatchUnpause);
                                                 }else{
                                                     if ($unpauseMatchCount > 0) {
-                                                        $targets[] = $item[$customVariableKey];
+
                                                         $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
                                                         $this->updateBotReport(
                                                             $key['id'],
@@ -624,7 +633,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             if($key['operator'] == 'and'){
                                                 if ($conditionCount == $matchCount) {
 
-                                                    $targets[] = $item[$customVariableKey];
+                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                        $targets[] = $item[$customVariableKey];
+                                                    }
                                                     $this->insertBotReport($key['campaignRulesId'],
                                                         $key['tid'],
                                                         $key['id'],
@@ -652,7 +663,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 // $ruleSetCount++;
                                             }else{
                                                 if ($matchCount > 0) {
-                                                    $targets[] = $item[$customVariableKey];
+                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                        $targets[] = $item[$customVariableKey];
+                                                    }
                                                     $this->insertBotReport($key['campaignRulesId'],
                                                         $key['tid'],
                                                         $key['id'],
@@ -689,33 +702,33 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                              */
 
 
-                            /*
+
                             if(count($zeroParkToResumeTargets) > 0 ){
                                 $query = array('hash' => implode(',', $zeroParkToResumeTargets));
-                                $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/target/sresume/?' . http_build_query($query);
+                                $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/resume/?' . http_build_query($query);
                                 $return = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
                                 $output->writeln([
                                     json_encode($return)
                                 ]);
 
                             }
-                            */
+
                             switch($key['trafficName']){
                                 case 'Zeropark':
                                     if(count($targets) > 0){
                                         $targetsToPause = array_unique($targets);
 
-                                        if(count($targetsToPause) > 100){
+                                        if(count($targetsToPause) > 50){
 
-                                            $chunks = array_chunk($targetsToPause, 100, true);
-                                            var_dump($chunks);
+                                            $chunks = array_chunk($targetsToPause, 50, true);
+
                                             foreach($chunks as $chunk){
                                                 $targetArray = array();
                                                 foreach($chunk as $target){
                                                     $targetArray[] = $target;
                                                 }
 
-                                                /*
+
                                                 $query = array('hash' => implode(',', $targetArray)
                                                 );
                                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
@@ -723,7 +736,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 $output->writeln([
                                                     json_encode($response)
                                                 ]);
-                                                */
+
 
                                             }
 
