@@ -693,7 +693,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                         }
                                     }
                                 }
-                                }
+                            }
 
 
 
@@ -706,7 +706,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                             if(count($zeroParkToResumeTargets) > 0 ){
                                 $query = array('hash' => implode(',', $zeroParkToResumeTargets));
                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/resume/?' . http_build_query($query);
-                                $return = $zeroparkService->zeroparkRequestAction($url, $query, 'POST', $zeroparkSessionId);
+                                $return = $zeroparkService->zeroparkRequestAction($url, $query, 1, $zeroparkSessionId);
                                 $output->writeln([
                                     json_encode($return)
                                 ]);
@@ -746,7 +746,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
                                             $response = json_decode($zeroparkService->zeroparkRequestAction($url, $query, 1, $zeroparkSessionId), true);
                                             $output->writeln([
-                                            json_encode($response)
+                                                json_encode($response)
                                             ]);
                                         }
 

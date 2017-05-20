@@ -1086,12 +1086,18 @@ class CampaignController extends Controller
     public function saveDataAction(){
         $data = json_decode($_POST['param'], true);
         $em = $this->getDoctrine()->getManager();
+        $campaignEntity = $em->getRepository('AppBundle:Campaign')->find($data['cid']);
+        $verticalEntity = $em->getRepository('AppBundle:Verticals')->find($campaignEntity->getVerId());
         foreach($data['items'] as $row){
             $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
             $listExists = $em->getRepository('AppBundle:ListReports')->findOneBy(array('cid' => $listData->getCid(), 'placement' => $listData->getPlacement()));
             if($listExists){
                 $listExists->setTid($listData->getTid());
                 $listExists->setCid($listData->getCid());
+                $listExists->setCampName($campaignEntity->getCampName());
+                $listExists->setGeo($campaignEntity->getGeo());
+                $listExists->setVerticalName($verticalEntity->getVerticalName());
+                $listExists->setTrafficName($data['trafficSource']);
                 $listExists->setType($listData->getType());
                 $listExists->setPlacement($listData->getPlacement());
                 $listExists->setVisits($listData->getVisits());
@@ -1111,6 +1117,10 @@ class CampaignController extends Controller
                 $listEntity = new ListReports();
                 $listEntity->setTid($listData->getTid());
                 $listEntity->setCid($listData->getCid());
+                $listEntity->setCampName($campaignEntity->getCampName());
+                $listEntity->setGeo($campaignEntity->getGeo());
+                $listEntity->setVerticalName($verticalEntity->getVerticalName());
+                $listEntity->setTrafficName($data['trafficSource']);
                 $listEntity->setType($listData->getType());
                 $listEntity->setPlacement($listData->getPlacement());
                 $listEntity->setVisits($listData->getVisits());
@@ -1151,14 +1161,6 @@ class CampaignController extends Controller
         $targets = array();
         foreach($data['items'] as $row){
             $targets[] = $row['placement'];
-
-            $botReportEntity = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findOneBy(array('cid' => $data['cid'], 'placement' => $row['placement']));
-            if($botReportEntity){
-                $botReportEntity->setStatus('RESUMED');
-                $em->flush();
-
-            }
-
         }
 
         if(count($targets) > 0 ){
@@ -1174,20 +1176,38 @@ class CampaignController extends Controller
 
 
                         $query = array('hash' => implode(',', $targetArray));
-                        $url = 'https://panel.zeropark.com/api/campaign/' . $data['cid'] . '/targets/resume/?' . http_build_query($query);
+                        $url = 'https://panel.zeropark.com/api/campaign/' . $data['campId'] . '/targets/resume/?';
                         $return = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkRequest', array('url' => $url,
                             'query' => $query,
-                            'method' => 'POST',
+                            'method' => 1,
                             'token' => $zeroParkToken))->getContent(), true);
+
+                        for($i = 0; $i < count($return['hashes']); $i++){
+                            $botReportEntity = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findOneBy(array('cid' => $data['cid'], 'placement' => $return['hashes'][$i]));
+                            if($botReportEntity){
+                                $botReportEntity->setStatus('RESUMED');
+                                $em->flush();
+
+                            }
+                        }
 
                     }
                 }else{
                     $query = array('hash' => implode(',', $targets));
-                    $url = 'https://panel.zeropark.com/api/campaign/' . $data['cid'] . '/targets/resume/?' . http_build_query($query);
+                    $url = 'https://panel.zeropark.com/api/campaign/' . $data['campId'] . '/targets/resume/?';
                     $return = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkRequest', array('url' => $url,
                         'query' => $query,
-                        'method' => 'POST',
+                        'method' => '1',
                         'token' => $zeroParkToken))->getContent(), true);
+
+                    for($i = 0; $i < count($return['hashes']); $i++){
+                        $botReportEntity = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findOneBy(array('cid' => $data['cid'], 'placement' => $return['hashes'][$i]));
+                        if($botReportEntity){
+                            $botReportEntity->setStatus('RESUMED');
+                            $em->flush();
+
+                        }
+                    }
                 }
 
             }
@@ -1684,13 +1704,13 @@ class CampaignController extends Controller
             $sQuery = $em->createQuery("
             SELECT $aQueryColumns
             FROM ".$sTable." p ".$sWhere.$sOrder."")
-                    ->setFirstResult($firstResult)
-                    ->setMaxResults($maxResults)
-                ;
-                $rResult = $sQuery->getResult();
+                ->setFirstResult($firstResult)
+                ->setMaxResults($maxResults)
+            ;
+            $rResult = $sQuery->getResult();
 
 
-                $sQuery = $em->createQuery("
+            $sQuery = $em->createQuery("
             SELECT p
             FROM ".$sTable." p ".$sWhere.$sOrder."")
                 ->setFirstResult($firstResult)

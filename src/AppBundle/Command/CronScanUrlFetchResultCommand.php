@@ -50,12 +50,13 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
         $to = $ymd.'T'.$hmi;
         $currentHour = date('H');
 
-            $scannedUrlObj = $this->getUrlsByColumn('isScanned', 1);
-            $domainResults = array();
+        $scannedUrlObj = $this->getUrlsByColumn('isScanned', 1);
+        $domainResults = array();
 
-            $i = 0;
+        $i = 0;
 
-            foreach($scannedUrlObj as $row){
+        foreach($scannedUrlObj as $row){
+            if($row['toCheck'] == 1){
                 $landersCampaign = array();
                 $tz = 'America/Chicago';
                 $sort = 'visits';
@@ -128,41 +129,45 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
                     $domainResults[] = array('domain' => $row['url'], 'result' => $result, 'campaigns' => $landersCampaignString);
                     $this->updateScannedUrl($row['scanId'], 0, $result, $landersCampaignString);
                 }
+
                 $i++;
             }
 
-            if(count($domainResults) > 0){
-                $message = '';
 
-                $message .= '<html>';
-                $message .= '    <head>';
-                $message .= '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">';
-                $message .= '      <title>Notification</title>';
-                $message .= '    </head>';
-                $message .= '    <body>';
-                $message .= '      <div class="col-lg-12">';
-                $message .= '      <table class="table table-striped">';
-                $message .= '        <tr>';
-                $message .= '          <th>Domain</th><th>Flag Type</th><th>Campaigns</th>';
-                $message .= '        </tr>';
-                foreach($domainResults as $domain){
-                    $message .= '<tr>';
-                    $message .= '<td>' . $domain['domain'] . '</td>';
-                    $message .= '<td>' . strtoupper($domain['result']) . '</td>';
-                    $message .= '<td>' . $domain['campaigns'] . '</td>';
-                    $message .= '</tr>';
-                }
-                $message .= '    </table>';
-                $message .= '    </div>';
-                $message .= '    </body>';
-                $message .= '    </html>';
+        }
 
+        if(count($domainResults) > 0){
+            $message = '';
 
-                $subject = 'Domain Reports ' . date('Y-m-d H:i:s');
-                $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
-                $systemService->sendEmail('jeraldfeller@gmail.com', 'jeraldfeller@gmail.com', $subject, $message);
-
+            $message .= '<html>';
+            $message .= '    <head>';
+            $message .= '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">';
+            $message .= '      <title>Notification</title>';
+            $message .= '    </head>';
+            $message .= '    <body>';
+            $message .= '      <div class="col-lg-12">';
+            $message .= '      <table class="table table-striped">';
+            $message .= '        <tr>';
+            $message .= '          <th>Domain</th><th>Flag Type</th><th>Campaigns</th>';
+            $message .= '        </tr>';
+            foreach($domainResults as $domain){
+                $message .= '<tr>';
+                $message .= '<td>' . $domain['domain'] . '</td>';
+                $message .= '<td>' . strtoupper($domain['result']) . '</td>';
+                $message .= '<td>' . $domain['campaigns'] . '</td>';
+                $message .= '</tr>';
             }
+            $message .= '    </table>';
+            $message .= '    </div>';
+            $message .= '    </body>';
+            $message .= '    </html>';
+
+
+            $subject = 'Domain Reports ' . date('Y-m-d H:i:s');
+            $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
+            $systemService->sendEmail('jeraldfeller@gmail.com', 'jeraldfeller@gmail.com', $subject, $message);
+
+        }
     }
 
 
@@ -176,7 +181,8 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
                 'scanId' => $entity[$i]->getScanId(),
                 'landerId' =>  $entity[$i]->getLanderId(),
                 'url' => $entity[$i]->getUrl(),
-                'scanRequestId' => $entity[$i]->getScanRequestId()
+                'scanRequestId' => $entity[$i]->getScanRequestId(),
+                'toCheck' => $entity[$i]->getToCheck()
             );
         }
 

@@ -197,3 +197,4 @@ class ReportsIpSaved
         return $this->id;
     }
 }
+
