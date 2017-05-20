@@ -515,4 +515,126 @@ class ListReports
     {
         return $this->placement;
     }
+    /**
+     * @var string
+     */
+    private $trafficname;
+
+
+    /**
+     * Set trafficname
+     *
+     * @param string $trafficname
+     *
+     * @return ListReports
+     */
+    public function setTrafficname($trafficname)
+    {
+        $this->trafficname = $trafficname;
+
+        return $this;
+    }
+
+    /**
+     * Get trafficname
+     *
+     * @return string
+     */
+    public function getTrafficname()
+    {
+        return $this->trafficname;
+    }
+    /**
+     * @var string
+     */
+    private $trafficName;
+
+
+    /**
+     * @var string
+     */
+    private $campName;
+
+    /**
+     * @var string
+     */
+    private $geo;
+
+    /**
+     * @var string
+     */
+    private $verticalName;
+
+
+    /**
+     * Set campName
+     *
+     * @param string $campName
+     *
+     * @return ListReports
+     */
+    public function setCampName($campName)
+    {
+        $this->campName = $campName;
+
+        return $this;
+    }
+
+    /**
+     * Get campName
+     *
+     * @return string
+     */
+    public function getCampName()
+    {
+        return $this->campName;
+    }
+
+    /**
+     * Set geo
+     *
+     * @param string $geo
+     *
+     * @return ListReports
+     */
+    public function setGeo($geo)
+    {
+        $this->geo = $geo;
+
+        return $this;
+    }
+
+    /**
+     * Get geo
+     *
+     * @return string
+     */
+    public function getGeo()
+    {
+        return $this->geo;
+    }
+
+    /**
+     * Set verticalName
+     *
+     * @param string $verticalName
+     *
+     * @return ListReports
+     */
+    public function setVerticalName($verticalName)
+    {
+        $this->verticalName = $verticalName;
+
+        return $this;
+    }
+
+    /**
+     * Get verticalName
+     *
+     * @return string
+     */
+    public function getVerticalName()
+    {
+        return $this->verticalName;
+    }
 }

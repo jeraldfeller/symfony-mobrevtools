@@ -14,27 +14,7 @@
         <option name="unsigned"/>
       </options>
     </field>
-    <field name="campName" type="string" column="camp_name" length="100" nullable="false">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="geo" type="string" column="geo" length="20" nullable="false">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="verticalName" type="string" column="vertical_name" length="20" nullable="false">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="trafficName" type="string" column="traffic_name" length="100" nullable="false">
-      <options>
-        <option name="fixed"/>
-      </options>
-    </field>
-    <field name="type" type="string" column="type" length="20" nullable="false">
+    <field name="type" type="string" column="type" length="10" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
@@ -71,7 +51,7 @@
         <option name="unsigned"/>
       </options>
     </field>
-    <field name="status" type="string" column="status" length="20" nullable="false">
+    <field name="status" type="string" column="status" length="10" nullable="false">
       <options>
         <option name="fixed"/>
       </options>
