@@ -324,6 +324,12 @@ class ConversionsReportController extends Controller{
 
             $row = array();
             $row[] = $column['id'];
+            $row[] = '<td>
+                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['id'] . '" />
+                             <span></span>
+                        </label>
+                      </td>';
             if($input['tableView'] == 'byCampaign'){
                 $row[] = $column['campaignName'];
                 $row[] = $column['ip'];

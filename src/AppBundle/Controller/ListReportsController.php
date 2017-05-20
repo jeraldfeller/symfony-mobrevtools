@@ -160,7 +160,7 @@ class ListReportsController extends Controller {
             for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
                 if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
 
-                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                        $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
 
                 }
             }
@@ -192,12 +192,12 @@ class ListReportsController extends Controller {
                 if($input['geo'] != '' || $input['geo'] != null){
                     $aFilteringRules[] = "p.geo = '". $input['geo'] ."'";
                     //$subGeoFilteringRules = "ca.geo = '". $input['geo'] ."'";
-                    // $subFilteringRules[] = " EXISTS (SELECT ca.geo FROM AppBundle:Campaign ca WHERE p.cid = ca.id  AND  " . $subGeoFilteringRules . ")";
+                   // $subFilteringRules[] = " EXISTS (SELECT ca.geo FROM AppBundle:Campaign ca WHERE p.cid = ca.id  AND  " . $subGeoFilteringRules . ")";
                 }
                 if($input['vertical'] != '' || $input['vertical'] != null){
                     $aFilteringRules[] = "p.verticalName = '". $input['verticalName'] ."'";
                     //$subVerticalFilteringRules = "caf.verId = '". $input['vertical'] ."'";
-                    // $subFilteringRules[] = " EXISTS (SELECT caf.verId FROM AppBundle:Campaign caf WHERE p.cid = caf.id  AND  " . $subVerticalFilteringRules . ")";
+                   // $subFilteringRules[] = " EXISTS (SELECT caf.verId FROM AppBundle:Campaign caf WHERE p.cid = caf.id  AND  " . $subVerticalFilteringRules . ")";
                 }
             }
 

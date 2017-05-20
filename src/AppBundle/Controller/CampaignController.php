@@ -1704,13 +1704,13 @@ class CampaignController extends Controller
             $sQuery = $em->createQuery("
             SELECT $aQueryColumns
             FROM ".$sTable." p ".$sWhere.$sOrder."")
-                ->setFirstResult($firstResult)
-                ->setMaxResults($maxResults)
-            ;
-            $rResult = $sQuery->getResult();
+                    ->setFirstResult($firstResult)
+                    ->setMaxResults($maxResults)
+                ;
+                $rResult = $sQuery->getResult();
 
 
-            $sQuery = $em->createQuery("
+                $sQuery = $em->createQuery("
             SELECT p
             FROM ".$sTable." p ".$sWhere.$sOrder."")
                 ->setFirstResult($firstResult)
