@@ -252,11 +252,6 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::resumePlacementsAction',  '_route' => 'resume-placements',);
             }
 
-            // deleteData
-            if ($pathinfo === '/campaign/delete-data') {
-                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteDataAction',  '_route' => 'deleteData',);
-            }
-
             // addVertical
             if ($pathinfo === '/campaign/add-vertical') {
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addVertical',  '_route' => 'addVertical',);
@@ -645,9 +640,22 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::indexAction',  '_route' => 'listReports',);
         }
 
-        // app_listreports_ajaxgetlistreports
-        if ($pathinfo === '/ajax/list-reports') {
-            return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::ajaxGetListReports',  '_route' => 'app_listreports_ajaxgetlistreports',);
+        // deleteData
+        if ($pathinfo === '/list-reports/delete-data') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::deleteDataAction',  '_route' => 'deleteData',);
+        }
+
+        if (0 === strpos($pathinfo, '/ajax')) {
+            // app_listreports_ajaxgetlistreports
+            if ($pathinfo === '/ajax/list-reports') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::ajaxGetListReports',  '_route' => 'app_listreports_ajaxgetlistreports',);
+            }
+
+            // app_listreports_ajaxgetreportsip
+            if ($pathinfo === '/ajax/get-reports-ip-saved') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::ajaxGetReportsIp',  '_route' => 'app_listreports_ajaxgetreportsip',);
+            }
+
         }
 
         // app_logtracker_showlogtrackerreport
