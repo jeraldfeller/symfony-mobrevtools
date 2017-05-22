@@ -247,9 +247,19 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteCampaignRuleAction',  '_route' => 'deleteCampaignRule',);
             }
 
+            // app_campaign_savedata
+            if ($pathinfo === '/campaign/save-data') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::saveDataAction',  '_route' => 'app_campaign_savedata',);
+            }
+
             // resume-placements
             if ($pathinfo === '/campaign/resume-placements') {
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::resumePlacementsAction',  '_route' => 'resume-placements',);
+            }
+
+            // app_campaign_deletedata
+            if ($pathinfo === '/campaign/delete-data') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::deleteDataAction',  '_route' => 'app_campaign_deletedata',);
             }
 
             // addVertical
@@ -590,9 +600,9 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\IpController::showIpReportAction',  '_route' => 'app_ip_showipreport',);
             }
 
-            // saveData
+            // app_ip_savedata
             if ($pathinfo === '/reports/ip/save-data') {
-                return array (  '_controller' => 'AppBundle\\Controller\\IpController::saveDataAction',  '_route' => 'saveData',);
+                return array (  '_controller' => 'AppBundle\\Controller\\IpController::saveDataAction',  '_route' => 'app_ip_savedata',);
             }
 
         }

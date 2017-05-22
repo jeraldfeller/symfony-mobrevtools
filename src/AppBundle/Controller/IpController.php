@@ -57,7 +57,7 @@ class IpController extends Controller{
 
 
     /**
-     * @Route("/reports/ip/save-data", name="saveData")
+     * @Route("/reports/ip/save-data")
      */
     public function saveDataAction(){
         $data = json_decode($_POST['param'], true);

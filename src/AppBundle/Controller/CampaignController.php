@@ -1081,64 +1081,133 @@ class CampaignController extends Controller
 
 
     /**
-     * @Route("/campaign/save-data", name="saveData")
+     * @Route("/campaign/save-data")
      */
     public function saveDataAction(){
+
         $data = json_decode($_POST['param'], true);
         $em = $this->getDoctrine()->getManager();
         $campaignEntity = $em->getRepository('AppBundle:Campaign')->find($data['cid']);
         $verticalEntity = $em->getRepository('AppBundle:Verticals')->find($campaignEntity->getVerId());
-        foreach($data['items'] as $row){
-            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
-            $listExists = $em->getRepository('AppBundle:ListReports')->findOneBy(array('cid' => $listData->getCid(), 'placement' => $listData->getPlacement()));
-            if($listExists){
-                $listExists->setTid($listData->getTid());
-                $listExists->setCid($listData->getCid());
-                $listExists->setCampName($campaignEntity->getCampName());
-                $listExists->setGeo($campaignEntity->getGeo());
-                $listExists->setVerticalName($verticalEntity->getVerticalName());
-                $listExists->setTrafficName($data['trafficSource']);
-                $listExists->setType($listData->getType());
-                $listExists->setPlacement($listData->getPlacement());
-                $listExists->setVisits($listData->getVisits());
-                $listExists->setClicks($listData->getClicks());
-                $listExists->setCtr($listData->getCtr());
-                $listExists->setConversions($listData->getConversions());
-                $listExists->setRevenue($listData->getRevenue());
-                $listExists->setCost($listData->getCost());
-                $listExists->setProfit($listData->getProfit());
-                $listExists->setCpv($listData->getCpv());
-                $listExists->setEpv($listData->getEpv());
-                $listExists->setRoi($listData->getRoi());
-                $listExists->setDateExecuted($listData->getDateExecuted());
-                $listExists->setStatus($listData->getStatus());
-                $em->flush();
-            }else{
-                $listEntity = new ListReports();
-                $listEntity->setTid($listData->getTid());
-                $listEntity->setCid($listData->getCid());
-                $listEntity->setCampName($campaignEntity->getCampName());
-                $listEntity->setGeo($campaignEntity->getGeo());
-                $listEntity->setVerticalName($verticalEntity->getVerticalName());
-                $listEntity->setTrafficName($data['trafficSource']);
-                $listEntity->setType($listData->getType());
-                $listEntity->setPlacement($listData->getPlacement());
-                $listEntity->setVisits($listData->getVisits());
-                $listEntity->setClicks($listData->getClicks());
-                $listEntity->setCtr($listData->getCtr());
-                $listEntity->setConversions($listData->getConversions());
-                $listEntity->setRevenue($listData->getRevenue());
-                $listEntity->setCost($listData->getCost());
-                $listEntity->setProfit($listData->getProfit());
-                $listEntity->setCpv($listData->getCpv());
-                $listEntity->setEpv($listData->getEpv());
-                $listEntity->setRoi($listData->getRoi());
-                $listEntity->setDateExecuted($listData->getDateExecuted());
-                $listEntity->setStatus($listData->getStatus());
-                $em->persist($listEntity);
+        $batch = 100;
+        $x = 1;
+        if($data['applyAll'] == true){
+            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            for($i = 0; $i < count($listData); $i++){
+                $listExists = $em->getRepository('AppBundle:ListReports')->findOneBy(array('cid' => $listData[$i]->getCid(), 'placement' => $listData[$i]->getPlacement()));
+                if($listExists){
+                    $listExists->setTid($listData[$i]->getTid());
+                    $listExists->setCid($listData[$i]->getCid());
+                    $listExists->setCampName($campaignEntity->getCampName());
+                    $listExists->setGeo($campaignEntity->getGeo());
+                    $listExists->setVerticalName($verticalEntity->getVerticalName());
+                    $listExists->setTrafficName($data['trafficSource']);
+                    $listExists->setType($listData[$i]->getType());
+                    $listExists->setPlacement($listData[$i]->getPlacement());
+                    $listExists->setVisits($listData[$i]->getVisits());
+                    $listExists->setClicks($listData[$i]->getClicks());
+                    $listExists->setCtr($listData[$i]->getCtr());
+                    $listExists->setConversions($listData[$i]->getConversions());
+                    $listExists->setRevenue($listData[$i]->getRevenue());
+                    $listExists->setCost($listData[$i]->getCost());
+                    $listExists->setProfit($listData[$i]->getProfit());
+                    $listExists->setCpv($listData[$i]->getCpv());
+                    $listExists->setEpv($listData[$i]->getEpv());
+                    $listExists->setRoi($listData[$i]->getRoi());
+                    $listExists->setDateExecuted($listData[$i]->getDateExecuted());
+                    $listExists->setStatus($listData[$i]->getStatus());
+                    $em->flush();
+                }else{
+
+                    $listEntity = new ListReports();
+                    $listEntity->setTid($listData[$i]->getTid());
+                    $listEntity->setCid($listData[$i]->getCid());
+                    $listEntity->setCampName($campaignEntity->getCampName());
+                    $listEntity->setGeo($campaignEntity->getGeo());
+                    $listEntity->setVerticalName($verticalEntity->getVerticalName());
+                    $listEntity->setTrafficName($data['trafficSource']);
+                    $listEntity->setType($listData[$i]->getType());
+                    $listEntity->setPlacement($listData[$i]->getPlacement());
+                    $listEntity->setVisits($listData[$i]->getVisits());
+                    $listEntity->setClicks($listData[$i]->getClicks());
+                    $listEntity->setCtr($listData[$i]->getCtr());
+                    $listEntity->setConversions($listData[$i]->getConversions());
+                    $listEntity->setRevenue($listData[$i]->getRevenue());
+                    $listEntity->setCost($listData[$i]->getCost());
+                    $listEntity->setProfit($listData[$i]->getProfit());
+                    $listEntity->setCpv($listData[$i]->getCpv());
+                    $listEntity->setEpv($listData[$i]->getEpv());
+                    $listEntity->setRoi($listData[$i]->getRoi());
+                    $listEntity->setDateExecuted($listData[$i]->getDateExecuted());
+                    $listEntity->setStatus($listData[$i]->getStatus());
+                    $em->persist($listEntity);
+                    if(($x % $batch) == 0){
+                        $em->flush();
+                        $em->clear();
+                    }
+                }
             }
 
+
+
+        }else{
+            foreach($data['items'] as $row){
+                $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
+                $listExists = $em->getRepository('AppBundle:ListReports')->findOneBy(array('cid' => $listData->getCid(), 'placement' => $listData->getPlacement()));
+                if($listExists){
+                    $listExists->setTid($listData->getTid());
+                    $listExists->setCid($listData->getCid());
+                    $listExists->setCampName($campaignEntity->getCampName());
+                    $listExists->setGeo($campaignEntity->getGeo());
+                    $listExists->setVerticalName($verticalEntity->getVerticalName());
+                    $listExists->setTrafficName($data['trafficSource']);
+                    $listExists->setType($listData->getType());
+                    $listExists->setPlacement($listData->getPlacement());
+                    $listExists->setVisits($listData->getVisits());
+                    $listExists->setClicks($listData->getClicks());
+                    $listExists->setCtr($listData->getCtr());
+                    $listExists->setConversions($listData->getConversions());
+                    $listExists->setRevenue($listData->getRevenue());
+                    $listExists->setCost($listData->getCost());
+                    $listExists->setProfit($listData->getProfit());
+                    $listExists->setCpv($listData->getCpv());
+                    $listExists->setEpv($listData->getEpv());
+                    $listExists->setRoi($listData->getRoi());
+                    $listExists->setDateExecuted($listData->getDateExecuted());
+                    $listExists->setStatus($listData->getStatus());
+                    $em->flush();
+                }else{
+                    $listEntity = new ListReports();
+                    $listEntity->setTid($listData->getTid());
+                    $listEntity->setCid($listData->getCid());
+                    $listEntity->setCampName($campaignEntity->getCampName());
+                    $listEntity->setGeo($campaignEntity->getGeo());
+                    $listEntity->setVerticalName($verticalEntity->getVerticalName());
+                    $listEntity->setTrafficName($data['trafficSource']);
+                    $listEntity->setType($listData->getType());
+                    $listEntity->setPlacement($listData->getPlacement());
+                    $listEntity->setVisits($listData->getVisits());
+                    $listEntity->setClicks($listData->getClicks());
+                    $listEntity->setCtr($listData->getCtr());
+                    $listEntity->setConversions($listData->getConversions());
+                    $listEntity->setRevenue($listData->getRevenue());
+                    $listEntity->setCost($listData->getCost());
+                    $listEntity->setProfit($listData->getProfit());
+                    $listEntity->setCpv($listData->getCpv());
+                    $listEntity->setEpv($listData->getEpv());
+                    $listEntity->setRoi($listData->getRoi());
+                    $listEntity->setDateExecuted($listData->getDateExecuted());
+                    $listEntity->setStatus($listData->getStatus());
+                    $em->persist($listEntity);
+                    if(($x % $batch) == 0){
+                        $em->flush();
+                        $em->clear();
+                    }
+                }
+
+            }
         }
+
 
         $em->flush();
         $em->clear();
@@ -1159,9 +1228,17 @@ class CampaignController extends Controller
         $data = json_decode($_POST['param'], true);
         $em = $this->getDoctrine()->getManager();
         $targets = array();
-        foreach($data['items'] as $row){
-            $targets[] = $row['placement'];
+        if($data['applyAll'] == true){
+            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            for($i = 0; $i < count($listData); $i++){
+                $targets[] = $listData[$i]->getPlacement();
+            }
+        }else{
+            foreach($data['items'] as $row){
+                $targets[] = $row['placement'];
+            }
         }
+
 
         if(count($targets) > 0 ){
             if($data['source'] == 'Zeropark'){
@@ -1221,20 +1298,31 @@ class CampaignController extends Controller
 
 
     /**
-     * @Route("/campaign/delete-data", name="deleteData")
+     * @Route("/campaign/delete-data")
      */
     public function deleteDataAction(){
         $data = json_decode($_POST['param'], true);
         $em = $this->getDoctrine()->getManager();
         $batch = 100;
         $i = 1;
-        foreach($data['items'] as $row){
-            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
-            if($listData){
-                $em->remove($listData);
-                if(($i % $batch) == 0){
+        if($data['applyAll'] == true){
+            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            for($x = 0; $x < count($listData); $x++) {
+                $em->remove($listData[$x]);
+                if (($i % $batch) == 0) {
                     $em->flush();
                     $em->clear();
+                }
+            }
+        }else{
+            foreach($data['items'] as $row){
+                $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->find($row['id']);
+                if($listData){
+                    $em->remove($listData);
+                    if(($i % $batch) == 0){
+                        $em->flush();
+                        $em->clear();
+                    }
                 }
             }
         }

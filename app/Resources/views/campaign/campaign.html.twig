@@ -366,6 +366,19 @@
                             <option value="autobid">Autobid</option>
                         </select>
                     </div>
+                    <div class="col-md-3 col-xs-6">
+                        <div class="form-group form-md-checkboxes">
+                            <div class="md-checkbox-list">
+                                <div class="md-checkbox">
+                                    <input type="checkbox" id="applyAll" class="md-check">
+                                    <label for="applyAll">
+                                        <span></span>
+                                        <span class="check"></span>
+                                        <span class="box"></span> Apply to all placements </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 
 
@@ -379,7 +392,7 @@
                                 <tr>
                                     <th>
                                         <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                            <input type="checkbox" class="group-checkable" data-set="#datatable-responsive .checkboxes" />
+                                            <input type="checkbox" class="group-checkable" id="group-checkable" data-set="#datatable-responsive .checkboxes" />
                                             <span></span>
                                         </label>
                                     </th>
@@ -675,13 +688,19 @@
                             text: '<i class="fa fa-save"></i> Save Data',
                             header: false,
                             action: function ( e, dt, node, config ) {
-                                var data = {items:[]};
+                                var data = {applyAll: $('#applyAll').is(':checked'),
+                                    trafficSource: '{{ trafficSourceName }}',
+                                    cid: $('#id').val(),
+                                    items:[]
+                                };
                                 $('input:checkbox.report-record').each(function () {
 
 
                                     if($(this).is(':checked') == true){
                                         var id = (this.checked ? $(this).data('id') : "");
-                                        data.items.push({id: id});
+                                        data.items.push({
+                                            id: id
+                                        });
                                     }
 
 
@@ -696,13 +715,15 @@
                             text: '<i class="fa fa-trash"></i> Delete Data',
                             header: false,
                             action: function ( e, dt, node, config ) {
-                                var data = {items:[]};
+                                var data = { applyAll: $('#applyAll').is(':checked'), items:[]};
                                 $('input:checkbox.report-record').each(function () {
 
 
                                     if($(this).is(':checked') == true){
                                         var id = (this.checked ? $(this).data('id') : "");
-                                        data.items.push({id: id});
+                                        data.items.push({
+                                            id: id
+                                        });
                                     }
 
 
@@ -717,7 +738,7 @@
                             text: '<i class="fa fa-refresh"></i> Resume',
                             header: false,
                             action: function ( e, dt, node, config ) {
-                                var data = {source: '{{ trafficSourceName }}', cid: $('#campaignId').val(), items:[]};
+                                var data = { applyAll: $('#applyAll').is(':checked'), source: '{{ trafficSourceName }}', cid: $('#campaignId').val(), items:[]};
                                 $('input:checkbox.report-record').each(function () {
                                     if($(this).is(':checked') == true){
                                         var id = (this.checked ? $(this).data('id') : "");
@@ -744,13 +765,12 @@
                         },
                     ],
                     scrollY:   1200,
-                    deferRender:    true,
-                    stateSave:      true
+                    deferRender:    true
 
 
                 });
 
-                table.find('.group-checkable').change(function () {
+                $('#group-checkable').change(function () {
                     var set = jQuery(this).attr("data-set");
                     var checked = jQuery(this).is(":checked");
                     jQuery(set).each(function () {

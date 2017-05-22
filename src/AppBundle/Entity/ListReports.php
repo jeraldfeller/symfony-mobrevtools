@@ -518,7 +518,7 @@ class ListReports
     /**
      * @var string
      */
-    private $trafficname;
+    private $trafficName;
 
 
     /**
@@ -528,9 +528,9 @@ class ListReports
      *
      * @return ListReports
      */
-    public function setTrafficname($trafficname)
+    public function setTrafficName($trafficName)
     {
-        $this->trafficname = $trafficname;
+        $this->trafficName = $trafficName;
 
         return $this;
     }
@@ -540,14 +540,10 @@ class ListReports
      *
      * @return string
      */
-    public function getTrafficname()
+    public function getTrafficName()
     {
-        return $this->trafficname;
+        return $this->trafficName;
     }
-    /**
-     * @var string
-     */
-    private $trafficName;
 
 
     /**
