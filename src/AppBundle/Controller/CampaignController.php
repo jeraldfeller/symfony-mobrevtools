@@ -1092,7 +1092,12 @@ class CampaignController extends Controller
         $batch = 100;
         $x = 1;
         if($data['applyAll'] == true){
-            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            if($data['type']){
+                $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findBy(array('type' => $data['type']));
+            }else{
+                $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            }
+
             for($i = 0; $i < count($listData); $i++){
                 $listExists = $em->getRepository('AppBundle:ListReports')->findOneBy(array('cid' => $listData[$i]->getCid(), 'placement' => $listData[$i]->getPlacement()));
                 if($listExists){
@@ -1229,7 +1234,11 @@ class CampaignController extends Controller
         $em = $this->getDoctrine()->getManager();
         $targets = array();
         if($data['applyAll'] == true){
-            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            if($data['type']){
+                $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findBy(array('type' => $data['type']));
+            }else{
+                $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            }
             for($i = 0; $i < count($listData); $i++){
                 $targets[] = $listData[$i]->getPlacement();
             }
@@ -1306,7 +1315,12 @@ class CampaignController extends Controller
         $batch = 100;
         $i = 1;
         if($data['applyAll'] == true){
-            $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            if($data['type']){
+                $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findBy(array('type' => $data['type']));
+            }else{
+                $listData = $em->getRepository('AppBundle:CampaignRulesPlacementList')->findAll();
+            }
+
             for($x = 0; $x < count($listData); $x++) {
                 $em->remove($listData[$x]);
                 if (($i % $batch) == 0) {

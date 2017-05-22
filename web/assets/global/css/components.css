@@ -22711,3 +22711,8 @@ Color library demo
       width: 100%; }
       .mt-content-row .mt-content-col-fixed .mt-content-sidebar {
         margin-left: 0; } }
+
+
+.loading-message img{
+    display: none !important;
+}

@@ -831,6 +831,7 @@ function saveData(data){
                 showNotification('success', 'Success', 'Data Successfully Saved');
                 var oTable = $('#datatable-responsive').DataTable();
                 oTable.ajax.reload();
+                App.unblockUI();
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
@@ -866,6 +867,7 @@ function resumePlacements(data){
                 showNotification('success', 'Success', 'Placements Successfully Resumed');
                 var oTable = $('#datatable-responsive').DataTable();
                 oTable.ajax.reload();
+                App.unblockUI();
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
@@ -902,6 +904,7 @@ function deleteData(data){
                 showNotification('success', 'Success', 'Data Successfully Deleted');
                 var oTable = $('#datatable-responsive').DataTable();
                 oTable.ajax.reload();
+                App.unblockUI();
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
