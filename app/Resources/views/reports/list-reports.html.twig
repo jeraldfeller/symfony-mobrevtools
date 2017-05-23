@@ -830,8 +830,8 @@
                                 '</table>'
                         );
 
-                        var tableIp = $('#datatable-responsive-conv');
-                        var oTableIp = $('#datatable-responsive-conv').DataTable({
+                        var tableConv = $('#datatable-responsive-conv');
+                        var oTableConv = $('#datatable-responsive-conv').DataTable({
                             fixedHeader: {
                                 header: true,
                                 headerOffset: fixedHeaderOffset
@@ -953,7 +953,7 @@
                             });
                         });
 
-                        tableIp.on('change', 'tbody tr .checkboxes', function () {
+                        tableConv.on('change', 'tbody tr .checkboxes', function () {
                             $(this).parents('tr').toggleClass("active");
                         });
 

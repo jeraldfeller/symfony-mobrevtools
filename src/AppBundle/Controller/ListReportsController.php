@@ -96,6 +96,9 @@ class ListReportsController extends Controller {
         }else if($data['table'] == 'ip'){
             $table = 'AppBundle:ReportsIpSaved';
         }
+        else if($data['table'] == 'conversions'){
+            $table = 'AppBundle:ReportsConversionsSaved';
+        }
         foreach($data['items'] as $row){
             $listData = $em->getRepository($table)->find($row['id']);
             if($listData){

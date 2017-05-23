@@ -2343,8 +2343,13 @@ class ConversionsReportController extends Controller{
         $em = $this->getDoctrine()->getManager();
         $i = 0;
         $batch = 100;
+        if($data['table'] == 'ipRanges'){
+            $table = 'AppBundle:ReportsMaskedConversions';
+        }else{
+            $table = 'AppBundle:ReportsCampaignConversions';
+        }
         foreach($data['items'] as $row){
-            $listData = $em->getRepository('AppBundle:ReportsMaskedConversions')->find($row['id']);
+            $listData = $em->getRepository($table)->find($row['id']);
             $listExists = $em->getRepository('AppBundle:ReportsConversionsSaved')->findOneBy(array('ip' => $listData->getIp(), 'isp' => $listData->getIsp()));
             if(!$listExists){
                 $listEntity = new ReportsConversionsSaved();

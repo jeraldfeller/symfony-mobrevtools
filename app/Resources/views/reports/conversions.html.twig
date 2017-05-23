@@ -800,7 +800,10 @@
                         header: false,
                         action: function ( e, dt, node, config ) {
                             App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Processing...</h2>' });
-                            var data = {items:[]};
+                            var data = {
+                                table: $('#tableView').val(),
+                                items:[]
+                            };
                             $('input:checkbox.report-record').each(function () {
 
 
