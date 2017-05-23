@@ -2351,7 +2351,7 @@ class ConversionsReportController extends Controller{
                 $listEntity->setIp($listData->getIp());
                 $listEntity->setIsp($listData->getIsp());
                 $listEntity->setMobileCarrier($listData->getMobileCarrier());
-                $listEntity->setGeo($listData->getGeo());
+                $listEntity->setGeo($listData->getCountryName());
                 $em->persist($listEntity);
                 if(($i % $batch) == 0){
                     $em->flush();

@@ -769,12 +769,20 @@
                 "columnDefs": [
                     {
                         "className": "dt-right",
-                        "targets": [ 0, 1 ],
+                        "targets": [ 0 ],
                         "visible": false,
                         "searchable": false
                         //"targets": [2]
                     },
                     {"width": "5%", "targets": 1},
+                    {  // set default column settings
+                        'orderable': false,
+                        'targets': [0, 1]
+                    },
+                    {
+                        "searchable": false,
+                        "targets": [0, 1]
+                    }
 
                 ],
                 "order": [[9, "desc"]],

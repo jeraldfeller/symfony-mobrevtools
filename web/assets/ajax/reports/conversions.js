@@ -1177,8 +1177,10 @@ function saveData(data){
                 App.unblockUI();
             }
 
-            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
                 showNotification('error', '', '');
+
+                App.unblockUI();
             }
         }
 
