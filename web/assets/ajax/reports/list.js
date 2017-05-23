@@ -29,8 +29,11 @@ function deleteData(data){
                 if(response == 'list'){
                     var oTable = $('#datatable-responsive').DataTable();
                     oTable.ajax.reload();
-                }else if(reponse == 'ip'){
+                }else if(response == 'ip'){
                     var oTableIp = $('#datatable-responsive-ip').DataTable();
+                    oTableIp.ajax.reload();
+                }else if(response == 'conversions'){
+                    var oTableIp = $('#datatable-responsive-conv').DataTable();
                     oTableIp.ajax.reload();
                 }
 

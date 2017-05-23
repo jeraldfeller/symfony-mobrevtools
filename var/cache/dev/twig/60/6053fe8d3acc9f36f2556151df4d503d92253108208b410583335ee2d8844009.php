@@ -15,11 +15,11 @@ class __TwigTemplate_f428672689a2bebee368cf495804c2b7ced2cb9e98cf9e1f5ff6b7f9aab
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_89d161aa16ab1abb34870b5634b2f5c92f0792e541c711d2ed128c79b85983bf = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_89d161aa16ab1abb34870b5634b2f5c92f0792e541c711d2ed128c79b85983bf->enter($__internal_89d161aa16ab1abb34870b5634b2f5c92f0792e541c711d2ed128c79b85983bf_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@Twig/Exception/traces.txt.twig"));
+        $__internal_0a9af073344ce12bd186319c88996652cb6511eb52d0814b608322f12083e73d = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_0a9af073344ce12bd186319c88996652cb6511eb52d0814b608322f12083e73d->enter($__internal_0a9af073344ce12bd186319c88996652cb6511eb52d0814b608322f12083e73d_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@Twig/Exception/traces.txt.twig"));
 
-        $__internal_860441e95760425e23155281012a5acf32c58912821fef38bd548985ae45e161 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_860441e95760425e23155281012a5acf32c58912821fef38bd548985ae45e161->enter($__internal_860441e95760425e23155281012a5acf32c58912821fef38bd548985ae45e161_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@Twig/Exception/traces.txt.twig"));
+        $__internal_7b72d74d6f49bc29156168774eb4aeab16f7fb6348cd1c0b9096dd2f460f6d3b = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_7b72d74d6f49bc29156168774eb4aeab16f7fb6348cd1c0b9096dd2f460f6d3b->enter($__internal_7b72d74d6f49bc29156168774eb4aeab16f7fb6348cd1c0b9096dd2f460f6d3b_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "@Twig/Exception/traces.txt.twig"));
 
         // line 1
         if (twig_length_filter($this->env, $this->getAttribute((isset($context["exception"]) ? $context["exception"] : $this->getContext($context, "exception")), "trace", array()))) {
@@ -38,10 +38,10 @@ class __TwigTemplate_f428672689a2bebee368cf495804c2b7ced2cb9e98cf9e1f5ff6b7f9aab
             $context = array_intersect_key($context, $_parent) + $_parent;
         }
         
-        $__internal_89d161aa16ab1abb34870b5634b2f5c92f0792e541c711d2ed128c79b85983bf->leave($__internal_89d161aa16ab1abb34870b5634b2f5c92f0792e541c711d2ed128c79b85983bf_prof);
+        $__internal_0a9af073344ce12bd186319c88996652cb6511eb52d0814b608322f12083e73d->leave($__internal_0a9af073344ce12bd186319c88996652cb6511eb52d0814b608322f12083e73d_prof);
 
         
-        $__internal_860441e95760425e23155281012a5acf32c58912821fef38bd548985ae45e161->leave($__internal_860441e95760425e23155281012a5acf32c58912821fef38bd548985ae45e161_prof);
+        $__internal_7b72d74d6f49bc29156168774eb4aeab16f7fb6348cd1c0b9096dd2f460f6d3b->leave($__internal_7b72d74d6f49bc29156168774eb4aeab16f7fb6348cd1c0b9096dd2f460f6d3b_prof);
 
     }
 
