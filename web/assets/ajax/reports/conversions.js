@@ -1155,4 +1155,41 @@ function removeLabel(label, btn){
 }
 
 
+function saveData(data){
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/reports/conversions/save-data");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                showNotification('success', 'Success', 'Data Successfully Saved');
+                var oTable = $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
+                App.unblockUI();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+    }
+
+    return false;
+}
+
+
 

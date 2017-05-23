@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use AppBundle\Entity\ListReports;
 use AppBundle\Entity\ReportsIpSaved;
+use AppBundle\Entity\ReportsConversionsSaved;
 use AppBundle\Entity\Campaign;
 
 class ListReportsController extends Controller {
@@ -50,13 +51,30 @@ class ListReportsController extends Controller {
                 'carriers' => $carriersIp,
                 'isps' => $ispIp
             );
+
+            $ipConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
+                'column' => 'ip'))->getContent(), true);
+            $geosConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
+                'column' => 'geo'))->getContent(), true);
+            $carriersConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
+                'column' => 'mobileCarrier'))->getContent(), true);
+
+            $ispConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
+                'column' => 'isp'))->getContent(), true);
+            $filtersConv = array(
+                'ip' => $ipConv,
+                'geos' => $geosConv,
+                'carriers' => $carriersConv,
+                'isps' => $ispConv
+            );
             return $this->render(
                 'reports/list-reports.html.twig', array('page' => $page,
                     'trafficSources' => $trafficSources,
                     'campaigns' => $campaigns,
                     'verticals' => $verticals,
                     'geos' => $geos,
-                    'filtersIp' => $filtersIp
+                    'filtersIp' => $filtersIp,
+                    'filtersConv' =>  $filtersConv
                 )
             );
         }else{
@@ -562,6 +580,188 @@ class ListReportsController extends Controller {
             $row[] = $column['isp'];
             $row[] = $column['ip'];
             $row[] = '-'.$column['ip'];
+            $output['aaData'][] = $row;
+        }
+        return new Response( json_encode( $output ) );
+    }
+
+
+    /**
+     * @Route("/ajax/get-reports-conversions-saved")
+     */
+
+    public function ajaxGetReportsConversions(){
+        $em = $this->getDoctrine()->getManager();
+        $aColumns = array( 'p.id', 'p.ip', 'p.geo', 'p.mobileCarrier', 'p.isp');
+
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'p.id';
+
+        // DB table to use
+        $sTable = 'AppBundle:ReportsConversionsSaved';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+                    $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+                }
+            }
+
+
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }else{
+            // custom filter
+
+            if(isset($input['ip']) || isset($input['geo']) || isset($input['mobileCarrier']) || isset($input['isp']))            {
+                $aFilteringRules = array();
+                if($input['ip'] != '' || $input['ip'] != null){
+
+                    $aFilteringRules[] = "p.ip LIKE '%".$input['ip'] ."%'";
+                }
+
+                if($input['geo'] != '' || $input['geo'] != null){
+                    $aFilteringRules[] = "p.geo LIKE '%". $input['geo'] ."%'";
+                }
+
+                if($input['mobileCarrier'] != '' || $input['mobileCarrier'] != null){
+                    $aFilteringRules[] = "p.mobileCarrier LIKE '%". $input['mobileCarrier'] ."%'";
+                }
+
+                if($input['isp'] != '' || $input['isp'] != null){
+                    $aFilteringRules[] = "p.isp LIKE '%". $input['isp'] ."%'";
+                }
+
+                    if (!empty($aFilteringRules)) {
+                        $aFilteringRules = array('('.implode(" AND ", $aFilteringRules).')');
+                    }
+
+            }
+
+        }
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules);
+        } else {
+            $sWhere = "";
+        }
+
+
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
+
+
+
+        $sQuery = $em->createQuery("
+        SELECT $aQueryColumns
+        FROM ".$sTable." p ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+        $rResult = $sQuery->getResult();
+
+
+        $sQuery = $em->createQuery("
+        SELECT p
+        FROM ".$sTable." p ".$sWhere.$sOrder."")
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults)
+        ;
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($paginator);
+
+        $sQuery = $em->createQuery("
+        SELECT p
+        FROM ".$sTable." p ".$sWhere.$sOrder."");
+
+        $iTotal = count($paginator = new Paginator($sQuery));
+
+        /**
+         * Output
+         */
+
+
+        $output = array(
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
+        );
+
+
+        foreach($rResult as $column){
+            $row = array();
+            $row[] = $column['id'];
+            $row[] = '<td>
+                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['id'] . '" />
+                             <span></span>
+                        </label>
+                      </td>';
+            $row[] = $column['ip'];
+            $row[] = $column['isp'];
+            $row[] = $column['mobileCarrier'];
+            $row[] = $column['geo'];
+
             $output['aaData'][] = $row;
         }
         return new Response( json_encode( $output ) );

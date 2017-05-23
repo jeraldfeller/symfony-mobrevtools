@@ -485,6 +485,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\ConversionsReportController::deleteLabelAction',  '_route' => 'app_conversionsreport_deletelabel',);
             }
 
+            // app_conversionsreport_savedata
+            if ($pathinfo === '/reports/conversions/save-data') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ConversionsReportController::saveDataAction',  '_route' => 'app_conversionsreport_savedata',);
+            }
+
         }
 
         // homepage
@@ -661,9 +666,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::ajaxGetListReports',  '_route' => 'app_listreports_ajaxgetlistreports',);
             }
 
-            // app_listreports_ajaxgetreportsip
-            if ($pathinfo === '/ajax/get-reports-ip-saved') {
-                return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::ajaxGetReportsIp',  '_route' => 'app_listreports_ajaxgetreportsip',);
+            if (0 === strpos($pathinfo, '/ajax/get-reports-')) {
+                // app_listreports_ajaxgetreportsip
+                if ($pathinfo === '/ajax/get-reports-ip-saved') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::ajaxGetReportsIp',  '_route' => 'app_listreports_ajaxgetreportsip',);
+                }
+
+                // app_listreports_ajaxgetreportsconversions
+                if ($pathinfo === '/ajax/get-reports-conversions-saved') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\ListReportsController::ajaxGetReportsConversions',  '_route' => 'app_listreports_ajaxgetreportsconversions',);
+                }
+
             }
 
         }

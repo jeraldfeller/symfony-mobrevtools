@@ -37,6 +37,12 @@ function getActiveCampaigns(bol, include)
                     }));
                 });
 
+                $("#chooseCampaign").select2({
+                    placeholder: "Select Campaign",
+                    allowClear: true,
+                    width: null
+                });
+
                 localStorage.setItem("activeCampaigns", JSON.stringify(response));
                 if(bol == 1){
                     getArchiveCampaigns('archived');

@@ -79,6 +79,7 @@
                                 <option value="whitelist">Whitelist</option>
                                 <option value="autobid">Autobid</option>
                                 <option value="ipData">IP Data</option>
+                                <option value="conversionData">Conversion Data</option>
                             </select>
                         </div>
                         <div id="filtersContainer">
@@ -765,6 +766,218 @@
                             width: null
                         });
                         $("#selectFilterIspIp").select2({
+                            allowClear: true,
+                            placeholder: 'Select Isp',
+                            width: null
+                        });
+                    }
+                    else if($(this).val() == 'conversionData'){
+                        $('#filtersContainer').html(
+                                '<div class="col-md-2 col-xs-12">' +
+                                '<select id="selectFilterConvIp" class="form-control select2">' +
+                                '<option></option>' +
+                                {% for item in filtersConv.ip %}
+                                '<option value="{{ item.ip }}">{{ item.ip }}</option>' +
+                                {% endfor %}
+                                '</select>' +
+                                '</div>' +
+                                '<div class="col-md-2 col-xs-12">' +
+                                '<select id="selectFilterIspConv" class="form-control select2">' +
+                                '<option></option>' +
+                                {% for item in filtersConv.isps %}
+                                '<option value="{{ item.isp }}">{{ item.isp }}</option>' +
+                                {% endfor %}
+                                '</select>' +
+                                '</div>' +
+                                '<div class="col-md-2 col-xs-12">' +
+                                '<select id="selectFilterCarrierConv" class="form-control select2">' +
+                                '<option></option>' +
+                                {% for item in filtersConv.carriers %}
+                                '<option value="{{ item.mobileCarrier }}">{{ item.mobileCarrier }}</option>' +
+                                {% endfor %}
+                                '</select>' +
+                                '</div>' +
+                                '<div class="col-md-2 col-xs-12">' +
+                                '<select id="selectFilterGeoConv" class="form-control select2">' +
+                                '<option></option>' +
+                                {% for item in filtersConv.geos %}
+                                '<option value="{{ item.geo }}">{{ item.geo }}</option>' +
+                                {% endfor %}
+                                '</select>' +
+                                '</div>'
+
+
+                        );
+                        $('#tableContainer').html('' +
+                                '<table class="table table-striped table-bordered table-hover dt-responsive table-checkable order-column table-header-fixed" width="100%" id="datatable-responsive-conv">' +
+                                '<thead>' +
+                                '<tr>' +
+                                '<th>Id </th>' +
+                                ' <th>' +
+                                '  <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">' +
+                                '  <input type="checkbox" class="group-checkable" id="group-checkable" data-set="#datatable-responsive-ip .checkboxes" />' +
+                                '  <span></span>' +
+                                '  </label>' +
+                                '  </th>' +
+                                '  <th>Ip </th>' +
+                                '  <th>ISP </th>' +
+                                '  <th>Mobile Carrier </th>' +
+                                '  <th>Geo </th>' +
+                                '</tr>' +
+                                '</thead>' +
+                                '<tbody>' +
+                                '</tbody>' +
+                                '</table>'
+                        );
+
+                        var tableIp = $('#datatable-responsive-conv');
+                        var oTableIp = $('#datatable-responsive-conv').DataTable({
+                            fixedHeader: {
+                                header: true,
+                                headerOffset: fixedHeaderOffset
+                            },
+                            "bProcessing": true,
+                            "bServerSide": true,
+                            "fnServerData": function (sSource, aoData, fnCallback) {
+                                aoData.push( {
+                                    "name": "ip", "value": $('#selectFilterIpConv').val()
+                                } );
+                                aoData.push( {
+                                    "name": "geo", "value": $('#selectFilterGeoConv').val()
+                                } );
+                                aoData.push( {
+                                    "name": "mobileCarrier", "value": $('#selectFilterCarrierConv').val()
+                                } );
+                                aoData.push( {
+                                    "name": "isp", "value": $('#selectFilterIspConv').val()
+                                } );
+                                $.getJSON(sSource, aoData, function (json) {
+                                    /* Do whatever additional processing you want on the callback, then tell DataTables */
+                                    fnCallback(json)
+                                });
+                            },
+                            "sAjaxSource": "/ajax/get-reports-conversions-saved",
+
+                            responsive: {
+                                details: {
+
+                                }
+                            },
+                            "iDisplayLength": 50,
+                            "lengthMenu": [
+                                [50, 200, 500, 1000, -1],
+                                [50, 200, 500, 1000, "All"] // change per page values here
+                            ],
+                            "order": [[ 0, "desc" ]],
+                            "columnDefs": [
+                                {
+                                    "targets": [ 0 ],
+                                    "visible": false,
+                                    "searchable": false
+                                },
+                                {  // set default column settings
+                                    'orderable': false,
+                                    'targets': [0, 1]
+                                },
+                                {
+                                    "searchable": false,
+                                    "targets": [0, 1]
+                                },
+                                {"width": "5%", "targets": 1},
+
+                            ],
+
+                            select: {
+                                style: 'os',
+                                selector: 'td:first-child'
+                            },
+                            //dom: '<"wrapper"lBfrtip>',
+                            //dom: '<lB<frt>ip>',
+                            "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+
+                            buttons: [
+                                {
+                                    extend: 'copyHtml5',
+                                    className: 'btn purple btn-outline whitelistBtn',
+                                    text: '<i class="fa fa-copy"></i> Copy to Clipboard',
+                                    header: false,
+                                    exportOptions: {
+                                        columns: [2]
+                                    }
+                                },
+                                {
+                                    className: 'btn red btn-outline',
+                                    text: '<i class="fa fa-trash"></i> Delete Data',
+                                    header: false,
+                                    action: function (e, dt, node, config) {
+                                        var data = {table: 'conversions', items: []};
+                                        $('input:checkbox.report-record').each(function () {
+
+
+                                            if ($(this).is(':checked') == true) {
+                                                var id = (this.checked ? $(this).data('id') : "");
+                                                data.items.push({id: id});
+                                            }
+
+
+                                        });
+
+                                        console.log(data);
+                                        deleteData(data);
+                                    }
+                                },
+                                {
+                                    extend: 'colvis',
+                                    className: 'btn dark btn-outline ',
+                                    text: '<i class="fa fa-eye"></i> Visible Columns'
+                                }
+                            ],
+                            scrollY:   1200,
+                            deferRender:    true,
+                            stateSave:      true
+
+
+                        });
+
+                        $('#group-checkable').change(function () {
+                            var set = jQuery(this).attr("data-set");
+                            var checked = jQuery(this).is(":checked");
+                            jQuery(set).each(function () {
+                                if (checked) {
+                                    $(this).prop("checked", true);
+                                    $(this).parents('tr').addClass("active");
+                                } else {
+                                    $(this).prop("checked", false);
+                                    $(this).parents('tr').removeClass("active");
+                                }
+                            });
+                        });
+
+                        tableIp.on('change', 'tbody tr .checkboxes', function () {
+                            $(this).parents('tr').toggleClass("active");
+                        });
+
+
+                        $('#datatable-responsive-ip').checkboxes('range', true);
+
+
+                        $("#selectFilterConvIp").select2({
+                            allowClear: true,
+                            placeholder: 'Select IP',
+                            width: null
+                        });
+                        $("#selectFilterGeoConv").select2({
+                            allowClear: true,
+                            placeholder: 'Select Geo',
+                            width: null
+                        });
+
+                        $("#selectFilterCarrierConv").select2({
+                            allowClear: true,
+                            placeholder: 'Select Carrier',
+                            width: null
+                        });
+                        $("#selectFilterIspConv").select2({
                             allowClear: true,
                             placeholder: 'Select Isp',
                             width: null

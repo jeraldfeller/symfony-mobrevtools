@@ -350,6 +350,12 @@
                                         <tr>
 
                                             <th>Id </th>
+                                            <th>
+                                                <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                    <input type="checkbox" class="group-checkable" data-set="#datatable-responsive .checkboxes" />
+                                                    <span></span>
+                                                </label>
+                                            </th>
                                             <th id="index1">Campaign</th>
                                             <th id="index2">IP Range</th>
                                             <th>Visits</th>
@@ -366,7 +372,7 @@
                                         </thead>
                                         <tfoot class="bg-primary">
                                             <tr>
-                                                <th colspan="3">Total</th>
+                                                <th colspan="4">Total</th>
                                                 <th><span id="totalVisits"></span></th>
                                                 <th><span id="totalConversions"></span></th>
                                                 <th><span id="totalRevenue"></span></th>
@@ -768,6 +774,7 @@
                         "searchable": false
                         //"targets": [2]
                     },
+                    {"width": "5%", "targets": 1},
 
                 ],
                 "order": [[10, "desc"]],
@@ -779,6 +786,28 @@
                 //dom: '<lB<frt>ip>',
                 "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
                 buttons: [
+                    {
+                        className: 'btn green btn-outline ',
+                        text: '<i class="fa fa-save"></i> Save Data',
+                        header: false,
+                        action: function ( e, dt, node, config ) {
+                            App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Processing...</h2>' });
+                            var data = {items:[]};
+                            $('input:checkbox.report-record').each(function () {
+
+
+                                if($(this).is(':checked') == true){
+                                    var id = (this.checked ? $(this).data('id') : "");
+                                    data.items.push({id: id});
+                                }
+
+
+                            });
+
+                            console.log(data);
+                            saveData(data);
+                        }
+                    },
                     {
                         extend: 'print',
                         className: 'btn blue btn-outline',
@@ -864,19 +893,19 @@
                 colReorder: true,
                 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                     // Bold the grade for all 'A' grade browsers
-                    if ( aData[7].includes('-') == true )
-                    {
-                        $('td:eq(6)', nRow).css('color', 'red');
-                    }else if(aData[7].includes != '$0.00') {
-                        $('td:eq(6)', nRow).css('color', 'green');
-                    }else{
-                        $('td:eq(6)', nRow).css('color', '');
-                    }
                     if ( aData[8].includes('-') == true )
                     {
                         $('td:eq(7)', nRow).css('color', 'red');
                     }else if(aData[8].includes != '$0.00') {
                         $('td:eq(7)', nRow).css('color', 'green');
+                    }else{
+                        $('td:eq(7)', nRow).css('color', '');
+                    }
+                    if ( aData[9].includes('-') == true )
+                    {
+                        $('td:eq(8)', nRow).css('color', 'red');
+                    }else if(aData[9].includes != '$0.00') {
+                        $('td:eq(8)', nRow).css('color', 'green');
                     }
 
                 }

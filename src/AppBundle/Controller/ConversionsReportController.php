@@ -2317,7 +2317,7 @@ class ConversionsReportController extends Controller{
     }
 
     /**
-     * @Route("reports/clear-tmp-files", name="clearTmpFiles")
+     * @Route("/reports/clear-tmp-files", name="clearTmpFiles")
      */
     public function clearTmpFilesAction(){
 
@@ -2330,6 +2330,39 @@ class ConversionsReportController extends Controller{
 
         return new Response(json_encode(true));
 
+    }
+
+
+
+    /**
+     * @Route("/reports/conversions/save-data")
+     */
+    public function saveDataAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        $i = 0;
+        $batch = 100;
+        foreach($data['items'] as $row){
+            $listData = $em->getRepository('AppBundle:ReportsMaskedConversions')->find($row['id']);
+            $listExists = $em->getRepository('AppBundle:ReportsConversionsSaved')->findOneBy(array('ip' => $listData->getIp(), 'isp' => $listData->getIsp()));
+            if(!$listExists){
+                $listEntity = new ReportsConversionsSaved();
+                $listEntity->setIp($listData->getIp());
+                $listEntity->setIsp($listData->getIsp());
+                $listEntity->setMobileCarrier($listData->getMobileCarrier());
+                $listEntity->setGeo($listData->getGeo());
+                $em->persist($listEntity);
+                if(($i % $batch) == 0){
+                    $em->flush();
+                    $em->clear();
+                }
+            }
+        }
+
+        $em->flush();
+        $em->clear();
+
+        return new Response(json_encode(true));
     }
 
 }
