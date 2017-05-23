@@ -769,7 +769,7 @@
                 "columnDefs": [
                     {
                         "className": "dt-right",
-                        "targets": [ 0 ],
+                        "targets": [ 0, 1 ],
                         "visible": false,
                         "searchable": false
                         //"targets": [2]
@@ -777,7 +777,7 @@
                     {"width": "5%", "targets": 1},
 
                 ],
-                "order": [[10, "desc"]],
+                "order": [[9, "desc"]],
                 select: {
                     style: 'os',
                     selector: 'td:first-child'
@@ -912,6 +912,28 @@
 
 
             });
+
+
+            table.find('.group-checkable').change(function () {
+                var set = jQuery(this).attr("data-set");
+                var checked = jQuery(this).is(":checked");
+                jQuery(set).each(function () {
+                    if (checked) {
+                        $(this).prop("checked", true);
+                        $(this).parents('tr').addClass("active");
+                    } else {
+                        $(this).prop("checked", false);
+                        $(this).parents('tr').removeClass("active");
+                    }
+                });
+            });
+
+            table.on('change', 'tbody tr .checkboxes', function () {
+                $(this).parents('tr').toggleClass("active");
+            });
+
+
+            $('#datatable-responsive').checkboxes('range', true);
 
 
 

@@ -19,6 +19,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use AppBundle\Entity\ReportsConversions;
 use AppBundle\Entity\ImportGroup;
 use AppBundle\Entity\ReportsConversionsImported;
+use AppBundle\Entity\ReportsConversionsSaved;
 use AppBundle\Entity\ReportsCampaignConversions;
 use AppBundle\Entity\ReportsMaskedConversions;
 
