@@ -39,7 +39,7 @@ class PlanningController extends Controller{
                     'trafficSources' => $trafficSource['trafficSources'],
                     'countries' => $countries,
                     'flows' => $flow['flows'],
-                    'domains' => $domain['customDomains'],
+                    'domains' => $domain['domains']['customDomains'],
                     'page' => 'Create Campaign'
                 )
             );
@@ -140,7 +140,7 @@ class PlanningController extends Controller{
 
 
 
-                $url = 'https://panel-api.voluum.com/campaign';
+                $url = 'https://api.voluum.com/campaign';
                 $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:postVoluum', array('url' => $url,
                     'query' => $query,
                     'method' => 'POST',

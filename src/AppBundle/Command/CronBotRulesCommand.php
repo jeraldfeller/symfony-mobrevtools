@@ -120,10 +120,12 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $tz = 'America/New_York';
                     $sort = 'visits';
                     $direction = 'desc';
-                    $limit = 100000;
+                    $limit = 50000;
+                    /*
                     $output->writeln([
                         $key['ruleType'], $key['trafficName'], $key['campName']
                     ]);
+                    */
                     $query = array('from' => $timeSetStart,
                         'to' => $dateTimeTo,
                         'tz' => $tz,
@@ -152,10 +154,9 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                         'filter1' => 'campaign',
                         'filter1Value' => $key['vid']
                     );
-                    $url = 'https://panel-api.voluum.com/report?';
+                    $url = 'https://api.voluum.com/report?';
                     $returnedData = json_decode($voluumService->getVoluumReportsAction($url, $query, 'GET', $voluumSessionId)->getContent(), true);
                     $zeroParkToResumeTargets = array();
-
                     if ($key['active'] == 1) {
                         if (!isset($returnedData['error'])) {
                             $targets = array();
@@ -707,9 +708,11 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                 $query = array('hash' => implode(',', $zeroParkToResumeTargets));
                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/resume/?' . http_build_query($query);
                                 $return = $zeroparkService->zeroparkRequestAction($url, $query, 1, $zeroparkSessionId);
+                                /*
                                 $output->writeln([
                                     json_encode($return)
                                 ]);
+                                */
 
                             }
 
@@ -733,9 +736,11 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                                 );
                                                 $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
                                                 $response = $zeroparkService->zeroparkRequestAction($url, $query, 1, $zeroparkSessionId);
+                                                /*
                                                 $output->writeln([
                                                     json_encode($response)
                                                 ]);
+                                                */
 
 
                                             }
@@ -745,9 +750,11 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                             );
                                             $url = 'https://panel.zeropark.com/api/campaign/' . $key['campId'] . '/targets/pause/?' . http_build_query($query);
                                             $response = json_decode($zeroparkService->zeroparkRequestAction($url, $query, 1, $zeroparkSessionId), true);
+                                            /*
                                             $output->writeln([
                                                 json_encode($response)
                                             ]);
+                                            */
                                         }
 
                                     }
@@ -757,15 +764,17 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                                 case 'ExoClick':
                                     if(count($targets) > 0){
                                         $response = json_decode($exoClickService->exoClickPostBlockDomain($exoclickSessionId, $key['campId'], array_unique($targets))->getContent(), true);
+                                        /*
                                         $output->writeln([
                                             json_encode($response)
                                         ]);
+                                        */
                                     }
                                     break;
                             }
 
                         }else {
-                            echo '<pre>', var_dump($returnedData['error']), '</pre>';
+                         //   echo '<pre>', var_dump($returnedData['error']), '</pre>';
                         }
 
 

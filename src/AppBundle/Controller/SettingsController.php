@@ -270,40 +270,8 @@ class SettingsController extends Controller {
        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
 
        $voluumSessionId = $apiCredentials[0]['voluum'];
-       $from = date('Y-m-d', strtotime('-1 days'));
-       $to = date('Y-m-d', strtotime('+1 days'));
-       $tz = 'America/Chicago';
-       $sort = 'visit';
-       $direction = 'desc';
-       $limit = 200;
-       $query = array('from' => $from,
-           'to' => $to,
-           'tz' => $tz,
-           'sort' => $sort,
-           'direction' => $direction,
-           'columns' => 'trafficSourceName',
-           'columns' => 'trafficSourceId',
-           'columns' => 'visits',
-           'columns' => 'clicks',
-           'columns' => 'conversions',
-           'columns' => 'revenue',
-           'columns' => 'cost',
-           'columns' => 'profit',
-           'columns' => 'cpv',
-           'columns' => 'ctr',
-           'columns' => 'cr',
-           'columns' => 'cv',
-           'columns' => 'roi',
-           'columns' => 'epv',
-           'columns' => 'epc',
-           'columns' => 'ap',
-           'columns' => 'errors',
-           'groupBy' => 'traffic-source',
-           'offset' => 0,
-           'limit' => $limit,
-           'include' => 'traffic',
-       );
-        $url = 'https://portal.voluum.com/report?';
+       $query = array();
+        $url = 'https://api.voluum.com/traffic-source';
 
        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
            'query' => $query,
@@ -320,17 +288,17 @@ class SettingsController extends Controller {
        $output = '';
        $noExists = array();
        if(!isset($apiResponse['errors'])){
-           foreach($apiResponse['rows'] as $details){
-               if(!in_array($details['trafficSourceId'], $trafficExists )){
+           foreach($apiResponse['trafficSources'] as $details){
+               if(!in_array($details['id'], $trafficExists )){
                    $output .= '<tr>';
                    $output .= '<td>';
                    $output .= '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">';
-                   $output .= '<input type="checkbox" class="checkboxes traffic-record" value="1" name="table_records" data-trafficId="'. $details['trafficSourceId'] . '" data-trafficName="' . $details['trafficSourceName'] . '" />';
+                   $output .= '<input type="checkbox" class="checkboxes traffic-record" value="1" name="table_records" data-trafficId="'. $details['id'] . '" data-trafficName="' . $details['name'] . '" />';
                    $output .= '<span></span>';
                    $output .= '</label>';
                    $output .= '</td>';
-                   $output .= '<td>' . $details['trafficSourceName'] . '</td>';
-                   $output .= '<td>' . $details['trafficSourceId'] . '</td>';
+                   $output .= '<td>' . $details['name'] . '</td>';
+                   $output .= '<td>' . $details['id'] . '</td>';
                    $output .= '</tr>';
                    $disable = '';
                    $noExists[] = 1;

@@ -73,14 +73,15 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
                 'limit' => $limit,
                 'include' => 'active',
             );
-            $url = 'https://portal.voluum.com/report?';
+            $url = 'https://api.voluum.com/report?';
             $landers = json_decode($voluumService->getVoluumReportsAction($url, $query, 'GET', $voluumSessionId)->getContent(), true);
 
 
             $query = array();
-            $url = 'https://core.voluum.com/domains';
+            $url = 'https://api.voluum.com/setup';
 
             $domains = json_decode($voluumService->getVoluumReportsAction($url, $query, 'GET', $voluumSessionId)->getContent(), true);
+
             $scannedUrlObj = $this->getUrlsByColumn('isScanned', 1);
             $savedUrls = $this->getScannedUrls();
 
@@ -92,11 +93,11 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
             foreach($scannedUrlObj as $scanObj){
                 $scannedUrl[] = $scanObj['url'];
             }
-            foreach($domains['internalDomains'] as $internal){
+            foreach($domains['domains']['internalDomains'] as $internal){
                 $urlData[] = $internal['address'];
                 $landerIds[] = array('url' => $internal['address'], 'id' => '');
             }
-            foreach($domains['customDomains'] as $custom){
+            foreach($domains['domains']['customDomains'] as $custom){
                 $urlData[] = $custom['address'];
                 $landerIds[] = array('url' => $custom['address'], 'id' => '');
             }

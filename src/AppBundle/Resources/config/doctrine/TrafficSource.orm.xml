@@ -24,5 +24,10 @@
         <option name="fixed"/>
       </options>
     </field>
+    <field name="timeZone" type="string" column="time_zone" length="30" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
   </entity>
 </doctrine-mapping>

@@ -60,8 +60,8 @@ class MetricsController extends Controller {
                         $to = $splitDateHoursPlusOneHour[0].'T'.$splitDateHoursPlusOneHour[1].'Z';
                         $sort = 'visits';
                         $direction = 'desc';
-                        $limit = 5000;
-                        $url = 'https://portal.voluum.com/report?';
+                        $limit = 20000;
+                        $url = 'https://api.voluum.com/report?';
                         $query = array('from' => $from,
                             'to' => $to,
                             'tz' => $data['tz'],
@@ -115,8 +115,8 @@ class MetricsController extends Controller {
                 $to = date('Y-m-d', strtotime($dates[$x] . '+1 days')) . 'T00:00:00Z';
                 $sort = 'visits';
                 $direction = 'desc';
-                $limit = 5000;
-                $url = 'https://portal.voluum.com/report?';
+                $limit = 20000;
+                $url = 'https://api.voluum.com/report?';
                 $query = array('from' => $from,
                     'to' => $to,
                     'tz' => $data['tz'],

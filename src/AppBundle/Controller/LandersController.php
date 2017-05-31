@@ -50,7 +50,7 @@ class LandersController extends Controller {
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
-        $url = 'https://core.voluum.com/landers';
+        $url = 'https://api.voluum.com/lander?';
 
 
         $success = array();
@@ -151,7 +151,7 @@ class LandersController extends Controller {
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
-        $url = 'https://panel-api.voluum.com/lander/' . trim($data['landerId']);
+        $url = 'https://api.voluum.com/lander/' . trim($data['landerId']);
         $success = array();
         $failed = array();
         $apiResponse = array();
@@ -217,61 +217,24 @@ class LandersController extends Controller {
 
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
-        $from = date('Y-m-d', strtotime('-30 days')) . 'T00:00:00Z';
-
-        $to = date('Y-m-d').'T00:00:00Z';
-        $tz = 'America/Chicago';
-        $sort = 'visits';
-        $direction = 'desc';
-        $limit = '10000';
-
-        $query = array('from' => $from,
-            'to' => $to,
-            'tz' => $tz,
-            'sort' => $sort,
-            'direction' => $direction,
-            'columns' => 'landerName',
-            'columns' => 'landerUrl',
-            'columns' => 'landerCountry',
-            'columns' => 'numberOfOffers',
-            'columns' => 'visits',
-            'columns' => 'clicks',
-            'columns' => 'conversions',
-            'columns' => 'revenue',
-            'columns' => 'cost',
-            'columns' => 'profit',
-            'columns' => 'cpv',
-            'columns' => 'ctr',
-            'columns' => 'cr',
-            'columns' => 'cv',
-            'columns' => 'roi',
-            'columns' => 'epv',
-            'columns' => 'epc',
-            'columns' => 'ap',
-            'columns' => 'errors',
-            'groupBy' => 'lander',
-            'offset' => 0,
-            'limit' => $limit,
-            'include' => 'traffic',
-            'conversionTimeMode' => 'VISIT'
-        );
+        $query = array();
 
 
-        $url = 'https://portal.voluum.com/report?';
+        $url = 'https://api.voluum.com/lander?';
         $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
             'query' => $query,
             'method' => 'GET',
             'sessionId' => $voluumSessionId))->getContent(), true);
-        foreach($apiResponse['rows'] as $row){
-                if($row['landerCountry'] == null){
+        foreach($apiResponse['landers'] as $row){
+                if(!isset($row['country'])){
                     $country = 'Global';
                 }else{
-                    $country = $row['landerCountry'];
+                    $country = $row['country']['name'];
                 }
 
             $data['data'][] = array(
-                $row['landerName'],
-                $row['landerUrl'],
+                $row['name'],
+                $row['url'],
                 $row['numberOfOffers'],
                 $country,
                 '<div class="btn-group">
@@ -283,12 +246,12 @@ class LandersController extends Controller {
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="#"
                                                 data-action="edit"
-                                                data-id="' . $row['landerId'] . '"
+                                                data-id="' . $row['id'] . '"
                                                 onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
                                             </li>
                                             <li><a href="#" data-toggle="modal" data-target="#modalDeleteGroup" data-action="delete"
                                                 data-action="delete"
-                                                data-id="' . $row['landerId'] . '"
+                                                data-id="' . $row['id'] . '"
                                                 onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
                                             </li>
                                         </ul>

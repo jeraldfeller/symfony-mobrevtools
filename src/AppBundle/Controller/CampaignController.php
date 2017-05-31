@@ -762,7 +762,7 @@ class CampaignController extends Controller
             $from = date('Y-m-d', strtotime('-' . $data['days']. ' days'));
             $to = date('Y-m-d', strtotime('+1 days'));
             $tz = 'America/Chicago';
-            $sort = 'visit';
+            $sort = 'visits';
             $direction = 'desc';
             $limit = 1000;
 
@@ -790,7 +790,7 @@ class CampaignController extends Controller
                 'filter1' => 'traffic-source',
                 'filter1Value' => $traffic[0]->getTrafficSourceId()
             );
-            $url = 'https://portal.voluum.com/report?';
+            $url = 'https://api.voluum.com/report?';
 
 
 

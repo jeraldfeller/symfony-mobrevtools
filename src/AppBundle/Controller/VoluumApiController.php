@@ -17,34 +17,37 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 use AppBundle\Entity\ReportsCampaignsManualCostUpdate;
-
+use AppBundle\Entity\TrafficSource;
 
 class VoluumApiController extends Controller{
 
+    public function voluumLoginAction($userName, $password){
 
-        public function voluumLoginAction($userName, $password){
-
-            $auth = base64_encode($userName . ':' . $password);
-            $url = 'https://security.voluum.com/login';
-            // Get cURL resource
-            $curl = curl_init();
-            // Set some options - we are passing in a useragent too here
-            curl_setopt_array($curl, array(
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_URL => $url,
-                CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $auth . ''),
-            ));
-            // Send the request & save response to $resp
-            $resp = curl_exec($curl);
-            // Close request to clear up some resources
-            curl_close($curl);
-
-
-
-            return new Response($resp);
+        $query = array('email' => $userName, 'password' => $password);
+        $url = 'https://api.voluum.com/auth/session';
+        $json = json_encode($query);
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            CURLOPT_POSTFIELDS => $json,
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
 
 
-        }
+
+        return new Response($resp);
+
+
+    }
 
 
     /**
@@ -134,7 +137,7 @@ class VoluumApiController extends Controller{
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
-        $url = 'https://panel-api.voluum.com/affiliate-network';
+        $url = 'https://api.voluum.com/affiliate-network';
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here
@@ -162,7 +165,7 @@ class VoluumApiController extends Controller{
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
-        $url = 'https://panel-api.voluum.com/traffic-source';
+        $url = 'https://api.voluum.com/traffic-source';
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here
@@ -190,7 +193,7 @@ class VoluumApiController extends Controller{
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
-        $url = 'https://panel-api.voluum.com/flow';
+        $url = 'https://api.voluum.com/flow';
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here
@@ -220,7 +223,7 @@ class VoluumApiController extends Controller{
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
-        $url = 'https://core.voluum.com/domains';
+        $url = 'https://api.voluum.com/setup';
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here
@@ -238,6 +241,7 @@ class VoluumApiController extends Controller{
 
         return new Response($resp);
 
+
     }
     /**
      * @Route("/api/voluum/get-lander/{$landerId}", name="voluumGetLander")
@@ -247,7 +251,7 @@ class VoluumApiController extends Controller{
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
-        $url = 'https://panel-api.voluum.com/lander/' . trim($landerId);
+        $url = 'https://api.voluum.com/lander/' . trim($landerId);
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here
@@ -372,7 +376,7 @@ class VoluumApiController extends Controller{
         $direction = 'desc';
         $limit = '5000';
         $include = 'traffic';
-        $url = 'https://panel-api.voluum.com/report?';
+        $url = 'https://api.voluum.com/report?';
         $query = array(
             'from' => $from,
             'to' => $to,
@@ -403,13 +407,7 @@ class VoluumApiController extends Controller{
         foreach($returnedData['rows']  as $row) {
             if($row['trafficSourceName'] != 'Zeropark'){
                 if($row['visits'] >= 1){
-                    if($row['trafficSourceName'] == 'ExoClick'){
-                        $tz = 'America/New_York';
-                    }else if($row['trafficSourceName'] == 'TrafficStars'){
-                        $tz = 'Europe/London';
-                    }else{
-                        $tz = 'America/Chicago';
-                    }
+                    $tz = $this->getTimeZone($row['trafficSourceName']);
                     $reports = new ReportsCampaignsManualCostUpdate();
                     $reports->setCampaignId($row['campaignId']);
                     $reports->setCampaignName($row['campaignName']);
@@ -466,13 +464,12 @@ class VoluumApiController extends Controller{
         }
 
 
-        $url = 'https://reports.voluum.com/manual-costs';
+        $url = 'https://api.voluum.com/report/manual-cost';
         $return = array();
         foreach($data['items'] as $item){
 
             $query = array('timeZone' => $item['timeZone'],
                 'cost' => $item['cost'],
-                'restoreCost' => false,
                 'campaignId' => $item['campid'],
                 'from' => $from,
                 'to' => $to,
@@ -642,6 +639,16 @@ class VoluumApiController extends Controller{
 
 
         return new Response( json_encode( $output ) );
+    }
+
+    public function getTimeZone($trafficSource){
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('AppBundle:TrafficSource')->findOneBy(array('trafficName' => $trafficSource));
+        if($entity){
+            return $entity->getTimezone();
+        }else{
+            return 'America/Chicago';
+        }
     }
 
 

@@ -379,7 +379,7 @@ class ConversionsReportController extends Controller{
         $data = json_decode($_POST['param'], true);
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
-        $url = 'https://portal.voluum.com/report/conversions?';
+        $url = 'https://api.voluum.com/report/conversions?';
 
         $include = $data['include'];
         $split = explode(':', date('H:m'));
@@ -398,10 +398,9 @@ class ConversionsReportController extends Controller{
             'columns' => 'mobileCarrier',
             'columns' => 'connectionTypeName',
             'columns' => 'ip',
-            'groupBy' => 'conversion',
+            'groupBy' => 'conversions',
             'offset' => 0,
             'limit' => 50000,
-            'include' => $include
         );
 
 
@@ -409,6 +408,8 @@ class ConversionsReportController extends Controller{
             'query' => $query,
             'method' => 'GET',
             'sessionId' => $voluumSessionId))->getContent();
+
+        var_dump($returnedData);
         $this->get('session')->set('FILE_COUNTER', 0);
 
         if (!isset($returnedData['errors'])) {
@@ -419,6 +420,7 @@ class ConversionsReportController extends Controller{
         } else {
             return new Response(json_encode(false));
         }
+
 
     }
 
@@ -489,7 +491,7 @@ class ConversionsReportController extends Controller{
                     'filter1' => 'campaign',
                     'filter1Value' => $dataCampaignId
                 );
-                $url = 'https://portal.voluum.com/report?';
+                $url = 'https://panel-api.voluum.com/report?';
                 $ipDataReturnData = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
                     'query' => $query,
                     'method' => 'GET',

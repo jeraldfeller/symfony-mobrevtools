@@ -138,4 +138,33 @@ class TrafficSource
     {
         return $this->customVariableKey;
     }
+    /**
+     * @var string
+     */
+    private $timeZone;
+
+
+    /**
+     * Set timeZone
+     *
+     * @param string $timeZone
+     *
+     * @return TrafficSource
+     */
+    public function setTimeZone($timeZone)
+    {
+        $this->timeZone = $timeZone;
+
+        return $this;
+    }
+
+    /**
+     * Get timeZone
+     *
+     * @return string
+     */
+    public function getTimeZone()
+    {
+        return $this->timeZone;
+    }
 }

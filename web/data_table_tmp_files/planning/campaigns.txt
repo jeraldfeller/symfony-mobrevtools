@@ -1,1 +1,1 @@
-{"0":{"name":"Pop Test","source":"b93e5ff2-0c4b-4106-bfb8-6e0795cf3eba","geo":"Global","model":"NOT_TRACKED","tags":[],"flow":"8fd6d13f-7905-4081-b01d-cfb9b9b7e8d5","domain":"trk.realrewardss.site","count":"1"},"data":[["Pop Test 01","http:\/\/trk.realrewardss.site\/1e1e44d1-1bfe-4f19-92dc-1d1692b5bf1ftarget={target}&domain={domain}&domain_id={domain_id}&campaign_id={campaign_id}&country={country}&channel={channel}&bid={bid}&click_id={click_id}","50onRed Pops","Global","NOT_TRACKED"]]}
+{"data":[]}

@@ -72,17 +72,23 @@ class OffersController extends Controller{
             $offerCountry = trim($row['offerCountry']);
             $affiliateNetwork = trim($row['affiliateNetwork']);
             $payout = trim((isset($row['payout']) ? $row['payout'] : ''));
-                if($payout == 'Global' || $payout == null){
-                    if($offerCountry == '' || $offerCountry == null){
+                if($payout == '' || $payout == null){
+                    if($offerCountry == 'Global' || $offerCountry == null){
                         $query = array('namePostfix' => $offerName,
                             'url' =>  $offerURL,
-                            'affiliateNetwork' => array('id' => $affiliateNetwork)
+                            'affiliateNetwork' => array('id' => $affiliateNetwork),
+                            'payout' => array(
+                                'type' => 'AUTO'
+                            )
                         );
                     }else{
                         $query = array('namePostfix' => $offerName,
                             'url' =>  $offerURL,
                             'country' => array('code' => $offerCountry),
-                            'affiliateNetwork' => array('id' => $affiliateNetwork)
+                            'affiliateNetwork' => array('id' => $affiliateNetwork),
+                            'payout' => array(
+                                'type' => 'AUTO'
+                            )
                         );
                     }
 
@@ -92,7 +98,10 @@ class OffersController extends Controller{
                             'url' =>  $offerURL,
                             'affiliateNetwork' => array('id' => $affiliateNetwork),
                             'overridePayout' => true,
-                            'payout' => $payout
+                            'payout' => array(
+                                'type' => 'MANUAL',
+                                'value' => $payout
+                            )
                         );
                     }else{
                         $query = array('namePostfix' => $offerName,
@@ -100,14 +109,18 @@ class OffersController extends Controller{
                             'country' => array('code' => $offerCountry),
                             'affiliateNetwork' => array('id' => $affiliateNetwork),
                             'overridePayout' => true,
-                            'payout' => $payout
+                            'payout' => array(
+                                'type' => 'MANUAL',
+                                'value' => $payout
+                            )
                         );
                     }
 
                 }
 
 
-                $url = 'https://core.voluum.com/offers';
+                //$url = 'https://core.voluum.com/offers';
+                $url = 'https://api.voluum.com/offer';
                 $apiResponse[] = json_decode($this->forward('AppBundle:VoluumApi:postVoluum', array('url' => $url,
                     'query' => $query,
                     'method' => 'POST',
@@ -186,12 +199,12 @@ class OffersController extends Controller{
             }
 
 
-            $url = 'https://panel-api.voluum.com/offer/' . $data['offerId'];
+            $url = 'https://api.voluum.com/offer/' . $data['offerId'];
             $apiResponse[] = json_decode($this->forward('AppBundle:VoluumApi:voluumPutOffer', array('url' => $url,
                 'query' => $query,
                 'method' => 'POST',
                 'sessionId' => $voluumSessionId))->getContent(), true);
-            //var_dump($apiResponse);
+
             if(!isset($apiResponse['error'])){
                 $success[] = $offerName;
             }else{
@@ -2267,72 +2280,48 @@ class OffersController extends Controller{
 
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
-        $from = date('Y-m-d', strtotime('-30 days')) . 'T00:00:00Z';
 
-        $to = date('Y-m-d').'T00:00:00Z';
-        $tz = 'America/Chicago';
-        $sort = 'conversions';
-        $direction = 'desc';
-        $limit = '5000';
-
-        $query = array('from' => $from,
-            'to' => $to,
-            'tz' => $tz,
-            'sort' => $sort,
-            'direction' => $direction,
-            'columns' => 'offerName',
-            'columns' => 'offerId',
-            'columns' => 'offerUrl',
-            'columns' => 'offerCountry',
-            'columns' => 'payout',
-            'columns' => 'visits',
-            'columns' => 'clicks',
-            'columns' => 'conversions',
-            'columns' => 'revenue',
-            'columns' => 'cost',
-            'columns' => 'profit',
-            'columns' => 'cpv',
-            'columns' => 'ctr',
-            'columns' => 'cr',
-            'columns' => 'cv',
-            'columns' => 'roi',
-            'columns' => 'epv',
-            'columns' => 'epc',
-            'columns' => 'ap',
-            'columns' => 'affiliateNetworkName',
-            'columns' => 'errors',
-            'groupBy' => 'offer',
-            'offset' => 0,
-            'limit' => $limit,
-            'include' => 'traffic',
-        );
-
-        $url = 'https://portal.voluum.com/report?';
+        $query = array();
+        $url = 'https://api.voluum.com/offer?';
         $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
             'query' => $query,
             'method' => 'GET',
             'sessionId' => $voluumSessionId))->getContent(), true);
 
+        $url = 'https://api.voluum.com/affiliate-network?';
+        $affiliateNetworkResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
 
-        foreach($apiResponse['rows'] as $row){
-            if($row['offerCountry'] == null){
+
+
+
+
+
+        foreach($apiResponse['offers'] as $row){
+            if(!isset($row['country'])){
                 $country = 'Global';
             }else{
-                $country = $row['offerCountry'];
+                $country = $row['country']['name'];
             }
 
-            if($row['affiliateNetworkName'] == null){
-                $affiliateNetwork = "";
+            if(isset($row['affiliateNetwork'])){
+                foreach($affiliateNetworkResponse['affiliateNetworks'] as $an){
+                    if($an['id'] == $row['affiliateNetwork']['id']){
+                        $affiliateNetworkName = $an['name'];
+                    }
+                }
             }else{
-                $affiliateNetwork = $row['affiliateNetworkName'];
+                $affiliateNetworkName = "";
             }
 
             $data['data'][] = array(
-                $row['offerName'],
-                $row['offerUrl'],
+                $row['name'],
+                $row['url'],
                 $country,
-                "$".number_format($row['payout'], 2),
-                $affiliateNetwork,
+                "$".number_format(($row['payout']['type'] == 'MANUAL' ? $row['payout']['value'] : 0.00), 2),
+                $affiliateNetworkName,
                 '<div class="btn-group">
                                         <button type="button" class="btn blue btn-xs"> Action</button>
                                         <button type="button" class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -2342,12 +2331,12 @@ class OffersController extends Controller{
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="#"
                                                 data-action="edit"
-                                                data-id="' . $row['offerId'] . '"
+                                                data-id="' . $row['id'] . '"
                                                 onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
                                             </li>
                                             <li><a href="#" data-toggle="modal" data-target="#modalDeleteGroup" data-action="delete"
                                                 data-action="delete"
-                                                data-id="' . $row['offerId'] . '"
+                                                data-id="' . $row['id'] . '"
                                                 onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
                                             </li>
                                         </ul>

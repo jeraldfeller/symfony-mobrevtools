@@ -139,4 +139,3 @@ class ReportsConversionsSaved
         return $this->id;
     }
 }
-

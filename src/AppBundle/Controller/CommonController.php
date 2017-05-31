@@ -157,7 +157,7 @@ class CommonController extends Controller {
             'limit' => $limit,
             'include' => $include,
         );
-        $url = 'https://portal.voluum.com/report?';
+        $url = 'https://api.voluum.com/report?';
         $activeCampaigns = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
             'query' => $query,
             'method' => 'GET',
