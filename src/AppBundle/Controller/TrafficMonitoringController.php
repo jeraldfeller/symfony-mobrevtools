@@ -29,24 +29,37 @@ class TrafficMonitoringController extends Controller{
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
 
-            $globalSettings = ($this->getGlobalSettings() ? $this->getGlobalSettings() : 0);
-            $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
-                'column' => 'trafficSourceName'))->getContent(), true);
-            $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
-                'column' => 'campaignName'))->getContent(), true);
-            $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
-                'column' => 'geo'))->getContent(), true);
-            $placements = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
-                'column' => 'placement'))->getContent(), true);
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
 
-            $filters = array('trafficSource' => $trafficSources,
-                'campaigns' => $campaigns,
-                'geos' => $geos,
-                'placements' => $placements
-            );
-            return $this->render(
-                'reports/trafficmonitoring.html.twig', array('page' => 'Traffic', 'filters' => $filters, 'globalSettings' => $globalSettings)
-            );
+            if($pageReturn == 'true'){
+                $globalSettings = ($this->getGlobalSettings() ? $this->getGlobalSettings() : 0);
+                $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
+                    'column' => 'trafficSourceName'))->getContent(), true);
+                $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
+                    'column' => 'campaignName'))->getContent(), true);
+                $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
+                    'column' => 'geo'))->getContent(), true);
+                $placements = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
+                    'column' => 'placement'))->getContent(), true);
+
+                $filters = array('trafficSource' => $trafficSources,
+                    'campaigns' => $campaigns,
+                    'geos' => $geos,
+                    'placements' => $placements
+                );
+                return $this->render(
+                    'reports/trafficmonitoring.html.twig', array('page' => 'Traffic', 'filters' => $filters, 'globalSettings' => $globalSettings, 'pageReturn' => $pageReturn)
+                );
+
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

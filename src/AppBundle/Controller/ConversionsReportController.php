@@ -409,7 +409,7 @@ class ConversionsReportController extends Controller{
             'method' => 'GET',
             'sessionId' => $voluumSessionId))->getContent();
 
-        var_dump($returnedData);
+
         $this->get('session')->set('FILE_COUNTER', 0);
 
         if (!isset($returnedData['errors'])) {

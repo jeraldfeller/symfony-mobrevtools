@@ -17,10 +17,23 @@ class DefaultController extends Controller
     {
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            // replace this example code with whatever you need
-            return $this->render('default/index.html.twig', [
-                'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
-            ]);
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+
+            if($pageReturn == 'true'){
+                // replace this example code with whatever you need
+                return $this->render('default/index.html.twig', [
+                    'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
+                ]);
+            }else{
+                return $this->redirect('/error');
+            }
+
+
         }else{
             return $this->redirect('/user/login');
         }

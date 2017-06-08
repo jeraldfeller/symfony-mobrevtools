@@ -12,6 +12,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\UsersGroup;
 use AppBundle\Entity\UsersGroupMember;
 use AppBundle\Entity\UsersGroupPages;
+use AppBundle\Entity\MenuPages;
 use Symfony\Component\HttpFoundation\Response;
 
 class UsersController extends Controller
@@ -27,6 +28,15 @@ class UsersController extends Controller
         );
     }
 
+    /**
+     * @Route("/error")
+     */
+    public function renderErrorPage()
+    {
+        return $this->render(
+            'error/error.html.twig'
+        );
+    }
 
     /**
      * @Route("/user/create-account")
@@ -187,7 +197,7 @@ class UsersController extends Controller
             */
 
            return $this->redirectToRoute('homepage', array(), 301);
-           
+
 
         }else{
             $return = array('success' => false,
@@ -473,27 +483,23 @@ class UsersController extends Controller
     {
 
         $data = json_decode($_POST['param'], true);
-        $this->forward('AppBundle:Deletes:deleteIndividualColumn', array('appBundle' => 'AppBundle:UsersGroup', 'column' => 'usersGroupId', 'value' => $data['groupId']))->getContent();
+
+        $this->forward('AppBundle:Deletes:deleteIndividualColumn', array('appBundle' => 'AppBundle:UsersGroupPages', 'column' => 'usersGroup', 'value' => $data['groupId']))->getContent();
         $isExists = $this->getGroupBy(array('usersGroupName' => $data['groupName']));
-        if($isExists){
+        if($data['groupName'] == $isExists->getUsersGroupName()){
+            $duplicated = false;
+        }else{
+            $duplicated = true;
+        }
+        if($duplicated == true){
             $return = array(
                 'type' => 'warning',
                 'title' => 'Warning',
                 'message' => 'Group already exists'
             );
         }else{
-            $group = new UsersGroup();
-            $group->setUsersGroupName($data['groupName']);
-            $group->setPermission('Read/Write');
-
-
             $em = $this->getDoctrine()->getManager();
-            // tells Doctrine you want to (eventually) save the Users (no quesries yet)
-            $em->persist($group);
-            // actually executes the queries (i.e. the INSERT query)
-            $em->flush();
-            $lastId = $group->getUsersGroupId();
-            $usersGroupId = $em->getRepository('AppBundle:UsersGroup')->findOneByUsersGroupId($lastId);
+            $usersGroupId = $em->getRepository('AppBundle:UsersGroup')->findOneByUsersGroupId($data['groupId']);
 
             for($x = 0; $x < count($data['pages']); $x++){
 
@@ -556,19 +562,118 @@ class UsersController extends Controller
 
     }
 
+    public function getUsersGroupPagesMenuByGroupId($groupId, $userLevel){
+        $em = $this->getDoctrine()->getEntityManager();
+        if($userLevel == 'Admin'){
+            $sQuery = $em->createQuery("
+            SELECT p.pageId, p.directoryLevel, p.icon, p.pageName, p.pageLink, p.parent, p.hasChild, p.pageOrder
+            FROM AppBundle:MenuPages p
+            WHERE p.parent != 0
+            ORDER BY p.pageOrder ASC")
+            ;
+        }else{
+            $sQuery = $em->createQuery("
+            SELECT p.pageId, p.directoryLevel, p.icon, p.pageName, p.pageLink, p.parent, p.hasChild, p.pageOrder
+            FROM AppBundle:UsersGroupPages u, AppBundle:MenuPages p
+            WHERE u.usersGroup = $groupId AND u.page = p.pageId AND p.parent != 0
+            ORDER BY p.pageOrder ASC")
+            ;
+        }
+
+        $rResult = $sQuery->getResult();
+        return $rResult;
+
+
+    }
+
+    public function getUsersGroupMainPagesMenuByGroupId($groupId, $userLevel){
+        $em = $this->getDoctrine()->getEntityManager();
+        if($userLevel == 'Admin'){
+            $sQuery = $em->createQuery("
+            SELECT p.pageId, p.directoryLevel, p.icon, p.pageName, p.pageLink, p.parent, p.hasChild, p.pageOrder
+            FROM AppBundle:MenuPages p
+            WHERE p.directoryLevel != ''
+            ORDER BY p.pageOrder ASC");
+        }else{
+            $sQuery = $em->createQuery("
+            SELECT p.pageId, p.directoryLevel, p.icon, p.pageName, p.pageLink, p.parent, p.hasChild, p.pageOrder
+            FROM AppBundle:UsersGroupPages u, AppBundle:MenuPages p
+            WHERE u.usersGroup = $groupId AND u.page = p.pageId AND p.directoryLevel != ''
+            ORDER BY p.pageOrder ASC");
+        }
+        $rResult = $sQuery->getResult();
+        return $rResult;
+
+
+    }
+
+    /**
+     * @Route("/manage-users/page-access/{uid}/{page}", name="pageAccess")
+     */
+    public function getAccessiblePagesAction($uid = null, $page = null){
+        $userEntity = $this->getUsersBy(array('id' => $uid));
+        $userLevel = $userEntity->getUserLevel();
+        $groupMemberEntity = $this->getGroupUserBy(array('user' => $userEntity));
+        $groupId = $groupMemberEntity->getUsersGroup()->getUsersGroupId();
+        if($userLevel != 'Admin'){
+            if($groupId){
+                $em = $this->getDoctrine()->getEntityManager();
+                $sQuery = $em->createQuery("
+                SELECT p.pageName
+                FROM AppBundle:UsersGroupPages u, AppBundle:MenuPages p
+                WHERE u.usersGroup = $groupId AND u.page = p.pageId AND p.pageLink = '$page'
+                ORDER BY p.pageOrder ASC");
+                $rResult = $sQuery->getResult();
+
+                if(!$rResult){
+                    return new Response(
+                        json_encode(false)
+                    );
+                }
+            }else{
+                return new Response(
+                    json_encode(false)
+                );
+            }
+
+        }else{
+            return new Response(
+                json_encode(true)
+            );
+        }
+
+    }
+
     /**
      * @Route("/manage-users/get-group-by-user-id/{id}", name="getGroupByUserId")
      */
     public function getGroupByUserIdAction($id = null){
-        $userEntity = $this->getUsersBy(array('id' => $id));
-        $groupMemberEntity = $this->getGroupUserBy(array('user' => $userEntity));
+            $userEntity = $this->getUsersBy(array('id' => $id));
+            $groupMemberEntity = $this->getGroupUserBy(array('user' => $userEntity));
+            $userLevel = $userEntity->getUserLevel();
+            if($userLevel == 'Admin'){
+                $groupId = '';
+                $mainPages = $this->getUsersGroupMainPagesMenuByGroupId($groupId, $userLevel);
+                $pages = $this->getUsersGroupPagesMenuByGroupId($groupId, $userLevel);
+            }else{
+                if($groupMemberEntity){
+                    $groupId = $groupMemberEntity->getUsersGroup()->getUsersGroupId();
+                    $mainPages = $this->getUsersGroupMainPagesMenuByGroupId($groupId, $userLevel);
+                    $pages = $this->getUsersGroupPagesMenuByGroupId($groupId, $userLevel);
+                }else{
+                    $mainPages = null;
+                    $pages = null;
+                }
+
+            }
 
 
-        var_dump($groupMemberEntity->getUsersGroupId());
-        //$groupEntity = $groupMemberEntity->getUsersGroup();
-       // $pages = $this->getUsersGroupPagesByGroupId($groupEntity->getUsersGroupId());
-
-        return new Response(json_encode($userEntity->getEmail()));
+        return new Response(json_encode(array(
+                    'main' => $mainPages,
+                    'pages' => $pages
+                )
+            )
+        );
     }
 
 
@@ -1161,9 +1266,9 @@ class UsersController extends Controller
         }
 
         if (!empty($aFilteringRules)) {
-            $sWhere = " WHERE ugm.user = u.id ".implode(" AND ", $aFilteringRules);
+            $sWhere = " WHERE ugm.user = u.id AND ugm.usersGroup = ug.usersGroupId AND ugm.usersGroup = $groupId ".implode(" AND ", $aFilteringRules);
         } else {
-            $sWhere = "WHERE ugm.user = u.id";
+            $sWhere = "WHERE ugm.user = u.id  AND ugm.usersGroup = ug.usersGroupId AND ugm.usersGroup = $groupId";
         }
 
 

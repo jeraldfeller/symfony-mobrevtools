@@ -4,6 +4,16 @@
     <id name="pageId" type="integer" column="page_id">
       <generator strategy="IDENTITY"/>
     </id>
+    <field name="directoryLevel" type="string" column="directory_level" length="60" nullable="true">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="icon" type="string" column="icon" length="20" nullable="true">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
     <field name="pageName" type="string" column="page_name" length="100" nullable="false">
       <options>
         <option name="fixed"/>
@@ -20,5 +30,10 @@
       </options>
     </field>
     <field name="hasChild" type="boolean" column="has_child" nullable="false"/>
+    <field name="pageOrder" type="integer" column="page_order" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
   </entity>
 </doctrine-mapping>

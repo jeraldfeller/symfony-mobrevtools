@@ -25,255 +25,152 @@ class NavmenuController extends Controller{
 
         $session = new Session();
         $userData = $session->get('userData');
-
         $uri = explode('/', $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
         $baseUri = $uri[1];
+
+
+
 
         $campaignNav = $this->getCampgaignNavigation();
         $campNavArr = array();
 
 
 
-      //  $pages = json_decode($this->forward('AppBundle:Users:getGroupByUserId', array('id' => $userData['id']))->getContent(), true);
-        foreach($campaignNav as $nav){
-            $campNavArr[] = '<li class="nav-item">
-                            <a href="/campaign/' . $nav['id'] . '/' . $nav['trafficName'] . '" class="nav-link ">
-                                <span class="title">' . $nav['trafficName'] . '</span>
-                            </a>
-                          </li>';
-        }
-
-        $campNav = implode(' ', $campNavArr);
-
-        $navmenu = array('home' => '<li class="nav-item isActiveIdentifier">
-                                <a href="/" class="nav-link nav-toggle">
-                                    <i class="icon-home"></i>
-                                    <span class="title">Dashboard</span>
+        $pages = json_decode($this->forward('AppBundle:Users:getGroupByUserId', array('id' => $userData['id']))->getContent(), true);
+        if($pages['main'] != null){
+            $mainParentPages = array();
+            foreach($pages['main'] as $page){
+                if($page['pageLink'] != ''){
+                    if($page['hasChild'] == 1){
+                        $subPageOutput = '';
+                        foreach($pages['pages'] as $subPage){
+                            if($subPage['parent'] == $page['pageId']){
+                                $subPageOutput .= '<li class="nav-item">
+                                                            <a href="' . $subPage['pageLink'] . '" class="nav-link ">
+                                                                <span class="title">' . $subPage['pageName'] . '</span>
+                                                            </a>
+                                                        </li>';
+                            }
+                        }
+                        $mainParentPages[$page['directoryLevel']] =   '<li class="nav-item isActiveIdentifier">
+                                <a href="javascript:;" class="nav-link nav-toggle">
+                                    <i class="' . $page['icon'] . '"></i>
+                                    <span class="title">' . $page['pageName'] . '</span>
+                                    <span class="selected"></span>
+                                    <span class="arrow open"></span>
                                 </a>
-                            </li>',
-                    'campaigns' => '<li class="nav-item isActiveIdentifier">
-                                        <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="fa fa-bullhorn"></i>
-                                                <span class="title">Campaigns</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            ' .  $campNav . '
-                                            <li class="nav-item" style="border-top: rgba(192,192,192,0.1) .05em solid;">
-                                                <a href="/settings/presets-rules" class="nav-link">
-                                                    <span class="title">Presets Rules</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    ',
-                    'offer-search' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="/offer-search" class="nav-link nav-toggle">
-                                                <i class="fa fa-exchange"></i>
-                                                <span class="title">Offer Search</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
-                                                <li class="nav-item">
-                                                    <a href="/offer-search/offer-preset-searches" class="nav-link ">
-                                                        <span class="title">Preset Searches</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/offer-search/offer-groups" class="nav-link ">
-                                                        <span class="title">Offer Groups</span>
-                                                    </a>
-                                                </li>
+                                <ul class="sub-menu">
+                                     ' . $subPageOutput . '
+                                </ul>
+                            </li>';
+                    }else{
+                        $mainParentPages[$page['directoryLevel']] =   '<li class="nav-item isActiveIdentifier">
+                                <a href="' . $page['pageLink'] . '" class="nav-link nav-toggle">
+                                    <i class="' . $page['icon'] . '"></i>
+                                    <span class="title">' . $page['pageName'] . '</span>
+                                </a>
+                        </li>';
+                    }
 
-                                            </ul>
-                                        </li>',
-                    'tools' => '<li class="nav-item isActiveIdentifier">
-                                                    <a href="javascript:;" class="nav-link nav-toggle">
-                                                        <i class="fa fa-cubes"></i>
-                                                        <span class="title">Tools</span>
-                                                        <span class="selected"></span>
-                                                        <span class="arrow open"></span>
-                                                    </a>
-                                                    <ul class="sub-menu">
-                                                        <li class="nav-item">
-                                                            <a href="/tools/cost-update" class="nav-link nav-toggle">
-                                                                <span class="title">Cost Update</span>
+                }else{
+                    if($page['hasChild'] == 1){
+                        $subPageOutput = '';
+                        foreach($pages['pages'] as $subPage){
+                            if($subPage['parent'] == $page['pageId']){
+                                if($subPage['hasChild'] == 1){
+                                    $subPageOutputLevelTwo = '';
+                                    foreach($pages['pages'] as $subPageLevelTwo) {
+                                        if ($subPageLevelTwo['parent'] == $subPage['pageId']) {
+                                            $subPageOutputLevelTwo .= '<li class="nav-item">
+                                                            <a href="' . $subPageLevelTwo['pageLink'] . '" class="nav-link ">
+                                                                <span class="title">' . $subPageLevelTwo['pageName'] . '</span>
                                                             </a>
-                                                        </li>
-                                                        <li class="nav-item">
-                                                            <a href="/tools/offers" class="nav-link ">
-                                                                <span class="title">Offers</span>
-                                                                <span class="selected"></span>
-                                                                <span class="arrow open"></span>
+                                                        </li>';
+                                        }
+                                    }
+                                    if ($subPage['pageLink'] != '') {
+                                        $subPageOutput .= '<li class="nav-item">
+                                                        <a href="' . $subPage['pageLink'] . '" class="nav-link nav-toggle">
+                                                            <span class="title">' . $subPage['pageName'] . '</span>
+                                                            <span class="selected"></span>
+                                                            <span class="arrow open"></span>
+                                                        </a>
+                                                        <ul class="sub-menu">
+                                                           ' . $subPageOutputLevelTwo . '
+                                                        </ul>
+                                                    </li>';
+                                    } else {
+                                        $subPageOutput .= '<li class="nav-item">
+                                                        <a href="javascript:;" class="nav-link nav-toggle">
+                                                            <span class="title">' . $subPage['pageName'] . '</span>
+                                                            <span class="selected"></span>
+                                                            <span class="arrow open"></span>
+                                                        </a>
+                                                        <ul class="sub-menu">
+                                                           ' . $subPageOutputLevelTwo . '
+                                                        </ul>
+                                                    </li>';
+                                    }
+
+                                }else{
+                                    $subPageOutput .= '<li class="nav-item">
+                                                            <a href="' . $subPage['pageLink'] . '" class="nav-link ">
+                                                                <span class="title">' . $subPage['pageName'] . '</span>
                                                             </a>
-                                                            <ul class="sub-menu">
-                                                                        <li class="nav-item">
-                                                                            <a href="/tools/offer-url-presets" class="nav-link ">
-                                                                                <span class="title">Offer Presets</span>
-                                                                            </a>
-                                                                        </li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="nav-item">
-                                                            <a href="/tools/landers" class="nav-link ">
-                                                                <span class="title">Landers</span>
-                                                                <span class="selected"></span>
-                                                                <span class="arrow open"></span>
-                                                            </a>
-                                                            <ul class="sub-menu">
-                                                                        <li class="nav-item">
-                                                                            <a href="/tools/lander-presets" class="nav-link ">
-                                                                                <span class="title">Lander Presets</span>
-                                                                            </a>
-                                                                        </li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="nav-item">
-                                                            <a href="/tools/ip-compiler" class="nav-link ">
-                                                                <span class="title">IP Compiler</span>
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </li>',
-                    'reports' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="icon icon-docs"></i>
-                                                <span class="title">Data Reports</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
-                                                <li class="nav-item">
-                                                    <a href="/reports/data-reports" class="nav-link ">
-                                                        <span class="title">Data Reports</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/reports/ip" class="nav-link ">
-                                                        <span class="title">IP Data</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/reports/conversions" class="nav-link ">
-                                                        <span class="title">Conversion Data</span>
-                                                    </a>
-                                                 </li>
-                                                <li class="nav-item">
-                                                    <a href="/reports/metrics" class="nav-link ">
-                                                        <span class="title">Metrics</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </li>',
-                    'monitoring' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="fa fa-desktop"></i>
-                                                <span class="title">Monitoring</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
-                                                <li class="nav-item">
-                                                    <a href="/monitoring/domain" class="nav-link ">
-                                                        <span class="title">Domains</span>
-                                                    </a>
-                                                </li>
-                                                 <li class="nav-item">
-                                                    <a href="/monitoring/traffic" class="nav-link ">
-                                                        <span class="title">Traffic</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/monitoring/exploit-log" class="nav-link ">
-                                                        <span class="title">Exploit Log</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/monitoring/data-log" class="nav-link ">
-                                                        <span class="title">Data Log</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </li>',
-                    'planning' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="fa fa-pencil-square-o"></i>
-                                                <span class="title">Planning</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
-                                                <li class="nav-item">
-                                                    <a href="/planning/create-campaign" class="nav-link ">
-                                                        <span class="title">Create Campaign</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </li>',
-                    'global-settings' => '<li class="nav-item isActiveIdentifier">
-                                            <a href="javascript:;" class="nav-link nav-toggle">
-                                                <i class="fa fa-gears"></i>
-                                                <span class="title">Global Settings</span>
-                                                <span class="selected"></span>
-                                                <span class="arrow open"></span>
-                                            </a>
-                                            <ul class="sub-menu">
-                                                <li class="nav-item">
-                                                    <a href="/global-settings/api-access" class="nav-link ">
-                                                        <span class="title">API Access</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/global-settings/traffic-source" class="nav-link ">
-                                                        <span class="title">Traffic Source</span>
-                                                    </a>
-                                                </li>
-                                                 <li class="nav-item">
-                                                    <a href="/global-settings/affiliate" class="nav-link ">
-                                                        <span class="title">Affiliate Network</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="javascript:;" class="nav-link nav-toggle">
-                                                        <span class="title">Manage Users</span>
-                                                        <span class="selected"></span>
-                                                        <span class="arrow open"></span>
-                                                    </a>
-                                                    <ul class="sub-menu">
-                                                        <li class="nav-item">
-                                                            <a href="/global-settings/manage-users/groups" class="nav-link ">
-                                                                <span class="title">Groups</span>
-                                                            </a>
-                                                        </li>
-                                                        <li class="nav-item">
-                                                            <a href="/global-settings/manage-users/users" class="nav-link ">
-                                                                <span class="title">Users</span>
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                        </li>'
-        );
+                                                        </li>';
+                                }
+
+                            }
+                        }
 
 
-        $output = '';
-        foreach($navmenu as $base => $nav){
-            if($baseUri == ''){
 
-                if($base == 'home'){
+                        $mainParentPages[$page['directoryLevel']] =   '<li class="nav-item isActiveIdentifier">
+                                <a href="javascript:;" class="nav-link nav-toggle">
+                                    <i class="' . $page['icon'] . '"></i>
+                                    <span class="title">' . $page['pageName'] . '</span>
+                                    <span class="selected"></span>
+                                    <span class="arrow open"></span>
+                                </a>
+                                <ul class="sub-menu">
+                                     ' . $subPageOutput . '
+                                </ul>
+                            </li>';
+                    }else{
+                        $mainParentPages[$page['directoryLevel']] =   '<li class="nav-item isActiveIdentifier">
+                                <a href="javascript:;" class="nav-link nav-toggle">
+                                    <i class="' . $page['icon'] . '"></i>
+                                    <span class="title">' . $page['pageName'] . '</span>
+                                </a>
+                        </li>';
+                    }
+
+                }
+
+
+            }
+
+            $output = '';
+            foreach($mainParentPages as $base => $nav){
+                if($baseUri == ''){
+
+                    if($base == 'home'){
+                        $output .= str_replace('isActiveIdentifier', 'active open', $nav);
+                    }else{
+                        $output .= $nav;
+                    }
+                }else if($baseUri == $base){
                     $output .= str_replace('isActiveIdentifier', 'active open', $nav);
                 }else{
                     $output .= $nav;
                 }
-            }else if($baseUri == $base){
-                $output .= str_replace('isActiveIdentifier', 'active open', $nav);
-            }else{
-                $output .= $nav;
+
             }
 
+        }else{
+            $output = '';
         }
+
 
         return new Response(
             $output

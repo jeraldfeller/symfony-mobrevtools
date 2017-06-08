@@ -105,6 +105,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
+        // app_aws_showofferspage
+        if ($pathinfo === '/tools/aws/invalidate') {
+            return array (  '_controller' => 'AppBundle\\Controller\\AWSController::showOffersPageAction',  '_route' => 'app_aws_showofferspage',);
+        }
+
         // app_blacklistreport_showbotreport
         if ($pathinfo === '/reports/blacklist') {
             return array (  '_controller' => 'AppBundle\\Controller\\BlacklistReportController::showBotReportAction',  '_route' => 'app_blacklistreport_showbotreport',);
@@ -1082,12 +1087,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/user')) {
-            // app_users_renderloginform
-            if ($pathinfo === '/user/login') {
-                return array (  '_controller' => 'AppBundle\\Controller\\UsersController::renderLoginForm',  '_route' => 'app_users_renderloginform',);
-            }
+        // app_users_renderloginform
+        if ($pathinfo === '/user/login') {
+            return array (  '_controller' => 'AppBundle\\Controller\\UsersController::renderLoginForm',  '_route' => 'app_users_renderloginform',);
+        }
 
+        // app_users_rendererrorpage
+        if ($pathinfo === '/error') {
+            return array (  '_controller' => 'AppBundle\\Controller\\UsersController::renderErrorPage',  '_route' => 'app_users_rendererrorpage',);
+        }
+
+        if (0 === strpos($pathinfo, '/user')) {
             // app_users_create
             if ($pathinfo === '/user/create-account') {
                 return array (  '_controller' => 'AppBundle\\Controller\\UsersController::createAction',  '_route' => 'app_users_create',);
@@ -1171,6 +1181,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             // deleteGroup
             if ($pathinfo === '/manage-users/delete-group') {
                 return array (  '_controller' => 'AppBundle\\Controller\\UsersController::deleteGroupAction',  '_route' => 'deleteGroup',);
+            }
+
+            // pageAccess
+            if (0 === strpos($pathinfo, '/manage-users/page-access') && preg_match('#^/manage\\-users/page\\-access(?:/(?P<uid>[^/]++)(?:/(?P<page>[^/]++))?)?$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'pageAccess')), array (  'uid' => NULL,  'page' => NULL,  '_controller' => 'AppBundle\\Controller\\UsersController::getAccessiblePagesAction',));
             }
 
             if (0 === strpos($pathinfo, '/manage-users/g')) {

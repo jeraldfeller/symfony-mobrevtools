@@ -66,7 +66,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
         $timeStamp = time();
 
         foreach($campaignGroups as $key) {
-
+            if ($key['active'] == 1) {
             if($key['ruleType'] == 'whitelist'){
                 $status = 'WHITE LISTED';
             }else{
@@ -120,7 +120,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $tz = 'America/New_York';
                     $sort = 'visits';
                     $direction = 'desc';
-                    $limit = 50000;
+                    $limit = 100000;
                     /*
                     $output->writeln([
                         $key['ruleType'], $key['trafficName'], $key['campName']
@@ -157,7 +157,7 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                     $url = 'https://api.voluum.com/report?';
                     $returnedData = json_decode($voluumService->getVoluumReportsAction($url, $query, 'GET', $voluumSessionId)->getContent(), true);
                     $zeroParkToResumeTargets = array();
-                    if ($key['active'] == 1) {
+
                         if (!isset($returnedData['error'])) {
                             $targets = array();
                             foreach ($returnedData['rows'] as $item) {

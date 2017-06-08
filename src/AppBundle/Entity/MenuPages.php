@@ -138,4 +138,120 @@ class MenuPages
     {
         return $this->hasChild;
     }
+    /**
+     * @var integer
+     */
+    private $order;
+
+
+    /**
+     * Set order
+     *
+     * @param integer $order
+     *
+     * @return MenuPages
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * Get order
+     *
+     * @return integer
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+    /**
+     * @var string
+     */
+    private $directoryLevel;
+
+
+    /**
+     * Set directoryLevel
+     *
+     * @param string $directoryLevel
+     *
+     * @return MenuPages
+     */
+    public function setDirectoryLevel($directoryLevel)
+    {
+        $this->directoryLevel = $directoryLevel;
+
+        return $this;
+    }
+
+    /**
+     * Get directoryLevel
+     *
+     * @return string
+     */
+    public function getDirectoryLevel()
+    {
+        return $this->directoryLevel;
+    }
+    /**
+     * @var integer
+     */
+    private $pageOrder;
+
+
+    /**
+     * Set pageOrder
+     *
+     * @param integer $pageOrder
+     *
+     * @return MenuPages
+     */
+    public function setPageOrder($pageOrder)
+    {
+        $this->pageOrder = $pageOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get pageOrder
+     *
+     * @return integer
+     */
+    public function getPageOrder()
+    {
+        return $this->pageOrder;
+    }
+    /**
+     * @var string
+     */
+    private $icon;
+
+
+    /**
+     * Set icon
+     *
+     * @param string $icon
+     *
+     * @return MenuPages
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * Get icon
+     *
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
 }
