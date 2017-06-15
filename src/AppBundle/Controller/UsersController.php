@@ -228,30 +228,41 @@ class UsersController extends Controller
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $pages = json_decode($this->forward('AppBundle:Navmenu:getMenuPages', array())->getContent(), true);
-            foreach($pages as $page){
-                if($page['parent'] == 0){
-                    $navPageMain[$page['pageName']] = array('pageName' => $page['pageName'],
-                        'pageId' => $page['pageId'],
-                        'pageLink' => $page['pageLink'],
-                        'childPages' => array());
-                }
-            }
-
-            foreach($navPageMain as $pageMain){
-                foreach($pages as $childpage){
-                    if($childpage['parent'] == $pageMain['pageId']){
-                        $navPageMain[$pageMain['pageName']]['childPages'][] = array('pageName' =>$childpage['pageName'],
-                            'pageId' => $childpage['pageId'],
-                            'pageLink' => $childpage['pageLink']);
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                $pages = json_decode($this->forward('AppBundle:Navmenu:getMenuPages', array())->getContent(), true);
+                foreach($pages as $page){
+                    if($page['parent'] == 0){
+                        $navPageMain[$page['pageName']] = array('pageName' => $page['pageName'],
+                            'pageId' => $page['pageId'],
+                            'pageLink' => $page['pageLink'],
+                            'childPages' => array());
                     }
                 }
 
+                foreach($navPageMain as $pageMain){
+                    foreach($pages as $childpage){
+                        if($childpage['parent'] == $pageMain['pageId']){
+                            $navPageMain[$pageMain['pageName']]['childPages'][] = array('pageName' =>$childpage['pageName'],
+                                'pageId' => $childpage['pageId'],
+                                'pageLink' => $childpage['pageLink']);
+                        }
+                    }
+
+                }
+
+                return $this->render(
+                    'users/groups.html.twig', array('page' => 'Groups', 'pages' => $navPageMain)
+                );
+            }else{
+                return $this->redirect('/error');
             }
 
-            return $this->render(
-                'users/groups.html.twig', array('page' => 'Groups', 'pages' => $navPageMain)
-            );
         }else{
             return $this->redirect('/user/login');
         }
@@ -269,23 +280,34 @@ class UsersController extends Controller
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $group = $this->getGroupBy(array('usersGroupId' => $groupId));
-            $users = $this->getUsersAll();
-            $data = array();
-            for($x = 0; $x < count($users); $x++){
-                if($users[$x]->getUserLevel() != 'Admin'){
-                    $data[] = array(
-                        'uid' => $users[$x]->getId(),
-                        'name' => $users[$x]->getFirstName() . ' ' . $users[$x]->getLastName()
-                    );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                $group = $this->getGroupBy(array('usersGroupId' => $groupId));
+                $users = $this->getUsersAll();
+                $data = array();
+                for($x = 0; $x < count($users); $x++){
+                    if($users[$x]->getUserLevel() != 'Admin'){
+                        $data[] = array(
+                            'uid' => $users[$x]->getId(),
+                            'name' => $users[$x]->getFirstName() . ' ' . $users[$x]->getLastName()
+                        );
+                    }
                 }
+
+                return $this->render(
+                    'users/manage-groups-pages.html.twig', array('page' => 'Groups',
+                        'group' => array('groupId' => $group->getUsersGroupId(), 'groupName' => $group->getUsersGroupName()),
+                        'users' => $data)
+                );
+            }else{
+                return $this->redirect('/error');
             }
 
-            return $this->render(
-                'users/manage-groups-pages.html.twig', array('page' => 'Groups',
-                    'group' => array('groupId' => $group->getUsersGroupId(), 'groupName' => $group->getUsersGroupName()),
-                    'users' => $data)
-            );
         }else{
             return $this->redirect('/user/login');
         }
@@ -300,9 +322,20 @@ class UsersController extends Controller
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            return $this->render(
-                'users/users.html.twig', array('page' => 'Users')
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                return $this->render(
+                    'users/users.html.twig', array('page' => 'Users')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }
@@ -330,7 +363,7 @@ class UsersController extends Controller
             $users->setFirstName($data['firstName']);
             $users->setLastName($data['lastName']);
             $users->setEmail($data['email']);
-            $users->setPassword('mobrev$37');
+            $users->setPassword($data['password']);
             $users->setUserLevel('Regular');
             $users->setDateAdded(new \DateTime(Date('Y-m-d')));
             $users->setIsActive($data['enabled']);
@@ -613,9 +646,9 @@ class UsersController extends Controller
     public function getAccessiblePagesAction($uid = null, $page = null){
         $userEntity = $this->getUsersBy(array('id' => $uid));
         $userLevel = $userEntity->getUserLevel();
-        $groupMemberEntity = $this->getGroupUserBy(array('user' => $userEntity));
-        $groupId = $groupMemberEntity->getUsersGroup()->getUsersGroupId();
         if($userLevel != 'Admin'){
+            $groupMemberEntity = $this->getGroupUserBy(array('user' => $userEntity));
+            $groupId = $groupMemberEntity->getUsersGroup()->getUsersGroupId();
             if($groupId){
                 $em = $this->getDoctrine()->getEntityManager();
                 $sQuery = $em->createQuery("
@@ -625,7 +658,11 @@ class UsersController extends Controller
                 ORDER BY p.pageOrder ASC");
                 $rResult = $sQuery->getResult();
 
-                if(!$rResult){
+                if($rResult){
+                    return new Response(
+                        json_encode(true)
+                    );
+                }else{
                     return new Response(
                         json_encode(false)
                     );

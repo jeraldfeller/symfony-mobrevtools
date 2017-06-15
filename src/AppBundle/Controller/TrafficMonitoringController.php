@@ -36,6 +36,7 @@ class TrafficMonitoringController extends Controller{
                 'page' => $url['path']
             ))->getContent();
 
+
             if($pageReturn == 'true'){
                 $globalSettings = ($this->getGlobalSettings() ? $this->getGlobalSettings() : 0);
                 $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsTrafficMonitoring',
@@ -53,7 +54,7 @@ class TrafficMonitoringController extends Controller{
                     'placements' => $placements
                 );
                 return $this->render(
-                    'reports/trafficmonitoring.html.twig', array('page' => 'Traffic', 'filters' => $filters, 'globalSettings' => $globalSettings, 'pageReturn' => $pageReturn)
+                    'reports/trafficmonitoring.html.twig', array('page' => 'Traffic', 'filters' => $filters, 'globalSettings' => $globalSettings)
                 );
 
             }else{

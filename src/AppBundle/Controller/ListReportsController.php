@@ -28,55 +28,66 @@ class ListReportsController extends Controller {
     {
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $page = 'Data Reports';
-            $trafficSources = $this->getTrafficSources();
-            $geos = $this->getGeos();
-            $verticals = $this->getVerticals();
-            $campaigns = $this->getCampaigns();
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                $page = 'Data Reports';
+                $trafficSources = $this->getTrafficSources();
+                $geos = $this->getGeos();
+                $verticals = $this->getVerticals();
+                $campaigns = $this->getCampaigns();
 
-            $trafficSourcesIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
-                'column' => 'trafficName'))->getContent(), true);
-            $campaignsIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
-                'column' => 'campaignName'))->getContent(), true);
-            $geosIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
-                'column' => 'geo'))->getContent(), true);
-            $carriersIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
-                'column' => 'mobileCarrier'))->getContent(), true);
+                $trafficSourcesIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
+                    'column' => 'trafficName'))->getContent(), true);
+                $campaignsIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
+                    'column' => 'campaignName'))->getContent(), true);
+                $geosIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
+                    'column' => 'geo'))->getContent(), true);
+                $carriersIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
+                    'column' => 'mobileCarrier'))->getContent(), true);
 
-            $ispIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
-                'column' => 'isp'))->getContent(), true);
-            $filtersIp = array('trafficSource' => $trafficSourcesIp,
-                'campaigns' => $campaignsIp,
-                'geos' => $geosIp,
-                'carriers' => $carriersIp,
-                'isps' => $ispIp
-            );
+                $ispIp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIpSaved',
+                    'column' => 'isp'))->getContent(), true);
+                $filtersIp = array('trafficSource' => $trafficSourcesIp,
+                    'campaigns' => $campaignsIp,
+                    'geos' => $geosIp,
+                    'carriers' => $carriersIp,
+                    'isps' => $ispIp
+                );
 
-            $ipConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
-                'column' => 'ip'))->getContent(), true);
-            $geosConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
-                'column' => 'geo'))->getContent(), true);
-            $carriersConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
-                'column' => 'mobileCarrier'))->getContent(), true);
+                $ipConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
+                    'column' => 'ip'))->getContent(), true);
+                $geosConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
+                    'column' => 'geo'))->getContent(), true);
+                $carriersConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
+                    'column' => 'mobileCarrier'))->getContent(), true);
 
-            $ispConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
-                'column' => 'isp'))->getContent(), true);
-            $filtersConv = array(
-                'ip' => $ipConv,
-                'geos' => $geosConv,
-                'carriers' => $carriersConv,
-                'isps' => $ispConv
-            );
-            return $this->render(
-                'reports/list-reports.html.twig', array('page' => $page,
-                    'trafficSources' => $trafficSources,
-                    'campaigns' => $campaigns,
-                    'verticals' => $verticals,
-                    'geos' => $geos,
-                    'filtersIp' => $filtersIp,
-                    'filtersConv' =>  $filtersConv
-                )
-            );
+                $ispConv = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsConversionsSaved',
+                    'column' => 'isp'))->getContent(), true);
+                $filtersConv = array(
+                    'ip' => $ipConv,
+                    'geos' => $geosConv,
+                    'carriers' => $carriersConv,
+                    'isps' => $ispConv
+                );
+                return $this->render(
+                    'reports/list-reports.html.twig', array('page' => $page,
+                        'trafficSources' => $trafficSources,
+                        'campaigns' => $campaigns,
+                        'verticals' => $verticals,
+                        'geos' => $geos,
+                        'filtersIp' => $filtersIp,
+                        'filtersConv' =>  $filtersConv
+                    )
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

@@ -22,9 +22,20 @@ class MetricsController extends Controller {
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            return $this->render(
-                'reports/metrics.html.twig', array('page' => 'Metrics', 'filters' => array())
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                return $this->render(
+                    'reports/metrics.html.twig', array('page' => 'Metrics', 'filters' => array())
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

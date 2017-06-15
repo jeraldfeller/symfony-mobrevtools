@@ -26,14 +26,25 @@ class LandersController extends Controller {
     public function showLandersPageAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $this->getLandersToFileAction();
-            $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
-            $presets = json_decode($this->forward('AppBundle:Settings:getPresets', array())->getContent(), true);
-            return $this->render(
-                'landers/landers.html.twig', array('countries' => $countries,
-                    'presets' => $presets,
-                    'page' => 'Landers')
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                $this->getLandersToFileAction();
+                $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
+                $presets = json_decode($this->forward('AppBundle:Settings:getPresets', array())->getContent(), true);
+                return $this->render(
+                    'landers/landers.html.twig', array('countries' => $countries,
+                        'presets' => $presets,
+                        'page' => 'Landers')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

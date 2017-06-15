@@ -31,18 +31,29 @@ class OffersController extends Controller{
     public function showOffersPageAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $this->getOffersToFileAction();
-            $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
-            $networks = json_decode($this->forward('AppBundle:VoluumApi:voluumGetAffiliateNetworks', array())->getContent(), true);
-            $presets = json_decode($this->getOfferUrlPresetsAction()->getContent(), true);
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                $this->getOffersToFileAction();
+                $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
+                $networks = json_decode($this->forward('AppBundle:VoluumApi:voluumGetAffiliateNetworks', array())->getContent(), true);
+                $presets = json_decode($this->getOfferUrlPresetsAction()->getContent(), true);
 
-            return $this->render(
-                'offers/offers.html.twig', array(
-                    'countries' => $countries,
-                    'networks' => $networks,
-                    'presets' => $presets
-                )
-            );
+                return $this->render(
+                    'offers/offers.html.twig', array(
+                        'countries' => $countries,
+                        'networks' => $networks,
+                        'presets' => $presets
+                    )
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }
@@ -230,9 +241,20 @@ class OffersController extends Controller{
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            return $this->render(
-                'offers/offer-groups.html.twig', array('page' => 'Offer Groups')
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                return $this->render(
+                    'offers/offer-groups.html.twig', array('page' => 'Offer Groups')
+                );
+            }else{
+                return $this->render('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }
@@ -532,11 +554,22 @@ class OffersController extends Controller{
         $this->forward('AppBundle:Deletes:deleteReportsAll', array('data' => 'AppBundle:CakeOffersTmpTbl'))->getContent();
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            return $this->render(
-                'offers/offer-search.html.twig', array('page' => 'Offer Search',
-                                                       'networks' => $this->getAffiliateNetworks(),
-                                                       'groups' => $this->getOfferGroups())
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                return $this->render(
+                    'offers/offer-search.html.twig', array('page' => 'Offer Search',
+                        'networks' => $this->getAffiliateNetworks(),
+                        'groups' => $this->getOfferGroups())
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }
@@ -1735,10 +1768,21 @@ class OffersController extends Controller{
     {
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            return $this->render(
-                'offers/offer-preset-searches.html.twig', array('page' => 'Offer Preset Search',
-                    'groups' => $this->getOfferGroups())
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                return $this->render(
+                    'offers/offer-preset-searches.html.twig', array('page' => 'Offer Preset Search',
+                        'groups' => $this->getOfferGroups())
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }
@@ -2015,9 +2059,25 @@ class OffersController extends Controller{
      * @Route("/tools/offer-url-presets")
      */
     public function showPresetsSettings(){
-        return $this->render(
-            'settings/offer-url-presets.html.twig', array('page' => 'Offer Url Presets')
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn) {
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                return $this->render(
+                    'settings/offer-url-presets.html.twig', array('page' => 'Offer Url Presets')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+        }else{
+            return $this->redirect('/user/login');
+        }
+
     }
 
 

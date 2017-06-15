@@ -26,9 +26,22 @@ class LogTrackerController extends Controller{
     public function showLogTrackerReportAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            return $this->render(
-                'reports/logtracker.html.twig', array('page' => 'Data Log', 'filters' => array())
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+
+
+            if($pageReturn == 'true'){
+                return $this->render(
+                    'reports/logtracker.html.twig', array('page' => 'Data Log', 'filters' => array())
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

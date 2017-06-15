@@ -27,22 +27,33 @@ class PlanningController extends Controller{
     public function showCreateCampaignPageAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-        $data = array('data' => array());
-        file_put_contents("data_table_tmp_files/planning/campaigns.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true') {
+                $data = array('data' => array());
+                file_put_contents("data_table_tmp_files/planning/campaigns.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
 
-        $trafficSource = json_decode($this->forward('AppBundle:VoluumApi:voluumGetTrafficSource', array())->getContent(), true);
-            $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
-            $flow = json_decode($this->forward('AppBundle:VoluumApi:voluumGetFlow', array())->getContent(), true);
-            $domain = json_decode($this->forward('AppBundle:VoluumApi:voluumGetDomain', array())->getContent(), true);
-            return $this->render(
-                'planning/create-campaign.html.twig', array(
-                    'trafficSources' => $trafficSource['trafficSources'],
-                    'countries' => $countries,
-                    'flows' => $flow['flows'],
-                    'domains' => $domain['domains']['customDomains'],
-                    'page' => 'Create Campaign'
-                )
-            );
+                $trafficSource = json_decode($this->forward('AppBundle:VoluumApi:voluumGetTrafficSource', array())->getContent(), true);
+                $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
+                $flow = json_decode($this->forward('AppBundle:VoluumApi:voluumGetFlow', array())->getContent(), true);
+                $domain = json_decode($this->forward('AppBundle:VoluumApi:voluumGetDomain', array())->getContent(), true);
+                return $this->render(
+                    'planning/create-campaign.html.twig', array(
+                        'trafficSources' => $trafficSource['trafficSources'],
+                        'countries' => $countries,
+                        'flows' => $flow['flows'],
+                        'domains' => $domain['domains']['customDomains'],
+                        'page' => 'Create Campaign'
+                    )
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

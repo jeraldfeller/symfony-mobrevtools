@@ -32,11 +32,22 @@ class ConversionsReportController extends Controller{
     public function showConversionsReportAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $this->clearConversionReportAction();
-            $filters = array();
-            return $this->render(
-                'reports/conversions.html.twig', array('page' => 'Conversion Data', 'filters' => $filters)
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                $this->clearConversionReportAction();
+                $filters = array();
+                return $this->render(
+                    'reports/conversions.html.twig', array('page' => 'Conversion Data', 'filters' => $filters)
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

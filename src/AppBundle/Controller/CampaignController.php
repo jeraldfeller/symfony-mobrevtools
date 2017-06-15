@@ -94,27 +94,37 @@ class CampaignController extends Controller
     {
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $trafficSource = $this->getTrafficSourceByName($page);
-            $campaigns = $this->getCampaigns($tid);
-            $verticals = $this->getVerticals();
-            $rulePresets = $this->getRulePresets();
-            $carriers = array();
-            $dateNow = date('m/d/Y');
-            if ($page == 'ExoClick') {
-                $carriers = $this->getCarriersDistinct($page);
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                $trafficSource = $this->getTrafficSourceByName($page);
+                $campaigns = $this->getCampaigns($tid);
+                $verticals = $this->getVerticals();
+                $rulePresets = $this->getRulePresets();
+                $carriers = array();
+                $dateNow = date('m/d/Y');
+                if ($page == 'ExoClick') {
+                    $carriers = $this->getCarriersDistinct($page);
+                }
+                return $this->render(
+                    'campaign/campaign.html.twig', array('page' => $page,
+                        'tid' => $trafficSource[0]->getId(),
+                        'trafficSourceId' => $trafficSource[0]->getTrafficSourceId(),
+                        'trafficSourceName' => $trafficSource[0]->getTrafficName(),
+                        'campaigns' => $campaigns,
+                        'verticals' => $verticals,
+                        'presets' => $rulePresets,
+                        'carriers' => $carriers,
+                        'dateNow' => $dateNow
+                    )
+                );
+            }else{
+                return $this->redirect('/error');
             }
-            return $this->render(
-                'campaign/campaign.html.twig', array('page' => $page,
-                    'tid' => $trafficSource[0]->getId(),
-                    'trafficSourceId' => $trafficSource[0]->getTrafficSourceId(),
-                    'trafficSourceName' => $trafficSource[0]->getTrafficName(),
-                    'campaigns' => $campaigns,
-                    'verticals' => $verticals,
-                    'presets' => $rulePresets,
-                    'carriers' => $carriers,
-                    'dateNow' => $dateNow
-                )
-            );
         }else{
             return $this->redirect('/user/login');
         }

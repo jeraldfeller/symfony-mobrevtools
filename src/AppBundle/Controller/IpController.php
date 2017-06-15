@@ -26,27 +26,37 @@ class IpController extends Controller{
     public function showIpReportAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-                'column' => 'trafficName'))->getContent(), true);
-            $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-                'column' => 'campaignName'))->getContent(), true);
-            $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-                'column' => 'geo'))->getContent(), true);
-            $carriers = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-                'column' => 'mobileCarrier'))->getContent(), true);
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                $trafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                    'column' => 'trafficName'))->getContent(), true);
+                $campaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                    'column' => 'campaignName'))->getContent(), true);
+                $geos = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                    'column' => 'geo'))->getContent(), true);
+                $carriers = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                    'column' => 'mobileCarrier'))->getContent(), true);
 
-            $isp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
-                'column' => 'isp'))->getContent(), true);
+                $isp = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:ReportsIp',
+                    'column' => 'isp'))->getContent(), true);
 
-            $filters = array('trafficSource' => $trafficSources,
-                'campaigns' => $campaigns,
-                'geos' => $geos,
-                'carriers' => $carriers,
-                'isps' => $isp
-            );
-            return $this->render(
-                'reports/ip.html.twig', array('page' => 'IP Data', 'filters' => $filters)
-            );
+                $filters = array('trafficSource' => $trafficSources,
+                    'campaigns' => $campaigns,
+                    'geos' => $geos,
+                    'carriers' => $carriers,
+                    'isps' => $isp
+                );
+                return $this->render(
+                    'reports/ip.html.twig', array('page' => 'IP Data', 'filters' => $filters)
+                );
+            }else{
+                return $this->redirect('/error');
+            }
         }else{
             return $this->redirect('/user/login');
         }

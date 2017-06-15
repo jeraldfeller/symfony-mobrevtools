@@ -52,7 +52,20 @@ class NavmenuController extends Controller{
                                                         </li>';
                             }
                         }
-                        $mainParentPages[$page['directoryLevel']] =   '<li class="nav-item isActiveIdentifier">
+                        if($page['pageLink'] != ''){
+                            $mainParentPages[$page['directoryLevel']] =   '<li class="nav-item isActiveIdentifier">
+                                <a href="'. $page['pageLink'] . '" class="nav-link nav-toggle">
+                                    <i class="' . $page['icon'] . '"></i>
+                                    <span class="title">' . $page['pageName'] . '</span>
+                                    <span class="selected"></span>
+                                    <span class="arrow open"></span>
+                                </a>
+                                <ul class="sub-menu">
+                                     ' . $subPageOutput . '
+                                </ul>
+                            </li>';
+                        }else{
+                            $mainParentPages[$page['directoryLevel']] =   '<li class="nav-item isActiveIdentifier">
                                 <a href="javascript:;" class="nav-link nav-toggle">
                                     <i class="' . $page['icon'] . '"></i>
                                     <span class="title">' . $page['pageName'] . '</span>
@@ -63,6 +76,8 @@ class NavmenuController extends Controller{
                                      ' . $subPageOutput . '
                                 </ul>
                             </li>';
+                        }
+
                     }else{
                         $mainParentPages[$page['directoryLevel']] =   '<li class="nav-item isActiveIdentifier">
                                 <a href="' . $page['pageLink'] . '" class="nav-link nav-toggle">

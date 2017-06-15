@@ -25,10 +25,21 @@ class HtmlDataController extends Controller{
     public function showHtmlPagesAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $filters = array();
-            return $this->render(
-                'html-pages/html-pages.html.twig', array('page' => 'Exploit Log')
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                $filters = array();
+                return $this->render(
+                    'html-pages/html-pages.html.twig', array('page' => 'Exploit Log')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

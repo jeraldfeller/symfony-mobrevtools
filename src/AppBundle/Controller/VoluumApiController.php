@@ -354,10 +354,27 @@ class VoluumApiController extends Controller{
      * @Route("/tools/cost-update")
      */
     public function showLandersPageAction(){
-        $this->forward('AppBundle:Deletes:deleteReportsAll', array('data' => 'AppBundle:ReportsCampaignsManualCostUpdate'))->getContent();
-        return $this->render(
-            'cost-update/cost-update.html.twig', array('page' => 'Cost Update')
-        );
+
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn) {
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                $this->forward('AppBundle:Deletes:deleteReportsAll', array('data' => 'AppBundle:ReportsCampaignsManualCostUpdate'))->getContent();
+                return $this->render(
+                    'cost-update/cost-update.html.twig', array('page' => 'Cost Update')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+        }else{
+            return $this->redirect('/user/login');
+        }
+
     }
 
 

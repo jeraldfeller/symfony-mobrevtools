@@ -31,9 +31,20 @@ class SettingsController extends Controller {
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            return $this->render(
-                'settings/api-access.html.twig', array('page' => 'Api Access')
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                return $this->render(
+                    'settings/api-access.html.twig', array('page' => 'Api Access')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }
@@ -83,9 +94,25 @@ class SettingsController extends Controller {
      * @Route("/global-settings/traffic-source")
      */
     public function showTrafficSourceSettings(){
-        return $this->render(
-            'settings/traffic-source.html.twig', array('page' => 'Traffic Source')
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn) {
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                return $this->render(
+                    'settings/traffic-source.html.twig', array('page' => 'Traffic Source')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+        }else{
+            return $this->redirect('/user/logout');
+        }
+
     }
 
 
@@ -455,9 +482,26 @@ class SettingsController extends Controller {
      * @Route("/tools/lander-presets")
      */
     public function showPresetsSettings(){
-        return $this->render(
-            'settings/presets.html.twig', array('page' => 'Lander Presets')
-        );
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn) {
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                return $this->render(
+                    'settings/presets.html.twig', array('page' => 'Lander Presets')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
+        }else{
+            return $this->redirect('/user/login');
+        }
+
     }
 
 
@@ -720,9 +764,20 @@ class SettingsController extends Controller {
 
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            return $this->render(
-                'settings/affiliate.html.twig', array('page' => 'Affiliate Network')
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                return $this->render(
+                    'settings/affiliate.html.twig', array('page' => 'Affiliate Network')
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }

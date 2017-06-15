@@ -28,10 +28,21 @@ class DomainTrackerController extends Controller{
     public function showDomainReportAction(){
         $isLoggedIn = $this->get('session')->get('isLoggedIn');
         if($isLoggedIn){
-            $filters = array();
-            return $this->render(
-                'reports/domaintracker.html.twig', array('page' => 'Domains', 'filters' => $filters)
-            );
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if ($pageReturn == 'true') {
+                $filters = array();
+                return $this->render(
+                    'reports/domaintracker.html.twig', array('page' => 'Domains', 'filters' => $filters)
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
         }else{
             return $this->redirect('/user/login');
         }
