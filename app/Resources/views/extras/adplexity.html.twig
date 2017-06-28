@@ -91,9 +91,12 @@
 									<select id="selectDateRange" class="select2 form-control" >
 										<option></option>
 										<option value="today">Today</option>
+										
 										<option value="3d">3 days</option>
 										<option value="7d">7 days</option>
 										<option value="14d">14 days</option>
+										
+										
 									</select>
 								</div>
 								<div class="col-md-3 col-xs-12" id="daysRunning">
@@ -103,6 +106,7 @@
 										<option value="1-7">1-7</option>
 										<option value="3-7">3-7</option>
 										<option value="7-10">7-10</option>
+										
 									</select>
 								</div>
 							</div>
@@ -433,13 +437,7 @@
 					$hasErrorD = 0;
 				}
 				
-				if($('#selectDaysRunning').val() == ''){
-					$('#daysRunning').addClass('has-error');
-					$hasErrorDr = 1;
-				}else{
-					$('#daysRunning').removeClass('has-error');
-					$hasErrorDr = 0;
-				}
+				
 				
 				if($('#selectOptionCountries').val() == '' || $('#selectOptionCountries').val() == null){
 					$('#countries').addClass('has-error');
@@ -449,7 +447,7 @@
 					$hasErrorC = 0;
 				}
 				
-				if($hasErrorA == 0 && $hasErrorM == 0 && $hasErrorD == 0 && $hasErrorDr == 0 && $hasErrorC == 0){
+				if($hasErrorA == 0 && $hasErrorM == 0 && $hasErrorD == 0 && $hasErrorC == 0){
 					if($('#selectOptionCountries').val() != null){
 						$countries = $('#selectOptionCountries').val().join(',');
 					}else{
