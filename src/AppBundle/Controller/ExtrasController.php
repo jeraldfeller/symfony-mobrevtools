@@ -124,17 +124,29 @@ class ExtrasController extends Controller{
 
 		$url = 'https://mobile.adplexity.com/api/v1/top/'.$data['aggregation'].'?';
 		
+		if($data['countries'] == 'all'){
+			$countries = $this->getAdplexityCountries();
+			foreach($countries as $country){
+				$countryList[] = $country['code'];
+			}
+		
+			$countryQuery = implode(',', $countryList);
+		}else{
+			$countryQuery = $data['countries'];
+		}
+		
+		
 		$query = array(
 			'metric' => $data['metric'],
 			'date_range' => $data['dateRange'],
 			'days_running' => $data['daysRunning'],
-			'country' => $data['countries'],
+			'country' => $countryQuery,
 			'ad_type' => $data['adTypes'],
 			'traffic_source' => $data['trafficSources'],
 			'affiliate_network' => $data['affiliateNetworks'],
 			'count' => $data['count']
 		);
-		
+	
 		$return = json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
             'query' => $query))->getContent(), true)['data'];	
 		

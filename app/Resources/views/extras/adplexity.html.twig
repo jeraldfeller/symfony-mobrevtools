@@ -118,6 +118,7 @@
 								<div class="col-md-3 col-xs-12" id="countries">
 									<select id="selectOptionCountries" class="select2_multiple form-control" multiple="multiple">
 										<option></option>
+										
 										{% for item in options.countries %}
 											<option value="{{ item.code }}">{{ item.name }}</option>
 										{% endfor %}
