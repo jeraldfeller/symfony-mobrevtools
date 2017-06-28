@@ -81,4 +81,137 @@ class ExtrasController extends Controller{
         file_put_contents("data_table_tmp_files/ip/24.txt", json_encode($data24, JSON_UNESCAPED_UNICODE));
         return new Response(json_encode(true));
     }
+	
+	/**
+     * @Route("/tools/adplexity", name="adplexity")
+     */
+    public function showAdplexityAction()
+    {
+
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+			$data['data']  = array();
+					file_put_contents("data_table_tmp_files/adplexity/report.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+			$countries = $this->getAdplexityCountries();
+			$adTypes = $this->getAdplexityAdTypes();
+			$networks = $this->getAdplexityNetworks();
+			$sources = $this->getAdplexitySources();
+			$options = array(
+				'countries' => $countries,
+				'adTypes' => $adTypes,
+				'networks' => $networks,
+				'sources' => $sources
+			);
+            return $this->render(
+                'extras/adplexity.html.twig', array(
+				'options' => $options,
+				'page' => 'Adplexity')
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
+    }
+	
+	
+	/**
+     * @Route("/extras/get-adplexity-report", name="getAdplexityReport")
+     */
+    public function getAdplexityReport()
+    {
+        $data = json_decode($_POST['param'], true);
+
+		$url = 'https://mobile.adplexity.com/api/v1/top/'.$data['aggregation'].'?';
+		
+		$query = array(
+			'metric' => $data['metric'],
+			'date_range' => $data['dateRange'],
+			'days_running' => $data['daysRunning'],
+			'country' => $data['countries'],
+			'ad_type' => $data['adTypes'],
+			'traffic_source' => $data['trafficSources'],
+			'affiliate_network' => $data['affiliateNetworks'],
+			'count' => $data['count']
+		);
+		
+		$return = json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
+            'query' => $query))->getContent(), true)['data'];	
+		
+		if(count($return) > 0){
+			switch($data['aggregation']){
+				case 'tracking_domains':
+					foreach($return as $row){
+						$data['data'][] = array(
+							$row['domain'],
+							$row['count'],
+							$row['tracking_name']
+						);
+					}
+				break;
+				case 'lp_domains':
+					foreach($return as $row){
+						$data['data'][] = array(
+							$row['domain'],
+							$row['count'],
+							''
+						);
+					}
+				break;
+				case 'affiliate_domains':
+					foreach($return as $row){
+						$data['data'][] = array(
+							$row['domain'],
+							$row['count'],
+							$row['affiliate_name']
+						);
+					}
+				break;
+				case 'offer_domains':
+					foreach($return as $row){
+						$data['data'][] = array(
+							$row['domain'],
+							$row['count'],
+							''
+						);
+					}
+				break;
+			}
+			
+			
+		}else{
+			$data['data']  = array();
+		}
+		
+        file_put_contents("data_table_tmp_files/adplexity/report.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+        return new Response(json_encode(true));
+    }
+	
+	public function getAdplexityCountries(){
+		$url = 'https://mobile.adplexity.com/api/v1/countries';
+		$query = array();
+		return json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
+            'query' => $query))->getContent(), true)['data'];	
+	}
+	
+	public function getAdplexityAdTypes(){
+		$url = 'https://mobile.adplexity.com/api/v1/ad_types';
+		$query = array();
+		return json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
+            'query' => $query))->getContent(), true)['data'];	
+	}
+	
+	public function getAdplexityNetworks(){
+		$url = 'https://mobile.adplexity.com/api/v1/affiliate_networks';
+		$query = array();
+		return json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
+            'query' => $query))->getContent(), true)['data'];	
+	}
+	
+	public function getAdplexitySources(){
+		$url = 'https://mobile.adplexity.com/api/v1/traffic_sources';
+		$query = array();
+		return json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
+            'query' => $query))->getContent(), true)['data'];	
+	}
 }

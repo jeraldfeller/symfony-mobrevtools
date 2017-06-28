@@ -110,6 +110,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\AWSController::showOffersPageAction',  '_route' => 'app_aws_showofferspage',);
         }
 
+        // adplexitykApiAction
+        if ($pathinfo === '/api/adplexity/{$url}/{$query}') {
+            return array (  'url' => NULL,  'query' => NULL,  '_controller' => 'AppBundle\\Controller\\AdplexityApiController::adplexityRequestAction',  '_route' => 'adplexitykApiAction',);
+        }
+
         // app_blacklistreport_showbotreport
         if ($pathinfo === '/reports/blacklist') {
             return array (  '_controller' => 'AppBundle\\Controller\\BlacklistReportController::showBotReportAction',  '_route' => 'app_blacklistreport_showbotreport',);
@@ -574,6 +579,16 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         // executeIpCompile
         if ($pathinfo === '/extras/execute-compile-ip') {
             return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::ipCompile',  '_route' => 'executeIpCompile',);
+        }
+
+        // adplexity
+        if ($pathinfo === '/tools/adplexity') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showAdplexityAction',  '_route' => 'adplexity',);
+        }
+
+        // getAdplexityReport
+        if ($pathinfo === '/extras/get-adplexity-report') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::getAdplexityReport',  '_route' => 'getAdplexityReport',);
         }
 
         // getFilters

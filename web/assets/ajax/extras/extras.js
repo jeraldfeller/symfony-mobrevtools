@@ -59,3 +59,42 @@ function compileIp(btn, data)
 
     return false;
 }
+
+function getAdplexityReport(btn, data)
+{
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/extras/get-adplexity-report");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response =  $.parseJSON(XMLHttpRequestObject.responseText);
+				var oTable =  $('#datatable-responsive').DataTable();
+				oTable.ajax.reload();
+                l.stop();
+				
+                showNotification('success', 'Success', 'Report Successfully Imported')
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '');
+                l.stop();
+            }
+        }
+
+
+        l.start();
+        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+    }
+
+    return false;
+}
