@@ -200,19 +200,21 @@ class ExtrasController extends Controller{
 								}
 							break;
 							case 'offer_domains':
-								if(isset($dataArray[$row['domain']])){
-										$plus = $dataArray[$row['domain']]['count'];
-										$dataArray[$row['domain']] = array(
-										'count' =>  $row['count'] + $plus,
-										'aggregationName' => ''
-									);	
-									}else{
-										
-										$dataArray[$row['domain']] = array(
-										'count' => $row['count'],
-										'aggregationName' => ''
-									);	
-									}
+								foreach($return['data'] as $row){
+									if(isset($dataArray[$row['domain']])){
+											$plus = $dataArray[$row['domain']]['count'];
+											$dataArray[$row['domain']] = array(
+											'count' =>  $row['count'] + $plus,
+											'aggregationName' => ''
+										);	
+										}else{
+											
+											$dataArray[$row['domain']] = array(
+											'count' => $row['count'],
+											'aggregationName' => ''
+										);	
+										}
+								}
 							break;
 						}
 						
@@ -313,6 +315,7 @@ class ExtrasController extends Controller{
 								}
 							break;
 							case 'offer_domains':
+							foreach($return['data'] as $row){
 								if(isset($dataArray[$row['domain']])){
 										$plus = $dataArray[$row['domain']]['count'];
 										$dataArray[$row['domain']] = array(
@@ -326,6 +329,7 @@ class ExtrasController extends Controller{
 										'aggregationName' => ''
 									);	
 									}
+							}
 							break;
 						}
 						
