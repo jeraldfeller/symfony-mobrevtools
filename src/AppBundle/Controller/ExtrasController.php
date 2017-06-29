@@ -126,74 +126,298 @@ class ExtrasController extends Controller{
 		
 		if($data['countries'] == 'all'){
 			$countries = $this->getAdplexityCountries();
+			$dataArray = array();
 			foreach($countries as $country){
-				$countryList[] = $country['code'];
-			}
+				
+				$query = array(
+					'metric' => $data['metric'],
+					'date_range' => $data['dateRange'],
+					'days_running' => $data['daysRunning'],
+					'country' => $country['code'],
+					'ad_type' => $data['adTypes'],
+					'traffic_source' => $data['trafficSources'],
+					'affiliate_network' => $data['affiliateNetworks'],
+					'count' => $data['count']
+				);
+				
+				$return = json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
+				'query' => $query))->getContent(), true);
+				
+				if(!isset($return['errorMessage'])){
+					if(count($return) > 0){
+						switch($data['aggregation']){
+							case 'tracking_domains':
+								foreach($return['data'] as $row){
+									if(isset($dataArray[$row['domain']])){
+										$plus = $dataArray[$row['domain']]['count'];
+										$dataArray[$row['domain']] = array(
+										'count' =>  $row['count'] + $plus,
+										'aggregationName' => $row['tracking_name']
+									);	
+									}else{
+										
+										$dataArray[$row['domain']] = array(
+										'count' => $row['count'],
+										'aggregationName' => $row['tracking_name']
+									);	
+									}
+								}
+							break;
+							case 'lp_domains':
+							
+								foreach($return['data'] as $row){
+									if(isset($dataArray[$row['domain']])){
+										$plus = $dataArray[$row['domain']]['count'];
+										$dataArray[$row['domain']] = array(
+										'count' =>  $row['count'] + $plus,
+										'aggregationName' => ''
+									);	
+									}else{
+										
+										$dataArray[$row['domain']] = array(
+										'count' => $row['count'],
+										'aggregationName' => ''
+									);	
+									}
+								}
+							break;
+							case 'affiliate_domains':
+						
+								foreach($return['data'] as $row){
+									if(isset($dataArray[$row['domain']])){
+										$plus = $dataArray[$row['domain']]['count'];
+										$dataArray[$row['domain']] = array(
+										'count' =>  $row['count'] + $plus,
+										'aggregationName' => $row['affiliate_name']
+									);	
+									}else{
+										
+										$dataArray[$row['domain']] = array(
+										'count' => $row['count'],
+										'aggregationName' => $row['affiliate_name']
+									);	
+									}
+								}
+							break;
+							case 'offer_domains':
+								if(isset($dataArray[$row['domain']])){
+										$plus = $dataArray[$row['domain']]['count'];
+										$dataArray[$row['domain']] = array(
+										'count' =>  $row['count'] + $plus,
+										'aggregationName' => ''
+									);	
+									}else{
+										
+										$dataArray[$row['domain']] = array(
+										'count' => $row['count'],
+										'aggregationName' => ''
+									);	
+									}
+							break;
+						}
+						
+						
+					}else{
+						$data['data']  = array();
+					}
+				}
+				
 		
-			$countryQuery = implode(',', $countryList);
-		}else{
+			}
+			
+			foreach($dataArray as $key => $row){
+				
+				$data['data'][] = array(
+										$key,
+										$row['count'],
+										$row['aggregationName']
+					);
+			}
+			
+			
+			
+			
+		}else if(strpos($data['countries'], ',') != false){
+			
+			$countries = explode(',', $data['countries']);
+			$dataArray = array();
+			for($x = 0; $x < count($countries); $x++){
+				$query = array(
+					'metric' => $data['metric'],
+					'date_range' => $data['dateRange'],
+					'days_running' => $data['daysRunning'],
+					'country' => $countries[$x],
+					'ad_type' => $data['adTypes'],
+					'traffic_source' => $data['trafficSources'],
+					'affiliate_network' => $data['affiliateNetworks'],
+					'count' => $data['count']
+				);
+				
+				$return = json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
+				'query' => $query))->getContent(), true);
+				
+				if(!isset($return['errorMessage'])){
+					if(count($return) > 0){
+						switch($data['aggregation']){
+							case 'tracking_domains':
+								foreach($return['data'] as $row){
+									if(isset($dataArray[$row['domain']])){
+										$plus = $dataArray[$row['domain']]['count'];
+										$dataArray[$row['domain']] = array(
+										'count' =>  $row['count'] + $plus,
+										'aggregationName' => $row['tracking_name']
+									);	
+									}else{
+										
+										$dataArray[$row['domain']] = array(
+										'count' => $row['count'],
+										'aggregationName' => $row['tracking_name']
+									);	
+									}
+								}
+							break;
+							case 'lp_domains':
+							
+								foreach($return['data'] as $row){
+									if(isset($dataArray[$row['domain']])){
+										$plus = $dataArray[$row['domain']]['count'];
+										$dataArray[$row['domain']] = array(
+										'count' =>  $row['count'] + $plus,
+										'aggregationName' => ''
+									);	
+									}else{
+										
+										$dataArray[$row['domain']] = array(
+										'count' => $row['count'],
+										'aggregationName' => ''
+									);	
+									}
+								}
+							break;
+							case 'affiliate_domains':
+						
+								foreach($return['data'] as $row){
+									if(isset($dataArray[$row['domain']])){
+										$plus = $dataArray[$row['domain']]['count'];
+										$dataArray[$row['domain']] = array(
+										'count' =>  $row['count'] + $plus,
+										'aggregationName' => $row['affiliate_name']
+									);	
+									}else{
+										
+										$dataArray[$row['domain']] = array(
+										'count' => $row['count'],
+										'aggregationName' => $row['affiliate_name']
+									);	
+									}
+								}
+							break;
+							case 'offer_domains':
+								if(isset($dataArray[$row['domain']])){
+										$plus = $dataArray[$row['domain']]['count'];
+										$dataArray[$row['domain']] = array(
+										'count' =>  $row['count'] + $plus,
+										'aggregationName' => ''
+									);	
+									}else{
+										
+										$dataArray[$row['domain']] = array(
+										'count' => $row['count'],
+										'aggregationName' => ''
+									);	
+									}
+							break;
+						}
+						
+						
+					}else{
+						$data['data']  = array();
+					}
+				}
+				
+		
+			}
+			
+			foreach($dataArray as $key => $row){
+				
+				$data['data'][] = array(
+										$key,
+										$row['count'],
+										$row['aggregationName']
+					);
+			}
+			
+		}
+		else{
 			$countryQuery = $data['countries'];
-		}
-		
-		
-		$query = array(
-			'metric' => $data['metric'],
-			'date_range' => $data['dateRange'],
-			'days_running' => $data['daysRunning'],
-			'country' => $countryQuery,
-			'ad_type' => $data['adTypes'],
-			'traffic_source' => $data['trafficSources'],
-			'affiliate_network' => $data['affiliateNetworks'],
-			'count' => $data['count']
-		);
+			$query = array(
+				'metric' => $data['metric'],
+				'date_range' => $data['dateRange'],
+				'days_running' => $data['daysRunning'],
+				'country' => $countryQuery,
+				'ad_type' => $data['adTypes'],
+				'traffic_source' => $data['trafficSources'],
+				'affiliate_network' => $data['affiliateNetworks'],
+				'count' => $data['count']
+			);
 	
-		$return = json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
-            'query' => $query))->getContent(), true)['data'];	
-		
-		if(count($return) > 0){
-			switch($data['aggregation']){
-				case 'tracking_domains':
-					foreach($return as $row){
-						$data['data'][] = array(
-							$row['domain'],
-							$row['count'],
-							$row['tracking_name']
-						);
+	
+			$return = json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
+				'query' => $query))->getContent(), true);
+				
+				if(!isset($return['errorMessage'])){
+					if(count($return) > 0){
+						switch($data['aggregation']){
+							case 'tracking_domains':
+								foreach($return['data'] as $row){
+									$data['data'][] = array(
+										$row['domain'],
+										$row['count'],
+										$row['tracking_name']
+									);
+								}
+							break;
+							case 'lp_domains':
+								foreach($return as $row){
+									$data['data'][] = array(
+										$row['domain'],
+										$row['count'],
+										''
+									);
+								}
+							break;
+							case 'affiliate_domains':
+								foreach($return as $row){
+									$data['data'][] = array(
+										$row['domain'],
+										$row['count'],
+										$row['affiliate_name']
+									);
+								}
+							break;
+							case 'offer_domains':
+								foreach($return as $row){
+									$data['data'][] = array(
+										$row['domain'],
+										$row['count'],
+										''
+									);
+								}
+							break;
+						}
+						
+						
+					}else{
+						$data['data']  = array();
 					}
-				break;
-				case 'lp_domains':
-					foreach($return as $row){
-						$data['data'][] = array(
-							$row['domain'],
-							$row['count'],
-							''
-						);
-					}
-				break;
-				case 'affiliate_domains':
-					foreach($return as $row){
-						$data['data'][] = array(
-							$row['domain'],
-							$row['count'],
-							$row['affiliate_name']
-						);
-					}
-				break;
-				case 'offer_domains':
-					foreach($return as $row){
-						$data['data'][] = array(
-							$row['domain'],
-							$row['count'],
-							''
-						);
-					}
-				break;
-			}
-			
-			
-		}else{
-			$data['data']  = array();
+				}
 		}
+		
+		
+			
+		
+		
+		
 		
         file_put_contents("data_table_tmp_files/adplexity/report.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
         return new Response(json_encode(true));
