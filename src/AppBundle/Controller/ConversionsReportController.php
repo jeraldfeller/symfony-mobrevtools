@@ -395,7 +395,6 @@ class ConversionsReportController extends Controller{
         $include = $data['include'];
         $split = explode(':', date('H:m'));
         $from = date('Y-m-d', strtotime($data['from'])) . 'T00:00:00Z';
-
         $to = date('Y-m-d', strtotime($data['to'] . '+1 days')) . 'T00:00:00Z';
         $query = array('from' => $from,
             'to' => $to,

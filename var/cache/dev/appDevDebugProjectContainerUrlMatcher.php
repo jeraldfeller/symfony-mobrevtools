@@ -909,6 +909,32 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
+        if (0 === strpos($pathinfo, '/reports/placements')) {
+            // placementsReports
+            if ($pathinfo === '/reports/placements') {
+                return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::indexAction',  '_route' => 'placementsReports',);
+            }
+
+            // app_placementsreports_initialize
+            if ($pathinfo === '/reports/placements/initialize') {
+                return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::initializeAction',  '_route' => 'app_placementsreports_initialize',);
+            }
+
+            if (0 === strpos($pathinfo, '/reports/placements/get-')) {
+                // app_placementsreports_getcampaigns
+                if ($pathinfo === '/reports/placements/get-campaigns') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::getCampaigns',  '_route' => 'app_placementsreports_getcampaigns',);
+                }
+
+                // app_placementsreports_ajaxgetlistreports
+                if ($pathinfo === '/reports/placements/get-reports') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::ajaxGetListReports',  '_route' => 'app_placementsreports_ajaxgetlistreports',);
+                }
+
+            }
+
+        }
+
         if (0 === strpos($pathinfo, '/planning')) {
             // app_planning_showcreatecampaignpage
             if ($pathinfo === '/planning/create-campaign') {
