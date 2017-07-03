@@ -97,7 +97,8 @@ class PlacementsReportsController extends Controller {
         $voluumSessionId = $apiCredentials[0]['voluum'];
 		$trafficSource = $this->getTrafficSourceByIndex($data['index']);
 		
-		if($trafficSource != false){
+		try{
+			if($trafficSource != false){
 		$url = 'https://api.voluum.com/report?';	
 		$from = date('Y-m-d', strtotime($data['from'])) . 'T00:00:00Z';
         $to = date('Y-m-d', strtotime($data['to'] . '+1 days')) . 'T00:00:00Z';
@@ -231,6 +232,13 @@ class PlacementsReportsController extends Controller {
 			
 			$response = array(
 				'hasNext' => false
+			);
+		}
+		
+		}catch(\Exception $e){
+			$response = array(
+				'error' => true,
+				'message' => $e
 			);
 		}
 		

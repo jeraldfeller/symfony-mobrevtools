@@ -61,15 +61,22 @@ function getCampaigns(data, index){
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
 				console.log(response);
-				if(response['hasNext'] == true){
+				if(typeof response['error'] != 'undefined'){
+					if(response['hasNext'] == true){
 					App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Processing ' + response['trafficSource']['trafficName'] +' ...</h2>' });
 					getCampaigns(data, response['nextIndex']);
+					}else{
+						showNotification('success', 'Success', 'Search Complete');
+						var oTable = $('#datatable-responsive').DataTable();
+						oTable.ajax.reload();
+						App.unblockUI();
+					}
 				}else{
-					showNotification('success', 'Success', 'Search Complete');
-					var oTable = $('#datatable-responsive').DataTable();
-					oTable.ajax.reload();
-					App.unblockUI();
+					console.log(response['message']);
+					showNotification('error', '', '');
+				App.unblockUI();
 				}
+				
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
