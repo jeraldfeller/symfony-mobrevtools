@@ -353,7 +353,7 @@
                    
                     {  // set default column settings
                         'orderable': false,
-                        'targets': [1]
+                        'targets': [0]
                     },
                     {
                         "searchable": false,
@@ -367,12 +367,34 @@
                 },
                 //dom: '<"wrapper"lBfrtip>',
                 //dom: '<lB<frt>ip>',
-                "dom": "<'row' <'col-md-12'>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>"
-                
+                "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+                buttons: [
+                    {
+                        className: 'btn green btn-outline ',
+                        text: '<i class="fa fa-save"></i> Save Data',
+                        header: false,
+                        action: function ( e, dt, node, config ) {
+                            var data = {items:[]};
+                            $('input:checkbox.report-record').each(function () {
+
+
+                                if($(this).is(':checked') == true){
+                                    var id = (this.checked ? $(this).data('id') : "");
+                                    data.items.push({id: id});
+                                }
+
+
+                            });
+							App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Saving...</h2>' });
+                            console.log(data);
+                            saveData(data);
+                        }
+                    }
+				]
 
 
             });
-
+		
             table.find('.group-checkable').change(function () {
                 var set = jQuery(this).attr("data-set");
                 var checked = jQuery(this).is(":checked");

@@ -429,4 +429,3 @@ class PlacementsReports
         return $this->id;
     }
 }
-

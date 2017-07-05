@@ -74,6 +74,22 @@ class ListReportsController extends Controller {
                     'carriers' => $carriersConv,
                     'isps' => $ispConv
                 );
+				
+				$placementTrafficSources = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:PlacementsReportsSaved',
+                    'column' => 'trafficSourceName'))->getContent(), true);
+				$placementCampaigns = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:PlacementsReportsSaved',
+                    'column' => 'campaignName'))->getContent(), true);	
+				$placementGeo = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:PlacementsReportsSaved',
+                    'column' => 'geo'))->getContent(), true);	
+				$placementPlacements = json_decode($this->forward('AppBundle:Filters:getFilters', array('bundle' => 'AppBundle:PlacementsReportsSaved',
+                    'column' => 'placement'))->getContent(), true);
+				$filtersPlacement = array(
+					'trafficSources' => $placementTrafficSources,
+					'campaigns' => $placementCampaigns,
+					'geos' => $placementGeo,
+					'placements' => $placementPlacements
+					
+				);
                 return $this->render(
                     'reports/list-reports.html.twig', array('page' => $page,
                         'trafficSources' => $trafficSources,
@@ -81,7 +97,8 @@ class ListReportsController extends Controller {
                         'verticals' => $verticals,
                         'geos' => $geos,
                         'filtersIp' => $filtersIp,
-                        'filtersConv' =>  $filtersConv
+                        'filtersConv' =>  $filtersConv,
+						'filtersPlacement' => $filtersPlacement
                     )
                 );
             }else{

@@ -61,7 +61,7 @@ function getCampaigns(data, index){
             {
                 var response = $.parseJSON(XMLHttpRequestObject.responseText);
 				console.log(response);
-				if(typeof response['error'] != 'undefined'){
+				if(typeof response['error'] == 'undefined'){
 					if(response['hasNext'] == true){
 					App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Processing ' + response['trafficSource']['trafficName'] +' ...</h2>' });
 					getCampaigns(data, response['nextIndex']);
@@ -100,7 +100,7 @@ function saveData(data){
     if(XMLHttpRequestObject)
     {
 
-        XMLHttpRequestObject.open("POST", "/reports/ip/save-data");
+        XMLHttpRequestObject.open("POST", "/reports/placements/save-data");
 
 
         XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
@@ -114,10 +114,12 @@ function saveData(data){
                 showNotification('success', 'Success', 'Data Successfully Saved');
                 var oTable = $('#datatable-responsive').DataTable();
                 oTable.ajax.reload();
+				App.unblockUI();
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
                 showNotification('error', '', '');
+				App.unblockUI();
             }
         }
 

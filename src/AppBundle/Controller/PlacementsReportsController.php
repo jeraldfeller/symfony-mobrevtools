@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use AppBundle\Entity\PlacementsReports;
+use AppBundle\Entity\PlacementsReportsSaved;
 
 
 class PlacementsReportsController extends Controller {
@@ -67,7 +68,8 @@ class PlacementsReportsController extends Controller {
                 WHERE p.trafficName != 'Voluum' ORDER BY p.trafficName ASC
         ");
         $result = $sql->getResult();
-		
+		if(count($result) > $index){
+
 		try{
 			$data = array(
 				'trafficName' => $result[$index]->getTrafficName(),
@@ -82,6 +84,9 @@ class PlacementsReportsController extends Controller {
 			return false;
 			
 		}
+		}else{
+		return false;
+}
 		
         
     }
@@ -142,7 +147,7 @@ class PlacementsReportsController extends Controller {
 				foreach($returnedData['rows'] as $row){
 					if($row['conversions'] >= $data['conversions']){
 						$campaignName = $row['campaignName'];
-						$geo = $row['campaignCountry'];
+						$geo = (isset($row['campaignCountry']) ? $row['campaignCountry'] : 'Global');
 						$query = array('from' => $from,
 							'to' => $to,
 							'tz' => 'America/New_York',
@@ -238,7 +243,7 @@ class PlacementsReportsController extends Controller {
 		}catch(\Exception $e){
 			$response = array(
 				'error' => true,
-				'message' => $e
+				'message' => $e->getMessage()
 			);
 		}
 		
@@ -254,6 +259,36 @@ class PlacementsReportsController extends Controller {
 
 		
 	}
+	
+	/**
+     * @Route("/reports/placements/save-data")
+     */
+    public function saveDataAction(){
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getManager();
+        foreach($data['items'] as $row){
+            $listData = $em->getRepository('AppBundle:PlacementsReports')->find($row['id']);
+            $listExists = $em->getRepository('AppBundle:PlacementsReportsSaved')->findOneBy(array(
+				'placement' => $listData->getPlacement(),
+				'campaignName' => $listData->getCampName(),
+				'trafficSourceName' => $listData->getTrafficSource()
+				));
+            if(!$listExists){
+                $listEntity = new PlacementsReportsSaved();
+				$listEntity->setTrafficSourceName($listData->getTrafficSource());
+				$listEntity->setCampaignName($listData->getCampName());
+				$listEntity->setGeo($listData->getGeo());
+				$listEntity->setPlacement($listData->getPlacement());
+                $em->persist($listEntity);
+            }
+
+        }
+
+        $em->flush();
+        $em->clear();
+
+        return new Response(json_encode(true));
+    }
 
 
     /**
@@ -439,6 +474,205 @@ class PlacementsReportsController extends Controller {
             $row[] = bcdiv($column['cpv'], 1, 4);
             $row[] = bcdiv($column['epv'], 1, 4);
             $row[] = bcdiv($column['roi'], 1, 2) . '%';
+           
+            $output['aaData'][] = $row;
+        }
+        return new Response( json_encode( $output ) );
+    }
+	
+	
+	/**
+     * @Route("/reports/placements/get-reports-placements-saved")
+     */
+
+    public function getReportsPlacementsSaved(){
+        $em = $this->getDoctrine()->getManager();
+        $aColumns = array( 'p.id', 'p.trafficSourceName', 'p.campaignName', 'p.geo',  'p.placement' );
+
+        // Indexed column (used for fast and accurate table cardinality)
+        $sIndexColumn = 'p.id';
+
+        // DB table to use
+        $sTable = 'AppBundle:PlacementsReportsSaved';
+
+        // Input method (use $_GET, $_POST or $_REQUEST)
+        $input = $_GET;
+
+        /**
+         * Paging
+         */
+        $firstResult = "";
+        $maxResults = "";
+        if ( isset( $input['iDisplayStart'] ) && $input['iDisplayLength'] != '-1' ) {
+            $firstResult = intval( $input['iDisplayStart'] );
+            $maxResults = intval( $input['iDisplayLength'] );
+        }
+
+        /**
+         * Ordering
+         */
+        $aOrderingRules = array();
+        if ( isset( $input['iSortCol_0'] ) ) {
+            $iSortingCols = intval( $input['iSortingCols'] );
+            for ( $i=0 ; $i<$iSortingCols ; $i++ ) {
+                if ( $input[ 'bSortable_'.intval($input['iSortCol_'.$i]) ] == 'true' ) {
+                    $aOrderingRules[] =
+                        $aColumns[ intval( $input['iSortCol_'.$i] ) ]
+                        . " " .($input['sSortDir_'.$i]==='asc' ? 'asc' : 'desc');
+                }
+            }
+        }
+
+        if (!empty($aOrderingRules)) {
+            $sOrder = " ORDER BY ".implode(", ", $aOrderingRules);
+        } else {
+            $sOrder = "";
+        }
+
+
+        /**
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        $iColumnCount = count($aColumns);
+        $aFilteringRules = array();
+        $subFilteringRules = array();
+        if ( isset($input['sSearch']) && $input['sSearch'] != "" ) {
+            $aFilteringRules = array();
+            for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+                if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' ) {
+
+                        $aFilteringRules[] = $aColumns[$i]." LIKE '%". $input['sSearch'] ."%'";
+
+                }
+            }
+
+
+            if (!empty($aFilteringRules)) {
+                $aFilteringRules = array('(' . implode(" OR ", $aFilteringRules) . ')');
+            }
+        }else{
+            // custom filter
+			 if(isset($input['traffic']) || isset($input['campaign']) || isset($input['geo']) || isset($input['placement'])){
+				 if($input['traffic'] != '' || $input['traffic'] != null){
+
+                    $aFilteringRules[] = "p.trafficSourceName = '". $input['traffic'] ."'";
+                 }
+				 if($input['campaign'] != '' || $input['campaign'] != null){
+
+                    $aFilteringRules[] = "p.campaignName = '". $input['campaign'] ."'";
+                 }
+				 if($input['geo'] != '' || $input['geo'] != null){
+
+                    $aFilteringRules[] = "p.geo = '". $input['geo'] ."'";
+                 }
+				 if($input['placement'] != '' || $input['placement'] != null){
+
+                    $aFilteringRules[] = "p.placement = '". $input['placement'] ."'";
+                 }
+			 }
+
+
+        }
+
+
+
+
+// Individual column filtering
+        for ( $i=0 ; $i<$iColumnCount ; $i++ ) {
+            if ( isset($input['bSearchable_'.$i]) && $input['bSearchable_'.$i] == 'true' && $input['sSearch_'.$i] != '' ) {
+                $aFilteringRules[] = $aColumns[$i]." LIKE '%" . $input['sSearch_'.$i] ."%'";
+            }
+        }
+
+        if (!empty($aFilteringRules)) {
+            $sWhere = " WHERE ".implode(" AND ", $aFilteringRules);
+        } else {
+            $sWhere = "";
+        }
+
+
+
+        /**
+         * SQL queries
+         * Get data to display
+         */
+        $aQueryColumns = implode(', ', $aColumns);
+
+
+		if($input['iDisplayLength'] == '-1'){
+			$sQuery = $em->createQuery("
+			SELECT $aQueryColumns
+			FROM ".$sTable." p ".$sWhere.$sOrder."")
+				
+			;
+			$rResult = $sQuery->getResult();
+
+
+			$sQuery = $em->createQuery("
+			SELECT p
+			FROM ".$sTable." p ".$sWhere.$sOrder."")
+				
+			;
+		}else{
+			$sQuery = $em->createQuery("
+			SELECT $aQueryColumns
+			FROM ".$sTable." p ".$sWhere.$sOrder."")
+				->setFirstResult($firstResult)
+				->setMaxResults($maxResults)
+			;
+			$rResult = $sQuery->getResult();
+
+
+			$sQuery = $em->createQuery("
+			SELECT p
+			FROM ".$sTable." p ".$sWhere.$sOrder."")
+				->setFirstResult($firstResult)
+				->setMaxResults($maxResults)
+			;
+		}
+        
+
+        $paginator = new Paginator($sQuery);
+        $iFilteredTotal = count($paginator);
+
+        $sQuery = $em->createQuery("
+        SELECT p
+        FROM ".$sTable." p ".$sWhere.$sOrder."");
+
+        $iTotal = count($paginator = new Paginator($sQuery));
+
+        /**
+         * Output
+         */
+
+
+        $output = array(
+            "sEcho"                => intval($input['sEcho']),
+            "iTotalRecords"        => $iTotal,
+            "iTotalDisplayRecords" => $iFilteredTotal,
+            "aaData"               => array(),
+        );
+
+
+        foreach($rResult as $column){
+            $row = array();
+			$row[] = $column['id'];
+            $row[] = '<td>
+                        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $column['id'] . '" />
+                             <span></span>
+                        </label>
+                      </td>';
+   
+            $row[] = $column['trafficSourceName'];
+            $row[] = $column['campaignName'];
+            $row[] = $column['geo'];
+           
+            $row[] = $column['placement'];
+            
            
             $output['aaData'][] = $row;
         }

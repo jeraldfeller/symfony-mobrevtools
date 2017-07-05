@@ -920,15 +920,25 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::initializeAction',  '_route' => 'app_placementsreports_initialize',);
             }
 
-            if (0 === strpos($pathinfo, '/reports/placements/get-')) {
-                // app_placementsreports_getcampaigns
-                if ($pathinfo === '/reports/placements/get-campaigns') {
-                    return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::getCampaigns',  '_route' => 'app_placementsreports_getcampaigns',);
-                }
+            // app_placementsreports_getcampaigns
+            if ($pathinfo === '/reports/placements/get-campaigns') {
+                return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::getCampaigns',  '_route' => 'app_placementsreports_getcampaigns',);
+            }
 
+            // app_placementsreports_savedata
+            if ($pathinfo === '/reports/placements/save-data') {
+                return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::saveDataAction',  '_route' => 'app_placementsreports_savedata',);
+            }
+
+            if (0 === strpos($pathinfo, '/reports/placements/get-reports')) {
                 // app_placementsreports_ajaxgetlistreports
                 if ($pathinfo === '/reports/placements/get-reports') {
                     return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::ajaxGetListReports',  '_route' => 'app_placementsreports_ajaxgetlistreports',);
+                }
+
+                // app_placementsreports_getreportsplacementssaved
+                if ($pathinfo === '/reports/placements/get-reports-placements-saved') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\PlacementsReportsController::getReportsPlacementsSaved',  '_route' => 'app_placementsreports_getreportsplacementssaved',);
                 }
 
             }
