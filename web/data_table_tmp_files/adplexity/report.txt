@@ -1,1 +1,1 @@
-{"aggregation":"tracking_domains","metric":"hits","dateRange":"today","daysRunning":"","countries":"AU","adTypes":"","affiliateNetworks":"14","trafficSources":"","count":100,"data":[["luckyusercenter.com",1,"iMobiTrax"]]}
+{"aggregation":"tracking_domains","metric":"hits","dateRange":"3d","daysRunning":"1-3","countries":"CA","adTypes":"","affiliateNetworks":"","trafficSources":"","count":100,"action":"automated","data":[]}

@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+
+use AppBundle\Entity\AdplexityAutomatedSettings;
+
 class ExtrasController extends Controller{
     /**
      * @Route("/tools/ip-compiler", name="ipCompile")
@@ -89,9 +92,65 @@ class ExtrasController extends Controller{
             return $this->redirect('/user/login');
         }
     }
-	
-	
-	/**
+
+    /**
+     * @Route("/tools/adplexity/automated")
+     */
+    public function showAdplexityAutomatedAction()
+    {
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $data['data']  = array();
+            file_put_contents("data_table_tmp_files/adplexity/report-automated.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+            $countries = $this->getAdplexityCountries();
+            $adTypes = $this->getAdplexityAdTypes();
+            $networks = $this->getAdplexityNetworks();
+            $sources = $this->getAdplexitySources();
+            $options = array(
+                'countries' => $countries,
+                'adTypes' => $adTypes,
+                'networks' => $networks,
+                'sources' => $sources
+            );
+            return $this->render(
+                'extras/adplexity-automated.html.twig', array(
+                    'options' => $options,
+                    'settings' => $this->getAdplexityAutomatedSettings(),
+                    'page' => 'Automated')
+            );
+        }else{
+            return $this->redirect('/user/login');
+        }
+    }
+
+    public function getAdplexityAutomatedSettings(){
+        $em = $this->getDoctrine()->getEntityManager();
+        $entity = $em->getRepository('AppBundle:AdplexityAutomatedSettings')->findOneBy(array('id' => 1));
+        $data = array();
+        if($entity){
+
+            $countries = explode(',', $entity->getCountries());
+            $adTypes = explode(',', $entity->getAdType());
+            $affiliateNetworks = explode(',', $entity->getAffiliateNetwork());
+            $trafficSources = explode(',', $entity->getTrafficSource());
+            $data = array(
+                'aggregation' => $entity->getAggregation(),
+                'metric' => $entity->getMetric(),
+                'dateRange' => $entity->getDateRange(),
+                'daysRunning' => $entity->getDaysRunning(),
+                'countries' => $countries,
+                'adType' => $adTypes,
+                'affiliateNetwork' => $affiliateNetworks,
+                'trafficSource' => $trafficSources
+            );
+        }
+
+        return $data;
+    }
+
+
+
+    /**
      * @Route("/extras/get-adplexity-report", name="getAdplexityReport")
      */
     public function getAdplexityReport()
@@ -118,7 +177,7 @@ class ExtrasController extends Controller{
 				
 				$return = json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
 				'query' => $query))->getContent(), true);
-				
+
 				if(!isset($return['errorMessage'])){
 					if(count($return) > 0){
 						switch($data['aggregation']){
@@ -350,38 +409,89 @@ class ExtrasController extends Controller{
 						switch($data['aggregation']){
 							case 'tracking_domains':
 								foreach($return['data'] as $row){
-									$data['data'][] = array(
-										$row['domain'],
-										$row['count'],
-										$row['tracking_name']
-									);
+								    if($data['action'] == 'automated'){
+                                        $data['data'][] = array(
+                                            $row['domain'],
+                                            $row['count'],
+                                            $row['tracking_name'],
+                                            '<a href="https://mobile.adplexity.com/search/advertiser?q='.$row['domain'].'&qs=advertiser.lp_url_redirect_outbound&from=-30d&to=0d&order=volume_desc&days=3"
+                                            class="btn blue btn-xs" target="_blank">
+                                            <i class="fa fa-eye"></i></a>'
+                                        );
+                                    }else{
+                                        $data['data'][] = array(
+                                            $row['domain'],
+                                            $row['count'],
+                                            $row['tracking_name']
+                                        );
+                                    }
+									
 								}
 							break;
 							case 'lp_domains':
 								foreach($return as $row){
-									$data['data'][] = array(
-										$row['domain'],
-										$row['count'],
-										''
-									);
+								    if($data['action'] == 'automate'){
+                                        $data['data'][] = array(
+                                            $row['domain'],
+                                            $row['count'],
+                                            '',
+                                            '<a href="https://mobile.adplexity.com/search/advertiser?q='.$row['domain'].'&qs=advertiser.lp_url_redirect_outbound&from=-30d&to=0d&order=volume_desc&days=3"
+                                            class="btn blue btn-xs" target="_blank">
+                                            <i class="fa fa-eye"></i></a>'
+                                        );
+
+                                    }else{
+                                        $data['data'][] = array(
+                                            $row['domain'],
+                                            $row['count'],
+                                            ''
+                                        );
+                                    }
+
 								}
 							break;
 							case 'affiliate_domains':
 								foreach($return as $row){
-									$data['data'][] = array(
-										$row['domain'],
-										$row['count'],
-										$row['affiliate_name']
-									);
+								    if($data['action'] == 'automated'){
+                                        $data['data'][] = array(
+                                            $row['domain'],
+                                            $row['count'],
+                                            $row['affiliate_name'],
+                                            '<a href="https://mobile.adplexity.com/search/advertiser?q='.$row['domain'].'&qs=advertiser.lp_url_redirect_outbound&from=-30d&to=0d&order=volume_desc&days=3"
+                                            class="btn blue btn-xs" target="_blank">
+                                            <i class="fa fa-eye"></i></a>'
+                                        );
+
+                                    }else{
+                                        $data['data'][] = array(
+                                            $row['domain'],
+                                            $row['count'],
+                                            $row['affiliate_name']
+                                        );
+                                    }
+
 								}
 							break;
 							case 'offer_domains':
 								foreach($return as $row){
-									$data['data'][] = array(
-										$row['domain'],
-										$row['count'],
-										''
-									);
+								    if($data['action'] == 'automated'){
+                                        $data['data'][] = array(
+                                            $row['domain'],
+                                            $row['count'],
+                                            '',
+                                            '<a href="https://mobile.adplexity.com/search/advertiser?q='.$row['domain'].'&qs=advertiser.lp_url_redirect_outbound&from=-30d&to=0d&order=volume_desc&days=3"
+                                            class="btn blue btn-xs" target="_blank">
+                                            <i class="fa fa-eye"></i></a>'
+                                        );
+
+                                    }else{
+                                        $data['data'][] = array(
+                                            $row['domain'],
+                                            $row['count'],
+                                            ''
+                                        );
+                                    }
+
 								}
 							break;
 						}
@@ -398,8 +508,50 @@ class ExtrasController extends Controller{
 		
 		
 		
-		
-        file_put_contents("data_table_tmp_files/adplexity/report.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+		if($data['action'] == 'automated'){
+            file_put_contents("data_table_tmp_files/adplexity/report-automated.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+        }else{
+            file_put_contents("data_table_tmp_files/adplexity/report.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+        }
+
+        return new Response(json_encode(true));
+    }
+
+
+    /**
+     * @Route("/extras/save-adplexity-settings")
+     */
+    public function saveAdplexitySettings()
+    {
+        $data = json_decode($_POST['param'], true);
+        $em = $this->getDoctrine()->getEntityManager();
+        $entity = $em->getRepository('AppBundle:AdplexityAutomatedSettings')->find(1);
+        if($entity){
+            $entity->setAggregation($data['aggregation']);
+            $entity->setMetric($data['metric']);
+            $entity->setDateRange($data['dateRange']);
+            $entity->setDaysRunning($data['daysRunning']);
+            $entity->setCountries($data['countries']);
+            $entity->setAdType($data['adTypes']);
+            $entity->setAffiliateNetwork($data['affiliateNetworks']);
+            $entity->setTrafficSource($data['trafficSources']);
+            $em->flush();
+        }else{
+
+            $entity = new AdplexityAutomatedSettings();
+            $entity->setAggregation($data['aggregation']);
+            $entity->setMetric($data['metric']);
+            $entity->setDateRange($data['dateRange']);
+            $entity->setDaysRunning($data['daysRunning']);
+            $entity->setCountries($data['countries']);
+            $entity->setAdType($data['adTypes']);
+            $entity->setAffiliateNetwork($data['affiliateNetworks']);
+            $entity->setTrafficSource($data['trafficSources']);
+            $em->persist($entity);
+            $em->flush();
+        }
+        $em->clear();
+
         return new Response(json_encode(true));
     }
 	

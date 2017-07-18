@@ -581,14 +581,30 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::ipCompile',  '_route' => 'executeIpCompile',);
         }
 
-        // adplexity
-        if ($pathinfo === '/tools/adplexity') {
-            return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showAdplexityAction',  '_route' => 'adplexity',);
+        if (0 === strpos($pathinfo, '/tools/adplexity')) {
+            // adplexity
+            if ($pathinfo === '/tools/adplexity') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showAdplexityAction',  '_route' => 'adplexity',);
+            }
+
+            // app_extras_showadplexityautomated
+            if ($pathinfo === '/tools/adplexity/automated') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showAdplexityAutomatedAction',  '_route' => 'app_extras_showadplexityautomated',);
+            }
+
         }
 
-        // getAdplexityReport
-        if ($pathinfo === '/extras/get-adplexity-report') {
-            return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::getAdplexityReport',  '_route' => 'getAdplexityReport',);
+        if (0 === strpos($pathinfo, '/extras')) {
+            // getAdplexityReport
+            if ($pathinfo === '/extras/get-adplexity-report') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::getAdplexityReport',  '_route' => 'getAdplexityReport',);
+            }
+
+            // app_extras_saveadplexitysettings
+            if ($pathinfo === '/extras/save-adplexity-settings') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::saveAdplexitySettings',  '_route' => 'app_extras_saveadplexitysettings',);
+            }
+
         }
 
         // getFilters
