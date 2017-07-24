@@ -1,0 +1,839 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/clockface/css/clockface.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput-typeahead.css') }}" rel="stylesheet" type="text/css" />
+    <style>
+        .bootstrap-tagsinput {
+            width: 100% !important;
+        }
+    </style>
+{% endblock %}
+{% block nav %}
+    {{ render(controller(
+    'AppBundle:Navmenu:getNavmenu'
+    )) }}
+{% endblock %}
+{% block body %}
+    <h1 class="page-title"> {{ page }}
+
+    </h1>
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li>
+                <i class="icon-home"></i>
+                <a href="/">Home</a>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>Tools</span>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>Adplexity</span>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>{{ page }}</span>
+            </li>
+
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li>
+                        <a href="#">
+                            <i class="icon-bell"></i> Action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-shield"></i> Another action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-user"></i> Something else here</a>
+                    </li>
+                    <li class="divider"> </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-bag"></i> Separated link</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE HEADER-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="portlet light">
+                <div class="portlet-title">
+
+                    <div class="row">
+                        <div class="col-md-4 pull-left" >
+                            <button class="btn blue" data-toggle="modal" data-target="#modalAddPreset"><i class="fa fa-plus"></i> Add New Preset</button>
+                        </div>
+
+                    </div>
+                    <!-- Add Modals -->
+                    <div id="modalAddPreset" class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel2">Add Preset</h4>
+                                </div>
+
+                                <div class="modal-body">
+                                    <h4>Preset Name</h4>
+                                    <input type="text" id="presetName" class="form-control">
+                                    <br>
+                                    <h4>Presets</h4>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-xs-12" id="aggregation" >
+
+                                                <select id="selectAggregation" class="select2 form-control" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="tracking_domains">Tracking Domains</option>
+                                                    <option value="lp_domains">Lp Domains</option>
+                                                    <option value="affiliate_domains">Affiliate Domains</option>
+                                                    <option value="offer_domains">Offer Domains</option>
+                                                </select>
+
+                                            </div>
+                                            <div class="col-md-3 col-xs-12" id="metric">
+                                                <select id="selectMetric" class="select2 form-control" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="hits">Hits</option>
+                                                    <option value="ads">Ads</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12" id="dateRange">
+                                                <select id="selectDateRange" class="select2 form-control" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="today">Today</option>
+
+                                                    <option value="3d">3 days</option>
+                                                    <option value="7d">7 days</option>
+                                                    <option value="14d">14 days</option>
+
+
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12" id="daysRunning">
+                                                <select id="selectDaysRunning" class="select2 form-control" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="1-3">1-3</option>
+                                                    <option value="1-7">1-7</option>
+                                                    <option value="3-7">3-7</option>
+                                                    <option value="7-10">7-10</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-xs-12" id="countries">
+                                                <select id="selectOptionCountries" class="select2_multiple form-control" multiple="multiple" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="all">All</option>
+                                                    {% for item in options.countries %}
+                                                        <option value="{{ item.code }}">{{ item.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12">
+                                                <select id="selectOptionAdTypes" class="select2_multiple form-control" multiple="multiple" style="width: 100%;">
+                                                    <option></option>
+                                                    {% for item in options.adTypes %}
+                                                        <option value="{{ item.id }}|{{ item.name }}">{{ item.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12">
+                                                <select id="selectOptionNetworks" class="select2_multiple form-control" multiple="multiple" style="width: 100%;">
+                                                    <option></option>
+                                                    {% for item in options.networks %}
+                                                        <option value="{{ item.id }}|{{ item.name }}">{{ item.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12">
+                                                <select id="selectOptionSources" class="select2_multiple form-control" multiple="multiple" style="width: 100%;">
+                                                    <option></option>
+                                                    {% for item in options.sources %}
+                                                        <option value="{{ item.id }}|{{ item.name }}">{{ item.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" id="addPresetsBtn" class="btn btn-primary spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Save </span></button>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- edit Modals -->
+                    <div id="modalEditPreset" class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel2">Edit Preset</h4>
+                                </div>
+
+                                <div class="modal-body">
+                                    <h4>Preset Name</h4>
+                                    <input type="text" id="editPresetName" class="form-control">
+                                    <br>
+                                    <h4>Presets</h4>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-xs-12" id="editAggregation" >
+
+                                                <select id="editSelectAggregation" class="select2 form-control" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="tracking_domains">Tracking Domains</option>
+                                                    <option value="lp_domains">Lp Domains</option>
+                                                    <option value="affiliate_domains">Affiliate Domains</option>
+                                                    <option value="offer_domains">Offer Domains</option>
+                                                </select>
+
+                                            </div>
+                                            <div class="col-md-3 col-xs-12" id="editMetric">
+                                                <select id="editSelectMetric" class="select2 form-control" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="hits">Hits</option>
+                                                    <option value="ads">Ads</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12" id="editDateRange">
+                                                <select id="editSelectDateRange" class="select2 form-control" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="today">Today</option>
+
+                                                    <option value="3d">3 days</option>
+                                                    <option value="7d">7 days</option>
+                                                    <option value="14d">14 days</option>
+
+
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12" id="editDaysRunning">
+                                                <select id="editSelectDaysRunning" class="select2 form-control" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="1-3">1-3</option>
+                                                    <option value="1-7">1-7</option>
+                                                    <option value="3-7">3-7</option>
+                                                    <option value="7-10">7-10</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-xs-12" id="editCountries">
+                                                <select id="editSelectOptionCountries" class="select2_multiple form-control" multiple="multiple" style="width: 100%;">
+                                                    <option></option>
+                                                    <option value="all">All</option>
+                                                    {% for item in options.countries %}
+                                                        <option value="{{ item.code }}">{{ item.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12">
+                                                <select id="editSelectOptionAdTypes" class="select2_multiple form-control" multiple="multiple" style="width: 100%;">
+                                                    <option></option>
+                                                    {% for item in options.adTypes %}
+                                                        <option value="{{ item.id }}|{{ item.name }}">{{ item.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12">
+                                                <select id="editSelectOptionNetworks" class="select2_multiple form-control" multiple="multiple" style="width: 100%;">
+                                                    <option></option>
+                                                    {% for item in options.networks %}
+                                                        <option value="{{ item.id }}|{{ item.name }}">{{ item.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 col-xs-12">
+                                                <select id="editSelectOptionSources" class="select2_multiple form-control" multiple="multiple" style="width: 100%;">
+                                                    <option></option>
+                                                    {% for item in options.sources %}
+                                                        <option value="{{ item.id }}|{{ item.name }}">{{ item.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="hidden" id="editPresetId">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" id="editPresetsBtn" class="btn btn-primary spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Save </span></button>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- MODAL FOR DELETE -->
+                    <div class="modal fade" id="modalDeletePreset" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span>
+                                    </button>
+                                    <h2 class="modal-title" id="modalDeleteTitle"><i class="fa fa-warning"></i> Warning</h2>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <p id="delmsg"></p>
+                                            <input type="hidden" id="deletePresetId" class="form-control col-lg-12 col-md-12 col-sm-12">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" id="deletePresetsBtn" class="btn btn-primary spinnerBtn ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Delete </span></button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- /MODAL END FOR DELETE -->
+
+                    <br>
+                </div>
+
+                <div class="portlet-body">
+
+                    <div class="row">
+
+                        <div class="col-lg-12">
+
+                            <table class="table table-striped table-bordered table-hover dt-responsive table-checkable order-column table-header-fixed" width="100%" id="datatable-responsive">
+                                <thead>
+                                <tr>
+                                    <th>Preset Name </th>
+                                    <th>Parameters </th>
+                                    <th>Action </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('assets/global/plugins/autosize/autosize.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/select2/js/select2.full.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/moment.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/clockface/js/clockface.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/pages/scripts/components-date-time-pickers.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js') }}" type="text/javascript"></script>
+    <script>
+        Ladda.bind( '.spinnerBtn' );
+    </script>
+    <script type="text/javascript">
+
+        var ComponentsSelect2 = function() {
+
+            var handleDemo = function() {
+
+                // Set the "bootstrap" theme as the default theme for all Select2
+                // widgets.
+                //
+                // @see https://github.com/select2/select2/issues/2927
+                $.fn.select2.defaults.set("theme", "bootstrap");
+
+                $("#selectAggregation").select2({
+                    placeholder: "Select Aggregation",
+                    allowClear: true
+                });
+
+                $("#selectMetric").select2({
+                    placeholder: "Select Metric",
+                    allowClear: true
+                });
+
+                $("#selectDateRange").select2({
+                    placeholder: "Select Date Range",
+                    allowClear: true
+                });
+
+                $("#selectDaysRunning").select2({
+                    placeholder: "Select Days Running",
+                    allowClear: true
+                });
+
+
+                $("#selectOptionCountries").select2({
+                    placeholder: "Select Countries",
+                    allowClear: true
+                });
+
+                $("#selectOptionAdTypes").select2({
+                    placeholder: "Select Ad Type",
+                    allowClear: true
+                });
+
+                $("#selectOptionNetworks").select2({
+                    placeholder: "Select Affiliate Networks",
+                    allowClear: true
+                });
+
+                $("#selectOptionSources").select2({
+                    placeholder: "Select Traffic Sources",
+                    allowClear: true
+                });
+
+
+                $("#editSelectAggregation").select2({
+                    placeholder: "Select Aggregation",
+                    allowClear: true
+                });
+
+                $("#editSelectMetric").select2({
+                    placeholder: "Select Metric",
+                    allowClear: true
+                });
+
+                $("#editSelectDateRange").select2({
+                    placeholder: "Select Date Range",
+                    allowClear: true
+                });
+
+                $("#editSelectDaysRunning").select2({
+                    placeholder: "Select Days Running",
+                    allowClear: true
+                });
+
+
+                $("#editSelectOptionCountries").select2({
+                    placeholder: "Select Countries",
+                    allowClear: true
+                });
+
+                $("#editSelectOptionAdTypes").select2({
+                    placeholder: "Select Ad Type",
+                    allowClear: true
+                });
+
+                $("#editSelectOptionNetworks").select2({
+                    placeholder: "Select Affiliate Networks",
+                    allowClear: true
+                });
+
+                $("#editSelectOptionSources").select2({
+                    placeholder: "Select Traffic Sources",
+                    allowClear: true
+                });
+
+                // @see https://select2.github.io/examples.html#data-ajax
+                function formatRepo(repo) {
+                    if (repo.loading) return repo.text;
+
+                    var markup = "<div class='select2-result-repository clearfix'>" +
+                        "<div class='select2-result-repository__avatar'><img src='" + repo.owner.avatar_url + "' /></div>" +
+                        "<div class='select2-result-repository__meta'>" +
+                        "<div class='select2-result-repository__title'>" + repo.full_name + "</div>";
+
+                    if (repo.description) {
+                        markup += "<div class='select2-result-repository__description'>" + repo.description + "</div>";
+                    }
+
+                    markup += "<div class='select2-result-repository__statistics'>" +
+                        "<div class='select2-result-repository__forks'><span class='glyphicon glyphicon-flash'></span> " + repo.forks_count + " Forks</div>" +
+                        "<div class='select2-result-repository__stargazers'><span class='glyphicon glyphicon-star'></span> " + repo.stargazers_count + " Stars</div>" +
+                        "<div class='select2-result-repository__watchers'><span class='glyphicon glyphicon-eye-open'></span> " + repo.watchers_count + " Watchers</div>" +
+                        "</div>" +
+                        "</div></div>";
+
+                    return markup;
+                }
+
+                function formatRepoSelection(repo) {
+                    return repo.full_name || repo.text;
+                }
+
+                $(".js-data-example-ajax").select2({
+                    width: "off",
+                    ajax: {
+                        url: "https://api.github.com/search/repositories",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                q: params.term, // search term
+                                page: params.page
+                            };
+                        },
+                        processResults: function(data, page) {
+                            // parse the results into the format expected by Select2.
+                            // since we are using custom formatting functions we do not need to
+                            // alter the remote JSON data
+                            return {
+                                results: data.items
+                            };
+                        },
+                        cache: true
+                    },
+                    escapeMarkup: function(markup) {
+                        return markup;
+                    }, // let our custom formatter work
+                    minimumInputLength: 1,
+                    templateResult: formatRepo,
+                    templateSelection: formatRepoSelection
+                });
+
+                $("button[data-select2-open]").click(function() {
+                    $("#" + $(this).data("select2-open")).select2("open");
+                });
+
+                $(":checkbox").on("click", function() {
+                    $(this).parent().nextAll("select").prop("disabled", !this.checked);
+                });
+
+                // copy Bootstrap validation states to Select2 dropdown
+                //
+                // add .has-waring, .has-error, .has-succes to the Select2 dropdown
+                // (was #select2-drop in Select2 v3.x, in Select2 v4 can be selected via
+                // body > .select2-container) if _any_ of the opened Select2's parents
+                // has one of these forementioned classes (YUCK! ;-))
+                $(".select2, .select2-multiple, .select2-allow-clear, .js-data-example-ajax").on("select2:open", function() {
+                    if ($(this).parents("[class*='has-']").length) {
+                        var classNames = $(this).parents("[class*='has-']")[0].className.split(/\s+/);
+
+                        for (var i = 0; i < classNames.length; ++i) {
+                            if (classNames[i].match("has-")) {
+                                $("body > .select2-container").addClass(classNames[i]);
+                            }
+                        }
+                    }
+                });
+
+                $(".js-btn-set-scaling-classes").on("click", function() {
+                    $("#select2-multiple-input-sm, #select2-single-input-sm").next(".select2-container--bootstrap").addClass("input-sm");
+                    $("#select2-multiple-input-lg, #select2-single-input-lg").next(".select2-container--bootstrap").addClass("input-lg");
+                    $(this).removeClass("btn-primary btn-outline").prop("disabled", true);
+                });
+            }
+
+            return {
+                //main function to initiate the module
+                init: function() {
+                    handleDemo();
+                }
+            };
+
+        }();
+
+        if (App.isAngularJsApp() === false) {
+            jQuery(document).ready(function() {
+
+                ComponentsSelect2.init();
+
+            });
+        }
+
+
+    </script>
+    <script>
+        var lastChecked = null;
+        /* Custom filtering function which will filter data in column four between two values */
+
+
+
+        $(document).on('ready', function() {
+
+            var fixedHeaderOffset = 0;
+            if (App.getViewPort().width < App.getResponsiveBreakpoint('md')) {
+                if ($('.page-header').hasClass('page-header-fixed-mobile')) {
+                    fixedHeaderOffset = $('.page-header').outerHeight(true);
+                }
+            } else if ($('.page-header').hasClass('navbar-fixed-top')) {
+                fixedHeaderOffset = $('.page-header').outerHeight(true);
+            } else if ($('body').hasClass('page-header-fixed')) {
+                fixedHeaderOffset = 64; // admin 5 fixed height
+            }
+            var table = $('#datatable-responsive');
+            var oTable = $('#datatable-responsive').DataTable({
+                fixedHeader: {
+                    header: true,
+                    headerOffset: fixedHeaderOffset
+                },
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": "/tools/adplexity/get-search-presets",
+                responsive: {
+                    details: {
+
+                    }
+                },
+                "iDisplayLength": 20,
+                "lengthMenu": [
+                    [20, 500, 1000, -1],
+                    [20, 500, 1000, "All"] // change per page values here
+                ],
+                "order": [[ 0, "asc" ]]
+            });
+
+            $('#addPresetsBtn').on('click', function(){
+                $btn = $(this)[0];
+                $presetName = $('#presetName').val();
+                if($('#selectAggregation').val() == ''){
+                    $('#aggregation').addClass('has-error');
+                    $hasErrorA = 1;
+                }else{
+                    $('#aggregation').removeClass('has-error');
+                    $hasErrorA = 0;
+                }
+
+                if($('#selectMetric').val() == ''){
+                    $('#metric').addClass('has-error');
+                    $hasErrorM = 1;
+                }else{
+                    $('#metric').removeClass('has-error');
+                    $hasErrorM = 0;
+                }
+
+
+                if($('#selectDateRange').val() == ''){
+                    $('#dateRange').addClass('has-error');
+                    $hasErrorD = 1;
+                }else{
+                    $('#dateRange').removeClass('has-error');
+                    $hasErrorD = 0;
+                }
+
+
+
+                if($('#selectOptionCountries').val() == '' || $('#selectOptionCountries').val() == null){
+                    $('#countries').addClass('has-error');
+                    $hasErrorC = 1;
+                }else{
+                    $('#countries').removeClass('has-error');
+                    $hasErrorC = 0;
+                }
+
+                if($hasErrorA == 0 && $hasErrorM == 0 && $hasErrorD == 0 && $hasErrorC == 0){
+                    if($('#selectOptionCountries').val() != null){
+                        $countries = $('#selectOptionCountries').val().join(',');
+                    }else{
+                        $countries = '';
+                    }
+                    if($('#selectOptionAdTypes').val() != null){
+                        $adTypes = $('#selectOptionAdTypes').val().join(',');
+                    }else{
+                        $adTypes = '';
+                    }
+                    if($('#selectOptionNetworks').val() != null){
+                        $networks = $('#selectOptionNetworks').val().join(',');
+                    }else{
+                        $networks = '';
+                    }
+                    if($('#selectOptionSources').val() != null){
+                        $sources = $('#selectOptionSources').val().join(',');
+                    }else{
+                        $sources = '';
+                    }
+                    $data = {
+                        label: $presetName,
+                        aggregation: $('#selectAggregation').val(),
+                        metric: $('#selectMetric').val(),
+                        dateRange: $('#selectDateRange').val(),
+                        daysRunning: $('#selectDaysRunning').val(),
+                        countries: $countries,
+                        adTypes: $adTypes,
+                        affiliateNetworks: $networks,
+                        trafficSources: $sources
+                    };
+
+                    console.log($data);
+                    addAdplexityPresets($btn, $data, oTable);
+                }
+
+
+            });
+
+
+            $('#editPresetsBtn').on('click', function(){
+                $btn = $(this)[0];
+                $presetName = $('#editPresetName').val();
+                if($('#editSelectAggregation').val() == ''){
+                    $('#editAggregation').addClass('has-error');
+                    $hasErrorA = 1;
+                }else{
+                    $('#editAggregation').removeClass('has-error');
+                    $hasErrorA = 0;
+                }
+
+                if($('#editSelectMetric').val() == ''){
+                    $('#editMetric').addClass('has-error');
+                    $hasErrorM = 1;
+                }else{
+                    $('#editMetric').removeClass('has-error');
+                    $hasErrorM = 0;
+                }
+
+
+                if($('#editSelectDateRange').val() == ''){
+                    $('#editDateRange').addClass('has-error');
+                    $hasErrorD = 1;
+                }else{
+                    $('#editDateRange').removeClass('has-error');
+                    $hasErrorD = 0;
+                }
+
+
+
+                if($('#editSelectOptionCountries').val() == '' || $('#editSelectOptionCountries').val() == null){
+                    $('#editCountries').addClass('has-error');
+                    $hasErrorC = 1;
+                }else{
+                    $('#editCountries').removeClass('has-error');
+                    $hasErrorC = 0;
+                }
+
+                if($hasErrorA == 0 && $hasErrorM == 0 && $hasErrorD == 0 && $hasErrorC == 0) {
+                    if ($('#editSelectOptionCountries').val() != null) {
+                        $countries = $('#editSelectOptionCountries').val().join(',');
+                    } else {
+                        $countries = '';
+                    }
+                    if ($('#editSelectOptionAdTypes').val() != null) {
+                        $adTypes = $('#editSelectOptionAdTypes').val().join(',');
+                    } else {
+                        $adTypes = '';
+                    }
+                    if ($('#editSelectOptionNetworks').val() != null) {
+                        $networks = $('#editSelectOptionNetworks').val().join(',');
+                    } else {
+                        $networks = '';
+                    }
+                    if ($('#editSelectOptionSources').val() != null) {
+                        $sources = $('#editSelectOptionSources').val().join(',');
+                    } else {
+                        $sources = '';
+                    }
+                    $data = {
+                        id: $('#editPresetId').val(),
+                        label: $presetName,
+                        aggregation: $('#editSelectAggregation').val(),
+                        metric: $('#editSelectMetric').val(),
+                        dateRange: $('#editSelectDateRange').val(),
+                        daysRunning: $('#editSelectDaysRunning').val(),
+                        countries: $countries,
+                        adTypes: $adTypes,
+                        affiliateNetworks: $networks,
+                        trafficSources: $sources
+                    };
+
+                    console.log($data);
+                    editAdplexityPresets($btn, $data, oTable);
+                }
+            });
+
+            $('#deletePresetsBtn').on('click', function(){
+                $btn = $(this)[0];
+                $presetId = $('#deletePresetId').val();
+
+                deleteAdplexityPresets($btn, $presetId, oTable);
+            });
+
+        });
+
+        function pushData(elem){
+            $action = $(elem).data('action');
+            $id = $(elem).data('id');
+            $presetName = $(elem).data('name');
+            $aggregation = $(elem).data('aggregation');
+            $metric = $(elem).data('metric');
+            $dateRange = $(elem).data('date-range');
+            $daysRunning = $(elem).data('days-running');
+            $countries = $(elem).data('countries');
+            $countries = $countries.split(',');
+            $adTypes = $(elem).data('ad-type').trim();
+            $adTypes = $adTypes.split(',');
+            $affiliateNetworks = $(elem).data('affiliate-network').trim();
+            $affiliateNetworks = $affiliateNetworks.split(',');
+            $trafficSources = $(elem).data('traffic-source').trim();
+            $trafficSources = $trafficSources.split(',');
+            if($action == 'edit'){
+                $('#editPresetId').val($id);
+                $('#editPresetName').val($presetName);
+                $('#editSelectAggregation').val($aggregation).trigger('change');
+                $('#editSelectMetric').val($metric).trigger('change');
+                $('#editSelectDateRange').val($dateRange).trigger('change');
+                $('#editSelectDaysRunning').val($daysRunning).trigger('change');
+                $('#editSelectOptionCountries').val($countries).trigger('change');
+                $('#editSelectOptionAdTypes').val($adTypes).trigger('change');
+                $('#editSelectOptionNetworks').val($affiliateNetworks).trigger('change');
+                $('#editSelectOptionSources').val($trafficSources).trigger('change');
+
+            }else if($action == 'delete'){
+                $('#deletePresetId').val($id);
+                $('#delmsg').html('Are you sure do you want to delete <b>' + $presetName+'</b>?');
+                console.log($presetName);
+            }
+
+        }
+
+    </script>
+
+    <!-- AJAX CALLS -->
+    <script src="{{ asset('assets/ajax/extras/extras.js') }}" type="text/javascript"></script>
+    <!-- END AJAX CALLS -->
+{% endblock %}

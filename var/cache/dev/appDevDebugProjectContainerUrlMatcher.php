@@ -592,12 +592,30 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showAdplexityAutomatedAction',  '_route' => 'app_extras_showadplexityautomated',);
             }
 
+            // app_extras_showadplexitysearchpresets
+            if ($pathinfo === '/tools/adplexity/search-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::showAdplexitySearchPresetsAction',  '_route' => 'app_extras_showadplexitysearchpresets',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/extras')) {
-            // getAdplexityReport
-            if ($pathinfo === '/extras/get-adplexity-report') {
-                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::getAdplexityReport',  '_route' => 'getAdplexityReport',);
+            // app_extras_executemultipleadplexitysettingsreport
+            if ($pathinfo === '/extras/execute-multiple-adplexity-settings') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::executeMultipleAdplexitySettingsReport',  '_route' => 'app_extras_executemultipleadplexitysettingsreport',);
+            }
+
+            if (0 === strpos($pathinfo, '/extras/get-adplexity-report')) {
+                // getAdplexityReport
+                if ($pathinfo === '/extras/get-adplexity-report') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::getAdplexityReport',  '_route' => 'getAdplexityReport',);
+                }
+
+                // app_extras_getadplexityformultireport
+                if ($pathinfo === '/extras/get-adplexity-report-for-multi') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::getAdplexityForMultiReport',  '_route' => 'app_extras_getadplexityformultireport',);
+                }
+
             }
 
             // app_extras_saveadplexitysettings
@@ -605,6 +623,26 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::saveAdplexitySettings',  '_route' => 'app_extras_saveadplexitysettings',);
             }
 
+            // app_extras_addadplexitypresets
+            if ($pathinfo === '/extras/add-adplexity-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::addAdplexityPresets',  '_route' => 'app_extras_addadplexitypresets',);
+            }
+
+            // app_extras_editadplexitypresets
+            if ($pathinfo === '/extras/edit-adplexity-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::editAdplexityPresets',  '_route' => 'app_extras_editadplexitypresets',);
+            }
+
+            // app_extras_deleteadplexitypresets
+            if ($pathinfo === '/extras/delete-adplexity-presets') {
+                return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::deleteAdplexityPresets',  '_route' => 'app_extras_deleteadplexitypresets',);
+            }
+
+        }
+
+        // app_extras_adplexitygetsearchpresets
+        if ($pathinfo === '/tools/adplexity/get-search-presets') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ExtrasController::adplexityGetSearchPresets',  '_route' => 'app_extras_adplexitygetsearchpresets',);
         }
 
         // getFilters

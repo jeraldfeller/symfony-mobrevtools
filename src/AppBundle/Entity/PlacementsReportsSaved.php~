@@ -139,4 +139,3 @@ class PlacementsReportsSaved
         return $this->id;
     }
 }
-

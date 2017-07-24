@@ -254,5 +254,120 @@ class AdplexityAutomatedSettings
     {
         return $this->id;
     }
-}
+    /**
+     * @var string
+     */
+    private $label;
 
+
+    /**
+     * Set label
+     *
+     * @param string $label
+     *
+     * @return AdplexityAutomatedSettings
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+    
+        return $this;
+    }
+
+    /**
+     * Get label
+     *
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+    /**
+     * @var string
+     */
+    private $adTypeName;
+
+    /**
+     * @var string
+     */
+    private $affiliateNetworkName;
+
+    /**
+     * @var string
+     */
+    private $trafficSourceName;
+
+
+    /**
+     * Set adTypeName
+     *
+     * @param string $adTypeName
+     *
+     * @return AdplexityAutomatedSettings
+     */
+    public function setAdTypeName($adTypeName)
+    {
+        $this->adTypeName = $adTypeName;
+    
+        return $this;
+    }
+
+    /**
+     * Get adTypeName
+     *
+     * @return string
+     */
+    public function getAdTypeName()
+    {
+        return $this->adTypeName;
+    }
+
+    /**
+     * Set affiliateNetworkName
+     *
+     * @param string $affiliateNetworkName
+     *
+     * @return AdplexityAutomatedSettings
+     */
+    public function setAffiliateNetworkName($affiliateNetworkName)
+    {
+        $this->affiliateNetworkName = $affiliateNetworkName;
+    
+        return $this;
+    }
+
+    /**
+     * Get affiliateNetworkName
+     *
+     * @return string
+     */
+    public function getAffiliateNetworkName()
+    {
+        return $this->affiliateNetworkName;
+    }
+
+    /**
+     * Set trafficSourceName
+     *
+     * @param string $trafficSourceName
+     *
+     * @return AdplexityAutomatedSettings
+     */
+    public function setTrafficSourceName($trafficSourceName)
+    {
+        $this->trafficSourceName = $trafficSourceName;
+    
+        return $this;
+    }
+
+    /**
+     * Get trafficSourceName
+     *
+     * @return string
+     */
+    public function getTrafficSourceName()
+    {
+        return $this->trafficSourceName;
+    }
+}

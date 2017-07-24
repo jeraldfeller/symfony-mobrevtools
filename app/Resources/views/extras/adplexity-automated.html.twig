@@ -73,204 +73,30 @@
                 <div class="portlet-body">
                     <div class="row">
                         <div class="form-group">
-                            <div class="col-md-3 col-xs-12" id="aggregation">
-
-                                <select id="selectAggregation" class="select2 form-control" >
-                                    {% set selectTrackingDomains = '' %}
-                                    {% set selectLpDomains = '' %}
-                                    {% set selectAffiliateDomains = '' %}
-                                    {% set selectOfferDomains = '' %}
-                                    {% if settings.aggregation == 'tracking_domains' %}
-                                        {% set selectTrackingDomains = 'selected' %}
-                                    {% elseif settings.aggregation == 'lp_domains' %}
-                                        {% set selectLpDomains = 'selected' %}
-                                    {% elseif settings.aggregation == 'affiliate_domains' %}
-                                        {% set selectAffiliateDomains = 'selected' %}
-                                    {% elseif settings.aggregation == 'offer_domains' %}
-                                        {% set selectOfferDomains = 'selected' %}
-                                    {% endif %}
-                                    <option></option>
-                                    <option value="tracking_domains" {{ selectTrackingDomains }}>Tracking Domains</option>
-                                    <option value="lp_domains" {{ selectLpDomains }}>Lp Domains</option>
-                                    <option value="affiliate_domains" {{ selectAffiliateDomains }}>Affiliate Domains</option>
-                                    <option value="offer_domains" {{ selectOfferDomains }}>Offer Domains</option>
-                                </select>
-
-                            </div>
-                            <div class="col-md-3 col-xs-12" id="metric">
-                                <select id="selectMetric" class="select2 form-control" >
-                                    {% set selectHits = '' %}
-                                    {% set selectAds = '' %}
-                                    {% if settings.metric == 'hits' %}
-                                        {% set selectHits = 'selected' %}
-                                    {% elseif settings.metric == 'ads' %}
-                                        {% set selectAds = 'selected' %}
-                                    {% endif %}
-                                    <option></option>
-                                    <option value="hits" {{ selectHits }}>Hits</option>
-                                    <option value="ads" {{ selectAds }}>Ads</option>
+                            <div class="col-md-4 col-xs-12" id="preset">
+                                <select id="selectOptionPreset" class="select2_multiple form-control" multiple="multiple">
+                                    {% for item in presets %}
+                                        <option value="{{ item.id }}">{{ item.label }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-3 col-xs-12" id="dateRange">
-                                <select id="selectDateRange" class="select2 form-control" >
-                                    {% set selectToday = '' %}
-                                    {% set select3d = '' %}
-                                    {% set select7d = '' %}
-                                    {% set select14d = '' %}
-                                    {% if settings.dateRange == 'today' %}
-                                        {% set selectToday = 'selected' %}
-                                    {% elseif settings.dateRange == '3d' %}
-                                        {% set select3d = 'selected' %}
-                                    {% elseif settings.dateRange == '7d' %}
-                                        {% set select7d = 'selected' %}
-                                    {% elseif settings.dateRange == '14d' %}
-                                        {% set select14d = 'selected' %}
-                                    {% endif %}
-                                    <option></option>
-                                    <option value="today" {{ selectToday }}>Today</option>
 
-                                    <option value="3d" {{ select3d }}>3 days</option>
-                                    <option value="7d" {{ select7d }}>7 days</option>
-                                    <option value="14d" {{ select14d }}>14 days</option>
-
-
-                                </select>
-                            </div>
-                            <div class="col-md-3 col-xs-12" id="daysRunning">
-                                <select id="selectDaysRunning" class="select2 form-control" >
-                                    {% set select1_3 = '' %}
-                                    {% set select1_7 = '' %}
-                                    {% set select3_7 = '' %}
-                                    {% set select7_10 = '' %}
-                                    {% if settings.daysRunning == '1-3' %}
-                                        {% set select1_3 = 'selected' %}
-                                    {% elseif settings.daysRunning == '1-7' %}
-                                        {% set select1_7 = 'selected' %}
-                                    {% elseif settings.daysRunning == '3-7' %}
-                                        {% set select3_7 = 'selected' %}
-                                    {% elseif settings.daysRunning == '7-10' %}
-                                        {% set select7_10 = 'selected' %}
-                                    {% endif %}
-                                    <option></option>
-                                    <option value="1-3" {{ select1_3 }}>1-3</option>
-                                    <option value="1-7" {{ select1_7 }}>1-7</option>
-                                    <option value="3-7" {{ select3_7 }}>3-7</option>
-                                    <option value="7-10" {{ select7_10 }}>7-10</option>
-
-                                </select>
+                            <div class="col-md-3 col-xs-12">
+                                <button class="btn blue spinnerBtn ladda-button" id="executeBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-play"></i> Execute</span></button>
                             </div>
                         </div>
                     </div>
-                    <br>
 
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="col-md-3 col-xs-12" id="countries">
-                                <select id="selectOptionCountries" class="select2_multiple form-control" multiple="multiple">
-                                    <option></option>
-                                    {% if 'all' in settings.countries  %}
-                                        {% set selectedAll = 'selected' %}
-                                    {% else %}
-                                        {% set selectedAll = '' %}
-                                    {% endif %}
-                                    <option value="all" {{ selectedAll }}>All</option>
-                                    {% for item in options.countries %}
-                                        {% if item.code in settings.countries  %}
-                                            {% set selectedCountry = 'selected' %}
-                                        {% else %}
-                                            {% set selectedCountry = '' %}
-                                        {% endif %}
-                                        <option value="{{ item.code }}" {{ selectedCountry }}>{{ item.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-3 col-xs-12">
-                                <select id="selectOptionAdTypes" class="select2_multiple form-control" multiple="multiple">
-                                    <option></option>
-                                    {% for item in options.adTypes %}
-                                        {% if item.id in settings.adType %}
-                                            {% set selectAdType = 'selected' %}
-                                        {% else %}
-                                            {% set selectAdType = '' %}
-                                        {% endif %}
-                                        <option value="{{ item.id }}" {{ selectAdType }}>{{ item.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-3 col-xs-12">
-                                <select id="selectOptionNetworks" class="select2_multiple form-control" multiple="multiple">
-                                    <option></option>
-                                    {% for item in options.networks %}
-                                        {% if item.name != 'None' %}
-                                            {% if item.id in settings.affiliateNetwork %}
-                                                {% set selectAffiliateNetwork = 'selected' %}
-                                            {% else %}
-                                                {% set selectAffiliateNetwork = '' %}
-                                            {% endif %}
-                                            <option value="{{ item.id }}" {{ selectAffiliateNetwork }}>{{ item.name }}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-3 col-xs-12">
-                                <select id="selectOptionSources" class="select2_multiple form-control" multiple="multiple">
-                                    <option></option>
-                                    {% for item in options.sources %}
-                                        {% if item.id in settings.trafficSource %}
-                                            {% set selectTrafficSource = 'selected' %}
-                                        {% else %}
-                                            {% set selectTrafficSource = '' %}
-                                        {% endif %}
-                                        <option value="{{ item.id }}" {{ selectTrafficSource }}>{{ item.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
 
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-3 col-xs-12">
-                            <button class="btn blue spinnerBtn ladda-button" id="executeBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save</span></button>
-                        </div>
-                    </div>
+
 
                 </div>
             </div>
         </div>
-        <div class="col-lg-12">
-            <div class="portlet light">
-                <div class="portlet-title">
+        <div id="resultContainer">
 
-                    <div class="caption font-green-sharp">
-                        <i class="fa fa-table font-green-sharp"></i>
-                        <span class="caption-subject bold uppercase">Data Table</span>
-                    </div>
-
-                </div>
-                <div class="portlet-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-striped table-bordered table-hover dt-responsive" style="width: 100%;" id="datatable-responsive">
-                                <thead>
-                                <tr>
-                                    <th>Domain</th>
-                                    <th>Count</th>
-                                    <th>Aggregate Name</th>
-                                    <th>View</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
         </div>
+
     </div>
     </div>
 {% endblock %}
@@ -292,46 +118,12 @@
                 // @see https://github.com/select2/select2/issues/2927
                 $.fn.select2.defaults.set("theme", "bootstrap");
 
-                $("#selectAggregation").select2({
-                    placeholder: "Select Aggregation",
+
+                $("#selectOptionPreset").select2({
+                    placeholder: "Select Preset",
                     allowClear: true
                 });
 
-                $("#selectMetric").select2({
-                    placeholder: "Select Metric",
-                    allowClear: true
-                });
-
-                $("#selectDateRange").select2({
-                    placeholder: "Select Date Range",
-                    allowClear: true
-                });
-
-                $("#selectDaysRunning").select2({
-                    placeholder: "Select Days Running",
-                    allowClear: true
-                });
-
-
-                $("#selectOptionCountries").select2({
-                    placeholder: "Select Countries",
-                    allowClear: true
-                });
-
-                $("#selectOptionAdTypes").select2({
-                    placeholder: "Select Ad Type",
-                    allowClear: true
-                });
-
-                $("#selectOptionNetworks").select2({
-                    placeholder: "Select Affiliate Networks",
-                    allowClear: true
-                });
-
-                $("#selectOptionSources").select2({
-                    placeholder: "Select Traffic Sources",
-                    allowClear: true
-                });
 
                 // @see https://select2.github.io/examples.html#data-ajax
                 function formatRepo(repo) {
@@ -489,91 +281,16 @@
 
 
             $('#executeBtn').on('click', function(){
+
                 $btn = $(this)[0];
 
-                if($('#selectAggregation').val() == ''){
-                    $('#aggregation').addClass('has-error');
-                    $hasErrorA = 1;
-                }else{
-                    $('#aggregation').removeClass('has-error');
-                    $hasErrorA = 0;
+                $data = {
+                    preset: $('#selectOptionPreset').val(),
+                    index: 0
                 }
-
-                if($('#selectMetric').val() == ''){
-                    $('#metric').addClass('has-error');
-                    $hasErrorM = 1;
-                }else{
-                    $('#metric').removeClass('has-error');
-                    $hasErrorM = 0;
-                }
-
-
-                if($('#selectDateRange').val() == ''){
-                    $('#dateRange').addClass('has-error');
-                    $hasErrorD = 1;
-                }else{
-                    $('#dateRange').removeClass('has-error');
-                    $hasErrorD = 0;
-                }
-
-
-
-                if($('#selectOptionCountries').val() == '' || $('#selectOptionCountries').val() == null){
-                    $('#countries').addClass('has-error');
-                    $hasErrorC = 1;
-                }else{
-                    $('#countries').removeClass('has-error');
-                    $hasErrorC = 0;
-                }
-
-                if($hasErrorA == 0 && $hasErrorM == 0 && $hasErrorD == 0 && $hasErrorC == 0){
-                    if($('#selectOptionCountries').val() != null){
-                        $countries = $('#selectOptionCountries').val().join(',');
-                    }else{
-                        $countries = '';
-                    }
-                    if($('#selectOptionAdTypes').val() != null){
-                        $adTypes = $('#selectOptionAdTypes').val().join(',');
-                    }else{
-                        $adTypes = '';
-                    }
-                    if($('#selectOptionNetworks').val() != null){
-                        $networks = $('#selectOptionNetworks').val().join(',');
-                    }else{
-                        $networks = '';
-                    }
-                    if($('#selectOptionSources').val() != null){
-                        $sources = $('#selectOptionSources').val().join(',');
-                    }else{
-                        $sources = '';
-                    }
-                    $data = {
-                        aggregation: $('#selectAggregation').val(),
-                        metric: $('#selectMetric').val(),
-                        dateRange: $('#selectDateRange').val(),
-                        daysRunning: $('#selectDaysRunning').val(),
-                        countries: $countries,
-                        adTypes: $adTypes,
-                        affiliateNetworks: $networks,
-                        trafficSources: $sources,
-                        count: 100,
-                        action: 'automated'
-                    };
-
-                    console.log($data);
-
-                  //  getAdplexityReport($btn, $data);
-                    saveAdplexitySettings($btn, $data);
-
-                }else{
-                    showNotification('warning', 'Warning', 'Please select required fields..');
-                    var l = Ladda.create($btn);
-                    l.start();
-                    setTimeout(function(){l.stop();}, 200);
-
-                }
-
-
+                App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i><span id="progress-label">Processing...</span></h2>' });
+                $('#resultContainer').empty();
+                executeAutomatedAdpexitySettings($btn, $data);
 
             });
 
