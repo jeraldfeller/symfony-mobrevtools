@@ -655,7 +655,7 @@
                     },
                     "iDisplayLength": 50,
                     "lengthMenu": [
-                        [50, 200, 500, 1000, -1],
+                        [50, 200, 500, 1000, 25],
                         [50, 200, 500, 1000, "All"] // change per page values here
                     ],
                     "columnDefs": [
@@ -780,6 +780,165 @@
                     deferRender:    true
 
 
+                });
+
+                $('#datatable-responsive_length select').on('change', function(){
+                    console.log($(this).val());
+                    if($(this).val() == 25){
+                        $('#datatable-responsive').DataTable().destroy();
+                        var table = $('#datatable-responsive');
+                        var oTable = $('#datatable-responsive').DataTable({
+                            "bProcessing": true,
+                            "bServerSide": true,
+                            "fnServerData": function (sSource, aoData, fnCallback) {
+
+                                aoData.push({"name": "type", "value": $('#filterByType').val()});
+                                aoData.push({"name": "id", "value": $('#id').val()});
+                                $.getJSON(sSource, aoData, function (json) {
+
+                                    fnCallback(json)
+                                });
+                            },
+                            "sAjaxSource": "/ajax/get-placement-list/{{ tid }}",
+
+                            responsive: {
+                                details: {
+
+                                }
+                            },
+                            ajax: function ( data, callback, settings ) {
+
+                                console.log(settings);
+                                var out = [];
+
+                                for ( var i=data.start, ien=data.start+data.length ; i<ien ; i++ ) {
+                                    out.push( [ i+'-1', i+'-2', i+'-3', i+'-4', i+'-5' ] );
+                                }
+
+                                setTimeout( function () {
+                                    console.log(callback);
+                                    callback( {
+                                        draw: data.draw,
+                                        data: out
+                                    } );
+                                }, 50 );
+                            },
+                            scrollY: 1800,
+                            scroller: {
+                                loadingIndicator: true
+                            },
+                            "columnDefs": [
+                                {  // set default column settings
+                                    'orderable': false,
+                                    'targets': [0]
+                                },
+                                {
+                                    "searchable": false,
+                                    "targets": [0]
+                                }
+                            ],
+                            "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+                            buttons: [
+                                {
+                                    className: 'btn dark btn-outline',
+                                    text: '<i class="fa fa-refresh"></i> Refresh Table',
+                                    header: false,
+                                    action: function ( e, dt, node, config ) {
+                                        oTable.ajax.reload();
+                                    }
+                                },
+                                {
+                                    className: 'btn blue btn-outline ',
+                                    text: '<i class="fa fa-save"></i> Save Data',
+                                    header: false,
+                                    action: function ( e, dt, node, config ) {
+                                        App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Processing...</h2>' });
+                                        var data = {applyAll: $('#applyAll').is(':checked'),
+                                            type: $('#filterByType').val(),
+                                            trafficSource: '',
+                                            cid: $('#id').val(),
+                                            items:[]
+                                        };
+                                        $('input:checkbox.report-record').each(function () {
+
+
+                                            if($(this).is(':checked') == true){
+                                                var id = (this.checked ? $(this).data('id') : "");
+                                                data.items.push({
+                                                    id: id
+                                                });
+                                            }
+
+
+                                        });
+
+                                        console.log(data);
+                                        saveData(data);
+                                    }
+                                },
+                                {
+                                    className: 'btn red btn-outline',
+                                    text: '<i class="fa fa-trash"></i> Delete Data',
+                                    header: false,
+                                    action: function ( e, dt, node, config ) {
+                                        App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Processing...</h2>' });
+                                        var data = { applyAll: $('#applyAll').is(':checked'),
+                                            type: $('#filterByType').val(),
+                                            items:[]};
+                                        $('input:checkbox.report-record').each(function () {
+
+
+                                            if($(this).is(':checked') == true){
+                                                var id = (this.checked ? $(this).data('id') : "");
+                                                data.items.push({
+                                                    id: id
+                                                });
+                                            }
+
+
+                                        });
+
+                                        console.log(data);
+                                        deleteData(data);
+                                    }
+                                },
+                                {
+                                    className: 'btn green btn-outline ',
+                                    text: '<i class="fa fa-refresh"></i> Resume',
+                                    header: false,
+                                    action: function ( e, dt, node, config ) {
+                                        App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Processing...</h2>' });
+                                        var data = { applyAll: $('#applyAll').is(':checked'), source: '', cid: $('#campaignId').val(), items:[]};
+                                        $('input:checkbox.report-record').each(function () {
+                                            if($(this).is(':checked') == true){
+                                                var id = (this.checked ? $(this).data('id') : "");
+                                                var placement = (this.checked ? $(this).data('placement') : "");
+                                                data.items.push({
+                                                    id: id,
+                                                    placement: placement
+                                                });
+                                            }
+                                        });
+
+                                        console.log(data);
+                                        resumePlacements(data);
+                                    }
+                                },
+                                {
+                                    extend: 'copyHtml5',
+                                    className: 'btn green btn-outline',
+                                    text: '<i class="fa fa-copy"></i> Copy to Clipboard',
+                                    header: false,
+                                    exportOptions: {
+                                        columns: [2]
+                                    }
+                                },
+                            ],
+
+
+
+                        });
+                    }
                 });
 
                 $('#group-checkable').change(function () {
