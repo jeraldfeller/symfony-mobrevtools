@@ -517,6 +517,7 @@ function getCampaignMatch(voluumId)
                             items:[]
                         };
 
+                        $classStatus = '';
                         for($z = 0; $z < info['conditions'].length; $z++){
 
                             $selectedVisits = '';

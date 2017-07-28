@@ -40,43 +40,78 @@ class TestApiCommand extends  ContainerAwareCommand{
         $apiCredentials = $this->getApiCredentialsAllAction();
         $voluumSessionId = $apiCredentials[0]['voluum'];
 
-        $url = 'https://api.voluum.com/report?';
-        $query = array('from' => '2017-05-01T00:00:00Z',
-            'to' => '2017-05-05T00:00:00Z',
-            'tz' => 'America/New_York',
-            'sort' => 'visitTimestamp',
-            'direction' => 'desc',
-            'columns' => 'ip',
-            'columns' => 'visits',
-            'columns' => 'clicks',
-            'columns' => 'conversions',
-            'columns' => 'revenue',
-            'columns' => 'cost',
-            'columns' => 'profit',
-            'columns' => 'cpv',
-            'columns' => 'ctr',
-            'columns' => 'cr',
-            'columns' => 'cv',
-            'columns' => 'roi',
-            'columns' => 'epv',
-            'columns' => 'epc',
-            'columns' => 'ap',
-            'groupBy' => 'ip',
-            'offset' =>  0,
-            'limit' => 10,
-            'include' => 'TRAFFIC',
-            'filter1' => 'campaign',
-            'filter1Value' => '4d864f72-3da3-4563-aa32-94b8f5c78ab4'
+        /*
+        $url = 'https://panel-api.voluum.com/zeropark/campaign/0479fc90-33b5-11e7-8599-0e81439a55b2/isp/bulk/pause';
+        $requestResponse = json_decode($this->voluumRequestOption($url, $voluumSessionId), true);
+
+        var_dump($requestResponse);
+*/
+        $url = 'https://api.voluum.com/zeropark/campaign/0479fc90-33b5-11e7-8599-0e81439a55b2/isp/bulk/pause';
+        $query = array(
+            'voluumCampaignId' => '05d80905-5d59-429f-bfe4-87660a6fcc18',
+            'assocValues' => array("Digital Ocean inc.")
         );
 
-        $response = $this->getVoluumReportsAction($url, $query, 'POST', $voluumSessionId);
+
+        $response = $this->voluumPutAction($url, $query, 'POST', $voluumSessionId);
 
         var_dump($response);
 
     }
 
 
+    public function voluumRequestOption($url, $sessionId){
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            //CURLOPT_PUT => 1,
+            CURLOPT_CUSTOMREQUEST=> 'PUT',
+            //CURLOPT_POSTFIELDS => $json,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $sessionId . '', 'Content-Type: application/json'),
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_VERBOSE => 1
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
 
+
+        return $resp;
+
+    }
+
+
+    public function voluumPutAction($url, $query, $sessionId){
+        $json = json_encode($query);
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            //CURLOPT_PUT => 1,
+
+            CURLOPT_CUSTOMREQUEST=> 'PUT',
+            CURLOPT_POSTFIELDS => $json,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $sessionId . '', 'Content-Type: application/json'),
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_VERBOSE => 1
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+
+        return $resp;
+
+    }
 
     public function getVoluumReportsAction($url = null, $query = null , $method = null, $sessionId = null){
 
