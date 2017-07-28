@@ -468,9 +468,10 @@ function getCampaignMatch(voluumId)
                     }
                     $.each(obj['rulesConditions'], function(index, info){
 
+                        if(info['conditions'].length != 0){
 
-
-
+                        }
+                        console.log(info);
                         $botRuleSelected = '';
                         $blacklistRuleSelected = '';
                         $whitelistRuleSelected = '';
@@ -518,6 +519,32 @@ function getCampaignMatch(voluumId)
                         };
 
                         $classStatus = '';
+
+                        if(info['active'] == 1){
+                            $classStatus = 'green';
+                            $buttons = '<div class="row" id="buttonsContainer-'+index+'"><div class="col-md-5 pull-left">' +
+                                '<button data-index="'+index+'" data-id="'+info['campaignRulesId']+'" data-action="pause" class="btn yellow ladda-button spinnerBtn" data-style="expand-right" data-size="s" onclick="changeRuleStatus(this)"> ' +
+                                '<span class="ladda-label">' +
+                                '<i class="fa fa-pause"></i> Pause </span></button>' +
+                                '<button style="margin-left: 10px;" data-action="edit" data-index="'+index+'" class="btn blue" onclick="editRule(this)"> ' +
+                                '<i class="fa fa-pencil"></i> Edit </button>' +
+                                '<button style="margin-left: 10px;" data-index="'+index+'" data-id="'+info['campaignRulesId']+'" onclick="pushDataDelete(this)" data-toggle="modal" data-target="#deleteRuleModal" class="btn red"><i class="fa fa-trash"></i> Delete</button>' +
+                                '<label style="margin-left: 10px;">Status: Running</label>'+
+                                '</div>' +
+                                '</div>';
+                        }else{
+                            $classStatus = 'yellow';
+                            $buttons = '<div class="row" id="buttonsContainer-'+index+'"><div class="col-md-5 pull-left">' +
+                                '<button data-index="'+index+'" data-id="'+info['campaignRulesId']+'" data-action="resume" class="btn green ladda-button spinnerBtn" data-style="expand-right" data-size="s" onclick="changeRuleStatus(this)"> ' +
+                                '<span class="ladda-label">' +
+                                '<i class="fa fa-play"></i> Resume </span></button>' +
+                                '<button style="margin-left: 10px;" data-action="edit" data-index="'+index+'" class="btn blue" onclick="editRule(this)"> ' +
+                                '<i class="fa fa-pencil"></i> Edit </button>' +
+                                '<button style="margin-left: 10px;" data-index="'+index+'" data-id="'+info['campaignRulesId']+'" onclick="pushDataDelete(this)" data-toggle="modal" data-target="#deleteRuleModal" class="btn red"><i class="fa fa-trash"></i> Delete</button>' +
+                                '<label style="margin-left: 10px;">Status: Paused</label>'+
+                                '</div>' +
+                                '</div>';
+                        }
                         for($z = 0; $z < info['conditions'].length; $z++){
 
                             $selectedVisits = '';
@@ -568,31 +595,7 @@ function getCampaignMatch(voluumId)
 
 
 
-                            if(info['active'] == 1){
-                                $classStatus = 'green';
-                                $buttons = '<div class="row" id="buttonsContainer-'+index+'"><div class="col-md-5 pull-left">' +
-                                '<button data-index="'+index+'" data-id="'+info['campaignRulesId']+'" data-action="pause" class="btn yellow ladda-button spinnerBtn" data-style="expand-right" data-size="s" onclick="changeRuleStatus(this)"> ' +
-                                '<span class="ladda-label">' +
-                                '<i class="fa fa-pause"></i> Pause </span></button>' +
-                                '<button style="margin-left: 10px;" data-action="edit" data-index="'+index+'" class="btn blue" onclick="editRule(this)"> ' +
-                                '<i class="fa fa-pencil"></i> Edit </button>' +
-                                '<button style="margin-left: 10px;" data-index="'+index+'" data-id="'+info['campaignRulesId']+'" onclick="pushDataDelete(this)" data-toggle="modal" data-target="#deleteRuleModal" class="btn red"><i class="fa fa-trash"></i> Delete</button>' +
-                                '<label style="margin-left: 10px;">Status: Running</label>'+
-                                '</div>' +
-                                '</div>';
-                            }else{
-                                $classStatus = 'yellow';
-                                $buttons = '<div class="row" id="buttonsContainer-'+index+'"><div class="col-md-5 pull-left">' +
-                                '<button data-index="'+index+'" data-id="'+info['campaignRulesId']+'" data-action="resume" class="btn green ladda-button spinnerBtn" data-style="expand-right" data-size="s" onclick="changeRuleStatus(this)"> ' +
-                                '<span class="ladda-label">' +
-                                '<i class="fa fa-play"></i> Resume </span></button>' +
-                                '<button style="margin-left: 10px;" data-action="edit" data-index="'+index+'" class="btn blue" onclick="editRule(this)"> ' +
-                                '<i class="fa fa-pencil"></i> Edit </button>' +
-                                '<button style="margin-left: 10px;" data-index="'+index+'" data-id="'+info['campaignRulesId']+'" onclick="pushDataDelete(this)" data-toggle="modal" data-target="#deleteRuleModal" class="btn red"><i class="fa fa-trash"></i> Delete</button>' +
-                                '<label style="margin-left: 10px;">Status: Paused</label>'+
-                                '</div>' +
-                                '</div>';
-                            }
+
 
                             $conditions += '<div class="row" id="row-'+index+'-'+$z+'">' +
                             '<br>' +
@@ -624,7 +627,7 @@ function getCampaignMatch(voluumId)
                             '<input type="text" class="form-control disableTrigger-'+index+'" id="value2-'+index+'-'+$z+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" value="'+info['conditions'][$z]['value2']+'" disabled>'+
                             '</div>' +
                             '<div class="col-md-2">' +
-                            '<button onclick="removeActiveAppend(this)" class="btn red btn-md disableTrigger-'+index+'" data-index-row="'+index+'-'+$z+'" data-index="'+index+'" data-key="'+$z+'" disabled><i class="fa fa-times"></i> Remove</button">' +
+                            '<button onclick="removeActiveAppend(this)" class="btn red btn-md disableTrigger-'+index+'" data-index-row="'+index+'-'+$z+'" data-index="'+index+'" data-key="'+$z+'" disabled><i class="fa fa-times"></i> Remove</button>' +
                             '</div>' +
                             '</div>'
 
@@ -1145,7 +1148,7 @@ function getPresetRuleConditions(id)
                     $conditions += '<div class="row presetRow" data-index="'+$z+'" id="row-'+$z+'">' +
                     '<br>' +
                     '<div class="col-md-3">' +
-                    '<select id="metric-'+$z+'" class="select2_single form-control metric tabindex="-1" >' +
+                    '<select id="metric-'+$z+'" class="select2_single form-control metric" tabindex="-1" >' +
                     '<option></option>' +
                     '<option value="visits" '+ $selectedVisits +'>Visits</option>' +
                     '<option value="conversions" '+ $selectedConversions +'>Conversion</option>' +
@@ -1157,7 +1160,7 @@ function getPresetRuleConditions(id)
                     '</select>' +
                     '</div>' +
                     '<div class="col-md-3">' +
-                    '<select data-index="'+$z+'" onChange="enableInputValue(this)" id="option-'+$z+'" class="select2_single form-control option tabindex="-1">' +
+                    '<select data-index="'+$z+'" onChange="enableInputValue(this)" id="option-'+$z+'" class="select2_single form-control" option tabindex="-1">' +
                     '<option></option>' +
                     '<option value="greaterThan" '+ $selectedGreater +'>Greater Than</option>' +
                     '<option value="lessThan" '+ $selectedLess +'>Less Than</option>' +
@@ -1172,7 +1175,7 @@ function getPresetRuleConditions(id)
                     '<input type="text" class="form-control" id="value2-'+$z+'" placeholder="Enter Value" onkeypress="isNumberKey(event)" value="'+response[$z]['value2']+'" disabled>'+
                     '</div>' +
                     '<div class="col-md-2">' +
-                    '<button onclick="removeAppend(this)" class="btn red btn-md" data-index-row="'+$z+'" data-index="'+$z+'" data-key="'+$z+'"><i class="fa fa-times"></i> Remove</button">' +
+                    '<button onclick="removeAppend(this)" class="btn red btn-md" data-index-row="'+$z+'" data-index="'+$z+'" data-key="'+$z+'"><i class="fa fa-times"></i> Remove</button>' +
                     '</div>' +
                     '</div>'
 
