@@ -501,7 +501,7 @@ class ConversionsReportController extends Controller{
                     'filter1' => 'campaign',
                     'filter1Value' => $dataCampaignId
                 );
-                $url = 'https://panel-api.voluum.com/report?';
+                $url = 'https://api.voluum.com/report?';
                 $ipDataReturnData = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
                     'query' => $query,
                     'method' => 'GET',
@@ -633,7 +633,7 @@ class ConversionsReportController extends Controller{
                     'filter1' => 'campaign',
                     'filter1Value' => $dataCampaignId
                 );
-                $url = 'https://portal.voluum.com/report?';
+                $url = 'https://api.voluum.com/report?';
                 $ipDataReturnData = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
                     'query' => $query,
                     'method' => 'GET',

@@ -2146,4 +2146,38 @@ class CampaignController extends Controller
         return new Response ($this->makeResponse($error, $message, $returnData));
     }
 
+
+    /**
+     * @Route("/campaign/reset")
+     */
+    public function campaignResetAction(){
+        $data = json_decode($_POST['param'], true);
+        $id = $data['id'];
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $zeroParkToken = $apiCredentials[0]['zeropark'];
+        $query = array();
+        $url = 'https://panel.zeropark.com/api/campaign/' . $id . '/targets/resume';
+        $returnedData = json_decode($this->forward('AppBundle:ZeroparkApi:zeroparkRequest', array('url' => $url,
+            'query' => $query,
+            'method' => 1,
+            'token' => $zeroParkToken))->getContent(), true);
+
+        if (!isset($returnedData['error'])) {
+            $return = array(
+                'success' => true
+            );
+        }else{
+            $return = array(
+                'success' => false,
+                'message' => $returnedData['error']
+            );
+        }
+
+
+        return new Response(
+            json_encode($return)
+        );
+    }
+
 }

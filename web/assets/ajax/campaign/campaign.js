@@ -452,7 +452,7 @@ function getCampaignMatch(voluumId)
                 console.log(response);
                 $dataConditionsActive = [];
                 $.each(response['data']['details']['elements'], function(campaign, obj){
-                    console.log(obj['info'][0]['verId'])
+                    $('#campaignTitleName').html(obj['info'][0]['campName']);
                     $('#id').val(obj['info'][0]['id']);
                     $('#campaignId').val(obj['info'][0]['campId']);
                     $('#selectAddVertical').val(obj['info'][0]['verId']).trigger("change");
@@ -1286,6 +1286,52 @@ function updateSafeListActive(data){
 
         var dataArray = JSON.stringify(data);
         XMLHttpRequestObject.send("param=" + dataArray);
+
+
+
+    }
+
+    return false;
+}
+
+
+function resetCampaign(btn, data){
+    var l = Ladda.create(btn);
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/reset");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                if(response['success'] == true){
+                    showNotification('error', 'Success', 'All Placements Successfully Resumed.');
+                    $('#resetModal').modal('hide');
+                }else{
+                    showNotification('warning', 'Warning', response['message']);
+                }
+
+
+                l.stop();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '');
+
+                l.stop();
+            }
+        }
+
+
+        l.start();
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
 
 
 

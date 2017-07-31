@@ -57,7 +57,12 @@ class ZeroparkApiController extends Controller {
      */
     public function zeroparkRequestAction($url = null, $query = null , $method = null, $token = null){
 
-        $url = $url . http_build_query($query);
+        if(count($query) != 0){
+            $url = $url . http_build_query($query);
+        }else{
+            $url = $url;
+        }
+
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here

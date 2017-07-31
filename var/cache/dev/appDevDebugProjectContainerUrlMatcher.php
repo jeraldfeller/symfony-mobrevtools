@@ -345,6 +345,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::addIpRule',  '_route' => 'addIpRule',);
                 }
 
+                // app_campaign_campaignreset
+                if ($pathinfo === '/campaign/reset') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignResetAction',  '_route' => 'app_campaign_campaignreset',);
+                }
+
             }
 
             if (0 === strpos($pathinfo, '/common')) {
