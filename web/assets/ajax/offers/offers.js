@@ -929,3 +929,127 @@ function getEditOffer(data)
 }
 
 
+function getFlow()
+{
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/tools/offers/get-flow");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+
+
+                $.each(response, function(i, val) {
+                    $('#selectFlow').append($('<option data-rules="'+val['rules']+'" value="'+val['id']+'" >' +val['name']+'</option>'
+                    ));
+                });
+
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+
+
+        XMLHttpRequestObject.send("param=1");
+
+    }
+
+    return false;
+}
+
+
+function getFlowToUpdate(data, oTable)
+{
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/tools/offers/get-flow-to-update");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                if(response['success'] == true){
+                    showNotification('success', 'Success', response['message']);
+                }else{
+                    showNotification('warning', 'Warning', response['message']);
+                }
+                console.log(response);
+                oTable.ajax.reload();
+                App.unblockUI();
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+                App.unblockUI();
+            }
+        }
+
+
+
+
+        XMLHttpRequestObject.send("param="+JSON.stringify(data));
+
+    }
+
+    return false;
+}
+
+
+function getFlowRules(flowId)
+{
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/tools/offers/get-flow/rules");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+
+
+        XMLHttpRequestObject.send("param="+flowId);
+
+    }
+
+    return false;
+}
+
+

@@ -1,0 +1,415 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+    <style>
+        .align-left{
+            text-align: left !important;
+            padding-left: 10px !important;
+        }
+    </style>
+{% endblock %}
+{% block nav %}
+    {{ render(controller(
+    'AppBundle:Navmenu:getNavmenu'
+    )) }}
+{% endblock %}
+{% block body %}
+    <h1 class="page-title"> {{ page }}
+        <small></small>
+    </h1>
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li>
+                <i class="icon-home"></i>
+                <a href="/">Home</a>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>Tools</span>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li>
+                <span>Offers</span>
+                <i class="fa fa-angle-right"></i>
+            </li>
+            <li> {{ page }}</li>
+
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li>
+                        <a href="#">
+                            <i class="icon-bell"></i> Action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-shield"></i> Another action</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-user"></i> Something else here</a>
+                    </li>
+                    <li class="divider"> </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-bag"></i> Separated link</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE HEADER-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <select class="form-control" id="selectFlow">
+                                <option></option>
+                            </select>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <select class="form-control" id="selectRules">
+                                <option></option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2">
+                            <button class="btn blue" id="postBtn"><i class="fa fa-send"></i> Post</button>
+                        </div>
+                    </div>
+                    <div class="tools"> </div>
+
+
+                    <!-- modal -->
+                    <div class="modal fade" id="editModal" role="basic" aria-hidden="true">
+                        <div class="modal-dialog modal-md">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4>Edit <span id="editOfferNameDisplay"></span></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row" id="displayEditOffer">
+
+                                    </div>
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">Close</button>
+                                    <button type="button" id="updateOffer"  class="btn blue ladda-button spinnerBtn" data-style="expand-right" data-size="l"><span class="ladda-label"><i class="fa fa-save"></i> Save</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-striped table-hover dt-responsive table-checkable order-column table-header-fixed" width="100%" id="datatable-responsive">
+                        <thead>
+                        <tr>
+                            <th>
+                                <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                    <input type="checkbox" class="group-checkable" data-set="#datatable-responsive .checkboxes" />
+                                    <span></span>
+                                </label>
+                            </th>
+                            <th>Offer </th>
+                            <th>Geo </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('assets/global/plugins/autosize/autosize.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/global/plugins/select2/js/select2.full.min.js') }}" type="text/javascript"></script>
+    <script>
+        Ladda.bind( '.spinnerBtn' );
+    </script>
+    <script type="text/javascript">
+
+        var ComponentsSelect2 = function() {
+
+            var handleDemo = function() {
+
+                // Set the "bootstrap" theme as the default theme for all Select2
+                // widgets.
+                //
+                // @see https://github.com/select2/select2/issues/2927
+                $.fn.select2.defaults.set("theme", "bootstrap");
+
+                $(".selectGeo").select2({
+                    allowClear: true,
+                    placeholder: 'Select Geo',
+                    width: null
+                });
+
+
+
+                $(".selectPreset").select2({
+                    allowClear: true,
+                    placeholder: 'Select Preset',
+                    width: null
+                });
+
+
+                $(".selectNetwork").select2({
+                    allowClear: true,
+                    placeholder: 'Select Affiliate Network',
+                    width: null
+                });
+
+
+                // @see https://select2.github.io/examples.html#data-ajax
+                function formatRepo(repo) {
+                    if (repo.loading) return repo.text;
+
+                    var markup = "<div class='select2-result-repository clearfix'>" +
+                        "<div class='select2-result-repository__avatar'><img src='" + repo.owner.avatar_url + "' /></div>" +
+                        "<div class='select2-result-repository__meta'>" +
+                        "<div class='select2-result-repository__title'>" + repo.full_name + "</div>";
+
+                    if (repo.description) {
+                        markup += "<div class='select2-result-repository__description'>" + repo.description + "</div>";
+                    }
+
+                    markup += "<div class='select2-result-repository__statistics'>" +
+                        "<div class='select2-result-repository__forks'><span class='glyphicon glyphicon-flash'></span> " + repo.forks_count + " Forks</div>" +
+                        "<div class='select2-result-repository__stargazers'><span class='glyphicon glyphicon-star'></span> " + repo.stargazers_count + " Stars</div>" +
+                        "<div class='select2-result-repository__watchers'><span class='glyphicon glyphicon-eye-open'></span> " + repo.watchers_count + " Watchers</div>" +
+                        "</div>" +
+                        "</div></div>";
+
+                    return markup;
+                }
+
+                function formatRepoSelection(repo) {
+                    return repo.full_name || repo.text;
+                }
+
+                $(".js-data-example-ajax").select2({
+                    width: "off",
+                    ajax: {
+                        url: "https://api.github.com/search/repositories",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                q: params.term, // search term
+                                page: params.page
+                            };
+                        },
+                        processResults: function(data, page) {
+                            // parse the results into the format expected by Select2.
+                            // since we are using custom formatting functions we do not need to
+                            // alter the remote JSON data
+                            return {
+                                results: data.items
+                            };
+                        },
+                        cache: true
+                    },
+                    escapeMarkup: function(markup) {
+                        return markup;
+                    }, // let our custom formatter work
+                    minimumInputLength: 1,
+                    templateResult: formatRepo,
+                    templateSelection: formatRepoSelection
+                });
+
+                $("button[data-select2-open]").click(function() {
+                    $("#" + $(this).data("select2-open")).select2("open");
+                });
+
+                $(":checkbox").on("click", function() {
+                    $(this).parent().nextAll("select").prop("disabled", !this.checked);
+                });
+
+                // copy Bootstrap validation states to Select2 dropdown
+                //
+                // add .has-waring, .has-error, .has-succes to the Select2 dropdown
+                // (was #select2-drop in Select2 v3.x, in Select2 v4 can be selected via
+                // body > .select2-container) if _any_ of the opened Select2's parents
+                // has one of these forementioned classes (YUCK! ;-))
+                $(".select2, .select2-multiple, .select2-allow-clear, .js-data-example-ajax").on("select2:open", function() {
+                    if ($(this).parents("[class*='has-']").length) {
+                        var classNames = $(this).parents("[class*='has-']")[0].className.split(/\s+/);
+
+                        for (var i = 0; i < classNames.length; ++i) {
+                            if (classNames[i].match("has-")) {
+                                $("body > .select2-container").addClass(classNames[i]);
+                            }
+                        }
+                    }
+                });
+
+                $(".js-btn-set-scaling-classes").on("click", function() {
+                    $("#select2-multiple-input-sm, #select2-single-input-sm").next(".select2-container--bootstrap").addClass("input-sm");
+                    $("#select2-multiple-input-lg, #select2-single-input-lg").next(".select2-container--bootstrap").addClass("input-lg");
+                    $(this).removeClass("btn-primary btn-outline").prop("disabled", true);
+                });
+            }
+
+            return {
+                //main function to initiate the module
+                init: function() {
+                    handleDemo();
+                }
+            };
+
+        }();
+
+        if (App.isAngularJsApp() === false) {
+            jQuery(document).ready(function() {
+                ComponentsSelect2.init();
+            });
+        }
+
+
+    </script>
+
+    <script type="text/javascript">
+        $(document).on('ready', function() {
+
+            $("#selectFlow").select2({
+                allowClear: true,
+                placeholder: 'Select Flow',
+                width: null
+            });
+
+
+            $("#selectRules").select2({
+                allowClear: true,
+                placeholder: 'Select Rules',
+                width: null
+            });
+
+
+
+
+            getFlow();
+
+            var fixedHeaderOffset = 0;
+            if (App.getViewPort().width < App.getResponsiveBreakpoint('md')) {
+                if ($('.page-header').hasClass('page-header-fixed-mobile')) {
+                    fixedHeaderOffset = $('.page-header').outerHeight(true);
+                }
+            } else if ($('.page-header').hasClass('navbar-fixed-top')) {
+                fixedHeaderOffset = $('.page-header').outerHeight(true);
+            } else if ($('body').hasClass('page-header-fixed')) {
+                fixedHeaderOffset = 64; // admin 5 fixed height
+            }
+            var table = $('#datatable-responsive');
+            var oTable = $('#datatable-responsive').DataTable({
+                fixedHeader: {
+                    header: true,
+                    headerOffset: fixedHeaderOffset
+                },
+                "ajax": '/data_table_tmp_files/offers/offers-flow.txt',
+                responsive: {
+                    details: {}
+                },
+                "iDisplayLength": 20,
+                "lengthMenu": [
+                    [20, 500, 1000, -1],
+                    [20, 500, 1000, "All"] // change per page values here
+                ],
+                "order": [[0, "asc"]],
+                "columnDefs": [
+                    {
+                        'sortable': false,
+                        'searchable': false,
+                        'targets': [0]
+                    },
+                    {"width": "5%", "targets": 0},
+                    {className: "text-center", "targets": 0}
+                ]
+            });
+
+            table.find('.group-checkable').change(function () {
+                var set = jQuery(this).attr("data-set");
+                var checked = jQuery(this).is(":checked");
+                jQuery(set).each(function () {
+                    if (checked) {
+                        $(this).prop("checked", true);
+                        $(this).parents('tr').addClass("active");
+                    } else {
+                        $(this).prop("checked", false);
+                        $(this).parents('tr').removeClass("active");
+                    }
+                });
+            });
+
+            table.on('change', 'tbody tr .checkboxes', function () {
+                $(this).parents('tr').toggleClass("active");
+            });
+
+
+            $('#datatable-responsive').checkboxes('range', true);
+
+
+
+            $('#selectFlow').on('change', function(){
+                $('#selectRules').empty();
+                $id = $(this).val();
+                $rulesSet = $(this).find(':selected').data('rules');
+
+                $rules = $rulesSet.split(',');
+                $.each($rules, function(i, val) {
+                    $values = val.split('|')
+                            $('#selectRules').append($('<option>', {
+                                value: $values[0],
+                                text: $values[1]
+                            }));
+                });
+            });
+
+            $('#postBtn').on('click', function(){
+                $flowId = $('#selectFlow').val();
+                $ruleId = $('#selectRules').val();
+                $items = [];
+
+                $('input:checkbox.report-record').each(function () {
+                    if($(this).is(':checked') == true){
+                        var id = (this.checked ? $(this).data('id') : "");
+                        $items.push(id);
+                    }
+
+
+                });
+
+
+                $data = {
+                    flowId: $flowId,
+                    ruleId: $ruleId,
+                    offers: $items
+                }
+
+                App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> Processing...</h2>' });
+                getFlowToUpdate($data, oTable);
+                console.log($data);
+
+            });
+
+        });
+
+    </script>
+    <!-- AJAX CALLS -->
+    <script src="{{ asset('assets/ajax/offers/offers.js') }}" type="text/javascript"></script>
+    <!-- END AJAX CALLS -->
+{% endblock %}

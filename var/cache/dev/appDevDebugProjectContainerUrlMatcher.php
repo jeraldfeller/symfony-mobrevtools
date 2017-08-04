@@ -789,9 +789,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         if (0 === strpos($pathinfo, '/tools')) {
-            // app_offers_showofferspage
-            if ($pathinfo === '/tools/offers') {
-                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOffersPageAction',  '_route' => 'app_offers_showofferspage',);
+            if (0 === strpos($pathinfo, '/tools/offers')) {
+                // app_offers_showofferspage
+                if ($pathinfo === '/tools/offers') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOffersPageAction',  '_route' => 'app_offers_showofferspage',);
+                }
+
+                // app_offers_showoffersflowpage
+                if ($pathinfo === '/tools/offers/flow') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::showOffersFlowPageAction',  '_route' => 'app_offers_showoffersflowpage',);
+                }
+
             }
 
             // app_offers_addoffers
@@ -957,6 +965,24 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 // deleteOfferUrlPresets
                 if ($pathinfo === '/tools/settings/delete-offer-url-presets') {
                     return array (  '_controller' => 'AppBundle\\Controller\\OffersController::presetDeleteAction',  '_route' => 'deleteOfferUrlPresets',);
+                }
+
+            }
+
+            if (0 === strpos($pathinfo, '/tools/offers/get-flow')) {
+                // app_offers_getflow
+                if ($pathinfo === '/tools/offers/get-flow') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::getFlowAction',  '_route' => 'app_offers_getflow',);
+                }
+
+                // app_offers_getflowtoupdate
+                if ($pathinfo === '/tools/offers/get-flow-to-update') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::getFlowToUpdateAction',  '_route' => 'app_offers_getflowtoupdate',);
+                }
+
+                // app_offers_getflowrules
+                if ($pathinfo === '/tools/offers/get-flow/rules') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\OffersController::getFlowRulesAction',  '_route' => 'app_offers_getflowrules',);
                 }
 
             }
@@ -1347,9 +1373,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                         return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::getVoluumReportsAction',  '_route' => 'voluumReport',);
                     }
 
-                    // voluumPost
-                    if ($pathinfo === '/api/voluum-post/{$url}/{$query}/{$method}/{$sessionId}') {
-                        return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::postVoluumAction',  '_route' => 'voluumPost',);
+                    if (0 === strpos($pathinfo, '/api/voluum-p')) {
+                        // voluumPost
+                        if ($pathinfo === '/api/voluum-post/{$url}/{$query}/{$method}/{$sessionId}') {
+                            return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::postVoluumAction',  '_route' => 'voluumPost',);
+                        }
+
+                        // voluumPut
+                        if ($pathinfo === '/api/voluum-put/{$url}/{$query}/{$method}/{$sessionId}') {
+                            return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'sessionId' => NULL,  '_controller' => 'AppBundle\\Controller\\VoluumApiController::putVoluumAction',  '_route' => 'voluumPut',);
+                        }
+
                     }
 
                 }

@@ -102,6 +102,34 @@ class VoluumApiController extends Controller{
 
 
     /**
+     * @Route("/api/voluum-put/{$url}/{$query}/{$method}/{$sessionId}", name="voluumPut")
+     */
+    public function putVoluumAction($url = null, $query = null, $method = null, $sessionId = null){
+
+        $json = json_encode($query);
+        // Get cURL resource
+        $curl = curl_init();
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            //CURLOPT_PUT => 1,
+            CURLOPT_CUSTOMREQUEST=> 'PUT',
+            CURLOPT_POSTFIELDS => $json,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $sessionId . '', 'Content-Type: application/json')
+        ));
+        // Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        // Close request to clear up some resources
+        curl_close($curl);
+
+        return new Response( $resp );
+    }
+
+
+    /**
      * @Route("/api/voluum/get-countries", name="voluumGetCountries")
      */
     public function voluumGetCountriesAction($sessionId = null){
@@ -172,7 +200,9 @@ class VoluumApiController extends Controller{
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
-            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . '')
+            CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . ''),
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_SSL_VERIFYHOST => 0
         ));
         // Send the request & save response to $resp
         $resp = curl_exec($curl);

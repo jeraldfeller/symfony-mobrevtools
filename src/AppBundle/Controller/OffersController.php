@@ -61,6 +61,37 @@ class OffersController extends Controller{
 
     }
 
+
+    /**
+     * @Route("/tools/offers/flow")
+     */
+    public function showOffersFlowPageAction(){
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+            //    $this->getOffersToFileFlowAction();
+                return $this->render(
+                    'offers/offers-flow.html.twig', array(
+                        'page' => 'Flow'
+                    )
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+
+        }else{
+            return $this->redirect('/user/login');
+        }
+
+
+    }
+
     /**
      * @Route("/tools/add-offers")
      */
@@ -2360,6 +2391,7 @@ class OffersController extends Controller{
 
 
         foreach($apiResponse['offers'] as $row){
+
             if(!isset($row['country'])){
                 $country = 'Global';
             }else{
@@ -2409,6 +2441,236 @@ class OffersController extends Controller{
 
 
     }
+
+
+    public function getOffersToFileFlowAction(){
+
+
+        $this->clearTmpFilesAction();
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+
+        $query = array();
+        $url = 'https://api.voluum.com/offer?';
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+
+        foreach($apiResponse['offers'] as $row){
+
+            if(!isset($row['country'])){
+                $country = 'Global';
+            }else{
+                $country = $row['country']['name'];
+            }
+
+            $data['data'][] = array(
+                '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" data-id="' . $row['id'] . '"  />
+                             <span></span>
+                           
+                        </label>',
+                $row['name'],
+                $country
+            );
+
+        }
+
+        file_put_contents("data_table_tmp_files/offers/offers-flow.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+
+
+    }
+
+
+    /**
+     * @Route("tools/offers/get-flow")
+     */
+    public function getFlowAction(){
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+
+        $from = date('Y-m-d');
+        $to = date('Y-m-d', strtotime('+1 days'));
+
+        $url = 'https://api.voluum.com/flow';
+        /*
+        $query = array(
+            'from' => $from.'T00:00:00Z',
+            'to' => $to.'T00:00:00Z',
+            'tz' => 'America/Chicago',
+            'sort' => 'visits',
+            'direction' => 'desc',
+            'columns' => 'flowName',
+            'columns' => 'visits',
+            'columns' => 'clicks',
+            'columns' => 'conversions',
+            'columns' => 'revenue',
+            'columns' => 'cost',
+            'columns' => 'profit',
+            'columns' => 'cpv',
+            'columns' => 'ctr',
+            'columns' => 'cr',
+            'columns' => 'cv',
+            'columns' => 'roi',
+            'columns' => 'epv',
+            'groupBy' => 'flow',
+            'offset' => 0,
+            'limit' => 1000,
+            'include' => 'ACTIVE',
+            'conversionTimeMode' => 'VISIT',
+        );
+        */
+        $query = array();
+
+
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+        $options = array();
+
+        foreach($apiResponse['flows'] as $row){
+
+
+                $rules = array();
+                foreach($row['conditionalPathsGroups'] as $rule){
+                    $rules[] = $rule['id'].'|'.$rule['name'];
+                }
+                $options[] = array(
+                    'id' => $row['id'],
+                    'name' => $row['name'],
+                    'rules' => implode(',', $rules)
+                );
+
+        }
+
+
+        return new Response(
+            json_encode($options)
+        );
+
+
+    }
+
+
+    /**
+     * @Route("tools/offers/get-flow-to-update")
+     */
+    public function getFlowToUpdateAction(){
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $data = json_decode($_POST['param'], true);
+        $url = 'https://api.voluum.com/flow/'.$data['flowId'];
+        $query = array();
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+        foreach($apiResponse['conditionalPathsGroups'] as $index => $row){
+            if($row['id'] == $data['ruleId']){
+                $indexKey = $index;
+            }
+        }
+
+        for($x = 0; $x < count($data['offers']); $x++){
+            $apiResponse['conditionalPathsGroups'][$indexKey]['paths'][0]['offers'][] = array(
+                'weight' => 100,
+                'offer' => array(
+                    'id' => $data['offers'][$x]
+                )
+            );
+        }
+
+
+        $postReponse = json_decode($this->forward('AppBundle:VoluumApi:putVoluum', array('url' => $url,
+            'query' => $apiResponse,
+            'method' => 'PUT',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+        if(isset($postReponse['id'])){
+            $success = true;
+            $message = 'Offers Successfully Added';
+        }else{
+            $success = false;
+            $message = $postReponse['error']['messages'];
+        }
+        return new Response(
+            json_encode(
+                array(
+                    'success' => $success,
+                    'message' => $message
+                )
+            )
+        );
+    }
+
+
+
+    /**
+     * @Route("tools/offers/get-flow/rules")
+     */
+    public function getFlowRulesAction(){
+
+        $flowId = $_POST['param'];
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+
+        $from = date('Y-m-d');
+        $to = date('Y-m-d', strtotime('+1 days'));
+
+        $url = 'https://api.voluum.com/report?';
+        $query = array(
+            'from' => $from.'T00:00:00Z',
+            'to' => $to.'T00:00:00Z',
+            'tz' => 'America/Chicago',
+            'sort' => 'visits',
+            'direction' => 'desc',
+            'columns' => 'flowName',
+            'columns' => 'visits',
+            'columns' => 'clicks',
+            'columns' => 'conversions',
+            'columns' => 'revenue',
+            'columns' => 'cost',
+            'columns' => 'profit',
+            'columns' => 'cpv',
+            'columns' => 'ctr',
+            'columns' => 'cr',
+            'columns' => 'cv',
+            'columns' => 'roi',
+            'columns' => 'epv',
+            'groupBy' => 'flow',
+            'offset' => 0,
+            'limit' => 1000,
+            'include' => 'ACTIVE',
+            'conversionTimeMode' => 'VISIT',
+        );
+
+        $url = 'https://core.voluum.com/flows/'.$flowId;
+
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+        var_dump($apiResponse);
+        return new Response(
+            json_encode(true)
+        );
+
+
+    }
+
+
 
 
     public function clearTmpFilesAction(){

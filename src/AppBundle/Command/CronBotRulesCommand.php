@@ -161,539 +161,542 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                         if (!isset($returnedData['error'])) {
                             $targets = array();
                             foreach ($returnedData['rows'] as $item) {
-                                if(!in_array($item[$customVariableKey], $safeList)){
-                                    if ($key['trafficName'] == 'Zeropark') {
-                                        $ruleSetCount = 1;
-                                        if (count($ruleConditions) > 0) {
-                                            $match = array();
-                                            $tomatch = array();
-                                            $pauseMatchCount = 0;
-                                            $conditionCount = 0;
-                                            $matchCount = 0;
-                                            foreach ($ruleConditions as $conditions ) {
-
-                                                $variable = $conditions['rule_variable'];
-                                                $condition = $conditions['rule_condition'];
-                                                $value1 = $conditions['value1'];
-                                                $value2 = $conditions['value2'];
-
-                                                $match[] = $variable;
-                                                if ($condition == 'lessthan') {
-
-                                                    if ($item[$variable] <= $value1) {
-                                                        $tomatch[] = $variable;
-
-                                                    }
-                                                } else if ($condition == 'greaterthan') {
-
-                                                    if ($item[$variable] >= $value1) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                } else if ($condition == 'equalto'){
-                                                    if ($item[$variable] == $value1) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                }
-                                                else {
-
-                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                }
-
-                                                $result = array_diff($match, $tomatch);
-                                                if (count($result) == 0) {
-                                                    $matchCount = $matchCount + 1;
-                                                }
-
-                                                $conditionCount++;
-
-                                            }
-                                            if($key['operator'] == 'and'){
-                                                if ($conditionCount == $matchCount) {
-                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                                        $targets[] = $item[$customVariableKey];
-                                                    }
-
-                                                    $this->insertBotReport($key['campaignRulesId'],
-                                                        $key['tid'],
-                                                        $key['id'],
-                                                        $key['ruleType'],
-                                                        $item[$customVariableKey],
-                                                        $item['visits'],
-                                                        $item['clicks'],
-                                                        $item['ctr'],
-                                                        $item['conversions'],
-                                                        $item['revenue'],
-                                                        $item['cost'],
-                                                        $item['profit'],
-                                                        $item['cpv'],
-                                                        $item['epv'],
-                                                        $item['roi'],
-                                                        $timeStamp,
-                                                        $status
-                                                    );
-
-
-                                                }
-
-                                                unset($match);
-                                                unset($tomatch);
-                                                //   $ruleSetCount++;
-                                            }else{
-                                                if ($matchCount > 0) {
-                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                                        $targets[] = $item[$customVariableKey];
-                                                    }
-                                                    $this->insertBotReport($key['campaignRulesId'],
-                                                        $key['tid'],
-                                                        $key['id'],
-                                                        $key['ruleType'],
-                                                        $item[$customVariableKey],
-                                                        $item['visits'],
-                                                        $item['clicks'],
-                                                        $item['ctr'],
-                                                        $item['conversions'],
-                                                        $item['revenue'],
-                                                        $item['cost'],
-                                                        $item['profit'],
-                                                        $item['cpv'],
-                                                        $item['epv'],
-                                                        $item['roi'],
-                                                        $timeStamp,
-                                                        $status
-                                                    );
-                                                }
-
-                                                unset($match);
-                                                unset($tomatch);
-                                                $ruleSetCount++;
-                                            }
-
-
-
-
-
-
-                                        }
-
-                                        if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                            $isResumed = 0;
-                                            if (count($ruleConditions) > 0) {
-                                                $matchUnpause = array();
-                                                $tomatchUnpause = array();
-                                                $unpauseMatchCount = 0;
-                                                $unpauseConditionCount = 0;
-                                                $unpauseMatchCount = 0;
-                                                foreach ($ruleConditions as $conditions ) {
-                                                    $variable = $conditions['rule_variable'];
-                                                    $condition = $conditions['rule_condition'];
-                                                    $value1 = $conditions['value1'];
-                                                    $value2 = $conditions['value2'];
-
-                                                    $matchUnpause[] = $variable;
-                                                    if ($condition == 'lessthan') {
-
-                                                        if ($item[$variable] <= $value1) {
-                                                            $tomatchUnpause[] = $variable;
-
-                                                        }
-                                                    } else if ($condition == 'greaterthan') {
-
-                                                        if ($item[$variable] >= $value1) {
-                                                            $tomatchUnpause[] = $variable;
-                                                        }
-                                                    } else if ($condition == 'equalto'){
-                                                        if ($item[$variable] == $value1) {
-                                                            $tomatchUnpause[] = $variable;
-                                                        }
-                                                    }
-                                                    else {
-
-                                                        if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                            $tomatchUnpause[] = $variable;
-                                                        }
-                                                    }
-
-                                                    $result = array_diff($matchUnpause, $tomatchUnpause);
-                                                    if (count($result) == 0) {
-                                                        $unpauseMatchCount = $unpauseMatchCount + 1;
-                                                    }
-
-                                                    $unpauseConditionCount++;
-
-                                                }
-                                                if($key['operator'] == 'and'){
-                                                    if ($unpauseMatchCount == $unpauseConditionCount) {
-                                                        if ($isResumed == 0) {
-                                                            $zeroParkToResumeTargets[] =$item[$customVariableKey];
-
-                                                            if(!isset($response['error'])){
-                                                                $this->updateBotReport(
-                                                                    $key['id'],
-                                                                    $item[$customVariableKey],
-                                                                    $item['visits'],
-                                                                    $item['clicks'],
-                                                                    $item['ctr'],
-                                                                    $item['conversions'],
-                                                                    $item['revenue'],
-                                                                    $item['cost'],
-                                                                    $item['profit'],
-                                                                    $item['cpv'],
-                                                                    $item['epv'],
-                                                                    $item['roi'],
-                                                                    $timeStamp);
-                                                            }
-                                                            $isResumed = 1;
-                                                        }
-                                                    }
-
-                                                    unset($matchUnpause);
-                                                    unset($tomatchUnpause);
-                                                }else{
-                                                    if ($unpauseMatchCount > 0) {
-                                                        $targets[] = $item[$customVariableKey];
-                                                        $this->updateBotReport(
-                                                            $key['id'],
-                                                            $item[$customVariableKey],
-                                                            $item['visits'],
-                                                            $item['clicks'],
-                                                            $item['ctr'],
-                                                            $item['conversions'],
-                                                            $item['revenue'],
-                                                            $item['cost'],
-                                                            $item['profit'],
-                                                            $item['cpv'],
-                                                            $item['epv'],
-                                                            $item['roi'],
-                                                            $timeStamp);
-                                                    }
-
-                                                    unset($match);
-                                                    unset($tomatch);
-                                                    // $ruleSetCount++;
-                                                }
-
-                                            }
-                                        }
-
-
-
-                                    }else if($key['trafficName'] == 'ExoClick'){
-                                        $ruleSetCount = 1;
-                                        if (count($ruleConditions) > 0) {
-                                            $match = array();
-                                            $tomatch = array();
-                                            $pauseMatchCount = 0;
-                                            $conditionCount = 0;
-                                            $matchCount = 0;
-                                            foreach ($ruleConditions as $conditions ) {
-                                                $variable = $conditions['rule_variable'];
-                                                $condition = $conditions['rule_condition'];
-                                                $value1 = $conditions['value1'];
-                                                $value2 = $conditions['value2'];
-
-                                                $match[] = $variable;
-                                                if ($condition == 'lessthan') {
-
-                                                    if ($item[$variable] <= $value1) {
-                                                        $tomatch[] = $variable;
-
-                                                    }
-                                                } else if ($condition == 'greaterthan') {
-
-                                                    if ($item[$variable] >= $value1) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                } else if ($condition == 'equalto'){
-                                                    if ($item[$variable] == $value1) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                }
-                                                else {
-
-                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                }
-
-                                                $result = array_diff($match, $tomatch);
-                                                if (count($result) == 0) {
-                                                    $matchCount = $matchCount + 1;
-                                                }
-
-                                                $conditionCount++;
-
-                                            }
-                                            if($key['operator'] == 'and'){
-                                                if ($conditionCount == $matchCount) {
-                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                                        $targets[] = $item[$customVariableKey];
-                                                    }
-                                                    $this->insertBotReport($key['campaignRulesId'],
-                                                        $key['tid'],
-                                                        $key['id'],
-                                                        $key['ruleType'],
-                                                        $item[$customVariableKey],
-                                                        $item['visits'],
-                                                        $item['clicks'],
-                                                        $item['ctr'],
-                                                        $item['conversions'],
-                                                        $item['revenue'],
-                                                        $item['cost'],
-                                                        $item['profit'],
-                                                        $item['cpv'],
-                                                        $item['epv'],
-                                                        $item['roi'],
-                                                        $timeStamp,
-                                                        $status
-                                                    );
-
-
-                                                }
-
-                                                unset($match);
-                                                unset($tomatch);
-                                                //    $ruleSetCount++;
-                                            }else{
-                                                if ($matchCount > 0) {
-                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                                        $targets[] = $item[$customVariableKey];
-                                                    }
-                                                    $this->insertBotReport($key['campaignRulesId'],
-                                                        $key['tid'],
-                                                        $key['id'],
-                                                        $key['ruleType'],
-                                                        $item[$customVariableKey],
-                                                        $item['visits'],
-                                                        $item['clicks'],
-                                                        $item['ctr'],
-                                                        $item['conversions'],
-                                                        $item['revenue'],
-                                                        $item['cost'],
-                                                        $item['profit'],
-                                                        $item['cpv'],
-                                                        $item['epv'],
-                                                        $item['roi'],
-                                                        $timeStamp,
-                                                        $status
-                                                    );
-                                                }
-
-                                                unset($match);
-                                                unset($tomatch);
-                                                //$ruleSetCount++;
-                                            }
-                                        }
-
-                                        if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                            $isResumed = 0;
-                                            if (count($ruleConditions) > 0) {
-                                                $matchUnpause = array();
-                                                $tomatchUnpause = array();
-                                                $unpauseMatchCount = 0;
-                                                $unpauseConditionCount = 0;
-                                                $unpauseMatchCount = 0;
-                                                foreach ($ruleConditions as $conditions ) {
-                                                    $variable = $conditions['rule_variable'];
-                                                    $condition = $conditions['rule_condition'];
-                                                    $value1 = $conditions['value1'];
-                                                    $value2 = $conditions['value2'];
-
-                                                    $matchUnpause[] = $variable;
-                                                    if ($condition == 'lessthan') {
-
-                                                        if ($item[$variable] <= $value1) {
-                                                            $tomatchUnpause[] = $variable;
-
-                                                        }
-                                                    } else if ($condition == 'greaterthan') {
-
-                                                        if ($item[$variable] >= $value1) {
-                                                            $tomatchUnpause[] = $variable;
-                                                        }
-                                                    } else if ($condition == 'equalto'){
-                                                        if ($item[$variable] == $value1) {
-                                                            $tomatchUnpause[] = $variable;
-                                                        }
-                                                    }
-                                                    else {
-
-                                                        if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                            $tomatchUnpause[] = $variable;
-                                                        }
-                                                    }
-
-                                                    $result = array_diff($matchUnpause, $tomatchUnpause);
-                                                    if (count($result) == 0) {
-                                                        $unpauseMatchCount = $unpauseMatchCount + 1;
-                                                    }
-
-                                                    $unpauseConditionCount++;
-
-                                                }
-                                                if($key['operator'] == 'and'){
-                                                    if ($unpauseMatchCount == $unpauseConditionCount) {
-                                                        if ($isResumed == 0) {
-                                                            $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
-                                                            if(!isset($response['error'])){
-                                                                $this->updateBotReport(
-                                                                    $key['id'],
-                                                                    $item[$customVariableKey],
-                                                                    $item['visits'],
-                                                                    $item['clicks'],
-                                                                    $item['ctr'],
-                                                                    $item['conversions'],
-                                                                    $item['revenue'],
-                                                                    $item['cost'],
-                                                                    $item['profit'],
-                                                                    $item['cpv'],
-                                                                    $item['epv'],
-                                                                    $item['roi'],
-                                                                    $timeStamp);
-                                                            }
-                                                            $isResumed = 1;
-                                                        }
-                                                    }
-
-                                                    unset($matchUnpause);
-                                                    unset($tomatchUnpause);
-                                                }else{
-                                                    if ($unpauseMatchCount > 0) {
-
-                                                        $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
-                                                        $this->updateBotReport(
-                                                            $key['id'],
-                                                            $item[$customVariableKey],
-                                                            $item['visits'],
-                                                            $item['clicks'],
-                                                            $item['ctr'],
-                                                            $item['conversions'],
-                                                            $item['revenue'],
-                                                            $item['cost'],
-                                                            $item['profit'],
-                                                            $item['cpv'],
-                                                            $item['epv'],
-                                                            $item['roi'],
-                                                            $timeStamp);
-                                                    }
-
-                                                    unset($match);
-                                                    unset($tomatch);
-                                                    //  $ruleSetCount++;
-                                                }
-
-                                            }
-                                        }
-
-                                    }else{
-                                        if (count($ruleConditions) > 0) {
-                                            $match = array();
-                                            $tomatch = array();
-                                            $pauseMatchCount = 0;
-                                            $conditionCount = 0;
-                                            $matchCount = 0;
-                                            foreach ($ruleConditions as $conditions ) {
-                                                $variable = $conditions['rule_variable'];
-                                                $condition = $conditions['rule_condition'];
-                                                $value1 = $conditions['value1'];
-                                                $value2 = $conditions['value2'];
-
-                                                $match[] = $variable;
-                                                if ($condition == 'lessthan') {
-
-                                                    if ($item[$variable] <= $value1) {
-                                                        $tomatch[] = $variable;
-
-                                                    }
-                                                } else if ($condition == 'greaterthan') {
-
-                                                    if ($item[$variable] >= $value1) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                } else if ($condition == 'equalto'){
-                                                    if ($item[$variable] == $value1) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                }
-                                                else {
-
-                                                    if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
-                                                        $tomatch[] = $variable;
-                                                    }
-                                                }
-
-                                                $result = array_diff($match, $tomatch);
-                                                if (count($result) == 0) {
-                                                    $matchCount = $matchCount + 1;
-                                                }
-
-                                                $conditionCount++;
-
-                                            }
-                                            if($key['operator'] == 'and'){
-                                                if ($conditionCount == $matchCount) {
-
-                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                                        $targets[] = $item[$customVariableKey];
-                                                    }
-                                                    $this->insertBotReport($key['campaignRulesId'],
-                                                        $key['tid'],
-                                                        $key['id'],
-                                                        $key['ruleType'],
-                                                        $item[$customVariableKey],
-                                                        $item['visits'],
-                                                        $item['clicks'],
-                                                        $item['ctr'],
-                                                        $item['conversions'],
-                                                        $item['revenue'],
-                                                        $item['cost'],
-                                                        $item['profit'],
-                                                        $item['cpv'],
-                                                        $item['epv'],
-                                                        $item['roi'],
-                                                        $timeStamp,
-                                                        $status
-                                                    );
-
-
-                                                }
-
-                                                unset($match);
-                                                unset($tomatch);
-                                                // $ruleSetCount++;
-                                            }else{
-                                                if ($matchCount > 0) {
-                                                    if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
-                                                        $targets[] = $item[$customVariableKey];
-                                                    }
-                                                    $this->insertBotReport($key['campaignRulesId'],
-                                                        $key['tid'],
-                                                        $key['id'],
-                                                        $key['ruleType'],
-                                                        $item[$customVariableKey],
-                                                        $item['visits'],
-                                                        $item['clicks'],
-                                                        $item['ctr'],
-                                                        $item['conversions'],
-                                                        $item['revenue'],
-                                                        $item['cost'],
-                                                        $item['profit'],
-                                                        $item['cpv'],
-                                                        $item['epv'],
-                                                        $item['roi'],
-                                                        $timeStamp,
-                                                        $status
-                                                    );
-                                                }
-
-                                                unset($match);
-                                                unset($tomatch);
-                                                // $ruleSetCount++;
-                                            }
-                                        }
-                                    }
-                                }
+                               if($item['visits'] > 1){
+                                   if(!in_array($item[$customVariableKey], $safeList)){
+                                       if ($key['trafficName'] == 'Zeropark') {
+                                           $ruleSetCount = 1;
+                                           if (count($ruleConditions) > 0) {
+                                               $match = array();
+                                               $tomatch = array();
+                                               $pauseMatchCount = 0;
+                                               $conditionCount = 0;
+                                               $matchCount = 0;
+                                               foreach ($ruleConditions as $conditions ) {
+
+                                                   $variable = $conditions['rule_variable'];
+                                                   $condition = $conditions['rule_condition'];
+                                                   $value1 = $conditions['value1'];
+                                                   $value2 = $conditions['value2'];
+
+                                                   $match[] = $variable;
+                                                   if ($condition == 'lessthan') {
+
+                                                       if ($item[$variable] <= $value1) {
+                                                           $tomatch[] = $variable;
+
+                                                       }
+                                                   } else if ($condition == 'greaterthan') {
+
+                                                       if ($item[$variable] >= $value1) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   } else if ($condition == 'equalto'){
+                                                       if ($item[$variable] == $value1) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   }
+                                                   else {
+
+                                                       if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   }
+
+                                                   $result = array_diff($match, $tomatch);
+                                                   if (count($result) == 0) {
+                                                       $matchCount = $matchCount + 1;
+                                                   }
+
+                                                   $conditionCount++;
+
+                                               }
+                                               if($key['operator'] == 'and'){
+                                                   if ($conditionCount == $matchCount) {
+                                                       if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                           $targets[] = $item[$customVariableKey];
+                                                       }
+
+                                                       $this->insertBotReport($key['campaignRulesId'],
+                                                           $key['tid'],
+                                                           $key['id'],
+                                                           $key['ruleType'],
+                                                           $item[$customVariableKey],
+                                                           $item['visits'],
+                                                           $item['clicks'],
+                                                           $item['ctr'],
+                                                           $item['conversions'],
+                                                           $item['revenue'],
+                                                           $item['cost'],
+                                                           $item['profit'],
+                                                           $item['cpv'],
+                                                           $item['epv'],
+                                                           $item['roi'],
+                                                           $timeStamp,
+                                                           $status
+                                                       );
+
+
+                                                   }
+
+                                                   unset($match);
+                                                   unset($tomatch);
+                                                   //   $ruleSetCount++;
+                                               }else{
+                                                   if ($matchCount > 0) {
+                                                       if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                           $targets[] = $item[$customVariableKey];
+                                                       }
+                                                       $this->insertBotReport($key['campaignRulesId'],
+                                                           $key['tid'],
+                                                           $key['id'],
+                                                           $key['ruleType'],
+                                                           $item[$customVariableKey],
+                                                           $item['visits'],
+                                                           $item['clicks'],
+                                                           $item['ctr'],
+                                                           $item['conversions'],
+                                                           $item['revenue'],
+                                                           $item['cost'],
+                                                           $item['profit'],
+                                                           $item['cpv'],
+                                                           $item['epv'],
+                                                           $item['roi'],
+                                                           $timeStamp,
+                                                           $status
+                                                       );
+                                                   }
+
+                                                   unset($match);
+                                                   unset($tomatch);
+                                                   $ruleSetCount++;
+                                               }
+
+
+
+
+
+
+                                           }
+
+                                           if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                               $isResumed = 0;
+                                               if (count($ruleConditions) > 0) {
+                                                   $matchUnpause = array();
+                                                   $tomatchUnpause = array();
+                                                   $unpauseMatchCount = 0;
+                                                   $unpauseConditionCount = 0;
+                                                   $unpauseMatchCount = 0;
+                                                   foreach ($ruleConditions as $conditions ) {
+                                                       $variable = $conditions['rule_variable'];
+                                                       $condition = $conditions['rule_condition'];
+                                                       $value1 = $conditions['value1'];
+                                                       $value2 = $conditions['value2'];
+
+                                                       $matchUnpause[] = $variable;
+                                                       if ($condition == 'lessthan') {
+
+                                                           if ($item[$variable] <= $value1) {
+                                                               $tomatchUnpause[] = $variable;
+
+                                                           }
+                                                       } else if ($condition == 'greaterthan') {
+
+                                                           if ($item[$variable] >= $value1) {
+                                                               $tomatchUnpause[] = $variable;
+                                                           }
+                                                       } else if ($condition == 'equalto'){
+                                                           if ($item[$variable] == $value1) {
+                                                               $tomatchUnpause[] = $variable;
+                                                           }
+                                                       }
+                                                       else {
+
+                                                           if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                               $tomatchUnpause[] = $variable;
+                                                           }
+                                                       }
+
+                                                       $result = array_diff($matchUnpause, $tomatchUnpause);
+                                                       if (count($result) == 0) {
+                                                           $unpauseMatchCount = $unpauseMatchCount + 1;
+                                                       }
+
+                                                       $unpauseConditionCount++;
+
+                                                   }
+                                                   if($key['operator'] == 'and'){
+                                                       if ($unpauseMatchCount == $unpauseConditionCount) {
+                                                           if ($isResumed == 0) {
+                                                               $zeroParkToResumeTargets[] =$item[$customVariableKey];
+
+                                                               if(!isset($response['error'])){
+                                                                   $this->updateBotReport(
+                                                                       $key['id'],
+                                                                       $item[$customVariableKey],
+                                                                       $item['visits'],
+                                                                       $item['clicks'],
+                                                                       $item['ctr'],
+                                                                       $item['conversions'],
+                                                                       $item['revenue'],
+                                                                       $item['cost'],
+                                                                       $item['profit'],
+                                                                       $item['cpv'],
+                                                                       $item['epv'],
+                                                                       $item['roi'],
+                                                                       $timeStamp);
+                                                               }
+                                                               $isResumed = 1;
+                                                           }
+                                                       }
+
+                                                       unset($matchUnpause);
+                                                       unset($tomatchUnpause);
+                                                   }else{
+                                                       if ($unpauseMatchCount > 0) {
+                                                           $targets[] = $item[$customVariableKey];
+                                                           $this->updateBotReport(
+                                                               $key['id'],
+                                                               $item[$customVariableKey],
+                                                               $item['visits'],
+                                                               $item['clicks'],
+                                                               $item['ctr'],
+                                                               $item['conversions'],
+                                                               $item['revenue'],
+                                                               $item['cost'],
+                                                               $item['profit'],
+                                                               $item['cpv'],
+                                                               $item['epv'],
+                                                               $item['roi'],
+                                                               $timeStamp);
+                                                       }
+
+                                                       unset($match);
+                                                       unset($tomatch);
+                                                       // $ruleSetCount++;
+                                                   }
+
+                                               }
+                                           }
+
+
+
+                                       }else if($key['trafficName'] == 'ExoClick'){
+                                           $ruleSetCount = 1;
+                                           if (count($ruleConditions) > 0) {
+                                               $match = array();
+                                               $tomatch = array();
+                                               $pauseMatchCount = 0;
+                                               $conditionCount = 0;
+                                               $matchCount = 0;
+                                               foreach ($ruleConditions as $conditions ) {
+                                                   $variable = $conditions['rule_variable'];
+                                                   $condition = $conditions['rule_condition'];
+                                                   $value1 = $conditions['value1'];
+                                                   $value2 = $conditions['value2'];
+
+                                                   $match[] = $variable;
+                                                   if ($condition == 'lessthan') {
+
+                                                       if ($item[$variable] <= $value1) {
+                                                           $tomatch[] = $variable;
+
+                                                       }
+                                                   } else if ($condition == 'greaterthan') {
+
+                                                       if ($item[$variable] >= $value1) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   } else if ($condition == 'equalto'){
+                                                       if ($item[$variable] == $value1) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   }
+                                                   else {
+
+                                                       if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   }
+
+                                                   $result = array_diff($match, $tomatch);
+                                                   if (count($result) == 0) {
+                                                       $matchCount = $matchCount + 1;
+                                                   }
+
+                                                   $conditionCount++;
+
+                                               }
+                                               if($key['operator'] == 'and'){
+                                                   if ($conditionCount == $matchCount) {
+                                                       if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                           $targets[] = $item[$customVariableKey];
+                                                       }
+                                                       $this->insertBotReport($key['campaignRulesId'],
+                                                           $key['tid'],
+                                                           $key['id'],
+                                                           $key['ruleType'],
+                                                           $item[$customVariableKey],
+                                                           $item['visits'],
+                                                           $item['clicks'],
+                                                           $item['ctr'],
+                                                           $item['conversions'],
+                                                           $item['revenue'],
+                                                           $item['cost'],
+                                                           $item['profit'],
+                                                           $item['cpv'],
+                                                           $item['epv'],
+                                                           $item['roi'],
+                                                           $timeStamp,
+                                                           $status
+                                                       );
+
+
+                                                   }
+
+                                                   unset($match);
+                                                   unset($tomatch);
+                                                   //    $ruleSetCount++;
+                                               }else{
+                                                   if ($matchCount > 0) {
+                                                       if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                           $targets[] = $item[$customVariableKey];
+                                                       }
+                                                       $this->insertBotReport($key['campaignRulesId'],
+                                                           $key['tid'],
+                                                           $key['id'],
+                                                           $key['ruleType'],
+                                                           $item[$customVariableKey],
+                                                           $item['visits'],
+                                                           $item['clicks'],
+                                                           $item['ctr'],
+                                                           $item['conversions'],
+                                                           $item['revenue'],
+                                                           $item['cost'],
+                                                           $item['profit'],
+                                                           $item['cpv'],
+                                                           $item['epv'],
+                                                           $item['roi'],
+                                                           $timeStamp,
+                                                           $status
+                                                       );
+                                                   }
+
+                                                   unset($match);
+                                                   unset($tomatch);
+                                                   //$ruleSetCount++;
+                                               }
+                                           }
+
+                                           if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                               $isResumed = 0;
+                                               if (count($ruleConditions) > 0) {
+                                                   $matchUnpause = array();
+                                                   $tomatchUnpause = array();
+                                                   $unpauseMatchCount = 0;
+                                                   $unpauseConditionCount = 0;
+                                                   $unpauseMatchCount = 0;
+                                                   foreach ($ruleConditions as $conditions ) {
+                                                       $variable = $conditions['rule_variable'];
+                                                       $condition = $conditions['rule_condition'];
+                                                       $value1 = $conditions['value1'];
+                                                       $value2 = $conditions['value2'];
+
+                                                       $matchUnpause[] = $variable;
+                                                       if ($condition == 'lessthan') {
+
+                                                           if ($item[$variable] <= $value1) {
+                                                               $tomatchUnpause[] = $variable;
+
+                                                           }
+                                                       } else if ($condition == 'greaterthan') {
+
+                                                           if ($item[$variable] >= $value1) {
+                                                               $tomatchUnpause[] = $variable;
+                                                           }
+                                                       } else if ($condition == 'equalto'){
+                                                           if ($item[$variable] == $value1) {
+                                                               $tomatchUnpause[] = $variable;
+                                                           }
+                                                       }
+                                                       else {
+
+                                                           if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                               $tomatchUnpause[] = $variable;
+                                                           }
+                                                       }
+
+                                                       $result = array_diff($matchUnpause, $tomatchUnpause);
+                                                       if (count($result) == 0) {
+                                                           $unpauseMatchCount = $unpauseMatchCount + 1;
+                                                       }
+
+                                                       $unpauseConditionCount++;
+
+                                                   }
+                                                   if($key['operator'] == 'and'){
+                                                       if ($unpauseMatchCount == $unpauseConditionCount) {
+                                                           if ($isResumed == 0) {
+                                                               $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
+                                                               if(!isset($response['error'])){
+                                                                   $this->updateBotReport(
+                                                                       $key['id'],
+                                                                       $item[$customVariableKey],
+                                                                       $item['visits'],
+                                                                       $item['clicks'],
+                                                                       $item['ctr'],
+                                                                       $item['conversions'],
+                                                                       $item['revenue'],
+                                                                       $item['cost'],
+                                                                       $item['profit'],
+                                                                       $item['cpv'],
+                                                                       $item['epv'],
+                                                                       $item['roi'],
+                                                                       $timeStamp);
+                                                               }
+                                                               $isResumed = 1;
+                                                           }
+                                                       }
+
+                                                       unset($matchUnpause);
+                                                       unset($tomatchUnpause);
+                                                   }else{
+                                                       if ($unpauseMatchCount > 0) {
+
+                                                           $response = $exoClickService->exoClickDeleteBlockDomain($exoclickSessionId, $key['campId'], $item[$customVariableKey]);
+                                                           $this->updateBotReport(
+                                                               $key['id'],
+                                                               $item[$customVariableKey],
+                                                               $item['visits'],
+                                                               $item['clicks'],
+                                                               $item['ctr'],
+                                                               $item['conversions'],
+                                                               $item['revenue'],
+                                                               $item['cost'],
+                                                               $item['profit'],
+                                                               $item['cpv'],
+                                                               $item['epv'],
+                                                               $item['roi'],
+                                                               $timeStamp);
+                                                       }
+
+                                                       unset($match);
+                                                       unset($tomatch);
+                                                       //  $ruleSetCount++;
+                                                   }
+
+                                               }
+                                           }
+
+                                       }else{
+                                           if (count($ruleConditions) > 0) {
+                                               $match = array();
+                                               $tomatch = array();
+                                               $pauseMatchCount = 0;
+                                               $conditionCount = 0;
+                                               $matchCount = 0;
+                                               foreach ($ruleConditions as $conditions ) {
+                                                   $variable = $conditions['rule_variable'];
+                                                   $condition = $conditions['rule_condition'];
+                                                   $value1 = $conditions['value1'];
+                                                   $value2 = $conditions['value2'];
+
+                                                   $match[] = $variable;
+                                                   if ($condition == 'lessthan') {
+
+                                                       if ($item[$variable] <= $value1) {
+                                                           $tomatch[] = $variable;
+
+                                                       }
+                                                   } else if ($condition == 'greaterthan') {
+
+                                                       if ($item[$variable] >= $value1) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   } else if ($condition == 'equalto'){
+                                                       if ($item[$variable] == $value1) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   }
+                                                   else {
+
+                                                       if ($item[$variable] >= $value1 && $item[$variable] <= $value2) {
+                                                           $tomatch[] = $variable;
+                                                       }
+                                                   }
+
+                                                   $result = array_diff($match, $tomatch);
+                                                   if (count($result) == 0) {
+                                                       $matchCount = $matchCount + 1;
+                                                   }
+
+                                                   $conditionCount++;
+
+                                               }
+                                               if($key['operator'] == 'and'){
+                                                   if ($conditionCount == $matchCount) {
+
+                                                       if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                           $targets[] = $item[$customVariableKey];
+                                                       }
+                                                       $this->insertBotReport($key['campaignRulesId'],
+                                                           $key['tid'],
+                                                           $key['id'],
+                                                           $key['ruleType'],
+                                                           $item[$customVariableKey],
+                                                           $item['visits'],
+                                                           $item['clicks'],
+                                                           $item['ctr'],
+                                                           $item['conversions'],
+                                                           $item['revenue'],
+                                                           $item['cost'],
+                                                           $item['profit'],
+                                                           $item['cpv'],
+                                                           $item['epv'],
+                                                           $item['roi'],
+                                                           $timeStamp,
+                                                           $status
+                                                       );
+
+
+                                                   }
+
+                                                   unset($match);
+                                                   unset($tomatch);
+                                                   // $ruleSetCount++;
+                                               }else{
+                                                   if ($matchCount > 0) {
+                                                       if($key['ruleType'] == 'botRule' || $key['ruleType'] == 'blacklistRule'){
+                                                           $targets[] = $item[$customVariableKey];
+                                                       }
+                                                       $this->insertBotReport($key['campaignRulesId'],
+                                                           $key['tid'],
+                                                           $key['id'],
+                                                           $key['ruleType'],
+                                                           $item[$customVariableKey],
+                                                           $item['visits'],
+                                                           $item['clicks'],
+                                                           $item['ctr'],
+                                                           $item['conversions'],
+                                                           $item['revenue'],
+                                                           $item['cost'],
+                                                           $item['profit'],
+                                                           $item['cpv'],
+                                                           $item['epv'],
+                                                           $item['roi'],
+                                                           $timeStamp,
+                                                           $status
+                                                       );
+                                                   }
+
+                                                   unset($match);
+                                                   unset($tomatch);
+                                                   // $ruleSetCount++;
+                                               }
+                                           }
+                                       }
+                                   }
+                               }
+
                             }
 
 
