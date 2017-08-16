@@ -180,6 +180,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return $this->mergeDefaults(array_replace($matches, array('_route' => 'campaign')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::indexAction',));
             }
 
+            // app_campaign_campaignoptimization
+            if ($pathinfo === '/campaign/optimization') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignOptimizationAction',  '_route' => 'app_campaign_campaignoptimization',);
+            }
+
             if (0 === strpos($pathinfo, '/campaign/get-')) {
                 // getCampaigns
                 if (0 === strpos($pathinfo, '/campaign/get-campaigns') && preg_match('#^/campaign/get\\-campaigns/(?P<tid>[^/]++)$#s', $pathinfo, $matches)) {
@@ -348,6 +353,24 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 // app_campaign_campaignreset
                 if ($pathinfo === '/campaign/reset') {
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignResetAction',  '_route' => 'app_campaign_campaignreset',);
+                }
+
+                if (0 === strpos($pathinfo, '/campaign/get-campaign-')) {
+                    // app_campaign_getcampaignoptimization
+                    if ($pathinfo === '/campaign/get-campaign-optimization') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignOptimizationAction',  '_route' => 'app_campaign_getcampaignoptimization',);
+                    }
+
+                    // app_campaign_getcampaignbyid
+                    if ($pathinfo === '/campaign/get-campaign-by-id') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignByIdAction',  '_route' => 'app_campaign_getcampaignbyid',);
+                    }
+
+                }
+
+                // app_campaign_executeflowoptimization
+                if ($pathinfo === '/campaign/execute-flow-optimization') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::executeFlowOptimizationAction',  '_route' => 'app_campaign_executeflowoptimization',);
                 }
 
             }

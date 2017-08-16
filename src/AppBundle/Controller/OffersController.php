@@ -75,7 +75,7 @@ class OffersController extends Controller{
                 'page' => $url['path']
             ))->getContent();
             if($pageReturn == 'true'){
-            //    $this->getOffersToFileFlowAction();
+                $this->getOffersToFileFlowAction();
                 return $this->render(
                     'offers/offers-flow.html.twig', array(
                         'page' => 'Flow'
@@ -2452,13 +2452,14 @@ class OffersController extends Controller{
         $voluumSessionId = $apiCredentials[0]['voluum'];
 
         $query = array();
-        $url = 'https://api.voluum.com/offer?';
-        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+        $url = 'https://api.voluum.com/offer';
+        $apiResponse = $this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
             'query' => $query,
             'method' => 'GET',
-            'sessionId' => $voluumSessionId))->getContent(), true);
+            'sessionId' => $voluumSessionId))->getContent();
 
 
+     
 
         foreach($apiResponse['offers'] as $row){
 

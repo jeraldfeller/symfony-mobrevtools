@@ -133,6 +133,34 @@ class CampaignController extends Controller
 
 
     /**
+     * @Route("/campaign/optimization")
+     */
+    public function campaignOptimizationAction()
+    {
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                $page = 'Campaign Optimization';
+                return $this->render(
+                    'campaign/optimization.html.twig', array('page' => $page
+                    )
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+        }else{
+            return $this->redirect('/user/login');
+        }
+    }
+
+
+    /**
      * @Route("/campaign/get-campaigns/{tid}", name="getCampaigns")
      */
     public function getCampaignsForSelect($tid)
@@ -2178,6 +2206,369 @@ class CampaignController extends Controller
         return new Response(
             json_encode($return)
         );
+    }
+
+
+
+    /**
+     * @Route("/campaign/get-campaign-optimization")
+     */
+
+    public function getCampaignOptimizationAction(){
+
+        $data = json_decode($_POST['param'], true);
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $from = date('Y-m-d', strtotime($data['from']));
+        $to = date('Y-m-d', strtotime($data['to']));
+        $from = $from.'T00:00:00Z';
+        $to = $to.'T00:00:00Z';
+        $tz = 'America/Chicago';
+        $sort = 'visits';
+        $direction = 'desc';
+        $limit = 1000;
+        $query = array('from' => $from,
+            'to' => $to,
+            'tz' => $tz,
+            'sort' => $sort,
+            'direction' => $direction,
+            'columns' => 'campaignName',
+            'columns' => 'campaignId',
+            'columns' => 'status',
+            'columns' => 'cpv',
+            'columns' => 'ctr',
+            'columns' => 'cr',
+            'columns' => 'cv',
+            'columns' => 'roi',
+            'columns' => 'epv',
+            'columns' => 'epc',
+            'columns' => 'ap',
+            'columns' => 'errors',
+            'groupBy' => 'campaign',
+            'offset' => 0,
+            'limit' => $limit,
+            'include' => 'ACTIVE',
+            'conversionTimeMode' => 'VISIT'
+        );
+        $url = 'https://api.voluum.com/report?';
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+        foreach($apiResponse['rows'] as $row){
+            if(!isset($row['campaignCountry'])){
+                $country = 'Global';
+            }else{
+                $country = $row['campaignCountry'];
+            }
+
+
+                $data['data'][] = array(
+                    '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                           <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" 
+                                data-id="' . $row['campaignId'] . '" />
+                              
+                             <span></span>
+                        </label>
+                      ',
+                    $row['campaignName'],
+                    $row['trafficSourceName'],
+                    $country,
+                    '<button 
+                        data-id="' . $row['campaignId'] . '"
+                        title="Optimized" class="btn blue btn-xs optimizeCampaign" onClick="optimizeCampaign(this)"><i class="icon icon-magnifier"></i></button>'
+                );
+
+
+        }
+
+
+        file_put_contents("data_table_tmp_files/campaign/optimization.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+
+        return new Response(
+            json_encode(true)
+        );
+    }
+
+
+    /**
+     * @Route("/campaign/get-campaign-by-id")
+     */
+
+    public function getCampaignByIdAction()
+    {
+
+        $data = json_decode($_POST['param'], true);
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $query = array();
+        $flowId = null;
+        for($x = 0; $x < count($data['items']); $x++){
+            $url = 'https://api.voluum.com/campaign/'.$data['items'][$x]['id'];
+            $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+                'query' => $query,
+                'method' => 'GET',
+                'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+            if(isset($apiResponse['id'])){
+               if(isset($apiResponse['redirectTarget']['flow'])){
+                   $flowId = $apiResponse['redirectTarget']['flow']['id'];
+                   $url = 'https://api.voluum.com/flow/'.$apiResponse['redirectTarget']['flow']['id'];
+                   $apiResponseFlow = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+                       'query' => $query,
+                       'method' => 'GET',
+                       'sessionId' => $voluumSessionId))->getContent(), true);
+
+                   foreach($apiResponseFlow['conditionalPathsGroups'] as $group){
+                       for($p = 0; $p < count($group['paths']); $p++){
+                           for($f = 0; $f < count($group['paths'][$p]['landers']); $f++){
+                               $pathLanders[$group['id']][$group['paths'][$p]['id']][] = array(
+                                   'landerId' => $group['paths'][$p]['landers'][$f]['lander']['id']
+                               );
+                           }
+                           for($f = 0; $f < count($group['paths'][$p]['offers']); $f++){
+                               $path[$group['id']][$group['paths'][$p]['id']][] = array(
+                                   'offerId' => $group['paths'][$p]['offers'][$f]['offer']['id']
+                               );
+                           }
+
+                       }
+                   }
+               }
+            }
+
+
+            $from = date('Y-m-d', strtotime($data['from']));
+            $to = date('Y-m-d', strtotime($data['to']));
+            $from = $from.'T00:00:00Z';
+            $to = $to.'T00:00:00Z';
+            $tz = 'America/Chicago';
+            $sort = 'visits';
+            $direction = 'desc';
+            $limit = 1000;
+            $query = array('from' => $from,
+                'to' => $to,
+                'tz' => $tz,
+                'sort' => $sort,
+                'direction' => $direction,
+                'columns' => 'campaignName',
+                'columns' => 'campaignId',
+                'columns' => 'status',
+                'columns' => 'cpv',
+                'columns' => 'ctr',
+                'columns' => 'cr',
+                'columns' => 'cv',
+                'columns' => 'roi',
+                'columns' => 'epv',
+                'columns' => 'epc',
+                'columns' => 'ap',
+                'columns' => 'errors',
+                'groupBy' => 'offer',
+                'offset' => 0,
+                'limit' => $limit,
+                'include' => 'ACTIVE',
+                'conversionTimeMode' => 'VISIT',
+                'filter1' => 'campaign',
+                'filter1Value' => $apiResponse['id']
+            );
+            $url = 'https://api.voluum.com/report?';
+            $apiResponseOffer = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+                'query' => $query,
+                'method' => 'GET',
+                'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+            $campaignOffers = $apiResponseOffer['rows'];
+
+
+            $query = array('from' => $from,
+                'to' => $to,
+                'tz' => $tz,
+                'sort' => $sort,
+                'direction' => $direction,
+                'columns' => 'campaignName',
+                'columns' => 'campaignId',
+                'columns' => 'status',
+                'columns' => 'cpv',
+                'columns' => 'ctr',
+                'columns' => 'cr',
+                'columns' => 'cv',
+                'columns' => 'roi',
+                'columns' => 'epv',
+                'columns' => 'epc',
+                'columns' => 'ap',
+                'columns' => 'errors',
+                'groupBy' => 'lander',
+                'offset' => 0,
+                'limit' => $limit,
+                'include' => 'ACTIVE',
+                'conversionTimeMode' => 'VISIT',
+                'filter1' => 'campaign',
+                'filter1Value' => $apiResponse['id']
+            );
+
+
+            $apiResponseLander = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+                'query' => $query,
+                'method' => 'GET',
+                'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+            $campaignLanders = $apiResponseLander['rows'];
+
+
+
+        }
+
+
+        if(count($path) > 0 ){
+            $return = array(
+                'success' => true,
+                'data' => array(
+                    'flowId' => $flowId,
+                    'flowOffers' => $path,
+                    'flowLanders' => $pathLanders,
+                    'campaignOffers' => $campaignOffers,
+                    'campaignLanders' => $campaignLanders
+                )
+
+            );
+        }else{
+            $return = array(
+                'success' => false,
+                'data' => array()
+            );
+        }
+        return new Response(
+            json_encode($return)
+        );
+
+
+    }
+
+
+    /**
+     * @Route("/campaign/execute-flow-optimization")
+     */
+
+    public function executeFlowOptimizationAction()
+    {
+
+        $data = json_decode($_POST['param'], true);
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $query = array();
+
+
+        if($data['flowId'] != null) {
+            $url = 'https://api.voluum.com/flow/' . $data['flowId'];
+            $apiResponseFlow = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+                'query' => $query,
+                'method' => 'GET',
+                'sessionId' => $voluumSessionId))->getContent(), true);
+
+            if (isset($apiResponseFlow['id'])) {
+                for($g = 0; $g < count($apiResponseFlow['conditionalPathsGroups']); $g++) {
+                    for ($x = 0; $x < count($data['data']); $x++) {
+                        $groupId = $data['data'][$x]['groupId'];
+                        if ($groupId == $apiResponseFlow['conditionalPathsGroups'][$g]['id']) {
+                            for ($p = 0; $p < count($data['data'][$x]['conditionalPaths']); $p++) {
+                                for ($cp = 0; $cp < count($apiResponseFlow['conditionalPathsGroups'][$g]['paths']); $cp++) {
+                                    if ($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['id'] == $data['data'][$x]['conditionalPaths'][$p]['conditionPathId']) {
+                                        if (count($data['data'][$x]['conditionalPaths'][$p]['losingOffers']) > 0) {
+                                            for ($lf = 0; $lf < count($data['data'][$x]['conditionalPaths'][$p]['losingOffers']); $lf++) {
+                                                for ($f = 0; $f < count($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers']); $f++) {
+                                                    if ($data['data'][$x]['conditionalPaths'][$p]['losingOffers'][$lf]['offerId'] == $apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers'][$f]['offer']['id']) {
+                                                       unset($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers'][$f]);
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                   $reassigned =  array_values($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers']);
+                                   $apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers'] = $reassigned;
+                                }
+                            }
+                        }
+                    }
+
+
+
+
+                    for ($x = 0; $x < count($data['landerData']); $x++) {
+                        $groupId = $data['landerData'][$x]['groupId'];
+                        if ($groupId == $apiResponseFlow['conditionalPathsGroups'][$g]['id']) {
+                            for ($p = 0; $p < count($data['landerData'][$x]['conditionalPaths']); $p++) {
+                                for ($cp = 0; $cp < count($apiResponseFlow['conditionalPathsGroups'][$g]['paths']); $cp++) {
+                                    if ($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['id'] == $data['landerData'][$x]['conditionalPaths'][$p]['conditionPathId']) {
+                                        if (count($data['landerData'][$x]['conditionalPaths'][$p]['losingLanders']) > 0) {
+                                            for ($lf = 0; $lf < count($data['landerData'][$x]['conditionalPaths'][$p]['losingLanders']); $lf++) {
+                                                for ($f = 0; $f < count($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['landers']); $f++) {
+                                                    if ($data['data'][$x]['conditionalPaths'][$p]['losingLanders'][$lf]['landerId'] == $apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['landers'][$f]['lander']['id']) {
+                                                        unset($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['landers'][$f]);
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    $reassigned =  array_values($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['landers']);
+                                    $apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['landers'] = $reassigned;
+                                }
+                            }
+                        }
+                    }
+
+
+
+                }
+
+                $return = array(
+                    'success' => true
+                );
+
+
+                $postReponse = json_decode($this->forward('AppBundle:VoluumApi:putVoluum', array('url' => $url,
+                    'query' => $apiResponseFlow,
+                    'method' => 'PUT',
+                    'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+            } else {
+                $return = array(
+
+                    'success' => false
+                );
+            }
+        }
+
+
+
+        return new Response(
+            json_encode($return)
+        );
+
+
+    }
+
+
+    public function getTrafficSourceById($id){
+        $em = $this->getDoctrine()->getEntityManager();
+        $entity = $em->getRepository('AppBundle:TrafficSource')->findOneBy(array('trafficSourceId' => $id));
+        if($entity){
+            return $entity->getTrafficName();
+        }else{
+            return 'Traffic Source Not Found';
+        }
     }
 
 }

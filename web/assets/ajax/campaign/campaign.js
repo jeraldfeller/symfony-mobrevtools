@@ -1341,4 +1341,321 @@ function resetCampaign(btn, data){
 }
 
 
+function getCampaignOptimization(data){
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/get-campaign-optimization");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+
+                var oTable = $('#datatable-responsive').DataTable();
+                oTable.ajax.reload();
+                showNotification('success', 'Success', 'Campaigns Successfully Imported');
+                App.unblockUI();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '');
+                App.unblockUI();
+            }
+        }
+
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+
+    }
+
+    return false;
+}
+
+function getCampaignById(data){
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/get-campaign-by-id");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                if(response['success'] == true){
+                   // console.log(response);
+
+                    $('#appBlockMessage').html('Computing Probabilities');
+                    $data = [];
+                    $landersData = [];
+                    $i = 0;
+                    $.each(response['data']['flowOffers'], function(key, value){
+                        $groupId = key;
+                        $data.push({
+                            groupId: $groupId,
+                            conditionalPaths: []
+                        });
+                        var offerCollection = [];
+                        $c = 0;
+                        $.each(value, function(obj, prop){
+                            $conditionalPathId = obj;
+                            $data[$i].conditionalPaths.push({
+                                conditionPathId: $conditionalPathId,
+                                losingOffers: []
+                            });
+                            for($x = 0; $x < prop.length; $x++){
+                                $.each(response['data']['campaignOffers'], function(cKey, cValue){
+                                    if(cValue['offerId'] == prop[$x]['offerId']){
+                                        offerCollection.push({
+                                            id: cValue['offerId'],
+                                            visits: cValue['visits'],
+                                            conversions: cValue['conversions']
+                                        });
+                                    }
+                                });
+
+                            }
+
+                            //start bayesian calculation
+                            if(offerCollection.length > 1){
+                                $startIndex = 0;
+                                for($a = 0; $a < offerCollection.length; $a++){
+
+                                    var offerData = [offerCollection[$startIndex], offerCollection[$a]];
+                                    var results = doCalcs(offerData);
+                                    console.log(results);
+                                    if(results[0] > results[1]){
+                                        if(results[0] >= 90){
+                                            console.log('Offer A: ' + results[0]+'%');
+                                            console.log('This offer will be remove: ' + offerCollection[$a]['id']);
+                                            $data[$i].conditionalPaths[$c].losingOffers.push(
+                                                {
+                                                    offerId:  offerCollection[$a]['id']
+                                                }
+                                            );
+                                        }else{
+                                            //  console.log(offerData);
+                                        }
+                                    }else{
+                                        if(results[1] >= 90){
+                                            console.log('Offer B: ' + results[1]+'%');
+                                            console.log('This offer will be remove: ' + offerCollection[$startIndex]['id']);
+                                            $data[$i].conditionalPaths[$c].losingOffers.push(
+                                                {
+                                                    offerId:  offerCollection[$startIndex]['id']
+                                                }
+                                            );
+                                            $startIndex = $a;
+                                        }else{
+                                            // console.log(offerData);
+                                        }
+                                    }
+
+                                    console.log('-----------------------------------');
+                                }
+                            }else{
+                                console.log('Nothing to compare');
+                            }
+
+                            $c++;
+                        });
+
+
+                        $i++;
+
+                    });
+
+
+
+                    $i = 0;
+                    $.each(response['data']['landerOffers'], function(key, value){
+                        $groupId = key;
+                        $data.push({
+                            groupId: $groupId,
+                            conditionalPaths: []
+                        });
+                        var landerCollection = [];
+                        $c = 0;
+                        $.each(value, function(obj, prop){
+                            $conditionalPathId = obj;
+                            $landersData[$i].conditionalPaths.push({
+                                conditionPathId: $conditionalPathId,
+                                losingLanders: []
+                            });
+                            for($x = 0; $x < prop.length; $x++){
+                                $.each(response['data']['campaignLanders'], function(cKey, cValue){
+                                    if(cValue['landerId'] == prop[$x]['landerId']){
+                                        landerCollection.push({
+                                            id: cValue['landerId'],
+                                            visits: cValue['visits'],
+                                            conversions: cValue['conversions']
+                                        });
+                                    }
+                                });
+
+                            }
+
+                            //start bayesian calculation
+                            if(landerCollection.length > 1){
+                                $startIndex = 0;
+                                for($a = 0; $a < landerCollection.length; $a++){
+
+                                    var landerData = [landerCollection[$startIndex], landerCollection[$a]];
+                                    var results = doCalcs(landerData);
+                                    console.log(results);
+                                    if(results[0] > results[1]){
+                                        if(results[0] >= 90){
+                                            console.log('Lander A: ' + results[0]+'%');
+                                            console.log('This lander will be remove: ' + landerCollection[$a]['id']);
+                                            $data[$i].conditionalPaths[$c].losingLanders.push(
+                                                {
+                                                    landerId:  landerCollection[$a]['id']
+                                                }
+                                            );
+                                        }else{
+                                            //  console.log(offerData);
+                                        }
+                                    }else{
+                                        if(results[1] >= 90){
+                                            console.log('Lander B: ' + results[1]+'%');
+                                            console.log('This lander will be remove: ' + landerCollection[$startIndex]['id']);
+                                            $data[$i].conditionalPaths[$c].losingOffers.push(
+                                                {
+                                                    landerId:  landerCollection[$startIndex]['id']
+                                                }
+                                            );
+                                            $startIndex = $a;
+                                        }else{
+                                            // console.log(offerData);
+                                        }
+                                    }
+
+                                    console.log('-----------------------------------');
+                                }
+                            }else{
+                                console.log('Nothing to compare');
+                            }
+
+                            $c++;
+                        });
+
+
+                        $i++;
+
+                    });
+
+
+
+                    $finalData = {
+                        flowId: response['data']['flowId'],
+                        data: $data,
+                        landerData: $landersData
+                    }
+
+                    console.log($finalData);
+
+                    $('#appBlockMessage').html('Computing Completed');
+
+                    executeFlowOptimization($finalData)
+
+
+                }else{
+                    showNotification('warning', 'Warning', 'There is no flow on this campaign');
+                    App.unblockUI();
+                }
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '');
+                App.unblockUI();
+            }
+        }
+
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+    }
+
+    return false;
+}
+
+function executeFlowOptimization(data){
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/execute-flow-optimization");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response)
+                showNotification('success', 'Success', 'Optimize Completed!');
+
+                $('#appBlockMessage').html('Complete');
+                App.unblockUI();
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '');
+                App.unblockUI();
+            }
+        }
+
+        $('#appBlockMessage').html('Optimizing Campaign > Flow');
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+    }
+
+    return false;
+}
+
+
+function getFlowToOptimize(){
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/get-glow-to-optimize");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response)
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '');
+            }
+        }
+
+        XMLHttpRequestObject.send("param="+ JSON.stringify(data));
+
+    }
+
+    return false;
+}
+
+
+
+
 
