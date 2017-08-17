@@ -318,6 +318,37 @@
                     {className: "text-center", "targets": 0},
                     {className: "text-center", "targets": 4}
                 ],
+                "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
+                buttons: [
+                    {
+                        className: 'btn blue ',
+                        text: '<i class="fa fa-rocket"></i> Optimize',
+                        header: false,
+                        action: function ( e, dt, node, config ) {
+                            var data = {
+                                from: $('#date-from').val(),
+                                to: $('#date-to').val(),
+                                items:[],
+                                index: 0
+                            };
+                            $('input:checkbox.report-record').each(function () {
+
+
+                                if($(this).is(':checked') == true){
+                                    var id = (this.checked ? $(this).data('id') : "");
+                                    data.items.push({id: id});
+                                }
+
+
+                            });
+
+                            console.log(data);
+                            App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i> <br> <span id="appBlockMessage">Processing...</span></h2>' });
+                            getCampaignById(data);
+
+                        }
+                    }
+                ],
                 "drawCallback": function( settings ) {
 
 
@@ -366,14 +397,15 @@
                 var data = {
                     from: $('#date-from').val(),
                     to: $('#date-to').val(),
-                    items:[]
+                    items:[],
+                    index: 0
                 };
                 data.items.push({
                     id: $id
                 });
                 console.log(data);
-                App.blockUI({ message: '<h2 id="appBlockMessage"><i class="fa fa-spinner fa-spin"></i> Processing...</h2>' });
-                getCampaignById(data);
+            App.blockUI({ message: '<h2 id="appBlockMessage"><i class="fa fa-spinner fa-spin"></i> Processing...</h2>' });
+            getCampaignById(data);
 
         }
     </script>

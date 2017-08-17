@@ -2307,15 +2307,17 @@ class CampaignController extends Controller
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
         $flowId = null;
-        for($x = 0; $x < count($data['items']); $x++){
+        $path = array();
+        $x = $data['index'];
             $url = 'https://api.voluum.com/campaign/'.$data['items'][$x]['id'];
             $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
                 'query' => $query,
                 'method' => 'GET',
                 'sessionId' => $voluumSessionId))->getContent(), true);
-
+        $campaignName = '';
 
             if(isset($apiResponse['id'])){
+                $campaignName = $apiResponse['name'];
                if(isset($apiResponse['redirectTarget']['flow'])){
                    $flowId = $apiResponse['redirectTarget']['flow']['id'];
                    $url = 'https://api.voluum.com/flow/'.$apiResponse['redirectTarget']['flow']['id'];
@@ -2422,13 +2424,23 @@ class CampaignController extends Controller
             $campaignLanders = $apiResponseLander['rows'];
 
 
+        $data['index'] += 1;
 
+        if(isset($data['items'][$data['index']])){
+            $hasNext = true;
+        }else{
+            $hasNext = false;
         }
+
+
 
 
         if(count($path) > 0 ){
             $return = array(
                 'success' => true,
+                'hasNext' => $hasNext,
+                'items' => $data,
+                'campaignName' => $campaignName,
                 'data' => array(
                     'flowId' => $flowId,
                     'flowOffers' => $path,
@@ -2441,6 +2453,9 @@ class CampaignController extends Controller
         }else{
             $return = array(
                 'success' => false,
+                'hasNext' => $hasNext,
+                'items' => $data,
+                'campaignName' => $campaignName,
                 'data' => array()
             );
         }
@@ -2545,7 +2560,6 @@ class CampaignController extends Controller
 
             } else {
                 $return = array(
-
                     'success' => false
                 );
             }

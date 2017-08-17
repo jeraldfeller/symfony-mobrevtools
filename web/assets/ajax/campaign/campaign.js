@@ -1395,7 +1395,7 @@ function getCampaignById(data){
                 if(response['success'] == true){
                    // console.log(response);
 
-                    $('#appBlockMessage').html('Computing Probabilities');
+                    $('#appBlockMessage').html('Computing Probabilities For ' + response['campaignName']);
                     $data = [];
                     $landersData = [];
                     $i = 0;
@@ -1564,14 +1564,16 @@ function getCampaignById(data){
 
                     console.log($finalData);
 
-                    $('#appBlockMessage').html('Computing Completed');
 
-                    executeFlowOptimization($finalData)
+                    executeFlowOptimization($finalData, response['items'], response['hasNext']);
 
 
                 }else{
                     showNotification('warning', 'Warning', 'There is no flow on this campaign');
-                    App.unblockUI();
+                    if(response['hasNext'] == true){
+                        getCampaignById(response['items']);
+                    }
+
                 }
             }
 
@@ -1588,7 +1590,7 @@ function getCampaignById(data){
     return false;
 }
 
-function executeFlowOptimization(data){
+function executeFlowOptimization(data, items, hasNext){
 
     if(XMLHttpRequestObject)
     {
@@ -1606,8 +1608,12 @@ function executeFlowOptimization(data){
                 console.log(response)
                 showNotification('success', 'Success', 'Optimize Completed!');
 
-                $('#appBlockMessage').html('Complete');
-                App.unblockUI();
+                $('#appBlockMessage').html('Processing...');
+                if(hasNext == true){
+                    getCampaignById(items);
+                }else{
+                    App.unblockUI();
+                }
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
@@ -1616,7 +1622,7 @@ function executeFlowOptimization(data){
             }
         }
 
-        $('#appBlockMessage').html('Optimizing Campaign > Flow');
+
         XMLHttpRequestObject.send("param="+ JSON.stringify(data));
 
     }
