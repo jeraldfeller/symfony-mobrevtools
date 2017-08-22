@@ -13030,7 +13030,7 @@ Custom tabs
           background: none;
           border-color: transparent; }
       .tabbable-custom > .nav-tabs > li.active {
-        border-top: 3px solid #ed6b75;
+        border-top: 3px solid #3598dc;
         margin-top: 0;
         position: relative; }
         .tabbable-custom > .nav-tabs > li.active > a {

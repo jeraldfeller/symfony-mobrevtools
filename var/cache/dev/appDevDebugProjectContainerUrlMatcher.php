@@ -373,6 +373,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::executeFlowOptimizationAction',  '_route' => 'app_campaign_executeflowoptimization',);
                 }
 
+                // app_campaign_getcampaignoptimizationreport
+                if ($pathinfo === '/campaign/get-campaign-optimization-report') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignOptimizationReportAction',  '_route' => 'app_campaign_getcampaignoptimizationreport',);
+                }
+
             }
 
             if (0 === strpos($pathinfo, '/common')) {

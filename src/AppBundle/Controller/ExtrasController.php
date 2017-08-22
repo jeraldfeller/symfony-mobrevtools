@@ -619,6 +619,7 @@ class ExtrasController extends Controller{
         file_put_contents("data_table_tmp_files/adplexity/report-automated-".$data['label'].".txt", json_encode($dataJson, JSON_UNESCAPED_UNICODE));
         if($data['countries'] == 'all'){
             $countries = $this->getAdplexityCountries();
+            var_dump($countries);
             $dataArray = array();
             foreach($countries as $country){
 
@@ -750,6 +751,7 @@ class ExtrasController extends Controller{
 
                 $return = json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
                     'query' => $query))->getContent(), true);
+
 
                 if(!isset($return['errorMessage'])){
                     if(count($return) > 0){
@@ -959,8 +961,6 @@ class ExtrasController extends Controller{
                 }
             }
         }
-
-
 
 
 
@@ -1395,8 +1395,9 @@ class ExtrasController extends Controller{
 	public function getAdplexityCountries(){
 		$url = 'https://mobile.adplexity.com/api/v1/countries';
 		$query = array();
+
 		return json_decode($this->forward('AppBundle:AdplexityApi:adplexityRequest', array('url' => $url,
-            'query' => $query))->getContent(), true)['data'];	
+            'query' => $query))->getContent(), true)['data'];
 	}
 	
 	public function getAdplexityAdTypes(){

@@ -10,6 +10,7 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\IpConditions;
+use AppBundle\Entity\ReportedIp;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -30,8 +31,7 @@ use AppBundle\Entity\CampaignRulePresetsConditions;
 use AppBundle\Entity\SafeListPlacements;
 
 
-
-
+use AppBundle\Entity\CampaignOptimizationHistory;
 
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -148,7 +148,8 @@ class CampaignController extends Controller
             if($pageReturn == 'true'){
                 $page = 'Campaign Optimization';
                 return $this->render(
-                    'campaign/optimization.html.twig', array('page' => $page
+                    'campaign/optimization.html.twig', array('page' => $page,
+                        'dateNow' => date('m/d/Y')
                     )
                 );
             }else{
@@ -2217,13 +2218,22 @@ class CampaignController extends Controller
     public function getCampaignOptimizationAction(){
 
         $data = json_decode($_POST['param'], true);
+        if($data['type'] == 'default'){
+            $from = date('Y-m-d', strtotime('-3 days'));
+            $to = date('Y-m-d', strtotime($data['to']));
+            $from = $from.'T00:00:00Z';
+            $to = $to.'T00:00:00Z';
+        }else{
+            $from = date('Y-m-d', strtotime($data['from']));
+            $timeFrom = explode(':', $data['fromTime']);
+            $to = date('Y-m-d', strtotime($data['to']));
+            $timeTo = explode(':', $data['toTime']);
+            $from = $from.'T'.$timeFrom[0].':00:00Z';
+            $to = $to.'T'.$timeTo[0].':00:00Z';
+        }
 
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
-        $from = date('Y-m-d', strtotime($data['from']));
-        $to = date('Y-m-d', strtotime($data['to']));
-        $from = $from.'T00:00:00Z';
-        $to = $to.'T00:00:00Z';
         $tz = 'America/Chicago';
         $sort = 'visits';
         $direction = 'desc';
@@ -2266,7 +2276,7 @@ class CampaignController extends Controller
             }
 
 
-                $data['data'][] = array(
+                $item['data'][] = array(
                     '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
                            <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" 
                                 data-id="' . $row['campaignId'] . '" />
@@ -2274,7 +2284,7 @@ class CampaignController extends Controller
                              <span></span>
                         </label>
                       ',
-                    $row['campaignName'],
+                    '<a href="#" onClick="getOptimizationReports(this)" data-id="'.$row['campaignId'].'" data-name="'.$row['campaignName'].'">'.$row['campaignName'].'</a>',
                     $row['trafficSourceName'],
                     $country,
                     '<button 
@@ -2286,7 +2296,7 @@ class CampaignController extends Controller
         }
 
 
-        file_put_contents("data_table_tmp_files/campaign/optimization.txt", json_encode($data, JSON_UNESCAPED_UNICODE));
+        file_put_contents("data_table_tmp_files/campaign/optimization.txt", json_encode($item, JSON_UNESCAPED_UNICODE));
 
         return new Response(
             json_encode(true)
@@ -2315,8 +2325,9 @@ class CampaignController extends Controller
                 'method' => 'GET',
                 'sessionId' => $voluumSessionId))->getContent(), true);
         $campaignName = '';
-
+        $campaignId = '';
             if(isset($apiResponse['id'])){
+                $campaignId = $apiResponse['id'];
                 $campaignName = $apiResponse['name'];
                if(isset($apiResponse['redirectTarget']['flow'])){
                    $flowId = $apiResponse['redirectTarget']['flow']['id'];
@@ -2346,9 +2357,11 @@ class CampaignController extends Controller
 
 
             $from = date('Y-m-d', strtotime($data['from']));
+            $timeFrom = explode(':', $data['fromTime']);
             $to = date('Y-m-d', strtotime($data['to']));
-            $from = $from.'T00:00:00Z';
-            $to = $to.'T00:00:00Z';
+            $timeTo = explode(':', $data['toTime']);
+            $from = $from.'T'.$timeFrom[0].':00:00Z';
+            $to = $to.'T'.$timeTo[0].':00:00Z';
             $tz = 'America/Chicago';
             $sort = 'visits';
             $direction = 'desc';
@@ -2385,7 +2398,12 @@ class CampaignController extends Controller
                 'sessionId' => $voluumSessionId))->getContent(), true);
 
 
-            $campaignOffers = $apiResponseOffer['rows'];
+            if(isset($apiResponseOffer['rows'])){
+                $campaignOffers = $apiResponseOffer['rows'];
+            }else{
+                $campaignOffers = $apiResponseOffer;
+            }
+
 
 
             $query = array('from' => $from,
@@ -2421,7 +2439,12 @@ class CampaignController extends Controller
                 'sessionId' => $voluumSessionId))->getContent(), true);
 
 
-            $campaignLanders = $apiResponseLander['rows'];
+            if(isset($apiResponseLander['rows'])){
+                $campaignLanders = $apiResponseLander['rows'];
+            }else{
+                $campaignLanders = $apiResponseLander;
+            }
+
 
 
         $data['index'] += 1;
@@ -2441,6 +2464,7 @@ class CampaignController extends Controller
                 'hasNext' => $hasNext,
                 'items' => $data,
                 'campaignName' => $campaignName,
+                'campaignId' => $campaignId,
                 'data' => array(
                     'flowId' => $flowId,
                     'flowOffers' => $path,
@@ -2475,7 +2499,7 @@ class CampaignController extends Controller
     {
 
         $data = json_decode($_POST['param'], true);
-
+        $dateTime = date('Y-m-d H:i:s');
         $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
         $voluumSessionId = $apiCredentials[0]['voluum'];
         $query = array();
@@ -2489,7 +2513,7 @@ class CampaignController extends Controller
                 'sessionId' => $voluumSessionId))->getContent(), true);
 
             if (isset($apiResponseFlow['id'])) {
-                for($g = 0; $g < count($apiResponseFlow['conditionalPathsGroups']); $g++) {
+                for ($g = 0; $g < count($apiResponseFlow['conditionalPathsGroups']); $g++) {
                     for ($x = 0; $x < count($data['data']); $x++) {
                         $groupId = $data['data'][$x]['groupId'];
                         if ($groupId == $apiResponseFlow['conditionalPathsGroups'][$g]['id']) {
@@ -2500,7 +2524,7 @@ class CampaignController extends Controller
                                             for ($lf = 0; $lf < count($data['data'][$x]['conditionalPaths'][$p]['losingOffers']); $lf++) {
                                                 for ($f = 0; $f < count($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers']); $f++) {
                                                     if ($data['data'][$x]['conditionalPaths'][$p]['losingOffers'][$lf]['offerId'] == $apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers'][$f]['offer']['id']) {
-                                                       unset($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers'][$f]);
+                                                        unset($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers'][$f]);
 
                                                     }
                                                 }
@@ -2508,14 +2532,12 @@ class CampaignController extends Controller
                                         }
                                     }
 
-                                   $reassigned =  array_values($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers']);
-                                   $apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers'] = $reassigned;
+                                    $reassigned = array_values($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers']);
+                                    $apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['offers'] = $reassigned;
                                 }
                             }
                         }
                     }
-
-
 
 
                     for ($x = 0; $x < count($data['landerData']); $x++) {
@@ -2536,13 +2558,12 @@ class CampaignController extends Controller
                                         }
                                     }
 
-                                    $reassigned =  array_values($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['landers']);
+                                    $reassigned = array_values($apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['landers']);
                                     $apiResponseFlow['conditionalPathsGroups'][$g]['paths'][$cp]['landers'] = $reassigned;
                                 }
                             }
                         }
                     }
-
 
 
                 }
@@ -2563,6 +2584,35 @@ class CampaignController extends Controller
                     'success' => false
                 );
             }
+
+
+            $em = $this->getDoctrine()->getManager();
+            if(count($data['offerReports']['offers']) > 0){
+                $campaignId = $data['offerReports']['campaignId'];
+                $type = 'offer';
+                $dataSet = json_encode($data['offerReports']['offers']);
+
+                $offerReportEntity = new CampaignOptimizationHistory();
+                $offerReportEntity->setCampaignId($campaignId);
+                $offerReportEntity->setType($type);
+                $offerReportEntity->setData($dataSet);
+                $offerReportEntity->setDateCreated(new \DateTime($dateTime));
+                $em->persist($offerReportEntity);
+            }
+            if(count($data['landerReports']['landers']) > 0){
+                $campaignId = $data['offerReports']['campaignId'];
+                $type = 'lander';
+                $dataSet = json_encode($data['landerReports']['landers']);
+
+                $offerReportEntity = new CampaignOptimizationHistory();
+                $offerReportEntity->setCampaignId($campaignId);
+                $offerReportEntity->setType($type);
+                $offerReportEntity->setData($dataSet);
+                $offerReportEntity->setDateCreated(new \DateTime($dateTime));
+                $em->persist($offerReportEntity);
+            }
+            $em->flush();
+
         }
 
 
@@ -2574,8 +2624,49 @@ class CampaignController extends Controller
 
     }
 
+    /**
+     * @Route("/campaign/get-campaign-optimization-report")
+     */
 
-    public function getTrafficSourceById($id){
+    public function getCampaignOptimizationReportAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $campaignId = $_POST['param'];
+        $data = array();
+        $entity = $em->getRepository('AppBundle:CampaignOptimizationHistory')->findBy(array('campaignId' => $campaignId), array('dateCreated' => 'ASC'));
+        if($entity){
+            $offerCount = 1;
+            $landerCount = 1;
+            for($x = 0; $x < count($entity); $x++){
+                if($entity[$x]->getType() == 'offer'){
+                    $data['offers'][] = array(
+                            'title' => 'Optimize Offer #'.$offerCount,
+                            'data' => $entity[$x]->getData(),
+                            'date' => $entity[$x]->getDateCreated()->format('m/d/Y H:i:s')
+                    );
+
+                    $offerCount++;
+                }
+                if($entity[$x]->getType() == 'lander'){
+                    $data['landers'][] = array(
+                        'title' => 'Optimize Lander #'.$landerCount,
+                        'data' => $entity[$x]->getData(),
+                        'date' => $entity[$x]->getDateCreated()->format('m/d/Y H:i:s')
+                    );
+
+                    $landerCount++;
+                }
+            }
+        }
+
+
+        return new Response(
+            json_encode($data)
+        );
+    }
+
+
+        public function getTrafficSourceById($id){
         $em = $this->getDoctrine()->getEntityManager();
         $entity = $em->getRepository('AppBundle:TrafficSource')->findOneBy(array('trafficSourceId' => $id));
         if($entity){
