@@ -90,6 +90,8 @@ class VoluumApiController extends Controller{
             CURLOPT_URL => $url,
             CURLOPT_POSTFIELDS => $json,
             CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
             CURLOPT_HTTPHEADER => array('cwauth-token: ' . $sessionId . '', 'Content-Type: application/json')
         ));
         // Send the request & save response to $resp

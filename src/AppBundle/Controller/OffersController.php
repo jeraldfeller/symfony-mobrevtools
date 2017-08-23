@@ -167,7 +167,7 @@ class OffersController extends Controller{
                     'query' => $query,
                     'method' => 'POST',
                     'sessionId' => $voluumSessionId))->getContent(), true);
-                //var_dump($apiResponse);
+            
                 if(!isset($apiResponse['error'])){
                     $success[] = $offerName;
                 }else{

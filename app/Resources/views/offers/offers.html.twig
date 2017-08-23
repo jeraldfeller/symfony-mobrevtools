@@ -308,7 +308,7 @@
                     '</div>' +
                     '<div class="col-md-2 col-sm-6">' +
                     '<select class="form-control selectPreset" id="offer_presets_'+i+'" placeholder="Presets">' +
-                    '<option value="No Preset" >No Preset</option>' +
+                    '<option value="" >No Preset</option>' +
                     {% for preset in presets %}
                     '<option value="{{ preset.presets }}">{{ preset.presetName }}</option>' +
                     {% endfor %}
@@ -430,7 +430,7 @@
                                         $offerData.push({
                                                     offerCountry: $('#' + value['geo']).val(),
                                                     offerName: $('#' + value['name']).val(),
-                                                    offerURL: $('#' + value['url']).val() +encodeURIComponent( $('#' + value['preset']).val()),
+                                                    offerURL: encodeURIComponent($('#' + value['url']).val() + $('#' + value['preset']).val()),
                                                     affiliateNetwork: $('#' + value['network']).val(),
                                                     payout: $('#' + value['payout']).val()
                                                 }
