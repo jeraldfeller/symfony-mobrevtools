@@ -2267,7 +2267,7 @@ class CampaignController extends Controller
             'method' => 'GET',
             'sessionId' => $voluumSessionId))->getContent(), true);
 
-
+        $item['data'] = array();
         foreach($apiResponse['rows'] as $row){
             if(!isset($row['campaignCountry'])){
                 $country = 'Global';
@@ -2275,24 +2275,24 @@ class CampaignController extends Controller
                 $country = $row['campaignCountry'];
             }
 
-
-                $item['data'][] = array(
-                    '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                if($row['visits'] >= 100){
+                    $item['data'][] = array(
+                        '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
                            <input type="checkbox" class="checkboxes report-record" value="1" name="table_records" 
                                 data-id="' . $row['campaignId'] . '" />
                               
                              <span></span>
                         </label>
                       ',
-                    '<a href="#" onClick="getOptimizationReports(this)" data-id="'.$row['campaignId'].'" data-name="'.$row['campaignName'].'">'.$row['campaignName'].'</a>',
-                    $row['trafficSourceName'],
-                    $country,
-                    '<button 
+                        '<a href="#" onClick="getOptimizationReports(this)" data-id="'.$row['campaignId'].'" data-name="'.$row['campaignName'].'">'.$row['campaignName'].'</a>',
+                        $row['trafficSourceName'],
+                        $country,
+                        '<button 
                         data-id="' . $row['campaignId'] . '"
                         title="Optimized" class="btn blue btn-xs optimizeCampaign" onClick="optimizeCampaign(this)"><i class="icon icon-magnifier"></i></button>'
-                );
+                    );
 
-
+                }
         }
 
 

@@ -1555,7 +1555,7 @@ function getCampaignById(data){
                                 //start bayesian calculation
                                 if(offerCollection.length > 1){
                                     $startIndex = 0;
-                                    for($a = 0; $a < offerCollection.length; $a++){
+                                    for($a = 1; $a < offerCollection.length; $a++){
 
                                         var offerData = [offerCollection[$startIndex], offerCollection[$a]];
                                         console.log(offerData);
@@ -1652,7 +1652,7 @@ function getCampaignById(data){
                                 //start bayesian calculation
                                 if(landerCollection.length > 1){
                                     $startIndex = 0;
-                                    for($a = 0; $a < landerCollection.length; $a++){
+                                    for($a = 1; $a < landerCollection.length; $a++){
 
                                         var landerData = [landerCollection[$startIndex], landerCollection[$a]];
                                         console.log(landerData);
