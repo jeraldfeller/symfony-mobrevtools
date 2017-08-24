@@ -80,4 +80,33 @@ class OfferUrlPresets
     {
         return $this->presetId;
     }
+    /**
+     * @var string
+     */
+    private $affiliateNetworkId;
+
+
+    /**
+     * Set affiliateNetworkId
+     *
+     * @param string $affiliateNetworkId
+     *
+     * @return OfferUrlPresets
+     */
+    public function setAffiliateNetworkId($affiliateNetworkId)
+    {
+        $this->affiliateNetworkId = $affiliateNetworkId;
+    
+        return $this;
+    }
+
+    /**
+     * Get affiliateNetworkId
+     *
+     * @return string
+     */
+    public function getAffiliateNetworkId()
+    {
+        return $this->affiliateNetworkId;
+    }
 }

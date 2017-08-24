@@ -1020,6 +1020,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\OffersController::editOfferAction',  '_route' => 'app_offers_editoffer',);
             }
 
+            // app_offers_findlink
+            if ($pathinfo === '/tools/affiliate/find-preset-link') {
+                return array (  '_controller' => 'AppBundle\\Controller\\OffersController::findLinkAction',  '_route' => 'app_offers_findlink',);
+            }
+
         }
 
         if (0 === strpos($pathinfo, '/reports/placements')) {

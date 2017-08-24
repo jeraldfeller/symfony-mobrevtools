@@ -167,7 +167,7 @@ class OffersController extends Controller{
                     'query' => $query,
                     'method' => 'POST',
                     'sessionId' => $voluumSessionId))->getContent(), true);
-            
+
                 if(!isset($apiResponse['error'])){
                     $success[] = $offerName;
                 }else{
@@ -2099,8 +2099,10 @@ class OffersController extends Controller{
                 'page' => $url['path']
             ))->getContent();
             if ($pageReturn == 'true') {
+				$networks = json_decode($this->forward('AppBundle:VoluumApi:voluumGetAffiliateNetworks', array())->getContent(), true);
                 return $this->render(
-                    'settings/offer-url-presets.html.twig', array('page' => 'Offer Url Presets')
+                    'settings/offer-url-presets.html.twig', array('page' => 'Offer Url Presets', 
+					'networks' => $networks)
                 );
             }else{
                 return $this->redirect('/error');
@@ -2118,7 +2120,7 @@ class OffersController extends Controller{
     public function ajaxGetPresets(){
 
         $em = $this->getDoctrine()->getManager();
-        $aColumns = array( 't.presetId', 't.presetName', 't.parameters' );
+        $aColumns = array( 't.presetId', 't.presetName', 't.parameters', 't.affiliateNetworkId');
 
         // Indexed column (used for fast and accurate table cardinality)
         $sIndexColumn = 'id';
@@ -2258,7 +2260,7 @@ class OffersController extends Controller{
                                             <span class="sr-only">Toggle Dropdown</span>
                                         </button>
                                         <ul class="dropdown-menu" role="menu">
-                                            <li><a href="#" data-toggle="modal" data-target="#modalEditPreset"  data-action="edit" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
+                                            <li><a href="#" data-toggle="modal" data-target="#modalEditPreset"  data-action="edit" data-affiliate-network="' . $column['affiliateNetworkId'] . '" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-edit"></i> Edit</a>
                                             </li>
                                             <li><a href="#" data-toggle="modal" data-target="#modalDeletePreset" data-action="delete" data-id="' . $column['presetId'] . '" data-name="' . $column['presetName'] . '" data-parameters="' . $column['parameters'] .'" onClick="pushData(this)"><i class="fa fa-times-circle"></i> Remove</a>
                                             </li>
@@ -2284,6 +2286,7 @@ class OffersController extends Controller{
             $doctrine = new OfferUrlPresets();
             $doctrine->setPresetName($data['presetName']);
             $doctrine->setParameters($data['parameters']);
+			$doctrine->setAffiliateNetworkId($data['affiliateNetwork']);
             $em = $this->getDoctrine()->getManager();
 
             // tells Doctrine you want to (eventually) save the Users (no quesries yet)
@@ -2336,6 +2339,7 @@ class OffersController extends Controller{
         $doctrine = $em->getRepository('AppBundle:OfferUrlPresets')->findOneByPresetId($data['presetId']);
         $doctrine->setPresetName($data['presetName']);
         $doctrine->setParameters($data['parameters']);
+		 $doctrine->setAffiliateNetworkId($data['affiliateNetwork']);
         $em->flush();
 
         return new Response(
@@ -2727,6 +2731,26 @@ class OffersController extends Controller{
             'preset' => '?'.$preset,
             'networks' => $networks
         );
+        return new Response(json_encode($return));
+    }
+	
+	
+	/**
+     * @Route("/tools/affiliate/find-preset-link")
+     */
+    public function findLinkAction(){
+
+        $data = $_POST['param'];
+		
+		$em = $this->getDoctrine()->getManager();
+		$entity = $em->getRepository('AppBundle:OfferUrlPresets')->findOneBy(array('affiliateNetworkId' => $data));
+		if($entity){
+			
+			$return = $entity->getParameters();
+
+		}else{
+			$return = 0;
+		}
         return new Response(json_encode($return));
     }
 

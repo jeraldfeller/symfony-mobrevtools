@@ -96,6 +96,14 @@
                                                 <br>
                                                 <h4>Presets</h4>
                                                 <input type="text" class="form-control" id="addPresets">
+												<h4>Link to:</h4>
+												
+													<select class="form-control selectNetwork" id="offer_network" placeholder="Affiliate Network">
+														<option value="0"></option>
+														{% for network in networks.affiliateNetworks %}
+															<option value="{{ network.id }}">{{ network.name }}</option>
+														{% endfor %}
+													</select>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -125,6 +133,14 @@
                                                 <br>
                                                 <h4>Presets</h4>
                                                 <input type="text" class="form-control" id="editPresets">
+												<h4>Link to:</h4>
+												
+													<select class="form-control selectNetwork" id="edit_offer_network" placeholder="Affiliate Network">
+														<option value="0"></option>
+														{% for network in networks.affiliateNetworks %}
+															<option value="{{ network.id }}">{{ network.name }}</option>
+														{% endfor %}
+													</select>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -221,6 +237,12 @@
 
 
         $(document).on('ready', function() {
+			
+                $('.selectNetwork').select2({
+                    allowClear: true,
+                    placeholder: 'Select Affiliate Network',
+                    width: null
+                });
 
             var fixedHeaderOffset = 0;
             if (App.getViewPort().width < App.getResponsiveBreakpoint('md')) {
@@ -258,10 +280,12 @@
                 $btn = $(this)[0];
                 $presetName = $('#presetName').val();
                 $items = $("#addPresets").val();
+				$affiliateNetwork = $('#offer_network').val();
 
                 $data = {
                     presetName: $presetName,
-                    parameters: encodeURIComponent($items)
+                    parameters: encodeURIComponent($items),
+					affiliateNetwork: $affiliateNetwork
                 }
 
 
@@ -275,11 +299,13 @@
                 $presetId = $('#editPresetId').val();
                 $presetName = $('#editPresetName').val();
                 $items = $("#editPresets").val();
+				$affiliateNetwork = $('#edit_offer_network').val();
 
                 $data = {
                     presetId: $presetId,
                     presetName: $presetName,
-                    parameters: encodeURIComponent($items)
+                    parameters: encodeURIComponent($items),
+					affiliateNetwork: $affiliateNetwork
                 }
                 editPresets($btn, $data);
             });
@@ -303,6 +329,10 @@
                 $('#editPresetId').val($id);
                 $('#editPresetName').val($presetName);
                 $('#editPresets').val($presets);
+				
+				$('#edit_offer_network').val($(elem).data('affiliate-network')).trigger('change');
+				
+				
             }else if($action == 'delete'){
                 $('#deletePresetId').val($id);
                 $('#delmsg').html('Are you sure do you want to delete <b>' + $presetName+'</b>?');

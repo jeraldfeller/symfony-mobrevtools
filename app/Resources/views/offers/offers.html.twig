@@ -297,8 +297,9 @@
                     '<input type="text" placeholder="Offer Url" class="form-control" id="offer_url_'+i+'">' +
                     '</div>' +
                     '<div class="col-md-2 col-sm-6">' +
-                    '<select class="form-control selectNetwork" id="offer_network_'+i+'" placeholder="Affiliate Network">' +
+                    '<select onChange="findLinkMatch(this)" data-index="'+i+'" class="form-control selectNetwork" id="offer_network_'+i+'" placeholder="Affiliate Network">' +
                     {% for network in networks.affiliateNetworks %}
+					'<option></option>' +
                     '<option value="{{ network.id }}">{{ network.name }}</option>' +
                     {% endfor %}
                     '</select>' +
@@ -471,6 +472,14 @@
             $('#editModal').modal('show');
             getEditOffer(id);
         }
+		
+		function findLinkMatch(elem){
+			$index = elem.getAttribute('data-index');
+			$affiliateNetwork = $('#offer_network_'+$index).val();
+			
+			executeFindLink($affiliateNetwork, $index);
+			
+		}
 
 
 

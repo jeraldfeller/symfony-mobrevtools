@@ -139,4 +139,3 @@ class CampaignOptimizationHistory
         return $this->id;
     }
 }
-

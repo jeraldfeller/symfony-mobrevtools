@@ -9,7 +9,12 @@
         <option name="fixed"/>
       </options>
     </field>
-    <field name="parameters" type="text" column="parameters" length="16777215" nullable="false">
+    <field name="parameters" type="text" column="parameters" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="affiliateNetworkId" type="string" column="affiliate_network_id" length="60" nullable="false">
       <options>
         <option name="fixed"/>
       </options>

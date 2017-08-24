@@ -1053,3 +1053,41 @@ function getFlowRules(flowId)
 }
 
 
+function executeFindLink(affiliateNetwork, index)
+{
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/tools/affiliate/find-preset-link");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+				
+				$('#offer_presets_'+index).val(response).trigger('change');
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+
+
+        XMLHttpRequestObject.send("param="+affiliateNetwork);
+
+    }
+
+    return false;
+}
+
+
