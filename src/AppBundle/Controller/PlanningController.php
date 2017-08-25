@@ -162,9 +162,10 @@ class PlanningController extends Controller{
                     $error = FALSE;
 
                     $campaigUrlParse = parse_url($apiResponse['url']);
+
                     $tableData[] = array(
                         'name' => $name . ' ' . $counter,
-                        'domain' => $campaigUrlParse['scheme'].'://'.$domain.$campaigUrlParse['path'].$campaigUrlParse['query'],
+                        'domain' => $campaigUrlParse['scheme'].'://'.$domain.$campaigUrlParse['path'].'?'.$campaigUrlParse['query'],
                         'costModel' => $costModel,
                         'country' => $tableGeo,
                         'source' => $tableSource,

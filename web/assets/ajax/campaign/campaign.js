@@ -1395,90 +1395,81 @@ function executeGetOptimizationReports(campaignId){
 
                 if(typeof response['offers'] != 'undefined'){
                     $offerReportHtml = '';
+                    $offerWinnersRow = [];
                     for(var x = 0; x < response['offers'].length; x++){
                         $title = response['offers'][x]['title'];
                         $date = response['offers'][x]['date'];
-
+                        $roiArray = [];
                         $offerReportHtml += '<p class="bold">'+ $title +' - '+ $date + '</p>';
                         $data = $.parseJSON(response['offers'][x]['data']);
                         $offerReportHtml += '<table class="table tabled-bordered">';
                         $offerReportHtml += '<thead>';
                         $offerReportHtml += '<tr>';
-                        $offerReportHtml += '<th>Offer A</th><th>Visits</th><th>Conv</th><th>Probability</th><th>Offer B</th><th>Visits</th><th>Conv</th><th>Probability</th>';
+                        $offerReportHtml += '<th>Offer</th><th>Visits</th><th>Conv</th><th>Roi</th>';
                         $offerReportHtml += '</tr>';
                         $offerReportHtml += '</thead>';
                         $offerReportHtml += '<tbody>';
                         for(var y = 0; y < $data.length; y++){
-                            if($data[y]['offer1']['probabilityScore'] <= 10){
-                                $offerAClass = 'font-red-thunderbird';
-                            }else{
-                                $offerAClass = '';
-                            }
-                            if($data[y]['offer2']['probabilityScore'] <= 10){
-                                $offerBClass = 'font-red-thunderbird';
-                            }else{
-                                $offerBClass = '';
-                            }
-                            $offerReportHtml += '<tr>';
-                            $offerReportHtml += '<td class="'+$offerAClass+'">'+ $data[y]['offer1']['name'] + '</td>';
-                            $offerReportHtml += '<td class="'+$offerAClass+'">'+ $data[y]['offer1']['visits'] + '</td>';
-                            $offerReportHtml += '<td class="'+$offerAClass+'">'+ $data[y]['offer1']['conversions'] + '</td>';
-                            $offerReportHtml += '<td class="bold '+$offerAClass+'">'+ $data[y]['offer1']['probabilityScore'] + '%</td>';
-                            $offerReportHtml += '<td class="'+$offerBClass+'">'+ $data[y]['offer2']['name'] + '</td>';
-                            $offerReportHtml += '<td class="'+$offerBClass+'">'+ $data[y]['offer2']['visits'] + '</td>';
-                            $offerReportHtml += '<td class="'+$offerBClass+'">'+ $data[y]['offer2']['conversions'] + '</td>';
-                            $offerReportHtml += '<td class="bold '+$offerBClass+'">'+ $data[y]['offer2']['probabilityScore'] + '%</td>';
+                            $roiArray.push($data[y]['roi']);
+                            $offerReportHtml += '<tr id="o_'+x+'_'+y+'">';
+                            $offerReportHtml += '<td>'+ $data[y]['name'] + '</td>';
+                            $offerReportHtml += '<td>'+ $data[y]['visits'] + '</td>';
+                            $offerReportHtml += '<td>'+ $data[y]['conversions'] + '</td>';
+                            $offerReportHtml += '<td>'+ $data[y]['roi'].toFixed(2) + '%</td>';
                             $offerReportHtml += '</tr>';
                         }
                         $offerReportHtml += '</tbody>';
                         $offerReportHtml += '</table>';
+
+                        $index = $roiArray.indexOf(Math.max($roiArray));
+
+                        $offerWinnersRow.push(x+'_'+$index);
                     }
                     $('#tab_offer').html($offerReportHtml);
+                    for($z = 0; $z < $offerWinnersRow.length; $z++){
+                        $('#o_'+$offerWinnersRow[$z]).addClass('font-green-jungle');
+                    }
                 }else{
                     $('#tab_offer').html('<p class="text-center">No Data Available.</p>');
                 }
 
                 if(typeof response['landers'] != 'undefined'){
                     $landerReportHtml = '';
+                    $ladnerWinnersRow = [];
                     for(var x = 0; x < response['landers'].length; x++){
                         $title = response['landers'][x]['title'];
                         $date = response['landers'][x]['date'];
-
+                        $roiArray = [];
                         $landerReportHtml += '<p class="bold">'+ $title +' - '+ $date + '</p>';
                         $data = $.parseJSON(response['landers'][x]['data']);
                         $landerReportHtml += '<table class="table tabled-bordered">';
                         $landerReportHtml += '<thead>';
                         $landerReportHtml += '<tr>';
-                        $landerReportHtml += '<th>Offer A</th><th>Visits</th><th>Conv</th><th>Probability</th><th>Offer B</th><th>Visits</th><th>Conv</th><th>Probability</th>';
+                        $landerReportHtml += '<th>Lander</th><th>Visits</th><th>Conv</th><th>Roi</th>';
                         $landerReportHtml += '</tr>';
                         $landerReportHtml += '</thead>';
                         $landerReportHtml += '<tbody>';
                         for(var y = 0; y < $data.length; y++){
-                            if($data[y]['lander1']['probabilityScore'] <= 10){
-                                $landerAClass = 'font-red-thunderbird';
-                            }else{
-                                $landerAClass = '';
-                            }
-                            if($data[y]['lander2']['probabilityScore'] <= 10){
-                                $landerBClass = 'font-red-thunderbird';
-                            }else{
-                                $landerBClass = '';
-                            }
-                            $landerReportHtml += '<tr>';
-                            $landerReportHtml += '<td class="'+$landerAClass+'">'+ $data[y]['lander1']['name'] + '</td>';
-                            $landerReportHtml += '<td class="'+$landerAClass+'">'+ $data[y]['lander1']['visits'] + '</td>';
-                            $landerReportHtml += '<td class="'+$landerAClass+'">'+ $data[y]['lander1']['conversions'] + '</td>';
-                            $landerReportHtml += '<td class="bold '+$landerAClass+'">'+ $data[y]['offer1']['probabilityScore'] + '%</td>';
-                            $landerReportHtml += '<td class="'+$landerBClass+'">'+ $data[y]['lander2']['name'] + '</td>';
-                            $landerReportHtml += '<td class="'+$landerBClass+'">'+ $data[y]['lander2']['visits'] + '</td>';
-                            $landerReportHtml += '<td class="'+$landerBClass+'">'+ $data[y]['lander2']['conversions'] + '</td>';
-                            $landerReportHtml += '<td class="bold '+$landerBClass+'">'+ $data[y]['lander2']['probabilityScore'] + '%</td>';
+                            $roiArray.push($data[y]['roi']);
+                            $landerReportHtml += '<tr id="l_'+x+'_'+y+'">';
+                            $landerReportHtml += '<td>'+ $data[y]['name'] + '</td>';
+                            $landerReportHtml += '<td>'+ $data[y]['visits'] + '</td>';
+                            $landerReportHtml += '<td>'+ $data[y]['conversions'] + '</td>';
+                            $landerReportHtml += '<td>'+ $data[y]['roi'].toFixed(2) + '%</td>';
                             $landerReportHtml += '</tr>';
                         }
                         $landerReportHtml += '</tbody>';
                         $landerReportHtml += '</table>';
+
+                        $index = $roiArray.indexOf(Math.max($roiArray));
+
+                        $ladnerWinnersRow.push(x+'_'+$index);
                     }
                     $('#tab_lander').html($landerReportHtml);
+
+                    for($z = 0; $z < $ladnerWinnersRow.length; $z++){
+                        $('#l_'+$ladnerWinnersRow[$z]).addClass('font-green-jungle');
+                    }
                 }else{
                     $('#tab_lander').html('<p class="text-center">No Data Available.</p>');
                 }
@@ -1545,6 +1536,15 @@ function getCampaignById(data){
                                                 id: cValue['offerId'],
                                                 name: cValue['offerName'],
                                                 visits: cValue['visits'],
+                                                roi: cValue['roi'],
+                                                conversions: cValue['conversions']
+                                            });
+
+                                            $offersReport.offers.push({
+                                                id: cValue['offerId'],
+                                                name: cValue['offerName'],
+                                                visits: cValue['visits'],
+                                                roi: cValue['roi'],
                                                 conversions: cValue['conversions']
                                             });
                                         }
@@ -1557,51 +1557,23 @@ function getCampaignById(data){
                                     $startIndex = 0;
                                     for($a = 1; $a < offerCollection.length; $a++){
 
-                                        var offerData = [offerCollection[$startIndex], offerCollection[$a]];
-                                        console.log(offerData);
-                                        var results = doCalcs(offerData);
-                                        console.log(results);
-                                        $offersReport.offers.push({
-                                            offer1: {
-                                                name:offerCollection[$startIndex]['name'],
-                                                visits: offerCollection[$startIndex]['visits'],
-                                                conversions: offerCollection[$startIndex]['conversions'],
-                                                probabilityScore: results[0]
-                                            },
-                                            offer2: {
-                                                name:offerCollection[$a]['name'],
-                                                visits: offerCollection[$a]['visits'],
-                                                conversions: offerCollection[$a]['conversions'],
-                                                probabilityScore: results[1]
-                                            }
-                                        });
-                                        if(results[0] > results[1]){
-                                            if(results[0] >= 90){
-                                                console.log('Offer A: ' + results[0]+'%');
-                                                console.log('This offer will be remove: ' + offerCollection[$a]['id']);
-                                                $data[$i].conditionalPaths[$c].losingOffers.push(
-                                                    {
-                                                        offerId:  offerCollection[$a]['id']
-                                                    }
-                                                );
-                                            }else{
-                                                //  console.log(offerData);
-                                            }
+                                        if(offerCollection[$startIndex]['roi'] > offerCollection[$a]['roi']){
+                                            console.log('A:' + offerCollection[$startIndex]['roi'] + ' : ' + offerCollection[$a]['roi']);
+                                            $data[$i].conditionalPaths[$c].losingOffers.push(
+                                                {
+                                                    offerId:  offerCollection[$a]['id']
+                                                }
+                                            );
                                         }else{
-                                            if(results[1] >= 90){
-                                                console.log('Offer B: ' + results[1]+'%');
-                                                console.log('This offer will be remove: ' + offerCollection[$startIndex]['id']);
-                                                $data[$i].conditionalPaths[$c].losingOffers.push(
-                                                    {
-                                                        offerId:  offerCollection[$startIndex]['id']
-                                                    }
-                                                );
-                                                $startIndex = $a;
-                                            }else{
-                                                // console.log(offerData);
-                                            }
-                                        }
+                                            console.log('B:' + offerCollection[$a]['roi'] + ' : ' + offerCollection[$startIndex]['roi']);
+                                            $data[$i].conditionalPaths[$c].losingOffers.push(
+                                                {
+                                                    offerId:  offerCollection[$startIndex]['id']
+                                                }
+                                            );
 
+                                            $startIndex = $a;
+                                        }
                                         console.log('-----------------------------------');
                                     }
                                 }else{
@@ -1621,9 +1593,9 @@ function getCampaignById(data){
                     if(data['target'] == 'Landers' || data['target'] == 'All'){
                         console.log('Landers Only');
                         $i = 0;
-                        $.each(response['data']['landerOffers'], function(key, value){
+                        $.each(response['data']['flowLanders'], function(key, value){
                             $groupId = key;
-                            $data.push({
+                            $landersData.push({
                                 groupId: $groupId,
                                 conditionalPaths: []
                             });
@@ -1640,10 +1612,20 @@ function getCampaignById(data){
                                         if(cValue['landerId'] == prop[$x]['landerId']){
                                             landerCollection.push({
                                                 id: cValue['landerId'],
-                                                name: cValue['campaignName'],
+                                                name: cValue['landerName'],
                                                 visits: cValue['visits'],
+                                                roi: cValue['roi'],
                                                 conversions: cValue['conversions']
                                             });
+
+                                            $landersReport.landers.push({
+                                                id: cValue['landerId'],
+                                                name: cValue['landerName'],
+                                                visits: cValue['visits'],
+                                                roi: cValue['roi'],
+                                                conversions: cValue['conversions']
+                                            });
+
                                         }
                                     });
 
@@ -1654,49 +1636,22 @@ function getCampaignById(data){
                                     $startIndex = 0;
                                     for($a = 1; $a < landerCollection.length; $a++){
 
-                                        var landerData = [landerCollection[$startIndex], landerCollection[$a]];
-                                        console.log(landerData);
-                                        var results = doCalcs(landerData);
-                                        console.log(results);
-                                        $landersReport.landers.push({
-                                            lander1: {
-                                                name:landerCollection[$startIndex]['name'],
-                                                visits: landerCollection[$startIndex]['visits'],
-                                                conversions: landerCollection[$startIndex]['conversions'],
-                                                probabilityScore: results[0]
-                                            },
-                                            lander2: {
-                                                name:landerCollection[$a]['name'],
-                                                visits: landerCollection[$a]['visits'],
-                                                conversions: landerCollection[$a]['conversions'],
-                                                probabilityScore: results[1]
-                                            }
-                                        });
-                                        if(results[0] > results[1]){
-                                            if(results[0] >= 90){
-                                                console.log('Lander A: ' + results[0]+'%');
-                                                console.log('This lander will be remove: ' + landerCollection[$a]['id']);
-                                                $data[$i].conditionalPaths[$c].losingLanders.push(
-                                                    {
-                                                        landerId:  landerCollection[$a]['id']
-                                                    }
-                                                );
-                                            }else{
-                                                //  console.log(offerData);
-                                            }
+                                        if(landerCollection[$startIndex]['roi'] > landerCollection[$a]['roi']){
+                                            console.log('A:' + landerCollection[$startIndex]['roi'] + ' : ' + landerCollection[$a]['roi']);
+                                            $landersData[$i].conditionalPaths[$c].losingLanders.push(
+                                                {
+                                                    landerId:  landerCollection[$a]['id']
+                                                }
+                                            );
                                         }else{
-                                            if(results[1] >= 90){
-                                                console.log('Lander B: ' + results[1]+'%');
-                                                console.log('This lander will be remove: ' + landerCollection[$startIndex]['id']);
-                                                $data[$i].conditionalPaths[$c].losingOffers.push(
-                                                    {
-                                                        landerId:  landerCollection[$startIndex]['id']
-                                                    }
-                                                );
-                                                $startIndex = $a;
-                                            }else{
-                                                // console.log(offerData);
-                                            }
+                                            console.log('B:' + landerCollection[$a]['roi'] + ' : ' + landerCollection[$startIndex]['roi']);
+                                            $landersData[$i].conditionalPaths[$c].losingLanders.push(
+                                                {
+                                                    landerId:  landerCollection[$startIndex]['id']
+                                                }
+                                            );
+
+                                            $startIndex = $a;
                                         }
 
                                         console.log('-----------------------------------');
@@ -1713,8 +1668,6 @@ function getCampaignById(data){
 
                         });
                     }
-
-
 
 
 

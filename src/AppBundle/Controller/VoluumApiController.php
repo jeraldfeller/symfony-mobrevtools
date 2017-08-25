@@ -236,6 +236,8 @@ class VoluumApiController extends Controller{
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_SSL_VERIFYHOST => 0,
             CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . '')
         ));
         // Send the request & save response to $resp
@@ -266,6 +268,8 @@ class VoluumApiController extends Controller{
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_SSL_VERIFYHOST => 0,
             CURLOPT_HTTPHEADER => array('cwauth-token: ' . $voluumSessionId . '')
 
         ));

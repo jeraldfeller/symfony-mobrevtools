@@ -2438,7 +2438,6 @@ class CampaignController extends Controller
                 'method' => 'GET',
                 'sessionId' => $voluumSessionId))->getContent(), true);
 
-
             if(isset($apiResponseLander['rows'])){
                 $campaignLanders = $apiResponseLander['rows'];
             }else{

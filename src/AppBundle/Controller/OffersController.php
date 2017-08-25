@@ -2457,13 +2457,11 @@ class OffersController extends Controller{
 
         $query = array();
         $url = 'https://api.voluum.com/offer';
-        $apiResponse = $this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
             'query' => $query,
             'method' => 'GET',
-            'sessionId' => $voluumSessionId))->getContent();
+            'sessionId' => $voluumSessionId))->getContent(), true);
 
-
-     
 
         foreach($apiResponse['offers'] as $row){
 
