@@ -107,6 +107,7 @@ class OffersController extends Controller{
         $apiResponse = array();
 
 
+
         foreach($data as $row){
 
             $offerName = trim($row['offerName']);
@@ -161,6 +162,7 @@ class OffersController extends Controller{
                 }
 
 
+
                 //$url = 'https://core.voluum.com/offers';
                 $url = 'https://api.voluum.com/offer';
                 $apiResponse[] = json_decode($this->forward('AppBundle:VoluumApi:postVoluum', array('url' => $url,
@@ -173,6 +175,7 @@ class OffersController extends Controller{
                 }else{
                     $failed = $offerName;
                 }
+
 
 
         }

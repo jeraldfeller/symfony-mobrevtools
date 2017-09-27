@@ -261,6 +261,8 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
         curl_setopt($ch, CURLOPT_POST, True);
         curl_setopt($ch, CURLOPT_VERBOSE, 1); // remove this if your not debugging
         curl_setopt($ch, CURLOPT_RETURNTRANSFER ,True);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 
 

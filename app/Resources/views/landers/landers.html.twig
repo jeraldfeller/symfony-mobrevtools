@@ -293,7 +293,7 @@
             '<div class="col-md-2 col-sm-6">' +
             '<select class="form-control selectGeo" id="lander_geo_'+i+'">' +
             '<option value="Global">Global</option>' +
-                {% for country in countries %}
+                {% for country in countries.countries %}
                 '<option value="{{ country.code }}">{{ country.name }}</option>' +
                 {% endfor %}
             '</select>' +

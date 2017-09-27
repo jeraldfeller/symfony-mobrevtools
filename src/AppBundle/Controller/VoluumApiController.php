@@ -82,6 +82,8 @@ class VoluumApiController extends Controller{
     public function postVoluumAction($url = null, $query = null, $method = null, $sessionId = null){
 
         $json = json_encode($query);
+
+
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here

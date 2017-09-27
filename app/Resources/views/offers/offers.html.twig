@@ -402,8 +402,8 @@
                 $btn = $(this)[0];
                 $data = {
                     offerId: $('#editOfferId').val(),
-                    offerName: $('#editOfferName').val(),
-                    offerURL: $('#editOfferUrl').val() + encodeURIComponent( $('#editOfferPresets').val()),
+                    offerName: encodeURIComponent($('#editOfferName').val()),
+                    offerURL: encodeURIComponent($('#editOfferUrl').val() +  $('#editOfferPresets').val()),
                     offerCountry: $('#editOfferGeo').val(),
                     affiliateNetwork: $('#editOfferNetwork').val(),
                     payout: $('#editOfferPayout').val()
@@ -430,7 +430,7 @@
                                     if(typeof $('#' + value['geo']).val() != 'undefined'){
                                         $offerData.push({
                                                     offerCountry: $('#' + value['geo']).val(),
-                                                    offerName: $('#' + value['name']).val(),
+                                                    offerName: encodeURIComponent($('#' + value['name']).val()),
                                                     offerURL: encodeURIComponent($('#' + value['url']).val() + $('#' + value['preset']).val()),
                                                     affiliateNetwork: $('#' + value['network']).val(),
                                                     payout: $('#' + value['payout']).val()

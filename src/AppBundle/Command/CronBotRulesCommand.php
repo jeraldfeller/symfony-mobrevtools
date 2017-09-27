@@ -134,7 +134,6 @@ class CronBotRulesCommand extends ContainerAwareCommand{
                         'columns' => $customVariableKey,
                         'columns' => 'campaignId',
                         'columns' => 'visits',
-                        'columns' => 'clicks',
                         'columns' => 'conversions',
                         'columns' => 'revenue',
                         'columns' => 'cost',

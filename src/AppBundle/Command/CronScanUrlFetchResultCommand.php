@@ -56,7 +56,7 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
         $i = 0;
 
         foreach($scannedUrlObj as $row){
-            if($row['toCheck'] == 1){
+            if($row['toCheck'] == true){
                 $landersCampaign = array();
                 $tz = 'America/Chicago';
                 $sort = 'visits';
@@ -136,6 +136,7 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
 
         }
 
+
         if(count($domainResults) > 0){
             $message = '';
 
@@ -151,6 +152,9 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
             $message .= '          <th>Domain</th><th>Flag Type</th><th>Campaigns</th>';
             $message .= '        </tr>';
             foreach($domainResults as $domain){
+                $output->write([
+                    $domain['domain'] . ' | ' . strtoupper($domain['result']) . ' | ' . $domain['campaigns']
+                ]);
                 $message .= '<tr>';
                 $message .= '<td>' . $domain['domain'] . '</td>';
                 $message .= '<td>' . strtoupper($domain['result']) . '</td>';
@@ -164,7 +168,7 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
 
 
             $subject = 'Domain Reports ' . date('Y-m-d H:i:s');
-            $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
+       //     $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
             $systemService->sendEmail('jeraldfeller@gmail.com', 'jeraldfeller@gmail.com', $subject, $message);
 
         }
@@ -214,9 +218,11 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://www.virustotal.com/vtapi/v2/url/report');
         curl_setopt($ch, CURLOPT_POST, True);
-        curl_setopt($ch, CURLOPT_VERBOSE, 1); // remove this if your not debugging
+        curl_setopt($ch, CURLOPT_VERBOSE, 0); // remove this if your not debugging
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate'); // please compress data
         curl_setopt($ch, CURLOPT_USERAGENT, "gzip, My php curl client");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER ,True);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 

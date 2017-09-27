@@ -185,6 +185,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignOptimizationAction',  '_route' => 'app_campaign_campaignoptimization',);
             }
 
+            // app_campaign_campaigncreate
+            if ($pathinfo === '/campaign/create') {
+                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignCreateAction',  '_route' => 'app_campaign_campaigncreate',);
+            }
+
             if (0 === strpos($pathinfo, '/campaign/get-')) {
                 // getCampaigns
                 if (0 === strpos($pathinfo, '/campaign/get-campaigns') && preg_match('#^/campaign/get\\-campaigns/(?P<tid>[^/]++)$#s', $pathinfo, $matches)) {
@@ -378,6 +383,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignOptimizationReportAction',  '_route' => 'app_campaign_getcampaignoptimizationreport',);
                 }
 
+                // app_campaign_createcampaigns
+                if ($pathinfo === '/campaign/create-action') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::createCampaignsAction',  '_route' => 'app_campaign_createcampaigns',);
+                }
+
             }
 
             if (0 === strpos($pathinfo, '/common')) {
@@ -528,9 +538,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\ConversionsReportController::deleteLabelAction',  '_route' => 'app_conversionsreport_deletelabel',);
             }
 
-            // app_conversionsreport_savedata
-            if ($pathinfo === '/reports/conversions/save-data') {
-                return array (  '_controller' => 'AppBundle\\Controller\\ConversionsReportController::saveDataAction',  '_route' => 'app_conversionsreport_savedata',);
+            if (0 === strpos($pathinfo, '/reports/c')) {
+                // app_conversionsreport_cleartmpfiles
+                if ($pathinfo === '/reports/clear-tmp-files') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\ConversionsReportController::clearTmpFilesAction',  '_route' => 'app_conversionsreport_cleartmpfiles',);
+                }
+
+                // app_conversionsreport_savedata
+                if ($pathinfo === '/reports/conversions/save-data') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\ConversionsReportController::saveDataAction',  '_route' => 'app_conversionsreport_savedata',);
+                }
+
             }
 
         }

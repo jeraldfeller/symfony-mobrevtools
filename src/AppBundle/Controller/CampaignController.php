@@ -161,6 +161,53 @@ class CampaignController extends Controller
     }
 
 
+
+    /**
+     * @Route("/campaign/create")
+     */
+    public function campaignCreateAction()
+    {
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                $page = 'Campaign New Campaign';
+
+                $offers = $this->getOffers();
+                $landers = $this->getLanders();
+                $countries = json_decode($this->forward('AppBundle:VoluumApi:voluumGetCountries', array())->getContent(), true);
+                $networks = json_decode($this->forward('AppBundle:VoluumApi:voluumGetAffiliateNetworks', array())->getContent(), true);
+                $presets = json_decode($this->forward('AppBundle:Offers:getOfferUrlPresets', array())->getContent(), true);
+                $landerPresets = json_decode($this->forward('AppBundle:Settings:getPresets', array())->getContent(), true);
+                $trafficSource = json_decode($this->forward('AppBundle:VoluumApi:voluumGetTrafficSource', array())->getContent(), true);
+                $flow = json_decode($this->forward('AppBundle:VoluumApi:voluumGetFlow', array())->getContent(), true);
+                return $this->render(
+                    'campaign/campaign-new.html.twig', array('page' => $page,
+                        'offers' => $offers,
+                        'landers' => $landers,
+                        'countries' => $countries,
+                        'networks' => $networks,
+                        'presets' => $presets,
+                        'landerPresets' => $landerPresets,
+                        'trafficSources' => $trafficSource['trafficSources'],
+                        'flows' => $flow['flows'],
+                        'dateNow' => date('m/d/Y')
+                    )
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+        }else{
+            return $this->redirect('/user/login');
+        }
+    }
+
+
     /**
      * @Route("/campaign/get-campaigns/{tid}", name="getCampaigns")
      */
@@ -2673,6 +2720,187 @@ class CampaignController extends Controller
         }else{
             return 'Traffic Source Not Found';
         }
+    }
+
+
+
+    public function getOffers(){
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+
+        $query = array();
+        $url = 'https://api.voluum.com/offer?';
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+        $url = 'https://api.voluum.com/affiliate-network?';
+        $affiliateNetworkResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+
+        $data = array();
+
+        foreach($apiResponse['offers'] as $row){
+
+            if(!isset($row['country'])){
+                $country = 'Global';
+            }else{
+                $country = $row['country']['name'];
+            }
+
+            if(isset($row['affiliateNetwork'])){
+                foreach($affiliateNetworkResponse['affiliateNetworks'] as $an){
+                    if($an['id'] == $row['affiliateNetwork']['id']){
+                        $affiliateNetworkName = $an['name'];
+                    }
+                }
+            }else{
+                $affiliateNetworkName = "";
+            }
+
+            $data[] = array(
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'url' => $row['url'],
+                'geo' => $country,
+                'payout' => "$".number_format(($row['payout']['type'] == 'MANUAL' ? $row['payout']['value'] : 0.00), 2),
+                'affiliateNetwork' => $affiliateNetworkName,
+            );
+
+        }
+
+
+
+
+        return $data;
+
+    }
+
+
+    public function getLanders(){
+
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+
+        $query = array();
+        $url = 'https://api.voluum.com/lander?';
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+        $data = array();
+
+        foreach($apiResponse['landers'] as $row){
+
+            if(!isset($row['country'])){
+                $country = 'Global';
+            }else{
+                $country = $row['country']['name'];
+            }
+
+            $data[] = array(
+                'id' => $row['id'],
+                'name' => $row['namePostfix'],
+                'url' => $row['url'],
+                'geo' => $country,
+                'numberOfOffers' => $row['numberOfOffers']
+            );
+
+        }
+
+
+
+
+        return $data;
+
+    }
+
+
+    // Creating Campaign
+
+    /**
+     * @Route("/campaign/create-action")
+     */
+    public function createCampaignsAction(){
+        $data = json_decode($_POST['param'], true);
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+
+        $name = trim($data['name']);
+        $source = trim($data['source']);
+        $costModel = trim($data['model']);
+        $country = trim($data['geo']);
+        $tags = $data['tags'];
+        $flow = trim($data['flow']);
+        $counter = 1;
+        $query = array();
+        if($country == "Global"){
+
+            $query = array(
+                'costModel' => array('type' => $costModel),
+                'namePostfix' => $name . ' ' . $counter,
+                'redirectTarget' => array(
+                    'flow' => array('id' => $flow)
+                ),
+                'tags' => $tags,
+                'trafficSource' => array('id' => $source)
+            );
+
+
+        }else{
+            $query = array(
+                'costModel' => array('type' => $costModel),
+                'country' => array('code' => $country),
+                'namePostfix' => $name . ' ' . $counter,
+                'redirectTarget' => array(
+                    'flow' => array('id' => $flow)
+                ),
+                'tags' => $tags,
+                'trafficSource' => array('id' => $source)
+            );
+        }
+
+
+
+
+
+        $url = 'https://api.voluum.com/campaign';
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:postVoluum', array('url' => $url,
+            'query' => $query,
+            'method' => 'POST',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+        if(!isset($apiResponse['error'])){
+            $success = true;
+            $message = 'Campaign Successfully Created';
+            $returnData = array(
+                    'name' => $apiResponse['name'],
+                    'url' => $apiResponse['url'],
+
+                );
+
+        }else{
+            $success = false;
+            $message = 'Campaign Name Already Exists!';
+            $returnData = array();
+        }
+
+        return new Response(
+            json_encode(
+                array(
+                    'success' => $success,
+                    'message' => $message,
+                    'data' => $returnData
+                )
+            )
+        );
     }
 
 }

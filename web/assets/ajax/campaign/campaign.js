@@ -1779,6 +1779,73 @@ function getFlowToOptimize(){
 }
 
 
+function addCampaignOffers(data)
+{
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/tools/add-offers");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response =  $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
+                showNotification('error', '', '');
+            }
+        }
+
+        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+    }
+
+    return false;
+}
+
+
+function createCampaign(data)
+{
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/create-action");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response =  $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+        }
+
+
+
+        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+    }
+
+    return false;
+}
+
+
 
 
 

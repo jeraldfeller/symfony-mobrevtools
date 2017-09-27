@@ -243,7 +243,49 @@ var FormWizard = function () {
 
             $('#form_wizard_1').find('.button-previous').hide();
             $('#form_wizard_1 .button-submit').click(function () {
-                alert('Finished! Hope you like it :)');
+                //alert('Finished! Hope you like it :)');
+
+                // Create Campaign
+
+                $newOfferList = [];
+                $('#assignOffersTbl tbody tr').each(function(){
+                    $isOfferNew = $(this).find('td:eq(0)').data('is-new');
+                    if($isOfferNew == 1){
+                        $newOfferName = $(this).find('td:eq(0)').data('name');
+                        $newOfferUrl = $(this).find('td:eq(0)').data('url');
+                        $newOfferGeo = $(this).find('td:eq(0)').data('geo');
+                        $newOfferPayout = $(this).find('td:eq(0)').data('payout');
+                        $newOfferNetwork = $(this).find('td:eq(0)').data('network');
+
+                        $newOfferList.push({
+                                offerCountry: $newOfferGeo,
+                                offerName: encodeURIComponent($newOfferName),
+                                offerURL: encodeURIComponent($newOfferUrl),
+                                affiliateNetwork: $newOfferNetwork,
+                                payout: $newOfferPayout
+                            }
+                        )
+
+                    }
+
+                });
+
+                addCampaignOffers($newOfferList);
+
+                /*
+
+                $campaignData = {
+                    name: $('#campaign_name').val(),
+                    source:  $('#campaign_source').val(),
+                    geo:  $('#campaign_geo').val(),
+                    model:  $('#campaign_model').val(),
+                    tags:  $('#campaign_tags').tagsinput('items'),
+                    flow:  $('#campaign_flow').val()
+                };
+
+
+                createCampaign($campaignData);
+                */
             }).hide();
 
             //apply validation on select2 dropdown value change, this only needed for chosen dropdown integration.

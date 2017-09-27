@@ -2330,7 +2330,7 @@ class ConversionsReportController extends Controller{
     }
 
     /**
-     * @Route("/reports/clear-tmp-files", name="clearTmpFiles")
+     * @Route("/reports/clear-tmp-files")
      */
     public function clearTmpFilesAction(){
 
