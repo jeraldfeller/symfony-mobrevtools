@@ -1781,6 +1781,7 @@ function getFlowToOptimize(){
 
 function addCampaignOffers(data)
 {
+    $dfd = $.Deferred();
     if(XMLHttpRequestObject)
     {
 
@@ -1794,16 +1795,139 @@ function addCampaignOffers(data)
             if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
             {
                 var response =  $.parseJSON(XMLHttpRequestObject.responseText);
-                console.log(response);
+
+                $.each(response['data']['details']['elements']['apiResponse'], function(key, value){
+                    if(typeof value['id'] != 'undefined'){
+                        $assignedOffers.push(value['id']);
+                    }
+                });
+
+       //         console.log($assignedOffers);
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503 || XMLHttpRequestObject.status == 500){
                 showNotification('error', '', '');
             }
+
+            $dfd.resolve();
         }
 
         XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
 
+
+    }
+
+    return $dfd.promise();
+}
+
+
+function addCampaignLanders(data)
+{
+    $dfd = $.Deferred();
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/tools/add-landers");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response =  $.parseJSON(XMLHttpRequestObject.responseText);
+                console.log(response);
+                $.each(response['data']['details']['elements']['apiResponse'], function(key, value){
+                    if(typeof value['id'] != 'undefined'){
+                        $assignedLanders.push(value['id']);
+                    }
+
+                });
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+
+            }
+
+            $dfd.resolve();
+        }
+
+        XMLHttpRequestObject.send("param= "+ JSON.stringify(data));
+
+
+    }
+
+    return $dfd.promise();
+}
+
+
+function getCampaignFlowToUpdate(data)
+{
+    $dfd = $.Deferred();
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/get-flow-to-update");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText.replace('""', ''));
+                console.log(response);
+                $capaignOffersReady = true;
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+
+            $dfd.resolve();
+        }
+
+        XMLHttpRequestObject.send("param="+JSON.stringify(data));
+
+    }
+
+    return $dfd.promise();
+}
+
+
+function getCampaignLandersFlowToUpdate(data)
+{
+
+    if(XMLHttpRequestObject)
+    {
+
+        XMLHttpRequestObject.open("POST", "/campaign/get-flow-to-update-landers");
+
+
+        XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+        XMLHttpRequestObject.onreadystatechange = function()
+        {
+            if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200)
+            {
+                var response = $.parseJSON(XMLHttpRequestObject.responseText.replace('""', ''));
+                console.log(response);
+                $capaignLandersReady = true;
+
+            }
+
+            if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
+                showNotification('error', '', '');
+            }
+
+        }
+
+        XMLHttpRequestObject.send("param="+JSON.stringify(data));
 
     }
 
@@ -1827,11 +1951,14 @@ function createCampaign(data)
             {
                 var response =  $.parseJSON(XMLHttpRequestObject.responseText);
                 console.log(response);
+                App.unblockUI();
+                window.location.href = '/campaign/create-success';
 
             }
 
             if (XMLHttpRequestObject.status == 408 || XMLHttpRequestObject.status == 503){
                 showNotification('error', '', '');
+                App.unblockUI();
             }
         }
 

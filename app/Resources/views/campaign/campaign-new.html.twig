@@ -280,8 +280,13 @@
                                                 <select class="form-control selectFlows" id="campaign_flow">
                                                     <option></option>
                                                     {% for flow in flows %}
-                                                        <option value="{{ flow.id }}">{{ flow.name }}</option>
+                                                        <option data-rules="{{ flow.rules }}" value="{{ flow.id }}">{{ flow.name }}</option>
                                                     {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                <select class="form-control selectRules" id="selectRules">
+                                                    <option></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -362,6 +367,12 @@
                 width: null
             });
 
+            $(".selectRules").select2({
+                allowClear: true,
+                placeholder: 'Select Rules',
+                width: null
+            });
+
             $(".selectGeo").select2({
                 allowClear: true,
                 placeholder: 'Select Geo',
@@ -431,7 +442,23 @@
             });
 
 
+            // Flows
 
+
+            $('#campaign_flow').on('change', function(){
+                $('#selectRules').empty();
+                $id = $(this).val();
+                $rulesSet = $(this).find(':selected').data('rules');
+
+                $rules = $rulesSet.split(',');
+                $.each($rules, function(i, val) {
+                    $values = val.split('|')
+                    $('#selectRules').append($('<option>', {
+                        value: $values[0],
+                        text: $values[1]
+                    }));
+                });
+            });
 
 
         })
@@ -689,7 +716,13 @@
            if(isExists == false) {
                $('#assignLandersTbl tbody').append(
                    '<tr>' +
-                   '<td>' + $('#lander_' + i).val() + '</td>' +
+                   '<td data-is-new="1"' +
+                       'data-name="' + $('#lander_' + i).val() + '" '+
+                       'data-url="'+ $('#lander_url_' + i).val() +'" '+
+                       'data-preset="'+ $('#lander_presets_' + i).val() + '" '+
+                       'data-offer="' + $('#lander_offer_' + i).val() + '" ' +
+                       'data-geo="' + $('#lander_geo_' + i).val() + '" ' +
+                   '> ' + $('#lander_' + i).val() + '</td>' +
                    '<td>' + $('#lander_url_' + i).val() + $('#lander_presets_' + i).val() + '</td>' +
                    '<td>' + $('#lander_offer_' + i).val() + '</td>' +
                    '<td>' + $('#lander_geo_' + i).val() + '</td>' +

@@ -185,12 +185,33 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignOptimizationAction',  '_route' => 'app_campaign_campaignoptimization',);
             }
 
-            // app_campaign_campaigncreate
-            if ($pathinfo === '/campaign/create') {
-                return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignCreateAction',  '_route' => 'app_campaign_campaigncreate',);
+            if (0 === strpos($pathinfo, '/campaign/create')) {
+                // app_campaign_campaigncreate
+                if ($pathinfo === '/campaign/create') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignCreateAction',  '_route' => 'app_campaign_campaigncreate',);
+                }
+
+                // app_campaign_campaigncreatesuccess
+                if ($pathinfo === '/campaign/create-success') {
+                    return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::campaignCreateSuccessAction',  '_route' => 'app_campaign_campaigncreatesuccess',);
+                }
+
             }
 
             if (0 === strpos($pathinfo, '/campaign/get-')) {
+                if (0 === strpos($pathinfo, '/campaign/get-flow-to-update')) {
+                    // app_campaign_getcampaignflowtoupdate
+                    if ($pathinfo === '/campaign/get-flow-to-update') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignFlowToUpdateAction',  '_route' => 'app_campaign_getcampaignflowtoupdate',);
+                    }
+
+                    // app_campaign_getcampaignflowtoupdatelanders
+                    if ($pathinfo === '/campaign/get-flow-to-update-landers') {
+                        return array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignFlowToUpdateLandersAction',  '_route' => 'app_campaign_getcampaignflowtoupdatelanders',);
+                    }
+
+                }
+
                 // getCampaigns
                 if (0 === strpos($pathinfo, '/campaign/get-campaigns') && preg_match('#^/campaign/get\\-campaigns/(?P<tid>[^/]++)$#s', $pathinfo, $matches)) {
                     return $this->mergeDefaults(array_replace($matches, array('_route' => 'getCampaigns')), array (  '_controller' => 'AppBundle\\Controller\\CampaignController::getCampaignsForSelect',));

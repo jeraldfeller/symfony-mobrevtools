@@ -247,6 +247,10 @@ var FormWizard = function () {
 
                 // Create Campaign
 
+                App.blockUI({ message: '<h2><i class="fa fa-spinner fa-spin"></i><br><span id="progress-label">Processing...</span></h2>' });
+
+                $capaignLandersReady = false;
+                $capaignOffersReady = true;
                 $newOfferList = [];
                 $('#assignOffersTbl tbody tr').each(function(){
                     $isOfferNew = $(this).find('td:eq(0)').data('is-new');
@@ -270,22 +274,186 @@ var FormWizard = function () {
 
                 });
 
-                addCampaignOffers($newOfferList);
 
-                /*
+                $newLanderList = [];
+                $('#assignLandersTbl tbody tr').each(function(){
+                    $isLanderNew = $(this).find('td:eq(0)').data('is-new');
+                    if($isLanderNew == 1){
+                        $newLanderName = $(this).find('td:eq(0)').data('name');
+                        $newLanderUrl = $(this).find('td:eq(0)').data('url');
+                        $newLanderPreset = $(this).find('td:eq(0)').data('preset');
+                        $newLanderGeo = $(this).find('td:eq(0)').data('geo');
+                        $newLanderOffer = $(this).find('td:eq(0)').data('offer');
 
-                $campaignData = {
-                    name: $('#campaign_name').val(),
-                    source:  $('#campaign_source').val(),
-                    geo:  $('#campaign_geo').val(),
-                    model:  $('#campaign_model').val(),
-                    tags:  $('#campaign_tags').tagsinput('items'),
-                    flow:  $('#campaign_flow').val()
-                };
+                        $newLanderList.push({
+                            landerName: $newLanderName,
+                            landerUrl:   encodeURIComponent($newLanderUrl),
+                            landerOffer: $newLanderOffer,
+                            landerGeo: $newLanderGeo,
+                            landerPresets: encodeURIComponent($newLanderPreset)
+                        });
 
 
-                createCampaign($campaignData);
-                */
+
+                    }
+
+                });
+
+
+                if($newOfferList.length == 0 && $newLanderList.length > 0){
+                    $capaignLandersReady = true;
+                        console.log($assignedOffers);
+                        $flowId = $('#campaign_flow').val();
+                        $ruleId = $('#selectRules').val();
+
+                        $data = {
+                            flowId: $flowId,
+                            ruleId: $ruleId,
+                            offers: $assignedOffers
+                        }
+                        $('#progress-label').html('Adding Offers In To Flow');
+                        getCampaignFlowToUpdate($data);
+                }else if($newLanderList.length == 0 && $newOfferList > 0){
+                        console.log($assignedLanders);
+                        $flowId = $('#campaign_flow').val();
+                        $ruleId = $('#selectRules').val();
+
+                        $data = {
+                            flowId: $flowId,
+                            ruleId: $ruleId,
+                            landers: $assignedLanders
+                        }
+                        $('#progress-label').html('Adding Landers In To Flow');
+                        getCampaignLandersFlowToUpdate($data);
+                }else if($newLanderList.length == 0 && $newOfferList == 0){
+                            console.log($assignedOffers);
+                            $flowId = $('#campaign_flow').val();
+                            $ruleId = $('#selectRules').val();
+
+                            $data = {
+                                flowId: $flowId,
+                                ruleId: $ruleId,
+                                offers: $assignedOffers
+                            }
+                            $('#progress-label').html('Adding Offers In To Flow');
+                            getCampaignFlowToUpdate($data).done(function(){
+                                setTimeout(function(){
+                                        setTimeout(function(){
+                                            console.log($assignedLanders);
+                                            $flowId = $('#campaign_flow').val();
+                                            $ruleId = $('#selectRules').val();
+
+                                            $data = {
+                                                flowId: $flowId,
+                                                ruleId: $ruleId,
+                                                landers: $assignedLanders
+                                            }
+                                            $('#progress-label').html('Adding Landers In To Flow');
+                                            getCampaignLandersFlowToUpdate($data);
+                                        }, 1000)
+                                }, 2000);
+                            });
+
+                }
+                else if($newOfferList.length > 0 && $newLanderList.length == 0){
+                    $('#progress-label').html('Adding New Offers');
+                    addCampaignOffers($newOfferList).done(function(){
+                        $capaignLandersReady = true;
+                        setTimeout(function(){
+                            console.log($assignedOffers);
+                            $flowId = $('#campaign_flow').val();
+                            $ruleId = $('#selectRules').val();
+
+                            $data = {
+                                flowId: $flowId,
+                                ruleId: $ruleId,
+                                offers: $assignedOffers
+                            }
+                            $('#progress-label').html('Adding Offers In To Flow');
+                            getCampaignFlowToUpdate($data)
+                        }, 1000)
+
+                    });
+                }else if($newLanderList.length > 0 && $newOfferList.length == 0){
+                    $('#progress-label').html('Adding New Landers');
+                    addCampaignLanders($newLanderList).done(function(){
+                        $capaignOffersReady = true;
+                        setTimeout(function(){
+                            console.log($assignedLanders);
+                            $flowId = $('#campaign_flow').val();
+                            $ruleId = $('#selectRules').val();
+
+                            $data = {
+                                flowId: $flowId,
+                                ruleId: $ruleId,
+                                landers: $assignedLanders
+                            }
+                            $('#progress-label').html('Adding Landers In To Flow');
+                            getCampaignLandersFlowToUpdate($data);
+                        }, 1000)
+
+                    });
+                }else if($newLanderList.length > 0 && $newOfferList.length > 0){
+                    $('#progress-label').html('Adding New Offers');
+                    addCampaignOffers($newOfferList).done(function(){
+                        setTimeout(function(){
+                            console.log($assignedOffers);
+                            $flowId = $('#campaign_flow').val();
+                            $ruleId = $('#selectRules').val();
+
+                            $data = {
+                                flowId: $flowId,
+                                ruleId: $ruleId,
+                                offers: $assignedOffers
+                            }
+                            $('#progress-label').html('Adding Offers In To Flow');
+                            getCampaignFlowToUpdate($data).done(function(){
+                                setTimeout(function(){
+                                    $('#progress-label').html('Adding New Landers');
+                                    addCampaignLanders($newLanderList).done(function(){
+                                        setTimeout(function(){
+                                            console.log($assignedLanders);
+                                            $flowId = $('#campaign_flow').val();
+                                            $ruleId = $('#selectRules').val();
+
+                                            $data = {
+                                                flowId: $flowId,
+                                                ruleId: $ruleId,
+                                                landers: $assignedLanders
+                                            }
+                                            $('#progress-label').html('Adding Landers In To Flow');
+                                            getCampaignLandersFlowToUpdate($data);
+                                        }, 1000)
+
+                                    });
+                                }, 2000);
+                            });
+                        }, 1000)
+
+                    });
+                }
+
+
+                $intervalCamp = setInterval(function(){
+                    console.log('L:' + $capaignLandersReady + ' | O:' + $capaignOffersReady );
+
+                        if($capaignLandersReady == true && $capaignOffersReady == true){
+                            clearInterval($intervalCamp);
+                            $campaignData = {
+                                name: $('#campaign_name').val(),
+                                source:  $('#campaign_source').val(),
+                                geo:  $('#campaign_geo').val(),
+                                model:  $('#campaign_model').val(),
+                                tags:  $('#campaign_tags').tagsinput('items'),
+                                flow:  $('#campaign_flow').val()
+                            };
+                            $('#progress-label').html('Creating Campaign....');
+                            createCampaign($campaignData);
+
+                        }
+                }, 500)
+
+
             }).hide();
 
             //apply validation on select2 dropdown value change, this only needed for chosen dropdown integration.

@@ -185,7 +185,9 @@ class OffersController extends Controller{
         $data = array('success' => $success, 'failed' => $failed, 'apiResponse' => $apiResponse);
         $return = $this->makeResponse($error,$message, $data);
 
-        return new Response($return);
+        return new Response(
+            str_replace('""', '', $return)
+        );
     }
 
     /**

@@ -176,7 +176,7 @@ class CampaignController extends Controller
                 'page' => $url['path']
             ))->getContent();
             if($pageReturn == 'true'){
-                $page = 'Campaign New Campaign';
+                $page = 'New Campaign';
 
                 $offers = $this->getOffers();
                 $landers = $this->getLanders();
@@ -185,7 +185,7 @@ class CampaignController extends Controller
                 $presets = json_decode($this->forward('AppBundle:Offers:getOfferUrlPresets', array())->getContent(), true);
                 $landerPresets = json_decode($this->forward('AppBundle:Settings:getPresets', array())->getContent(), true);
                 $trafficSource = json_decode($this->forward('AppBundle:VoluumApi:voluumGetTrafficSource', array())->getContent(), true);
-                $flow = json_decode($this->forward('AppBundle:VoluumApi:voluumGetFlow', array())->getContent(), true);
+                $flow = json_decode($this->forward('AppBundle:Offers:getFlow', array())->getContent(), true);
                 return $this->render(
                     'campaign/campaign-new.html.twig', array('page' => $page,
                         'offers' => $offers,
@@ -195,7 +195,7 @@ class CampaignController extends Controller
                         'presets' => $presets,
                         'landerPresets' => $landerPresets,
                         'trafficSources' => $trafficSource['trafficSources'],
-                        'flows' => $flow['flows'],
+                        'flows' => $flow,
                         'dateNow' => date('m/d/Y')
                     )
                 );
@@ -205,6 +205,145 @@ class CampaignController extends Controller
         }else{
             return $this->redirect('/user/login');
         }
+    }
+
+
+    /**
+     * @Route("/campaign/create-success")
+     */
+    public function campaignCreateSuccessAction()
+    {
+        $isLoggedIn = $this->get('session')->get('isLoggedIn');
+        if($isLoggedIn){
+            $userData = $this->get('session')->get('userData');
+            $url = parse_url($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+            $pageReturn = $this->forward('AppBundle:Users:getAccessiblePages', array(
+                'uid' => $userData['id'],
+                'page' => $url['path']
+            ))->getContent();
+            if($pageReturn == 'true'){
+                $page = 'Success';
+
+                return $this->render(
+                    'campaign/campaign-create-success.html.twig', array('page' => $page,
+                        'url' => $this->get('session')->get('CampaignUrl')
+                    )
+                );
+            }else{
+                return $this->redirect('/error');
+            }
+        }else{
+            return $this->redirect('/user/login');
+        }
+    }
+
+
+
+    /**
+     * @Route("/campaign/get-flow-to-update")
+     */
+    public function getCampaignFlowToUpdateAction(){
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $data = json_decode($_POST['param'], true);
+        $url = 'https://api.voluum.com/flow/'.$data['flowId'];
+        $query = array();
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+        foreach($apiResponse['conditionalPathsGroups'] as $index => $row){
+            if($row['id'] == $data['ruleId']){
+                $indexKey = $index;
+            }
+        }
+
+        for($x = 0; $x < count($data['offers']); $x++){
+            $apiResponse['conditionalPathsGroups'][$indexKey]['paths'][0]['offers'][] = array(
+                'weight' => 100,
+                'offer' => array(
+                    'id' => $data['offers'][$x]
+                )
+            );
+        }
+
+
+        $postReponse = json_decode($this->forward('AppBundle:VoluumApi:putVoluum', array('url' => $url,
+            'query' => $apiResponse,
+            'method' => 'PUT',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+        if(isset($postReponse['id'])){
+            $success = true;
+            $message = 'Offers Successfully Added';
+        }else{
+            $success = false;
+            $message = $postReponse['error']['messages'];
+        }
+        return new Response(
+            json_encode(
+                array(
+                    $success,
+                    $message
+                )
+            )
+        );
+    }
+
+
+    /**
+     * @Route("/campaign/get-flow-to-update-landers")
+     */
+    public function getCampaignFlowToUpdateLandersAction(){
+        $apiCredentials = json_decode($this->forward('AppBundle:System:getApiCredentialsAll', array())->getContent(), true);
+        $voluumSessionId = $apiCredentials[0]['voluum'];
+        $data = json_decode($_POST['param'], true);
+        $url = 'https://api.voluum.com/flow/'.$data['flowId'];
+        $query = array();
+        $apiResponse = json_decode($this->forward('AppBundle:VoluumApi:getVoluumReports', array('url' => $url,
+            'query' => $query,
+            'method' => 'GET',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+        foreach($apiResponse['conditionalPathsGroups'] as $index => $row){
+            if($row['id'] == $data['ruleId']){
+                $indexKey = $index;
+            }
+        }
+
+        for($x = 0; $x < count($data['landers']); $x++){
+            $apiResponse['conditionalPathsGroups'][$indexKey]['paths'][0]['landers'][] = array(
+                'weight' => 100,
+                'lander' => array(
+                    'id' => $data['landers'][$x]
+                )
+            );
+        }
+
+
+        $postReponse = json_decode($this->forward('AppBundle:VoluumApi:putVoluum', array('url' => $url,
+            'query' => $apiResponse,
+            'method' => 'PUT',
+            'sessionId' => $voluumSessionId))->getContent(), true);
+
+
+        if(isset($postReponse['id'])){
+            $success = true;
+            $message = 'Landers Successfully Added';
+        }else{
+            $success = false;
+            $message = $postReponse['error']['messages'];
+        }
+        return new Response(
+            json_encode(
+                array(
+                    $success,
+                    $message
+                )
+            )
+        );
     }
 
 
@@ -2885,6 +3024,8 @@ class CampaignController extends Controller
                     'url' => $apiResponse['url'],
 
                 );
+
+            $this->get('session')->set('CampaignUrl', $apiResponse['url']);
 
         }else{
             $success = false;
