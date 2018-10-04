@@ -42,14 +42,15 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-        $globalSettings = $this->getTrafficMonitoringCampaignGlobalSettings();
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
+        $globalSettings = $this->getTrafficMonitoringCampaignGlobalSettings($em);
         if($globalSettings == 1) {
             $commonService = $this->getContainer()->get('app.common_controller');
             $systemService = $this->getContainer()->get('app.system_controller');
             $voluumService = $this->getContainer()->get('app.voluum_api_controller');
 
-            $apiCredentials = $this->getApiCredentialsAllAction();
+            $apiCredentials = $this->getApiCredentialsAllAction($em);
             $voluumSessionId = $apiCredentials[0]['voluum'];
 
             $currentDate = date('Y-m-d');
@@ -115,9 +116,9 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
                     $campaignName = $campaignRow['campaignName'];
                     $campaignId =  $campaignRow['campaignId'];
                     $geo = $campaignRow['campaignCountry'];
-                    $settings = $this->getCampaignTrafficSettingsByCampid($campaignId);
-                    $visitCount = $settings[0]['visit_count'];
-                    $settingsId = $settings[0]['id'];
+                    $settings = $this->getCampaignTrafficSettingsByCampid($em, $campaignId);
+                    $visitCount = $settings['visitCount'];
+                    $settingsId = $settings['id'];
 
                     if($settings['active'] == 1){
                         switch($trafficSourceName){
@@ -298,7 +299,7 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
                                         $status = 'Running';
                                     }else{
                                         $status = 'Traffic Stopped';
-                                        $notificationSettings = $this->getPlacementNotificationSettings($campaignId, $placementRow[$customVariable]);
+                                        $notificationSettings = $this->getPlacementNotificationSettings($em, $campaignId, $placementRow[$customVariable]);
                                         if($notificationSettings == false){
 
                                             $hitPlacements[] = array(
@@ -318,10 +319,10 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
 
                                     }
 
-                                    $isExist = $this->checkPlacementExists($campaignId, $placementRow[$customVariable]);
+                                    $isExist = $this->checkPlacementExists($em, $campaignId, $placementRow[$customVariable]);
                                     if($isExist == true){
                                         // next is to update
-                                        $this->updateReportsTrafficMonitoring($campaignId, $placementRow[$customVariable], $currentDateTime, $lastHourVisitValue, $currentHourVisitValue, $visitsDifferencePercentage, $status);
+                                        $this->updateReportsTrafficMonitoring($em, $campaignId, $placementRow[$customVariable], $currentDateTime, $lastHourVisitValue, $currentHourVisitValue, $visitsDifferencePercentage, $status);
                                     }else{
                                         $dataArray[] = array(
                                             'settingsId' => $settingsId,
@@ -338,7 +339,7 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
                                             'status' => $status
                                         );
                                         $values[] = "('{$settingsId}', '{$trafficSourceName}','{$campaignName}', '{$campaignId}', '{$placementRow[$customVariable]}', '{$geo}', '{$currentDateTime}', '{$lastHourVisitValue}', '{$currentHourVisitValue}', '{$visitsDifferencePercentage}', '{$status}', 0)";
-                                        $em = $this->getContainer()->get('doctrine')->getManager();
+
                                         $reportsMonitoringEntity = new ReportsTrafficMonitoring();
                                         $reportsMonitoringEntity->setTmcsid($settingsId);
                                         $reportsMonitoringEntity->setTrafficSourceName($trafficSourceName);
@@ -354,6 +355,7 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
                                         $reportsMonitoringEntity->setIsDisabledNotification(0);
                                         $em->persist($reportsMonitoringEntity);
                                         $em->flush();
+                                        $em->clear();
 
                                     }
 
@@ -418,9 +420,8 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
 
     }
 
-    public function getApiCredentialsAllAction(){
+    public function getApiCredentialsAllAction($em){
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $apiCredentials = $em
             ->getRepository('AppBundle:ApiCredentials')
             ->findAll();
@@ -440,17 +441,15 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
 
     }
 
-    public function getTrafficMonitoringCampaignGlobalSettings(){
-        $em = $this->getContainer()->get('doctrine')->getManager();
+    public function getTrafficMonitoringCampaignGlobalSettings($em){
         $entity = $em
             ->getRepository('AppBundle:TrafficMonitoringCampaignSettingsGlobal')
             ->find(1);
         return $entity->getIsActive();
     }
 
-    public function getCampaignTrafficSettingsByCampid($campid){
+    public function getCampaignTrafficSettingsByCampid($em, $campid){
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $entity = $em
             ->getRepository('AppBundle:TrafficMonitoringCampaignSettings')
             ->findOneBy(array('campaignId' => $campid));
@@ -463,9 +462,9 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
         );
     }
 
-    public function getPlacementNotificationSettings($campid, $placement){
+    public function getPlacementNotificationSettings($em, $campid, $placement){
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
+
         $entity = $em
             ->getRepository('AppBundle:ReportsTrafficMonitoring')
             ->findOneBy(array('campaignId' => $campid, 'placement' => $placement));
@@ -473,9 +472,8 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
         return $entity->getIsDisabledNotification();
     }
 
-    public function checkPlacementExists($campid, $placement){
+    public function checkPlacementExists($em, $campid, $placement){
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $entity = $em
             ->getRepository('AppBundle:ReportsTrafficMonitoring')
             ->findOneBy(array('campaignId' => $campid, 'placement' => $placement));
@@ -487,9 +485,8 @@ class CronTrafficTrackingCommand extends  ContainerAwareCommand{
 
     }
 
-    public function updateReportsTrafficMonitoring($campid, $placement, $currentDateTime, $lastHourVisitValue, $currentHourVisitValue, $visitsDifferencePercentage, $status){
+    public function updateReportsTrafficMonitoring($em, $campid, $placement, $currentDateTime, $lastHourVisitValue, $currentHourVisitValue, $visitsDifferencePercentage, $status){
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $entity = $em
             ->getRepository('AppBundle:ReportsTrafficMonitoring')
             ->findOneBy(array('campaignId' => $campid, 'placement' => $placement));

@@ -37,6 +37,8 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
     }
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
         $voluumService = $this->getContainer()->get('app.voluum_api_controller');
         $apiCredentials = $this->getApiCredentialsAllAction();
         $voluumSessionId = $apiCredentials[0]['voluum'];
@@ -82,8 +84,8 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
 
             $domains = json_decode($voluumService->getVoluumReportsAction($url, $query, 'GET', $voluumSessionId)->getContent(), true);
 
-            $scannedUrlObj = $this->getUrlsByColumn('isScanned', 1);
-            $savedUrls = $this->getScannedUrls();
+            $scannedUrlObj = $this->getUrlsByColumn($em, 'isScanned', 1);
+            $savedUrls = $this->getScannedUrls($em);
 
             $data = array();
             $urlData = array();
@@ -129,7 +131,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
             if(count($toScanUrl) > 0 ){
                 for($i = 0; $i < count($toScanUrl); $i++){
                     //$sendRequestResponse = $apiClass->sendUrlToScan($toScanUrl[$i]);
-                    $isUrlExists = $this->checkUrlExist($toScanUrl[$i]);
+                    $isUrlExists = $this->checkUrlExist($em, $toScanUrl[$i]);
                     if(count($isUrlExists) == 0){
 
                         foreach($landerIds as $lanId){
@@ -150,16 +152,16 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
 
             foreach($savedUrls as $url){
                 if(!in_array($url['url'], $toScanUrl)){
-                    $this->deleteUrl($url['url']);
+                    $this->deleteUrl($em, $url['url']);
                 }
             }
 
             if(count($data) > 0){
-                $this->insertScannedUrls($data);
+                $this->insertScannedUrls($em, $data);
             }
 
 
-            $savedUrls = $this->getScannedUrls();
+            $savedUrls = $this->getScannedUrls($em);
 
             $x = 0;
             foreach($savedUrls as $url){
@@ -169,7 +171,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
                 if($url['toCheck'] == true){
                     $sendRequestResponse = $this->sendUrlToScan($toScanUrl[$x]);
                     if(!isset($sendRequestResponse['error'])){
-                        $this->updateScannedUrls($toScanUrl[$x], $sendRequestResponse['scan_id']);
+                        $this->updateScannedUrls($em, $toScanUrl[$x], $sendRequestResponse['scan_id']);
                     }
                 }
                 $x++;
@@ -181,9 +183,8 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
     }
 
 
-    public function getUrlsByColumn($column, $value){
+    public function getUrlsByColumn($em, $column, $value){
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $entity = $em->getRepository('AppBundle:ScannedUrls')->findBy(array($column => $value));
         $data = array();
         for($i = 0; $i < count($entity); $i++){
@@ -195,8 +196,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
 
     }
 
-    public function getScannedUrls(){
-        $em = $this->getContainer()->get('doctrine')->getManager();
+    public function getScannedUrls($em){
         $entity = $em->getRepository('AppBundle:ScannedUrls')->findAll();
         $data = array();
         for($i = 0; $i < count($entity); $i++){
@@ -210,23 +210,23 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
         return $data;
     }
 
-    public function checkUrlExist($url){
+    public function checkUrlExist($em, $url){
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
+
         $entity = $em->getRepository('AppBundle:ScannedUrls')->findBy(array('url' => $url));
         return $entity;
     }
 
-    public function deleteUrl($url){
-        $em = $this->getContainer()->get('doctrine')->getManager();
+    public function deleteUrl($em, $url){
+
         $entity = $em->getRepository('AppBundle:ScannedUrls')->findOneBy(array('url' => $url));
         $em->remove($entity);
         $em->flush();
 
     }
 
-    public function insertScannedUrls($data){
-        $em = $this->getContainer()->get('doctrine')->getManager();
+    public function insertScannedUrls($em, $data){
+
         foreach($data as $row){
             $entity = new ScannedUrls();
             $entity->setLanderId($row['landerId']);
@@ -242,7 +242,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
 
     }
 
-    public function updateScannedUrls($url, $scanRequestId){
+    public function updateScannedUrls($em, $url, $scanRequestId){
         $em = $this->getContainer()->get('doctrine')->getManager();
         $entity = $em->getRepository('AppBundle:ScannedUrls')->findOneBy(array('url' => $url));
         $entity->setIsScanned(1);
@@ -259,7 +259,7 @@ class CronScanUrlCommand extends  ContainerAwareCommand{
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://www.virustotal.com/vtapi/v2/url/scan');
         curl_setopt($ch, CURLOPT_POST, True);
-        curl_setopt($ch, CURLOPT_VERBOSE, 1); // remove this if your not debugging
+        curl_setopt($ch, CURLOPT_VERBOSE, 0); // remove this if your not debugging
         curl_setopt($ch, CURLOPT_RETURNTRANSFER ,True);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

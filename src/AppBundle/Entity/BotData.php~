@@ -1,0 +1,228 @@
+<?php
+
+namespace AppBundle\Entity;
+
+/**
+ * BotData
+ */
+class BotData
+{
+    /**
+     * @var string
+     */
+    private $query;
+
+    /**
+     * @var integer
+     */
+    private $id;
+
+
+    /**
+     * Set query
+     *
+     * @param string $query
+     *
+     * @return BotData
+     */
+    public function setQuery($query)
+    {
+        $this->query = $query;
+    
+        return $this;
+    }
+
+    /**
+     * Get query
+     *
+     * @return string
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     * @var string
+     */
+    private $appVersion;
+
+    /**
+     * @var string
+     */
+    private $title;
+
+    /**
+     * @var string
+     */
+    private $language;
+
+    /**
+     * @var string
+     */
+    private $hit;
+
+    /**
+     * @var string
+     */
+    private $position;
+
+    /**
+     * @var string
+     */
+    private $ipAddress;
+
+
+    /**
+     * Set appVersion
+     *
+     * @param string $appVersion
+     *
+     * @return BotData
+     */
+    public function setAppVersion($appVersion)
+    {
+        $this->appVersion = $appVersion;
+    
+        return $this;
+    }
+
+    /**
+     * Get appVersion
+     *
+     * @return string
+     */
+    public function getAppVersion()
+    {
+        return $this->appVersion;
+    }
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     *
+     * @return BotData
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Set language
+     *
+     * @param string $language
+     *
+     * @return BotData
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+    
+        return $this;
+    }
+
+    /**
+     * Get language
+     *
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * Set hit
+     *
+     * @param string $hit
+     *
+     * @return BotData
+     */
+    public function setHit($hit)
+    {
+        $this->hit = $hit;
+    
+        return $this;
+    }
+
+    /**
+     * Get hit
+     *
+     * @return string
+     */
+    public function getHit()
+    {
+        return $this->hit;
+    }
+
+    /**
+     * Set position
+     *
+     * @param string $position
+     *
+     * @return BotData
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    
+        return $this;
+    }
+
+    /**
+     * Get position
+     *
+     * @return string
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * Set ipAddress
+     *
+     * @param string $ipAddress
+     *
+     * @return BotData
+     */
+    public function setIpAddress($ipAddress)
+    {
+        $this->ipAddress = $ipAddress;
+    
+        return $this;
+    }
+
+    /**
+     * Get ipAddress
+     *
+     * @return string
+     */
+    public function getIpAddress()
+    {
+        return $this->ipAddress;
+    }
+}

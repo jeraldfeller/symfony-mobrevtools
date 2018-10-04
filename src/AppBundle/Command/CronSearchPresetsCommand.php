@@ -40,6 +40,7 @@ class CronSearchPresetsCommand extends ContainerAwareCommand {
     {
         $cakeApi = $this->getContainer()->get('app.cake_api');
         $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
         $offerPresets = $em
             ->getRepository('AppBundle:OfferPresets')
             ->findAll();

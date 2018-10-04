@@ -157,7 +157,7 @@ class PlanningController extends Controller{
                     'method' => 'POST',
                     'sessionId' => $voluumSessionId))->getContent(), true);
 
-                var_dump($apiResponse);
+
 
                 if(!isset($apiResponse['error'])){
                     $success[] = $name . ' ' . $counter;

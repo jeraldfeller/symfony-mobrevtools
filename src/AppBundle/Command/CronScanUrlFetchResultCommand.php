@@ -38,6 +38,8 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
         $systemService = $this->getContainer()->get('app.system_controller');
         $voluumService = $this->getContainer()->get('app.voluum_api_controller');
         $apiCredentials = $this->getApiCredentialsAllAction();
@@ -50,7 +52,7 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
         $to = $ymd.'T'.$hmi;
         $currentHour = date('H');
 
-        $scannedUrlObj = $this->getUrlsByColumn('isScanned', 1);
+        $scannedUrlObj = $this->getUrlsByColumn($em, 'isScanned', 1);
         $domainResults = array();
 
         $i = 0;
@@ -127,7 +129,7 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
 
                 if($detected == true){
                     $domainResults[] = array('domain' => $row['url'], 'result' => $result, 'campaigns' => $landersCampaignString);
-                    $this->updateScannedUrl($row['scanId'], 0, $result, $landersCampaignString);
+                    $this->updateScannedUrl($em, $row['scanId'], 0, $result, $landersCampaignString);
                 }
 
                 $i++;
@@ -168,16 +170,15 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
 
 
             $subject = 'Domain Reports ' . date('Y-m-d H:i:s');
-       //     $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
-            $systemService->sendEmail('jeraldfeller@gmail.com', 'jeraldfeller@gmail.com', $subject, $message);
+            $systemService->sendEmail('andrew@mobrevmedia.com', 'andrew@mobrevmedia.com', $subject, $message);
+            //$systemService->sendEmail('jeraldfeller@gmail.com', 'jeraldfeller@gmail.com', $subject, $message);
 
         }
     }
 
 
-    public function getUrlsByColumn($column, $value){
+    public function getUrlsByColumn($em, $column, $value){
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $entity = $em->getRepository('AppBundle:ScannedUrls')->findBy(array($column => $value));
         $data = array();
         for($i = 0; $i < count($entity); $i++){
@@ -196,9 +197,8 @@ class CronScanUrlFetchResultCommand extends  ContainerAwareCommand{
     }
 
 
-    public function updateScannedUrl($id, $isSafe, $flagType, $campaigns){
+    public function updateScannedUrl($em, $id, $isSafe, $flagType, $campaigns){
         $dateUpdated = date('Y-m-d H:i:s');
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $entity = $em->getRepository('AppBundle:ScannedUrls')->find($id);
         $entity->setHasReturned(1);
         $entity->setIsScanned(0);

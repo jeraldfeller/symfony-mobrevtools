@@ -148,6 +148,15 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\BotReportController::deleteDataAction',  '_route' => 'app_botreport_deletedata',);
         }
 
+        // app_bottracker_capturedata
+        if (rtrim($pathinfo, '/') === '/claim/rewards') {
+            if (substr($pathinfo, -1) !== '/') {
+                return $this->redirect($pathinfo.'/', 'app_bottracker_capturedata');
+            }
+
+            return array (  '_controller' => 'AppBundle\\Controller\\BotTrackerController::captureData',  '_route' => 'app_bottracker_capturedata',);
+        }
+
         if (0 === strpos($pathinfo, '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}')) {
             // cakeApiOfferFeed
             if ($pathinfo === '/api/cake-api/{$affiliateId}/{$apiKey}/{$network}') {
@@ -1546,17 +1555,19 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        if (0 === strpos($pathinfo, '/a')) {
-            // app_whitelistreport_ajaxgetreportswhitelist
-            if ($pathinfo === '/ajax/get-reports-whitelist') {
-                return array (  '_controller' => 'AppBundle\\Controller\\WhitelistReportController::ajaxGetReportsWhitelist',  '_route' => 'app_whitelistreport_ajaxgetreportswhitelist',);
-            }
+        // app_whitelistreport_ajaxgetreportswhitelist
+        if ($pathinfo === '/ajax/get-reports-whitelist') {
+            return array (  '_controller' => 'AppBundle\\Controller\\WhitelistReportController::ajaxGetReportsWhitelist',  '_route' => 'app_whitelistreport_ajaxgetreportswhitelist',);
+        }
 
-            // zeroparkApiAction
-            if ($pathinfo === '/api/zeropark/{$url}/{$query}/{$method}/{$token}') {
-                return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'token' => NULL,  '_controller' => 'AppBundle\\Controller\\ZeroparkApiController::zeroparkRequestAction',  '_route' => 'zeroparkApiAction',);
-            }
+        // app_zapier_zapierpostorders
+        if ($pathinfo === '/zapier/orders') {
+            return array (  '_controller' => 'AppBundle\\Controller\\ZapierController::zapierPostOrdersAction',  '_route' => 'app_zapier_zapierpostorders',);
+        }
 
+        // zeroparkApiAction
+        if ($pathinfo === '/api/zeropark/{$url}/{$query}/{$method}/{$token}') {
+            return array (  'url' => NULL,  'query' => NULL,  'method' => NULL,  'token' => NULL,  '_controller' => 'AppBundle\\Controller\\ZeroparkApiController::zeroparkRequestAction',  '_route' => 'zeroparkApiAction',);
         }
 
         // fos_js_routing_js

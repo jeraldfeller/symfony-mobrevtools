@@ -43,9 +43,11 @@ class CronGetLiveVisitsCommand extends ContainerAwareCommand{
         $apiCredentials = $this->getApiCredentialsAllAction();
         $voluumSessionId = $apiCredentials[0]['voluum'];
 
-        $campaigns = $this->getCampaigns();
+
         $objectArray = array();
         $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
+        $campaigns = $this->getCampaigns($em);
         foreach($campaigns as $key){
 
             $url = 'https://api.voluum.com/report/live/visits/'.$key['vid'].'?';
@@ -67,7 +69,7 @@ class CronGetLiveVisitsCommand extends ContainerAwareCommand{
                     $ip = explode('.', $item['ip']);
                     $ipArray[] = $ip[0] . '.' . $ip[1] . '.0.0/16';
 
-                    $getDuplicate = $this->getDuplicateIp($key['trafficName'], $key['campName'], $item['countryCode'], $ip[0] . '.' . $ip[1] . '.0.0/16');
+                    $getDuplicate = $this->getDuplicateIp($em, $key['trafficName'], $key['campName'], $item['countryCode'], $ip[0] . '.' . $ip[1] . '.0.0/16');
 
                     if ($getDuplicate == false) {
                         $entity = new ReportsIp();
@@ -124,12 +126,11 @@ class CronGetLiveVisitsCommand extends ContainerAwareCommand{
 
     }
 
-    public function getCampaigns(){
+    public function getCampaigns($em){
         $campaign = "AppBundle:Campaign";
         $trafficSource = "AppBundle:Trafficsource";
         $verticals = "AppBundle:Verticals";
         $campaignRules = "AppBundle:CampaignRules";
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $sql = $em->createQuery(
             "SELECT
                        t.id as tid,
@@ -154,8 +155,7 @@ class CronGetLiveVisitsCommand extends ContainerAwareCommand{
 
     }
 
-    public function getDuplicateIp($trafficName, $campaignName, $countryCode, $ip){
-        $em = $this->getContainer()->get('doctrine')->getManager();
+    public function getDuplicateIp($em, $trafficName, $campaignName, $countryCode, $ip){
         $entity = $em->getRepository('AppBundle:ReportsIp')->findOneBy(array(
             'trafficName' => $trafficName,
             'campaignName' => $campaignName,
